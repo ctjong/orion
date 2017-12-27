@@ -1,4 +1,4 @@
-﻿# Orion API
+# Orion API
 
 [![npm](https://img.shields.io/npm/dm/orion-api.svg)]() [![npm](https://img.shields.io/npm/v/orion-api.svg)]() [![David](https://img.shields.io/david/ctjong/orion.svg)]()
 
