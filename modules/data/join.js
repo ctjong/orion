@@ -1,3 +1,6 @@
+/**
+ * A module for representing entity joins
+ */
 module.exports = 
 {
     dependencies: [],
@@ -15,25 +18,33 @@ module.exports =
         // PUBLIC
         //----------------------------------------------
 
-        this.Join = function (e1, e2, e2Alias, e1JoinField, e2JoinField, e2SelectFields) 
+        /**
+         * Construct a new Join object
+         * @param {any} e1 First entity
+         * @param {any} e2 Second entity
+         * @param {any} e2Alias Alias of the second entity
+         * @param {any} e1JoinField Field from first entity to join upon
+         * @param {any} e2JoinField Field from second entity to join upon
+         * @param {any} e2SelectFields Fields from second entity to retrieve
+         */
+        function Join(e1, e2, e2Alias, e1JoinField, e2JoinField, e2SelectFields) 
         {
-            this.getJoinExpression = function()
-            {
-                return "INNER JOIN [" + e2 + "table] [" + e2Alias + "] ON [" + e1 + "table].[" + e1JoinField + "] = [" + e2Alias + "].[" + e2JoinField + "]";
-            };
-
-            this.getSelectExpression = function()
-            {
-                var str = "";
-                for(var i=0; i<e2SelectFields.length; i++)
-                {
-                    str += (str === "" ? "" : ", ") + "[" + e2Alias + "].[" + e2SelectFields[i] + "] AS [" + e2Alias + "_" + e2SelectFields[i] + "]";
-                }
-                return str;
-            };
+            this.e1 = e1;
+            this.e2 = e2;
+            this.e2Alias = e2Alias;
+            this.e1JoinField = e1JoinField;
+            this.e2JoinField = e2JoinField;
+            this.e2SelectFields = e2SelectFields;
         };
 
-        this.createForForeignKey = function(ctx, entity, field)
+        /**
+         * Create a Join object for resolving a foreign key
+         * @param {any} ctx Request context
+         * @param {any} entity Requseted entity
+         * @param {any} field Foreign key field
+         * @returns Join object
+         */
+        function createForForeignKey(ctx, entity, field)
         {
             if(!entity || !field) throw "[Join.createForForeignKey] Missing entity/field";
             if(!ctx.config.entities[entity])
@@ -59,6 +70,8 @@ module.exports =
             return new _this.Join(entity, e2, fk.resolvedKeyName, field, "id", e2SelectFields);
         };
 
+        this.Join = Join;
+        this.createForForeignKey = createForForeignKey;
         _construct();
     }
 };

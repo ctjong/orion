@@ -1,3 +1,6 @@
+/**
+ * A module for handling query conditions
+ */
 module.exports = 
 {
     dependencies: [],
@@ -15,42 +18,33 @@ module.exports =
         // PUBLIC
         //----------------------------------------------
 
-        this.Condition = function (entity, fieldName, operator, fieldValue) 
+        /**
+         * Construct a new Condition object
+         * @param {any} entity Entity where this condition applies to
+         * @param {any} fieldName Condition field
+         * @param {any} operator Condition operator
+         * @param {any} fieldValue Condition value
+         */
+        function Condition(entity, fieldName, operator, fieldValue) 
         {
+            this.entity = entity;
+            this.fieldName = fieldName;
+            this.operator = operator;
+            this.fieldValue = fieldValue;
             this.getValue = function(conditionKey)
             {
                 return fieldName === conditionKey ? fieldValue : null;
             };
-            this.getWhereExpression = function(queryObj)
-            {
-                if(fieldName === "1" && fieldValue === "1")
-                {
-                    return "1=1";
-                }
-                else if(operator === "~")
-                {
-                    return "[" + entity + "table].[" + fieldName + "] like '%" + fieldValue + "%'";
-                }
-                else if(typeof(fieldValue) === "string" && fieldValue.toLowerCase() === "null")
-                {
-                    if(operator == "=")
-                    {
-                        return "[" + entity + "table].[" + fieldName + "] is null";
-                    }
-                    else
-                    {
-                        return "[" + entity + "table].[" + fieldName + "] is not null";
-                    }
-                }
-                else
-                {
-                    return "[" + entity + "table].[" + fieldName + "]" + operator + queryObj.addQueryParam(fieldValue);
-                }
-            };
         };
 
-        this.CompoundCondition = function (operator, children) 
+        /**
+         * Construct a Condition that consists of other Conditions
+         * @param {any} operator Operator to connect all the child conditions
+         * @param {any} children Array of Conditions
+         */
+        function CompoundCondition(operator, children) 
         {
+            this.operator = operator;
             this.children = children;
             this.getValue = function(conditionKey)
             {
@@ -61,23 +55,15 @@ module.exports =
                 }
                 return null;
             };
-            this.getWhereExpression = function(queryObj)
-            {
-                if (!children)
-                    return "1=1";
-                var str = "(";
-                for(var i=0; i<children.length; i++)
-                {
-                    var cond = children[i];
-                    if(i > 0) str += operator === "&" ? " AND " : " OR ";
-                    str += cond.getWhereExpression(queryObj);
-                }
-                str += ")";
-                return str;
-            };
         };
 
-        this.parse = function(ctx, conditionString)
+        /**
+         * Try to parse the given condition string and return a Condition object
+         * @param {any} ctx Requst context
+         * @param {any} conditionString Condition string
+         * @returns Condition object, or null on failure
+         */
+        function parse(ctx, conditionString)
         {
             var condition = new _this.CompoundCondition("&", []);
             if(conditionString === "") 
@@ -141,6 +127,9 @@ module.exports =
             return condition;
         };
 
+        this.Condition = Condition;
+        this.CompoundCondition = CompoundCondition;
+        this.parse = parse;
         _construct();
     }
 };

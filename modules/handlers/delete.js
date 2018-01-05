@@ -21,7 +21,7 @@ module.exports =
             {
                 if(ctx.entity === "user" && resource.domain !== "local")
                     throw new _this.error.Error("d789", 400, "updating external user info is not supported");
-                _this.db.delete(ctx, ctx.entity, resourceId, function(dbResponse)
+                _this.db.deleteResource(ctx, ctx.entity, resourceId, function(dbResponse)
                 {
                     ctx.res.send(dbResponse);
                 });

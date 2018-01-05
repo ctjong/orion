@@ -34,7 +34,7 @@ module.exports =
                         }
                         else
                         {
-                            _this.db.delete(ctx, "asset", resourceId, function(dbResponse)
+                            _this.db.deleteResource(ctx, "asset", resourceId, function(dbResponse)
                             { 
                                 ctx.res.send(dbResponse);
                             });

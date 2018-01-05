@@ -26,9 +26,8 @@
     <Compile Include="modules\error.js" />
     <Compile Include="modules\moduleCollection.js" />
     <Compile Include="modules\data\condition.js" />
-    <Compile Include="modules\data\db.js" />
+    <Compile Include="modules\db\mssqldb.js" />
     <Compile Include="modules\data\join.js" />
-    <Compile Include="modules\data\query.js" />
     <Compile Include="modules\handlers\create.js" />
     <Compile Include="modules\handlers\createAsset.js" />
     <Compile Include="modules\handlers\delete.js" />
@@ -44,6 +43,7 @@
     <Folder Include="modules" />
     <Folder Include="modules\data" />
     <Folder Include="modules\handlers" />
+    <Folder Include="modules\db\" />
     <Folder Include="modules\services" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

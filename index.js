@@ -6,7 +6,7 @@ var modules = new (require('./modules/moduleCollection'))();
 var contextFactory = require('./modules/context');
 
 modules.add("body-parser", 'body-parser');
-modules.add("sql", 'mssql');
+modules.add("mssql", 'mssql');
 modules.add("captcha", 'svg-captcha');
 modules.add("crypto", 'crypto');
 modules.add("azure", 'azure-storage');
@@ -18,8 +18,6 @@ modules.add("https", 'https');
 modules.add("applicationinsights", "applicationinsights");
 modules.addDef("error", './modules/error');
 modules.addDef("condition", './modules/data/condition');
-modules.addDef("db", './modules/data/db');
-modules.addDef("query", './modules/data/query');
 modules.addDef("join", './modules/data/join');
 modules.addDef("create", './modules/handlers/create');
 modules.addDef("createAsset", './modules/handlers/createAsset');
@@ -47,6 +45,11 @@ function setConfig(config)
     {
         modules.get("applicationinsights").setup(config.appInsightsKey).start();
     }
+
+    if (!config.dbms || config.dbms === "mssql")
+        modules.addDef("db", './modules/db/mssqldb');
+    else
+        throw "Unknown database management system " + config.dbms;
 }
 
 /**

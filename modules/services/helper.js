@@ -67,19 +67,19 @@ module.exports =
             return newData;
         };
 
-        this.validate = function(ctx, action, queryMdl, resourceId, requestBody, callback)
+        this.validate = function(ctx, action, db, resourceId, requestBody, callback)
         {
             requestBody = _this.fixDataKeysAndTypes(ctx, requestBody);
             if(action === "create")
             {
-                resolveForeignKeys(ctx, requestBody, queryMdl, function(requestBody)
+                resolveForeignKeys(ctx, requestBody, db, function(requestBody)
                 {
-                    getAndRunValidator(ctx, action, null, requestBody, queryMdl, callback);
+                    getAndRunValidator(ctx, action, null, requestBody, db, callback);
                 });
             }
             else
             {
-                queryMdl.findResourceById(ctx, ctx.entity, resourceId, function(resource)
+                db.findResourceById(ctx, ctx.entity, resourceId, function(resource)
                 {
                     if(!resource)
                         throw new _this.error.Error("7e13", 400, "resource not found with id " + resourceId);
@@ -89,7 +89,7 @@ module.exports =
                     {
                         ctx.userRoles.push("owner");
                     }
-                    getAndRunValidator(ctx, action, resource, requestBody, queryMdl, callback);
+                    getAndRunValidator(ctx, action, resource, requestBody, db, callback);
                 });
             }
         };
@@ -119,7 +119,7 @@ module.exports =
             }
         }
 
-        function getAndRunValidator(ctx, action, oldData, newData, queryMdl, callback)
+        function getAndRunValidator(ctx, action, oldData, newData, db, callback)
         {
             var validator = getValidator(ctx, action);
             if(typeof validator === "undefined" || validator === null)
@@ -171,7 +171,7 @@ module.exports =
             callback(oldData, newData);
         }
 
-        function resolveForeignKeys(ctx, requestBody, queryMdl, callback)
+        function resolveForeignKeys(ctx, requestBody, db, callback)
         {
             var op = { active: 0 };
             var fields = ctx.config.entities[ctx.entity].fields;
@@ -179,15 +179,15 @@ module.exports =
             {
                 if(!fields.hasOwnProperty(fieldName) || !fields[fieldName].foreignKey)
                     continue;
-                resolveForeignKey(ctx, op, requestBody, fieldName, fields[fieldName].foreignKey, queryMdl, callback);
+                resolveForeignKey(ctx, op, requestBody, fieldName, fields[fieldName].foreignKey, db, callback);
             }
             if(op.active <= 0)
                 callback(requestBody);
         }
 
-        function resolveForeignKey(ctx, op, requestBody, fieldName, fk, queryMdl, callback)
+        function resolveForeignKey(ctx, op, requestBody, fieldName, fk, db, callback)
         {
-            queryMdl.findResourceById(ctx, fk.foreignEntity, requestBody[fieldName], function(resource)
+            db.findResourceById(ctx, fk.foreignEntity, requestBody[fieldName], function(resource)
             {
                 op.active--;
                 requestBody[fk.resolvedKeyName] = _this.fixDataKeysAndTypes(ctx, resource);

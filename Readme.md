@@ -58,6 +58,7 @@ A configuration module is required to give the application the necessary informa
 Below is the list of settings to be included in a configuration module:
 - **secretKey** - (Required) Secret key string for authentication purposes.
 - **salt** - (Required) Salt string for encrypting passwords.
+- **dbms** - (Optional) Database management system to use. Currently we only support "mssql". Default to "mssql".
 - **databaseConnectionString** - (Required) Database connection string.
 - **storageConnectionString** - (Optional) Azure Blob Storage connection string. Required for file upload. Set to null if not applicable.
 - **storageContainerName** - (Optional) Azure Blob Storage account name. Required for file upload. Set to null if not applicable.
