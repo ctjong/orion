@@ -3,16 +3,20 @@
  */
 module.exports = 
 {
-    dependencies: ["helper", "condition", "join", "mssql", "exec"],
+    dependencies: ["helper", "condition", "join", "exec"],
     Instance: function()
     {
         var _this = this;
+        var sql;
 
         //----------------------------------------------
         // CONSTRUCTOR
         //----------------------------------------------
 
-        function _construct(){}
+        function _construct()
+        {
+            sql = require("mssql");
+        }
 
         //----------------------------------------------
         // PUBLIC
@@ -242,7 +246,7 @@ module.exports =
             console.log(queryString);
             console.log("Query parameters:");
             console.log(queryParams);
-            var connection = new _this.mssql.ConnectionPool(ctx.config.databaseConnectionString);
+            var connection = new sql.ConnectionPool(ctx.config.databaseConnectionString);
             connection.connect(function (err)
             {
                 if (err)
@@ -252,7 +256,7 @@ module.exports =
                     console.log(err);
                     throw new _this.error.Error("f8cb", 500, "error while connecting to database");
                 }
-                var request = new _this.mssql.Request(connection);
+                var request = new sql.Request(connection);
                 for (var key in queryParams)
                 {
                     if (!queryParams.hasOwnProperty(key))
@@ -260,7 +264,7 @@ module.exports =
                     var paramValue = queryParams[key];
                     if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
                     {
-                        request.input(key, _this.mssql.BigInt, paramValue);
+                        request.input(key, sql.BigInt, paramValue);
                     }
                     else
                     {

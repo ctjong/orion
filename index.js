@@ -6,7 +6,6 @@ var modules = new (require('./modules/moduleCollection'))();
 var contextFactory = require('./modules/context');
 
 modules.add("body-parser", 'body-parser');
-modules.add("mssql", 'mssql');
 modules.add("captcha", 'svg-captcha');
 modules.add("crypto", 'crypto');
 modules.add("azure", 'azure-storage');
