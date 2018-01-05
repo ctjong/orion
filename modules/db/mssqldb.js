@@ -194,7 +194,8 @@ module.exports =
             var query = new Query();
             var tableName = entity + "table";
             var condition = new _this.condition.Condition(entity, "id", "=", id);
-            query.append("delete from [" + tableName + "] where " + condition.getWhereExpression(query));
+            query.append("delete from [" + tableName + "] where ");
+            appendWhereClause(query, condition);
             execute(ctx, query, successCb, completeCb);
         };
 
