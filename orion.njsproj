@@ -25,9 +25,9 @@
     <Compile Include="modules\context.js" />
     <Compile Include="modules\error.js" />
     <Compile Include="modules\moduleCollection.js" />
-    <Compile Include="modules\data\condition.js" />
+    <Compile Include="modules\models\condition.js" />
     <Compile Include="modules\db\mssqldb.js" />
-    <Compile Include="modules\data\join.js" />
+    <Compile Include="modules\models\join.js" />
     <Compile Include="modules\handlers\create.js" />
     <Compile Include="modules\handlers\createAsset.js" />
     <Compile Include="modules\handlers\delete.js" />
@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="modules" />
-    <Folder Include="modules\data" />
+    <Folder Include="modules\models\" />
     <Folder Include="modules\handlers" />
     <Folder Include="modules\db\" />
     <Folder Include="modules\services" />

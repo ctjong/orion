@@ -199,14 +199,6 @@ module.exports =
             execute(ctx, query, successCb, completeCb);
         };
 
-        this.quickFind = quickFind;
-        this.select = select;
-        this.findResourceById = findResourceById;
-        this.count = count;
-        this.insert = insert;
-        this.update = update;
-        this.deleteResource = deleteResource;
-
         //----------------------------------------------
         // PRIVATE
         //----------------------------------------------
@@ -431,5 +423,14 @@ module.exports =
                 query.append(")");
             }
         };
+
+        this.quickFind = quickFind;
+        this.select = select;
+        this.findResourceById = findResourceById;
+        this.count = count;
+        this.insert = insert;
+        this.update = update;
+        this.deleteResource = deleteResource;
+        _construct();
     }
 };
