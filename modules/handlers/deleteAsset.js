@@ -19,7 +19,7 @@ module.exports =
         {
             if(!ctx.userId)
                 throw new _this.error.Error("2c74", 401, "anonymous asset deletion is not supported");
-            _this.helper.validate(ctx, "delete", _this.db, resourceId, null, function(resource, requestBody)
+            _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, resourceId, null, function(resource, requestBody)
             {
                 var blobService = _this.azure.createBlobService(ctx.config.storageConnectionString);
                 var responseString = null;

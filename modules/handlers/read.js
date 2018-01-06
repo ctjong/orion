@@ -1,3 +1,6 @@
+/**
+ * A module to handle read operations
+ */
 module.exports = 
 {
     dependencies: ["helper", "condition", "join", "db", "auth"],
@@ -15,18 +18,32 @@ module.exports =
         // PUBLIC
         //----------------------------------------------
 
-        this.execute = function(ctx, requestParams, isFullMode)
+        /**
+         * Execute a read request
+         * @param {any} ctx Request context
+         * @param {any} requestParams Request parameters
+         * @param {any} isFullMode Whether to do the read in full mode (full mode = include rich text fields in response)
+         */
+        function execute (ctx, requestParams, isFullMode)
         {
-            var configConditionStr = getConditionStringFromConfig(ctx, requestParams.accessType);
-            if(typeof configConditionStr === "undefined" || configConditionStr === null)
-                throw new _this.error.Error("a058", 401, "Unauthorized");
-            var orderByField = !requestParams.orderByField ? "id" : requestParams.orderByField;
+            // set owner role if the read operation is run in private mode
+            if (accessType === "private")
+            {
+                // private read mode. add owner role directly, add ownerid condition later
+                if (!ctx.userId) throw new _this.error.Error("a058", 401, "Unauthorized");
+                ctx.userRoles.push("owner");
+            }
 
-            // get pagination info
+            // verify that current user context is allowed to execute a read
+            _this.helper.validateRoles(ctx, "read");
+
+            // get pagination and ordering info
             var skip = isNaN(parseInt(requestParams.skip)) ? 0 : parseInt(requestParams.skip);
             var take = isNaN(parseInt(requestParams.take)) ? 10 : parseInt(requestParams.take);
+            var orderByField = !requestParams.orderByField ? "id" : requestParams.orderByField;
 
             // get condition
+            var configConditionStr = getConditionStringFromConfig(ctx, requestParams.accessType);
             var condition = getConditionFromRequest(ctx, requestParams);
             if(configConditionStr !== "") 
             {
@@ -53,27 +70,26 @@ module.exports =
         // PRIVATE
         //----------------------------------------------
 
+        /**
+         * Get condition string from config
+         * @param {any} ctx Request context
+         * @param {any} accessType Request access type
+         * @returns condition string
+         */
         function getConditionStringFromConfig(ctx, accessType)
         {
-            if(accessType === "private")
-            {
-                // private read mode. add owner role directly, add ownerid condition later
-                if(!ctx.userId) throw new _this.error.Error("a058", 401, "Unauthorized");
-                ctx.userRoles.push("owner");
-            }
-            var conditionStrings = ctx.config.entities[ctx.entity].readConditionStrings;
-            if(!conditionStrings) return null;
-            var conditionStr = null;
-            for(var i=0; i<conditionStrings.length; i++)
-            {
-                if(ctx.userRoles.containsAny(conditionStrings[i].roles))
-                {
-                    conditionStr = conditionStrings[i].fn(ctx.userId);
-                }
-            }
-            return conditionStr;
+            var entityConfig = ctx.config.entities[ctx.entity];
+            if (!entityConfig.getReadCondition)
+                return "";
+            return entiityConfig.getReadCondition(ctx.userRoles, ctx.userId);
         }
 
+        /**
+         * Get Condition object from the request
+         * @param {any} ctx Request context
+         * @param {any} requestParams Request parameters
+         * @returns Condition object
+         */
         function getConditionFromRequest(ctx, requestParams)
         {
             var isPrivate = requestParams.accessType === "private";
@@ -100,6 +116,7 @@ module.exports =
             return condition;
         }
 
+        this.execute = execute;
         _construct();
     }
 };

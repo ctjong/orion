@@ -1,4 +1,7 @@
-module.exports = 
+/**
+ * A module to handle create operations
+ */
+module.exports =
 {
     dependencies: ["auth", "helper", "db"],
     Instance: function()
@@ -15,9 +18,14 @@ module.exports =
         // PUBLIC
         //----------------------------------------------
 
-        this.execute = function(ctx, requestBody)
+        /**
+         * Execute a create request
+         * @param {any} ctx Request context
+         * @param {any} requestBody Request body
+         */
+        function execute (ctx, requestBody)
         {
-            _this.helper.validate(ctx, "create", _this.db, null, requestBody, function(resource, requestBody)
+            _this.helper.onBeginWriteRequest(ctx, "create", _this.db, null, requestBody, function(resource, requestBody)
             {
                 // get required and optional fields
                 var fields = getConfigFields(ctx);
@@ -61,6 +69,11 @@ module.exports =
         // PRIVATE
         //----------------------------------------------
 
+        /**
+         * Get a list of fields from the config
+         * @param {any} ctx Request context
+         * @returns an object containing an array of required fields and an array of optional fields
+         */
         function getConfigFields(ctx)
         {
             var allFields = ctx.config.entities[ctx.entity].fields;
@@ -83,6 +96,12 @@ module.exports =
             return { required: requiredFields, optional: optionalFields };
         }
 
+        /**
+         * Verify that all the requirements for a create operation are met
+         * @param {any} ctx Request context
+         * @param {any} requestBody Request body
+         * @param {any} requiredFields Required fields from config
+         */
         function validateRequirements(ctx, requestBody, requiredFields)
         {
             if(ctx.config.captchaEnabled)
@@ -109,6 +128,14 @@ module.exports =
             }
         }
 
+        /**
+         * Prepare a list of fields to be included in the create request
+         * @param {any} ctx Request context
+         * @param {any} requestBody Request body
+         * @param {any} requiredFields A list of required fields from config
+         * @param {any} optionalFields A list of optional fields from config
+         * @returns an object containing an array of field names and an array of field values
+         */
         function prepareFields(ctx, requestBody, requiredFields, optionalFields)
         {
             var i;
@@ -141,9 +168,10 @@ module.exports =
             return { names: fieldNames, values: fieldValues };
         }
 
-        /*
-            Validate the given email
-        */
+        /**
+         * Validate the given email
+         * @param {any} email Email string
+         */
         function validateEmail(email) 
         {
             var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -153,9 +181,11 @@ module.exports =
             }
         }
 
-        /*
-            Verify if the given password meet the requirement
-        */
+        /**
+         * Verify that the given password meets the requirement
+         * @param {any} newPassword New password
+         * @param {any} passwordReqs Password requirements
+         */
         function verifyPwdRequirements(newPassword, passwordReqs)
         {
             if(newPassword.length < passwordReqs.minLength)
@@ -180,9 +210,12 @@ module.exports =
             }
         }
 
-        /*
-            Throw error if the given username already exists in the database
-        */
+        /**
+         * Verify the given username doesn't exist in the database yet
+         * @param {any} ctx Request context
+         * @param {any} username Input username
+         * @param {any} callback Callback function
+         */
         function verifyUsernameNotExist(ctx, username, callback)
         {
             _this.db.quickFind(ctx, ["username"], "user", {"username": username}, function(resource)
@@ -192,6 +225,7 @@ module.exports =
             });
         }
 
+        this.execute = execute;
         _construct();
     }
 };

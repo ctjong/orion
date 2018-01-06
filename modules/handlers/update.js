@@ -15,7 +15,7 @@ module.exports = {
 
         this.execute = function(ctx, requestBody, resourceId)
         {
-            _this.helper.validate(ctx, "update", _this.db, resourceId, requestBody, function(resource, requestBody)
+            _this.helper.onBeginWriteRequest(ctx, "update", _this.db, resourceId, requestBody, function(resource, requestBody)
             {
                 var updateData = {};
                 var fields = _this.helper.getFields(ctx, "update");

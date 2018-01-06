@@ -19,7 +19,7 @@ module.exports =
         {
             if(!ctx.userId) 
                 throw new _this.error.Error("4f53", 401, "anonymous upload is not supported");
-            _this.helper.validate(ctx, "create", _this.db, null, { "ownerid": ctx.userId }, function(resource, requestBody)
+            _this.helper.onBeginWriteRequest(ctx, "create", _this.db, null, { "ownerid": ctx.userId }, function(resource, requestBody)
             {
                 var blobService = _this.azure.createBlobService(ctx.config.storageConnectionString);
                 var form = new (_this.multiparty.Form)();

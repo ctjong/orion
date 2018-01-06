@@ -17,7 +17,7 @@ module.exports =
 
         this.execute = function(ctx, resourceId)
         {
-            _this.helper.validate(ctx, "delete", _this.db, resourceId, null, function(resource, requestBody)
+            _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, resourceId, null, function(resource, requestBody)
             {
                 if(ctx.entity === "user" && resource.domain !== "local")
                     throw new _this.error.Error("d789", 400, "updating external user info is not supported");
