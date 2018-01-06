@@ -27,7 +27,7 @@ module.exports =
         function execute (ctx, requestParams, isFullMode)
         {
             // set owner role if the read operation is run in private mode
-            if (accessType === "private")
+            if (requestParams.accessType === "private")
             {
                 // private read mode. add owner role directly, add ownerid condition later
                 if (!ctx.userId) throw new _this.error.Error("a058", 401, "Unauthorized");
@@ -73,10 +73,9 @@ module.exports =
         /**
          * Get condition string from config
          * @param {any} ctx Request context
-         * @param {any} accessType Request access type
          * @returns condition string
          */
-        function getConditionStringFromConfig(ctx, accessType)
+        function getConditionStringFromConfig(ctx)
         {
             var entityConfig = ctx.config.entities[ctx.entity];
             if (!entityConfig.getReadCondition)
