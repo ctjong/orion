@@ -80,7 +80,7 @@ module.exports =
             var entityConfig = ctx.config.entities[ctx.entity];
             if (!entityConfig.getReadCondition)
                 return "";
-            return entiityConfig.getReadCondition(ctx.userRoles, ctx.userId);
+            return entityConfig.getReadCondition(ctx.userRoles, ctx.userId);
         }
 
         /**
