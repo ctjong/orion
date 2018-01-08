@@ -28,17 +28,13 @@ module.exports =
                 {
                     _this.exec.safeExecute(ctx, function()
                     {
-                        if(error) 
-                        {
-                            throw new _this.error.Error("aa4e", 400, "asset not found");
-                        }
-                        else
-                        {
-                            _this.db.deleteResource(ctx, "asset", resourceId, function(dbResponse)
-                            { 
-                                ctx.res.send(dbResponse);
-                            });
-                        }
+                        _this.db.deleteResource(ctx, "asset", resourceId, function(dbResponse)
+                        { 
+                            if (error)
+                                ctx.res.send("Asset removed with error: " + error);
+                            else
+                                ctx.res.send("Asset removed");
+                        });
                     });
                 });
             });
