@@ -1,4 +1,7 @@
-module.exports = 
+/**
+ * A module to handle delete operations
+ */
+module.exports =
 {
     dependencies: ["auth", "db", "helper"],
     Instance: function()
@@ -15,7 +18,12 @@ module.exports =
         // PUBLIC
         //----------------------------------------------
 
-        this.execute = function(ctx, resourceId)
+        /**
+         * Handle a delete resource request
+         * @param {any} ctx Request context
+         * @param {any} resourceId Resource ID to delete
+         */
+        function execute(ctx, resourceId)
         {
             _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, resourceId, null, function(resource, requestBody)
             {
@@ -28,6 +36,7 @@ module.exports =
             });
         };
 
+        this.execute = execute;
         _construct();
     }
 };

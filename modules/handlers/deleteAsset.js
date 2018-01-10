@@ -1,3 +1,6 @@
+/**
+ * A module to handle file deletion operations
+ */
 module.exports = 
 {
     dependencies: ["azure", "exec", "helper", "db"],
@@ -15,7 +18,12 @@ module.exports =
         // PUBLIC
         //----------------------------------------------
 
-        this.execute = function(ctx, resourceId)
+        /**
+         * Handle a delete asset (file deletion) request
+         * @param {any} ctx Request context
+         * @param {any} resourceId Resource ID of the asset to delete
+         */
+        function execute (ctx, resourceId)
         {
             if(!ctx.userId)
                 throw new _this.error.Error("2c74", 401, "anonymous asset deletion is not supported");
@@ -40,6 +48,7 @@ module.exports =
             });
         };
 
+        this.execute = execute;
         _construct();
     }
 };

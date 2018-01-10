@@ -19,7 +19,7 @@ module.exports =
         //----------------------------------------------
 
         /**
-         * Execute a read request
+         * Handle a read request
          * @param {any} ctx Request context
          * @param {any} requestParams Request parameters
          * @param {any} isFullMode Whether to do the read in full mode (full mode = include rich text fields in response)

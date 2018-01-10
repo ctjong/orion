@@ -1,3 +1,6 @@
+/**
+ * A module to handle file upload operations
+ */
 module.exports = 
 {
     dependencies: ["azure", "multiparty", "exec", "guid", "mime", "helper", "db"],
@@ -15,7 +18,12 @@ module.exports =
         // PUBLIC
         //----------------------------------------------
 
-        this.execute = function(ctx, req)
+        /**
+         * Handle a create asset (file upload) request
+         * @param {any} ctx Request context
+         * @param {any} req Request object
+         */
+        function execute(ctx, req)
         {
             if(!ctx.userId) 
                 throw new _this.error.Error("4f53", 401, "anonymous upload is not supported");
@@ -74,6 +82,7 @@ module.exports =
             });
         };
 
+        this.execute = execute;
         _construct();
     }
 };

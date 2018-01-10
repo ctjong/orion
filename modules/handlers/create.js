@@ -19,7 +19,7 @@ module.exports =
         //----------------------------------------------
 
         /**
-         * Execute a create request
+         * Handle a create resource request
          * @param {any} ctx Request context
          * @param {any} requestBody Request body
          */

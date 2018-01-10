@@ -1,3 +1,6 @@
+/**
+ * A module to handle update operations
+ */
 module.exports = {
     dependencies: ["auth", "helper", "condition", "db"],
     Instance: function(){
@@ -13,7 +16,13 @@ module.exports = {
         // PUBLIC
         //----------------------------------------------
 
-        this.execute = function(ctx, requestBody, resourceId)
+        /**
+         * Handle an update request
+         * @param {any} ctx Request context
+         * @param {any} requestBody Request body
+         * @param {any} resourceId Resource ID to update
+         */
+        function execute (ctx, requestBody, resourceId)
         {
             _this.helper.onBeginWriteRequest(ctx, "update", _this.db, resourceId, requestBody, function(resource, requestBody)
             {
@@ -41,6 +50,7 @@ module.exports = {
             });
         };
 
+        this.execute = execute;
         _construct();
     }
 };

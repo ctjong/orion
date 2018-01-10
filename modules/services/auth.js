@@ -1,3 +1,6 @@
+/**
+ * A module for handling authentication
+ */
 module.exports = 
 {
     dependencies: ["jwt", "db", "crypto", "condition", "https"],
@@ -15,7 +18,11 @@ module.exports =
         // PUBLIC
         //----------------------------------------------
 
-        this.initUserContext = function(ctx)
+        /**
+         * Initialize the user context for the current request.
+         * @param {any} ctx Request context
+         */
+        function initUserContext(ctx)
         {
             var authHeader = ctx.req.get("authorization");
             if(!!authHeader)
@@ -40,7 +47,15 @@ module.exports =
             }
         }
 
-        this.generateLocalUserToken = function(ctx, userName, password)
+        /**
+         * Try to generate a first party access token for the user with the given credential.
+         * Throw an exception if credential is invalid or an error occurs.
+         * The access token will be sent into the response object in the context.
+         * @param {any} ctx Request context
+         * @param {any} userName Submitted user name
+         * @param {any} password Submitted password
+         */
+        function generateLocalUserToken(ctx, userName, password)
         {
             if(!userName || !password) 
                 throw new _this.error.Error("003a", 400, "invalid login");
@@ -63,7 +78,14 @@ module.exports =
             );
         };
 
-        this.processFbToken = function(ctx, fbToken) 
+        /**
+         * Try to generate a first party access token for the user with the given Facebook token.
+         * Throw an exception if credential is invalid or an error occurs.
+         * The access token will be sent into the response object in the context.
+         * @param {any} ctx Request context
+         * @param {any} fbToken Facebook token
+         */
+        function processFbToken(ctx, fbToken) 
         {
             var req = _this.https.request(
                 {
@@ -109,7 +131,12 @@ module.exports =
             req.end();
         };
 
-        this.hashPassword = function(ctx, plainPassword)
+        /**
+         * Encrypt the given plan text password
+         * @param {any} ctx Request context
+         * @param {any} plainPassword Plain text password
+         */
+        function hashPassword(ctx, plainPassword)
         {
             var hash = _this.crypto.createHmac('sha512', ctx.config.salt);
             hash.update(plainPassword);
@@ -120,6 +147,16 @@ module.exports =
         // PRIVATE
         //----------------------------------------------
 
+        /**
+         * Create a token from the given information and send it into the response object.
+         * @param {any} ctx Request context
+         * @param {any} id User's ID
+         * @param {any} domain User's domain
+         * @param {any} domainId User's ID on the domain
+         * @param {any} roles User's roles
+         * @param {any} firstName User's first name
+         * @param {any} lastName User's last name
+         */
         function createAndSendToken(ctx, id, domain, domainId, roles, firstName, lastName)
         {
             var tokenPayload = { id: id, domain: domain, domainId: domainId, roles: roles };
@@ -127,6 +164,10 @@ module.exports =
             ctx.res.json({"token": token, "id": id, "firstname": firstName, "lastname": lastName});
         }
 
+        this.initUserContext = initUserContext;
+        this.generateLocalUserToken = generateLocalUserToken;
+        this.processFbToken = processFbToken;
+        this.hashPassword = hashPassword;
         _construct();
     }
 };
