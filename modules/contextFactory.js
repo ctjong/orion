@@ -96,17 +96,17 @@ module.exports = function ()
 
     /**
      * Initialize the config object. This should be done before the server is started.
-     * This will also merge the input config object with the default config object.
+     * This will also merge defaultEntities and defaultFields into the config object.
      * @param {any} inputConfig Input config object
      */
     function initializeConfig(inputConfig)
     {
         config = inputConfig;
 
-        // merge field config objects
+        // merge defaultFields into the config
         for (var entityName in config.entities)
         {
-            if (!config.entities.hasOwnProperty(entityName))
+            if (!config.entities.hasOwnProperty(entityName) || !!defaultEntities[entityName])
                 continue;
             for (var defaultFieldName in defaultFields)
             {
@@ -116,7 +116,7 @@ module.exports = function ()
             }
         }
 
-        // merge entity config objects
+        // merge defaultEntities into the config
         for (var defaultEntityName in defaultEntities)
         {
             if (!defaultEntities.hasOwnProperty(defaultEntityName))
@@ -150,58 +150,88 @@ module.exports = function ()
     {
         if (!inputEntity)
             return defaultEntity;
+
+        // merge property names from both objects
         var mergedEntity = {};
+        mergePropNames(inputEntity, defaultEntity, mergedEntity);
 
-        // merge fields
-        // fields from default config is prioritized (overriding it is not allowed).
-        mergedEntity.fields = {};
-        for (var defaultFieldName in defaultEntity.fields)
+        // go through each object property
+        for (var propName in mergedEntity)
         {
-            if (!defaultEntity.fields.hasOwnProperty(defaultFieldName))
+            if (!mergedEntity.hasOwnProperty(propName))
                 continue;
-            mergedEntity.fields[defaultFieldName] = defaultEntity.fields[defaultFieldName];
-        }
-        for (var inputFieldName in inputEntity.fields)
-        {
-            if (!inputEntity.fields.hasOwnProperty(inputFieldName) ||
-                (!!defaultEntity.fields && !!defaultEntity.fields[inputFieldName]))
-                continue;
-            mergedEntity.fields[inputFieldName] = inputEntity.fields[inputFieldName];
-        }
 
-        // merge allowedRoles
-        // allowedRoles rules from input config is prioritized.
-        mergedEntity.allowedRoles = {};
-        for (var inputActionName in inputEntity.allowedRoles)
-        {
-            if (!inputEntity.allowedRoles.hasOwnProperty(inputActionName))
-                continue;
-            mergedEntity.allowedRoles[inputActionName] = inputEntity.allowedRoles[inputActionName];
-        }
-        for (var defaultActionName in defaultEntity.allowedRoles)
-        {
-            if (!defaultEntity.allowedRoles.hasOwnProperty(defaultActionName) ||
-                (!!inputEntity.allowedRoles && !!inputEntity.allowedRoles[defaultActionName]))
-                continue;
-            mergedEntity.allowedRoles[defaultActionName] = defaultEntity.allowedRoles[defaultActionName];
-        }
+            if (propName === "fields")
+            {
+                // merge property names from both fields config objects
+                mergedEntity.fields = {};
+                mergePropNames(inputEntity.fields, defaultEntity.fields, mergedEntity.fields);
+                
+                // merge each fields property from both config objects
+                // for this we prioritize the values from default config
+                for (var fieldName in mergedEntity.fields)
+                {
+                    mergePropValue(defaultEntity.fields, inputEntity.fields, fieldName, mergedEntity.fields);
+                }
+            }
+            else if (propName === "allowedRoles")
+            {
+                // merge property names from both allowedRoles config objects
+                mergedEntity.allowedRoles = {};
+                mergePropNames(inputEntity.allowedRoles, defaultEntity.allowedRoles, mergedEntity.allowedRoles);
 
-        // merge other properties
-        // properties from input config is prioritized.
-        for (var inputKey in inputEntity)
-        {
-            if (!inputEntity.hasOwnProperty(inputKey) || inputKey === "fields" || inputKey === "allowedRules")
-                continue;
-            mergedEntity[inputKey] = inputEntity[inputKey];
-        }
-        for (var defaultKey in defaultEntity)
-        {
-            if (!defaultEntity.hasOwnProperty(defaultKey) || !!inputEntity[defaultKey] || defaultKey === "fields" || defaultKey === "allowedRules")
-                continue;
-            mergedEntity[defaultKey] = inputEntity[defaultKey];
+                // merge each allowedRoles property from both config objects
+                // for this we prioritize the values from input config
+                for (var actionName in mergedEntity.allowedRoles)
+                {
+                    mergePropValue(inputEntity.allowedRoles, defaultEntity.allowedRoles, actionName, mergedEntity.allowedRoles);
+                }
+            }
+            else
+            {
+                // merge other properties from both config objects
+                // for this we prioritize the values from input config
+                mergePropValue(inputEntity, defaultEntity, propName, mergedEntity);
+            }
         }
 
         return mergedEntity;
+    }
+
+    /**
+     * Take property names from two objects and put them into a merged object.
+     * @param {any} obj1 Source object 1
+     * @param {any} obj2 Source object 2
+     * @param {any} mergedObj Target object
+     */
+    function mergePropNames(obj1, obj2, mergedObj)
+    {
+        if (!!obj1)
+            for (var propName in obj1)
+                if (obj1.hasOwnProperty(propName))
+                    mergedObj[propName] = null;
+        if (!!obj2)
+            for (var propName in obj2)
+                if (obj2.hasOwnProperty(propName))
+                    mergedObj[propName] = null;
+    }
+
+    /**
+     * Take the property with the given name from two source objects, and put it into a target object,
+     * based on which source object takes priority.
+     * @param {any} highPriObj Higher priority source object
+     * @param {any} lowPriObj Lower priority source object
+     * @param {any} propName Property name
+     * @param {any} mergedObj Target object
+     */
+    function mergePropValue(highPriObj, lowPriObj, propName, mergedObj)
+    {
+        if (!mergedObj.hasOwnProperty(propName))
+            return;
+        if (!!highPriObj && !!highPriObj[propName])
+            mergedObj[propName] = highPriObj[propName];
+        else
+            mergedObj[propName] = lowPriObj[propName];
     }
 
     this.Context = Context;
