@@ -8,7 +8,6 @@ var contextFactory = require('./modules/context');
 modules.add("body-parser", 'body-parser');
 modules.add("captcha", 'svg-captcha');
 modules.add("crypto", 'crypto');
-modules.add("azure", 'azure-storage');
 modules.add("guid", 'guid');
 modules.add("multiparty", 'multiparty');
 modules.add("mime", 'mime-types');
@@ -48,7 +47,12 @@ function setConfig(config)
     if (!config.dbms || config.dbms === "mssql")
         modules.addDef("db", './modules/db/mssqldb');
     else
-        throw "Unknown database management system " + config.dbms;
+        throw "Unsupported database management system " + config.dbms;
+
+    if (!config.storageSystem || config.storageSystem  === "azure")
+        modules.addDef("storage", './modules/storage/azureStorage');
+    else
+        throw "Unsupported storage system " + config.storageSystem;
 }
 
 /**

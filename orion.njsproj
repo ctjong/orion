@@ -21,6 +21,7 @@
     <Content Include=".npmignore" />
     <Content Include="package.json" />
     <Compile Include="index.js" />
+    <Compile Include="modules\storage\azureStorage.js" />
     <Compile Include="setup.js" />
     <Compile Include="modules\context.js" />
     <Compile Include="modules\error.js" />
@@ -44,6 +45,7 @@
     <Folder Include="modules\models\" />
     <Folder Include="modules\handlers" />
     <Folder Include="modules\db\" />
+    <Folder Include="modules\storage\" />
     <Folder Include="modules\services" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
