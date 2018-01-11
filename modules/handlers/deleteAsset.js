@@ -25,6 +25,8 @@ module.exports =
          */
         function execute (ctx, resourceId)
         {
+            if (!ctx.config.storage)
+                throw new _this.error.Error("51be", 500, "file delete is not supported for this site");
             if(!ctx.userId)
                 throw new _this.error.Error("2c74", 401, "anonymous asset deletion is not supported");
             _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, resourceId, null, function(resource, requestBody)

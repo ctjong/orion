@@ -30,7 +30,7 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
-            var blobService = storage.createBlobService(ctx.config.storageConnectionString);
+            var blobService = storage.createBlobService(ctx.config.storage.azureStorageConnectionString);
             var form = new (_this.multiparty.Form)();
             var isFileReceived = false;
             form.on('part', function(stream) 
@@ -42,7 +42,7 @@ module.exports =
                         throw new _this.error.Error("ffce", 400, "submitted file is not a valid file");
                     var size = stream.byteCount - stream.byteOffset;
                     var name = _this.guid.raw() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    blobService.createBlockBlobFromStream(ctx.config.storageContainerName, name, stream, size, 
+                    blobService.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
                     {
                         contentSettings: { contentType: _this.mime.lookup(name) }
                     }, 
@@ -72,8 +72,8 @@ module.exports =
 
         function deleteFile(ctx, filename, callback)
         {
-            var blobService = storage.createBlobService(ctx.config.storageConnectionString);
-            blobService.deleteBlob(ctx.config.storageContainerName, filename, function (error, response)
+            var blobService = storage.createBlobService(ctx.config.storage.azureStorageConnectionString);
+            blobService.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, function (error, response)
             {
                 callback(error);
             });

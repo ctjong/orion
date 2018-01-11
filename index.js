@@ -13,7 +13,6 @@ modules.add("multiparty", 'multiparty');
 modules.add("mime", 'mime-types');
 modules.add("jwt", 'jsonwebtoken');
 modules.add("https", 'https');
-modules.add("applicationinsights", "applicationinsights");
 modules.addDef("error", './modules/errorFactory');
 modules.addDef("condition", './modules/models/condition');
 modules.addDef("join", './modules/models/join');
@@ -39,20 +38,28 @@ modules.addDef("helper", './modules/services/helper');
 function setConfig(config)
 {
     contextFactory.initializeConfig(config);
-    if (!!config.appInsightsKey)
-    {
-        modules.get("applicationinsights").setup(config.appInsightsKey).start();
-    }
 
+    // database system
     if (!config.dbms || config.dbms === "mssql")
         modules.addDef("db", './modules/db/mssqldb');
     else
         throw "Unsupported database management system " + config.dbms;
 
-    if (!config.storageSystem || config.storageSystem  === "azure")
-        modules.addDef("storage", './modules/storage/azureStorage');
-    else
-        throw "Unsupported storage system " + config.storageSystem;
+    // storage system
+    if (!!config.storage)
+    {
+        if (!config.storage.storageSystem || config.storage.storageSystem  === "azure")
+            modules.addDef("storage", './modules/storage/azureStorage');
+        else
+            throw "Unsupported storage system " + config.storageSystem;
+    }
+
+    // monitoring system
+    if (!!config.monitoring)
+    {
+        if (!!config.monitoring.appInsightsKey)
+            require("applicationinsights").setup(config.monitoring.appInsightsKey).start();
+    }
 }
 
 /**
