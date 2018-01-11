@@ -154,7 +154,7 @@ module.exports =
             if(ctx.entity === "user")
             {
                 fieldNames.push("roles");
-                fieldValues.push(ctx.config.defaultRole);
+                fieldValues.push("member");
                 fieldNames.push("domain");
                 fieldValues.push("local");
             }
