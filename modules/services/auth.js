@@ -25,12 +25,12 @@ module.exports =
         function initUserContext(ctx)
         {
             var authHeader = ctx.req.get("authorization");
-            if(!!authHeader)
+            if(!!authHeader && !!ctx.config.auth)
             {
                 try
                 {
                     var token = authHeader.replace("Bearer ", "");
-                    var decoded = _this.jwt.verify(token, ctx.config.secretKey);
+                    var decoded = _this.jwt.verify(token, ctx.config.auth.secretKey);
                     ctx.userId = parseInt(decoded.id);
                     ctx.userName = decoded.name;
                     ctx.userRoles = decoded.roles.split(",");
@@ -57,6 +57,7 @@ module.exports =
          */
         function generateLocalUserToken(ctx, userName, password)
         {
+            verifyAuthSupported(ctx);
             if(!userName || !password) 
                 throw new _this.error.Error("003a", 400, "invalid login");
             _this.db.quickFind(
@@ -87,6 +88,7 @@ module.exports =
          */
         function processFbToken(ctx, fbToken) 
         {
+            verifyAuthSupported(ctx);
             var req = _this.https.request(
                 {
                     host: "graph.facebook.com", 
@@ -138,10 +140,20 @@ module.exports =
          */
         function hashPassword(ctx, plainPassword)
         {
-            var hash = _this.crypto.createHmac('sha512', ctx.config.salt);
+            verifyAuthSupported(ctx);
+            var hash = _this.crypto.createHmac('sha512', ctx.config.auth.salt);
             hash.update(plainPassword);
             return hash.digest('hex');
-        };
+        }
+
+        /**
+         * Verify authentication is supported in config. Throw exception if not.
+         */
+        function verifyAuthSupported(ctx)
+        {
+            if (!ctx.config.auth)
+                throw new _this.error.Error("94e8", 500, "Authentication is not supported for this site");
+        }
 
         //----------------------------------------------
         // PRIVATE
@@ -160,7 +172,7 @@ module.exports =
         function createAndSendToken(ctx, id, domain, domainId, roles, firstName, lastName)
         {
             var tokenPayload = { id: id, domain: domain, domainId: domainId, roles: roles };
-            var token = _this.jwt.sign(tokenPayload, ctx.config.secretKey);
+            var token = _this.jwt.sign(tokenPayload, ctx.config.auth.secretKey);
             ctx.res.json({"token": token, "id": id, "firstname": firstName, "lastname": lastName});
         }
 
@@ -168,6 +180,7 @@ module.exports =
         this.generateLocalUserToken = generateLocalUserToken;
         this.processFbToken = processFbToken;
         this.hashPassword = hashPassword;
+        this.verifyAuthSupported = verifyAuthSupported;
         _construct();
     }
 };

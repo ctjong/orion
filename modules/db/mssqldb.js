@@ -246,7 +246,7 @@ module.exports =
             console.log(queryString);
             console.log("Query parameters:");
             console.log(queryParams);
-            var connection = new sql.ConnectionPool(ctx.config.databaseConnectionString);
+            var connection = new sql.ConnectionPool(ctx.config.database.connectionString);
             connection.connect(function (err)
             {
                 if (err)

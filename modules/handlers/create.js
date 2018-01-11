@@ -118,12 +118,13 @@ module.exports =
             }
             if(ctx.entity === "user") 
             {
+                _this.auth.verifyAuthSupported(ctx);
                 if(requestBody.password !== requestBody.confirmpassword)
                 {
                     throw new _this.error.Error("1b9e", 400, "password doesn't match the confirmation");
                 }
                 validateEmail(requestBody.email);
-                verifyPwdRequirements(requestBody.password, ctx.config.passwordReqs);
+                verifyPwdRequirements(requestBody.password, ctx.config.auth.passwordReqs);
                 requestBody.password = _this.auth.hashPassword(ctx, requestBody.password);
             }
         }
