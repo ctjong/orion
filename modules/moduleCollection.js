@@ -1,4 +1,7 @@
-module.exports = function()
+/**
+ * A module for managing all modules used in this application.
+ */
+module.exports = function ()
 {
     var _this = this;
     var modules = {};
@@ -8,6 +11,9 @@ module.exports = function()
     // CONSTRUCTOR
     //----------------------------------------------
 
+    /**
+     * Construct the collection. This should be called on application start up.
+     */
     function _construct()
     {
         extendNativeFunctions();
@@ -17,17 +23,34 @@ module.exports = function()
     // PUBLIC
     //----------------------------------------------
 
-    this.add = function(moduleName, modulePath)
+    /**
+     * Add an initialized module to the collection. Modules added using this function
+     * do not require any instantiation. This typically is used for adding third party modules.
+     * @param {any} moduleName Name to be used to access the module
+     * @param {any} modulePath Path to the module to add
+     */
+    function add(moduleName, modulePath)
     {
         modules[moduleName] = require(modulePath);
-    };
+    }
 
-    this.addDef = function(moduleName, moduleDefPath)
+    /**
+     * Add a module definition to the collection. Modules added using this function
+     * requires instantiation before use. This typically is used for adding first party modules.
+     * @param {any} moduleName Name to be used to access the module
+     * @param {any} modulePath Path to the module definition to add
+     */
+    function addDef(moduleName, moduleDefPath)
     {
         moduleDefs[moduleName] = require("../" + moduleDefPath);
-    };
+    }
 
-    this.get = function(moduleName)
+    /**
+     * Get the module registered under the given name. If the registered module has not
+     * been instantiated, instantiate it first.
+     * @param {any} moduleName Module name
+     */
+    function get(moduleName)
     {
         var module = modules[moduleName];
         if(!module)
@@ -47,12 +70,16 @@ module.exports = function()
             modules[moduleName] = module;
         }
         return module;
-    };
+    }
 
     //----------------------------------------------
     // PRIVATE
     //----------------------------------------------
 
+    /**
+     * Extend native JS functions to be used in this application. This should be called on 
+     * application start up, so we are calling it from the constructor.
+     */
     function extendNativeFunctions() 
     {
         String.prototype.format = function() 
@@ -83,5 +110,8 @@ module.exports = function()
         };
     }
 
+    this.add = add;
+    this.addDef = addDef;
+    this.get = get;
     _construct();
 };

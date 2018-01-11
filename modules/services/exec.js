@@ -1,3 +1,7 @@
+/**
+ * A module for handling the execution of code outside of the main thread.
+ * This is to make sure exceptions are caught properly, even those coming from child threads.
+ */
 module.exports = 
 {
     dependencies: [],
@@ -15,7 +19,15 @@ module.exports =
         // PUBLIC
         //----------------------------------------------
 
-        this.handleError = function(err, req, res, db) 
+        /**
+         * Handle an error.
+         * This will log an error to the database, and send an error response.
+         * @param {any} err Error object
+         * @param {any} req Request object
+         * @param {any} res Response object
+         * @param {any} db Database module
+         */
+        function handleError(err, req, res, db) 
         {
             if(typeof(err) === "string")
             {
@@ -56,7 +68,12 @@ module.exports =
             }
         };
 
-        this.safeExecute = function(ctx, fn)
+        /**
+         * Execute the given function and catch any exception that comes out of it
+         * @param {any} ctx Request context
+         * @param {any} fn Function to execute
+         */
+        function safeExecute(ctx, fn)
         {
             try
             {
@@ -68,6 +85,8 @@ module.exports =
             }
         };
 
+        this.handleError = handleError;
+        this.safeExecute = safeExecute;
         _construct();
     }
 };

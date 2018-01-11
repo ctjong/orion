@@ -1,3 +1,6 @@
+/**
+ * A factory for creating Context objects, which will store all details about the current session.
+ */
 var factory = 
 {
     Config: null,
@@ -10,6 +13,9 @@ var factory =
         // CONSTRUCTOR
         //----------------------------------------------
 
+        /**
+         * Construct a new Context object. This should be done at the beginning of each session.
+         */
         function _construct()
         {
             try
@@ -42,7 +48,6 @@ var factory =
         this.userName = null;
         this.userRoles = [];
         this.userDomain = null;
-
         _construct();
     }
 };
