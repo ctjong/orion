@@ -40,7 +40,9 @@ function setConfig(config)
     contextFactory.initializeConfig(config);
 
     // database system
-    if (!config.dbms || config.dbms === "mssql")
+    if (!config.database)
+        throw "Missing database configuration";
+    if (!config.database.system || config.database.system === "mssql")
         modules.addDef("db", './modules/db/mssqldb');
     else
         throw "Unsupported database management system " + config.dbms;
@@ -48,7 +50,7 @@ function setConfig(config)
     // storage system
     if (!!config.storage)
     {
-        if (!config.storage.storageSystem || config.storage.storageSystem  === "azure")
+        if (!config.storage.system || config.storage.system  === "azure")
             modules.addDef("storage", './modules/storage/azureStorage');
         else
             throw "Unsupported storage system " + config.storageSystem;
