@@ -3,7 +3,7 @@
 ===================================================*/
 
 var modules = new (require('./modules/moduleCollection'))();
-var contextFactory = require('./modules/context');
+var contextFactory = new (require('./modules/contextFactory'))();
 
 modules.add("body-parser", 'body-parser');
 modules.add("captcha", 'svg-captcha');
@@ -14,7 +14,7 @@ modules.add("mime", 'mime-types');
 modules.add("jwt", 'jsonwebtoken');
 modules.add("https", 'https');
 modules.add("applicationinsights", "applicationinsights");
-modules.addDef("error", './modules/error');
+modules.addDef("error", './modules/errorFactory');
 modules.addDef("condition", './modules/models/condition');
 modules.addDef("join", './modules/models/join');
 modules.addDef("create", './modules/handlers/create');
@@ -38,7 +38,7 @@ modules.addDef("helper", './modules/services/helper');
  */
 function setConfig(config)
 {
-    contextFactory.Config = config;
+    contextFactory.initializeConfig(config);
     if (!!config.appInsightsKey)
     {
         modules.get("applicationinsights").setup(config.appInsightsKey).start();
@@ -166,7 +166,7 @@ function findAll(originalReq, entity, orderByField, skip, take, callback)
  */
 function verifyConfig()
 {
-    if (!contextFactory.Config)
+    if (!contextFactory.getConfig())
         throw "setConfig needs to be called before any other orion functions";
 }
 
@@ -260,7 +260,7 @@ function configureUtilityEndpoints(app)
     app.use('/api/error', modules.get("body-parser").json());
     app.post('/api/error', function (req, res)
     {
-        var config = contextFactory.Config;
+        var config = contextFactory.getConfig();
         if (!config)
         {
             throw { "tag": "13bf", "statusCode": 500, "msg": "missing config" };

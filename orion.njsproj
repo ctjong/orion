@@ -23,8 +23,8 @@
     <Compile Include="index.js" />
     <Compile Include="modules\storage\azureStorage.js" />
     <Compile Include="setup.js" />
-    <Compile Include="modules\context.js" />
-    <Compile Include="modules\error.js" />
+    <Compile Include="modules\contextFactory.js" />
+    <Compile Include="modules\errorFactory.js" />
     <Compile Include="modules\moduleCollection.js" />
     <Compile Include="modules\models\condition.js" />
     <Compile Include="modules\db\mssqldb.js" />

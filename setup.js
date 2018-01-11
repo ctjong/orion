@@ -5,17 +5,23 @@
      */
     function main()
     {
+        // process arguments
         if (process.argv.length < 4)
         {
             console.log("Usage: node setup <config file path> <output file path>");
             return;
         }
-
-        var fs = require('fs');
         var inputPath = process.argv[2];
         var outputPath = process.argv[3];
 
-        var config = require(inputPath);
+        // get config
+        var contextFactory = new (require('./modules/contextFactory'))();
+        var inputConfig = require(inputPath);
+        contextFactory.initializeConfig(inputConfig);
+        var config = contextFactory.getConfig();
+
+        // write the SQL file
+        var fs = require('fs');
         fs.writeFile(outputPath, "", function(err)
         {
             if (err)
