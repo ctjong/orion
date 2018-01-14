@@ -18,6 +18,7 @@ In this documentation:
   - [File Uploads](#file-uploads)
   - [Authentication](#authentication)
   - [Error logging](#error-logging)
+- [Condition Syntax](#condition-syntax)
 - [License](#license)
 
 ## Getting Started
@@ -56,289 +57,265 @@ In this documentation:
 A configuration module is required to give the application the necessary information about your project. This module should specify the connection strings, authentication and authorization settings, user roles and access levels, and most importantly, the data models.
 
 Below is the list of settings to be included in a configuration module:
-- **secretKey** - (Required) Secret key string for authentication purposes.
-- **salt** - (Required) Salt string for encrypting passwords.
-- **dbms** - (Optional) Database management system to use. Currently we only support "mssql". Default to "mssql".
-- **databaseConnectionString** - (Required) Database connection string.
-- **storageConnectionString** - (Optional) Azure Blob Storage connection string. Required for file upload. Set to null if not applicable.
-- **storageContainerName** - (Optional) Azure Blob Storage account name. Required for file upload. Set to null if not applicable.
-- **appInsightsKey** - (Optional) Azure Application Insights key. Required for monitoring. Set to null if not applicable.
-- **facebookAppSecret** - (Optional) Facebook app secret. Required for Facebook authentication. Set to null if not applicable.
-- **facebookAppId** - (Optional) Facebook app ID. Required for Facebook authentication. Set to null if not applicable.
-- **passwordReqs** - (Optional) An object contianing requirements for new user passwords. Required for first party authentication. It should contian the following rules:
-    - **minLength** - (int) Minimum number of characters in a password.
-    - **uppercaseChar** - (true/false) Whether or not a password should contain an uppercase character.
-    - **lowercaseChar** - (true/false) Whether or not a password should contain an lowercase character.
-    - **digitChar** - (true/false) Whether or not a password should contain a digit character.
-    - **specialChar** - (true/false) Whether or not a password should contain an special character.
-- **roles** - (Required) Array of user roles. "guest" and "owner" are special user roles that don't need to be included in this list. A "guest" role is given to an unauthenticated user, and "owner" role is given to an authenticated user who is requesting a resource that they own.
-- **defaultRole** - (Required) Default role assigned to authenticated user after signing up.
+- **database** - (Required) Database configuration
+    - **system** - (Optional) Database management system to use. Currently we only support "mssql". Default to "mssql".
+    - **connectionString** - (Required) Connection string to connect with database
+- **auth** - (Optional) Authentication configuration. Required if you want to enable authentication.
+    - **secretKey** - (Required) Secret key for token encryption.
+    - **salt** - (Optional) Salt string for password encryption. Required if you want to support first party authentication.
+    - **passwordReqs** - (Optional) New password requirements. Required if you want to support first party authentication.
+        - **minLength** - (Required) Minimum number of characters in a password (integer).
+        - **uppercaseChar** - (Required) Whether or not a password should contain an uppercase character (true/false).
+        - **lowercaseChar** - (Required) Whether or not a password should contain an lowercase character (true/false).
+        - **digitChar** - (Required) sWhether or not a password should contain a digit character (true/false).
+        - **specialChar** - (Required) Whether or not a password should contain an special character (true/false).
+- **storage** - (Optional) Configuration for file upload. Required if you want to support file uplaod.
+    - **system** - (Optional) Storage system to use. Currently we only support "azure" (Azure Blob Storage). Default to "azure".
+    - **azureStorageConnectionString** - (Optional) Azure Blob Storage connection string. Required if you want to use Azure Blob Storage.
+    - **azureStorageContainerName** - (Optional) Azure Blob Storage account name. Required if you want to use Azure Blob Storage.
+- **monitoring** - (Optional) Configuration for monitoring system. Required if you want to monitor traffic to the application.
+    - **appInsightsKey** - (Optional) Azure Application Insights key. Required if you want to use Application Insights.
 - **entities** - (Required) An object that contains a list of data entities (tables). The object keys would be the entity names, and the object valuse would be the [entity configurations](#entity-configuration). The entity name should contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
 
 #### Entity configuration
 
 The entity configuration is an object that should contain the following properties:
 - **fields** - (Required) An object that contains a list of fields in the entity. The object keys would be the field names and the object values would be the [field configurations](#field-configuration). Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
-- **readConditionStrings** - (Required) An array of rules that specify conditions to append to database read queries, to restrict access based on the requestor's roles. Each array item should follow the structure of a [read condition rule](#read-condition-rule).
-- **validators** - (Required) An object that contains validator functions to check whether a user has permission to execute a database create/update/delete query, based on their roles. The object keys would be the operation names (create/update/delete), and the object values would be arrays of rules. Each rule should follow the structure of a [validator function rule](#validator-function-rule).
+- **allowedRoles** - (Required) An object that specify which user roles are allowed to do certain operation. The key of the object should be the operation name (create/read/update/delete) and the value should be an array of roles.
+- **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function takes the user roles and user ID as arguments, and returns a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to only allow read access to a member that is more than 20 years old, you can put the role "member" in the **allowedRoles** and add a function here that returns condition "age>20". See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
+- **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function takes as arguments the action name, user roles, user ID, resource object from DB, and resource object from user, and it returns a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to only give update access to member that lives in Seattle, you can put "member" in the **allowedRoles** and add a function here that returns true only if city == "Seattle".
 
 #### Field configuration
-
-#### Read condition rule
 
 #### Validator function rule
 
 #### Sample configuration
 
 ```js
-module.exports = 
+"item":
 {
-    secretKey: __SECRETKEY__,
-    salt: __SALT__,
-    databaseConnectionString: __DB_CONNECTION_STRING__,
-    storageConnectionString: __STORAGE_CONNECTION_STRING__,
-    storageContainerName: __STORAGE_CONTAINER_NAME__,
-    appInsightsKey: __APPLICATION_INSIGHTS_KEY__,
-    facebookAppSecret: __FACEBOOK_APP_SECRET__,
-    facebookAppId: __FACEBOOK_APP_ID__,
-    passwordReqs:
+    fields:
     {
-        minLength: 8,
-        uppercaseChar: false,
-        lowercaseChar: false,
-        digitChar: false,
-        specialChar: false
-    },
-    roles: ["member", "admin"],
-    defaultRole: "member",
-    entities:
-    {
-        "item":
-        {
-            fields:
-            {
-                // The key to each object here will be the field name. We suggest that you
-                // use all lowercase for the field name.
+        // The key to each object here will be the field name. We suggest that you
+        // use all lowercase for the field name.
 
-                // (Required) id of the resource. This has to have the type "id" and will be 
-                // given the primary key constraint. See the ownerid field for more details on
-                // the properties inside the field object.
-                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
+        // (Required) id of the resource. This has to have the type "id" and will be 
+        // given the primary key constraint. See the ownerid field for more details on
+        // the properties inside the field object.
+        "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
  
-                // (Required) Owner of the resource. When the resource is created, this field 
-                // will be set automatically to the creator ID.
-                "ownerid": 
-                {
-                    // (Required) the type of the field
-                    // The supported types are:
-                    // "id"        : ID of the resource, primary key, needs to be unique.
-                    // "string"    : plain text, max 255 characters. default to null.
-                    // "text"      : rich text, no maximum. default to null. Note that this 
-                    //               field will only be returned on individual item retrieval.
-                    // "int"       : integer. default to 0.
-                    // "float"     : floating point numbers. default to null.
-                    // "boolean"   : boolean type (0/1). default to 0.
-                    // "timestamp" : timestamp type. Will be stored in JS's integer time
-                    //               format (the number of ms since Jan 1, 1970).
-                    type: "int",
+        // (Required) Owner of the resource. When the resource is created, this field 
+        // will be set automatically to the creator ID.
+        "ownerid": 
+        {
+            // (Required) the type of the field
+            // The supported types are:
+            // "id"        : ID of the resource, primary key, needs to be unique.
+            // "string"    : plain text, max 255 characters. default to null.
+            // "text"      : rich text, no maximum. default to null. Note that this 
+            //               field will only be returned on individual item retrieval.
+            // "int"       : integer. default to 0.
+            // "float"     : floating point numbers. default to null.
+            // "boolean"   : boolean type (0/1). default to 0.
+            // "timestamp" : timestamp type. Will be stored in JS's integer time
+            //               format (the number of ms since Jan 1, 1970).
+            type: "int",
 
-                    // (Required) whether or not this field is editable in PUT action.
-                    isEditable: false,
+            // (Required) whether or not this field is editable in PUT action.
+            isEditable: false,
 
-                    // (Required) specify the requirement for this field in POST action.
-                    // Possible values:
-                    // 0 : This field is not required in POST body.
-                    // 1 : This field is optional and may be included in POST body.
-                    // 2 : This field is required in POST body. Failure to supply this value 
-                    //     in POST will result in an error response.
-                    createReq: 0,
+            // (Required) specify the requirement for this field in POST action.
+            // Possible values:
+            // 0 : This field is not required in POST body.
+            // 1 : This field is optional and may be included in POST body.
+            // 2 : This field is required in POST body. Failure to supply this value 
+            //     in POST will result in an error response.
+            createReq: 0,
 
-                    // (Required) Specify whether this field is a foreign key to another 
-                    // entity. Set to null if it is not.
-                    foreignKey: 
-                    {
-                        // (Required) Name of the entity that this field is referring to.
-                        // For example, the field we're at now is the ownerid field, which
-                        // refers to the user entity.
-                        foreignEntity: "user",
+            // (Required) Specify whether this field is a foreign key to another 
+            // entity. Set to null if it is not.
+            foreignKey: 
+            {
+                // (Required) Name of the entity that this field is referring to.
+                // For example, the field we're at now is the ownerid field, which
+                // refers to the user entity.
+                foreignEntity: "user",
                         
-                        // (Required) The field name shown after the foreign key is resolved.
-                        // The GET handler resolves 1 foreign key level. So if you for instance
-                        // make a findbyid request to this item entity, the app will resolve
-                        // this ownerid field (since it is marked as a foreign key) and replace
-                        // it with a user object. The value of this resolvedKeyName will be 
-                        // the key to that object, so the output will be like:
-                        // { "id": "1", "owner": { "id": 2", ... }, ... }
-                        resolvedKeyName: "owner" 
-                    }
-                },
-
-                // (Optional) Timestamp of the resource creator. When the resource is created, 
-                // this field will be set automatically to the time of the creation.
-                "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
-
-                // You can add more fields to the entity
-                "name": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "date": { type: "int", isEditable: true, createReq: 2, foreignKey: null }
-            },
-            readConditionStrings: 
-            [
-                { 
-                    // (Required) A set of user roles that this rule applies to.
-                    // For GET requests, "owner" role is given automatically in private mode.
-                    // This automatically adds ownerid=[activeUserId] condition to the database
-                    // read operation.
-                    roles: ["owner", "admin"], 
-
-                    // (Required) A function that returns the condition string.
-                    // This function takes the active user as argument.
-                    // If this returns empty string return, no condition will be added so all 
-                    // requested data will be returned.
-                    fn: function(u) { return ""; } 
-                }
-            ],
-            validators:
-            {
-                // (Required) Validator functions for POST requests.
-                create: 
-                [
-                    // Each object in this array represents a rule that is applied to a 
-                    // certain set of user roles.
-
-                    {
-                        // (Required) A set of user roles that this rule applies to.
-                        roles: ["member"],
-
-                        // (Required) The validator function. Based on the supplied arguments, 
-                        // this should return true if the request is valid, and false 
-                        // otherwise. The validator for POST takes one argument, the newly 
-                        // submitted object.
-                        fn: function(n) { return true; } 
-                    }
-                ],
-
-                // (Required) Validator functions for PUT requests.
-                update: 
-                [
-                    { 
-                        roles: ["owner", "admin"], 
-
-                        // The validator for PUT takes three arguments, the active user object,
-                        // the current data object, and the updated data object.
-                        fn: function(u, o, n) { return true; } 
-                    }
-                ],
-
-                // (Required) Validator functions for DELETE requests.
-                delete: 
-                [
-                    { 
-                        roles: ["owner", "admin"], 
-
-                        // The validator for DELETE takes one argument, the data object to be 
-                        // deleted.
-                        fn: function(o) { return true; } 
-                    }
-                ]
+                // (Required) The field name shown after the foreign key is resolved.
+                // The GET handler resolves 1 foreign key level. So if you for instance
+                // make a findbyid request to this item entity, the app will resolve
+                // this ownerid field (since it is marked as a foreign key) and replace
+                // it with a user object. The value of this resolvedKeyName will be 
+                // the key to that object, so the output will be like:
+                // { "id": "1", "owner": { "id": 2", ... }, ... }
+                resolvedKeyName: "owner" 
             }
         },
 
-        // This is a special entity/table for storing user data. This is required if you want 
-        // to enable authentication. All fields listed here are required, and you can add more 
-        // to it if needed. You can also modify the condition strings and the validators.
-        "user":
-        {
-            fields:
-            {
-                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-                "domain": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-                "domainid": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-                "roles": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-                "username": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "password": { type: "secret", isEditable: false, createReq: 2, foreignKey: null },
-                "email": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "firstname": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "lastname": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
-            },
-            readConditionStrings: [{ roles: ["member", "owner", "admin"], fn: function(u) { return ""; } }],
-            validators:
-            {
-                create: [{ roles: ["guest"], fn: function(n) { return true; } }],
-                update: [{ roles: ["owner", "admin"], fn: function(u, o, n) { return true; } }],
-                delete: [{ roles: ["admin"], fn: function(o) { return true; } }]
-            }
-        },
+        // (Optional) Timestamp of the resource creator. When the resource is created, 
+        // this field will be set automatically to the time of the creation.
+        "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
 
-        // This is another special entity/table that is used for keeping track of uploaded 
-        // files. It is required if you want to enable file upload. All fields listed here
-        // are required. You can modify the condition strings and the validators if needed.
-        "asset":
-        {
-            fields:
-            {
-                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-                "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" }},
-                "filename": { type: "string", isEditable: true, createReq: 2, foreignKey: null }
-            },
-            readConditionStrings: [{ roles: ["owner", "admin"], fn: function(u) { return ""; } }],
-            validators:
-            {
-                create: [{ roles: ["member"], fn: function(n) { return true; } }],
-                update: [],
-                delete: [{ roles: ["owner", "admin"], fn: function(o) { return true; } }]
-            }
-        },
+        // You can add more fields to the entity
+        "name": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+        "date": { type: "int", isEditable: true, createReq: 2, foreignKey: null }
+    },
+    readConditionStrings: 
+    [
+        { 
+            // (Required) A set of user roles that this rule applies to.
+            // For GET requests, "owner" role is given automatically in private mode.
+            // This automatically adds ownerid=[activeUserId] condition to the database
+            // read operation.
+            roles: ["owner", "admin"], 
 
-        // You can add as many more entities as needed. This one below is an example entity
-        // that represents a chat message, to help you better understand how to use the 
-        // condition strings and validators to control resource access.
-        "message":
-        {
-            fields:
-            {
-                // We are setting all fields to be uneditable, except for the flagged field,
-                // because we want to let people flag inappropriate messages.
-                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-                "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" }},
-                "recipientid": { type: "int", isEditable: false, createReq: 2, foreignKey: { foreignEntity: "user", resolvedKeyName: "recipient" }},
-                "text": { type: "string", isEditable: false, createReq: 2, foreignKey: null },
-                "flagged": { type: "boolean", isEditable: true, createReq: 0, foreignKey: null },
-                "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
-            },
-            readConditionStrings:
-            [
-                // Unauthenticated users (guest) cannot access private chat messages, so guest
-                // role is not listed here. Regular authenticated users (member) is allowed to
-                // access only messages that they send or receive. So for member role we're 
-                // adding a condition string to make sure the ownerid or recipientid
-                // matches the active user id.
-                {
-                    roles: ["member"],
-                    fn: function(u) { return "ownerid=" + u + "|recipientid=" + u; } 
-                },
-
-                // Admin role has full access to all chat messages.
-                { roles: ["admin"], fn: function(u) { return ""; } }
-            ],
-            validators:
-            {
-                // Same as before, unauthenticated users (guest) cannot modify private chat 
-                // messages, so guest role is not listed here. Regular logged in users (member)
-                // are allowed to create messages so we're returning true here.
-                create: [{ roles: ["member"], fn: function(n) { return true; } }],
-
-                // We are allowing only chat recipients to flag a message. Therefore for PUT 
-                // requests we are checking if the active user is the chat recipient. If not
-                // then the request is invalid.
-                update: [{ roles: ["member"], fn: function(u, o, n) { return u === o.recipientid; } }],
-
-                // We are only allowing admins to delete messages.
-                delete: [{ roles: ["admin"], fn: function(o) { return true; } }]
-            }
+            // (Required) A function that returns the condition string.
+            // This function takes the active user as argument.
+            // If this returns empty string return, no condition will be added so all 
+            // requested data will be returned.
+            fn: function(u) { return ""; } 
         }
+    ],
+    validators:
+    {
+        // (Required) Validator functions for POST requests.
+        create: 
+        [
+            // Each object in this array represents a rule that is applied to a 
+            // certain set of user roles.
+
+            {
+                // (Required) A set of user roles that this rule applies to.
+                roles: ["member"],
+
+                // (Required) The validator function. Based on the supplied arguments, 
+                // this should return true if the request is valid, and false 
+                // otherwise. The validator for POST takes one argument, the newly 
+                // submitted object.
+                fn: function(n) { return true; } 
+            }
+        ],
+
+        // (Required) Validator functions for PUT requests.
+        update: 
+        [
+            { 
+                roles: ["owner", "admin"], 
+
+                // The validator for PUT takes three arguments, the active user object,
+                // the current data object, and the updated data object.
+                fn: function(u, o, n) { return true; } 
+            }
+        ],
+
+        // (Required) Validator functions for DELETE requests.
+        delete: 
+        [
+            { 
+                roles: ["owner", "admin"], 
+
+                // The validator for DELETE takes one argument, the data object to be 
+                // deleted.
+                fn: function(o) { return true; } 
+            }
+        ]
     }
-};
+},
+
+// This is a special entity/table for storing user data. This is required if you want 
+// to enable authentication. All fields listed here are required, and you can add more 
+// to it if needed. You can also modify the condition strings and the validators.
+"user":
+{
+    fields:
+    {
+        "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
+        "domain": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
+        "domainid": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
+        "roles": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
+        "username": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+        "password": { type: "secret", isEditable: false, createReq: 2, foreignKey: null },
+        "email": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+        "firstname": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+        "lastname": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+        "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
+    },
+    readConditionStrings: [{ roles: ["member", "owner", "admin"], fn: function(u) { return ""; } }],
+    validators:
+    {
+        create: [{ roles: ["guest"], fn: function(n) { return true; } }],
+        update: [{ roles: ["owner", "admin"], fn: function(u, o, n) { return true; } }],
+        delete: [{ roles: ["admin"], fn: function(o) { return true; } }]
+    }
+},
+
+// This is another special entity/table that is used for keeping track of uploaded 
+// files. It is required if you want to enable file upload. All fields listed here
+// are required. You can modify the condition strings and the validators if needed.
+"asset":
+{
+    fields:
+    {
+        "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
+        "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" }},
+        "filename": { type: "string", isEditable: true, createReq: 2, foreignKey: null }
+    },
+    readConditionStrings: [{ roles: ["owner", "admin"], fn: function(u) { return ""; } }],
+    validators:
+    {
+        create: [{ roles: ["member"], fn: function(n) { return true; } }],
+        update: [],
+        delete: [{ roles: ["owner", "admin"], fn: function(o) { return true; } }]
+    }
+},
+
+// You can add as many more entities as needed. This one below is an example entity
+// that represents a chat message, to help you better understand how to use the 
+// condition strings and validators to control resource access.
+"message":
+{
+    fields:
+    {
+        // We are setting all fields to be uneditable, except for the flagged field,
+        // because we want to let people flag inappropriate messages.
+        "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
+        "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" }},
+        "recipientid": { type: "int", isEditable: false, createReq: 2, foreignKey: { foreignEntity: "user", resolvedKeyName: "recipient" }},
+        "text": { type: "string", isEditable: false, createReq: 2, foreignKey: null },
+        "flagged": { type: "boolean", isEditable: true, createReq: 0, foreignKey: null },
+        "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
+    },
+    readConditionStrings:
+    [
+        // Unauthenticated users (guest) cannot access private chat messages, so guest
+        // role is not listed here. Regular authenticated users (member) is allowed to
+        // access only messages that they send or receive. So for member role we're 
+        // adding a condition string to make sure the ownerid or recipientid
+        // matches the active user id.
+        {
+            roles: ["member"],
+            fn: function(u) { return "ownerid=" + u + "|recipientid=" + u; } 
+        },
+
+        // Admin role has full access to all chat messages.
+        { roles: ["admin"], fn: function(u) { return ""; } }
+    ],
+    validators:
+    {
+        // Same as before, unauthenticated users (guest) cannot modify private chat 
+        // messages, so guest role is not listed here. Regular logged in users (member)
+        // are allowed to create messages so we're returning true here.
+        create: [{ roles: ["member"], fn: function(n) { return true; } }],
+
+        // We are allowing only chat recipients to flag a message. Therefore for PUT 
+        // requests we are checking if the active user is the chat recipient. If not
+        // then the request is invalid.
+        update: [{ roles: ["member"], fn: function(u, o, n) { return u === o.recipientid; } }],
+
+        // We are only allowing admins to delete messages.
+        delete: [{ roles: ["admin"], fn: function(o) { return true; } }]
+    }
+}
 ```
 
 
@@ -353,6 +330,7 @@ module.exports =
 
 #### Error Logging
 
+## Condition Syntax
 
 ## License
 
