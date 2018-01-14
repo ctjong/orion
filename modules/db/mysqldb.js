@@ -69,7 +69,7 @@ module.exports =
             {
                 var fieldName = fields[i];
                 if(!isFullMode && fieldName.contains("richtext")) continue;
-                query.append((i === 0 ? "": ", ") + "`" + entity + "table].`" + fieldName + "`");
+                query.append((i === 0 ? "": ", ") + "`" + entity + "table`.`" + fieldName + "`");
             }
             for(i=0; i<joins.length; i++)
             {
@@ -85,13 +85,13 @@ module.exports =
             orderByField = decodeURIComponent(orderByField);
             if(orderByField.indexOf("~") === 0)
             {
-                query.append(" order by `" + entity + "table].`" + orderByField.substring(1) + "` desc ");
+                query.append(" order by `" + entity + "table`.`" + orderByField.substring(1) + "` desc ");
             }
             else
             {
-                query.append(" order by `" + entity + "table].`" + orderByField + "` ");
+                query.append(" order by `" + entity + "table`.`" + orderByField + "` ");
             }
-            query.append(" OFFSET (?) ROWS FETCH NEXT (?) ROWS ONLY", skip, take);
+            query.append(" LIMIT ? OFFSET ?", take, skip);
             execute(ctx, query, successCb, completeCb);
         };
 
@@ -246,7 +246,26 @@ module.exports =
             console.log(queryString);
             console.log("Query parameters:");
             console.log(queryParams);
-            var connection = new sql.ConnectionPool(ctx.config.database.connectionString);
+
+            // there is an issue with creating mysql connection based on connection string.
+            // so we have to convert the string into a connection properties object.
+            var connString = ctx.config.database.connectionString;
+            var connStringParts = connString.split(";");
+            var connProps = {};
+            for (var i = 0; i < connStringParts.length; i++)
+            {
+                var connPropTokens = connStringParts[i].split('=');
+                connProps[connPropTokens[0]] = connPropTokens[1];
+            }
+            var connection = new sql.createConnection(
+            {
+                host: connProps["server"],
+                user: connProps["uid"],
+                password: connProps["pwd"],
+                database: connProps["database"],
+                multipleStatements: true
+                });
+
             connection.connect(function (err)
             {
                 if (err)
@@ -256,35 +275,20 @@ module.exports =
                     console.log(err);
                     throw new _this.error.Error("f8cb", 500, "error while connecting to database");
                 }
-                var request = new sql.Request(connection);
-                for (var key in queryParams)
+                connection.query(queryString, queryParams, function (error, results, fields)
                 {
-                    if (!queryParams.hasOwnProperty(key))
-                        continue;
-                    var paramValue = queryParams[key];
-                    if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
-                    {
-                        request.input(key, sql.BigInt, paramValue);
-                    }
-                    else
-                    {
-                        request.input(key, paramValue);
-                    }
-                }
-                request.query(queryString, function (err, dbResponse)
-                {
-                    if (err)
+                    if (error)
                     {
                         if (!!completeCb)
                             _this.exec.safeExecute(ctx, completeCb);
-                        console.log(err);
+                        console.log(error);
                         throw new _this.error.Error("a07f", 500, "error while sending query to database");
                     }
                     else
                     {
                         _this.exec.safeExecute(ctx, function ()
                         {
-                            successCb(dbResponse.recordset);
+                            successCb(results);
                         });
                         if (!!completeCb) 
                         {
@@ -304,7 +308,7 @@ module.exports =
             var _this = this;
             var paramsCounter = 0;
             var queryString = "";
-            var queryParams = {};
+            var queryParams = [];
 
             /**
              * Append the given string and params to the query
@@ -316,21 +320,10 @@ module.exports =
                     return;
                 if (arguments.length > 1)
                 {
-                    var newStr = "";
-                    var currentArgIndex = 1;
-                    for (var i = 0; i < str.length; i++)
+                    for (var i = 1; i < arguments.length; i++)
                     {
-                        if (str[i] !== "?")
-                        {
-                            newStr += str[i];
-                            continue;
-                        }
-                        newStr += "@value" + paramsCounter + " ";
-                        queryParams["value" + paramsCounter] = arguments[currentArgIndex];
-                        paramsCounter++;
-                        currentArgIndex++;
+                        queryParams.push(arguments[i]);
                     }
-                    str = newStr;
                 }
                 queryString += str;
             };
@@ -364,7 +357,7 @@ module.exports =
          */
         function getJoinExpression(joinObj)
         {
-            return "INNER JOIN `" + joinObj.e2 + "table] `" + joinObj.e2Alias + "` ON `" + joinObj.e1 + "table].`" + joinObj.e1JoinField + "` = `" + joinObj.e2Alias + "`.`" + joinObj.e2JoinField + "`";
+            return "INNER JOIN `" + joinObj.e2 + "table` `" + joinObj.e2Alias + "` ON `" + joinObj.e1 + "table`.`" + joinObj.e1JoinField + "` = `" + joinObj.e2Alias + "`.`" + joinObj.e2JoinField + "`";
         };
 
         /**
@@ -397,22 +390,22 @@ module.exports =
                 }
                 else if (condObj.operator === "~")
                 {
-                    query.append("`" + condObj.entity + "table].`" + condObj.fieldName + "` like '%" + condObj.fieldValue + "%'");
+                    query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` like '%" + condObj.fieldValue + "%'");
                 }
                 else if (typeof (condObj.fieldValue) === "string" && condObj.fieldValue.toLowerCase() === "null")
                 {
                     if (condObj.operator == "=")
                     {
-                        query.append("`" + condObj.entity + "table].`" + condObj.fieldName + "` is null");
+                        query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` is null");
                     }
                     else
                     {
-                        query.append("`" + condObj.entity + "table].`" + condObj.fieldName + "` is not null");
+                        query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` is not null");
                     }
                 }
                 else
                 {
-                    query.append("`" + condObj.entity + "table].`" + condObj.fieldName + "`" + condObj.operator + "?", condObj.fieldValue);
+                    query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "`" + condObj.operator + "?", condObj.fieldValue);
                 }
             }
             else

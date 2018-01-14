@@ -21,6 +21,7 @@
     <Content Include=".npmignore" />
     <Content Include="package.json" />
     <Compile Include="index.js" />
+    <Compile Include="modules\db\mysqldb.js" />
     <Compile Include="modules\storage\azureStorage.js" />
     <Compile Include="setup.js" />
     <Compile Include="modules\contextFactory.js" />

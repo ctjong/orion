@@ -1,6 +1,6 @@
 (function ()
 {
-    var dbms;
+    var engine;
     var outputPath;
     var fs = require('fs');
 
@@ -10,20 +10,20 @@
     function main()
     {
         // process arguments
-        if (process.argv.length < 5)
+        if (process.argv.length < 4)
         {
-            console.log("Usage: node setup <db engine> <config file path> <output file path>");
+            console.log("Usage: node setup <config file path> <output file path>");
             return;
         }
-        dbms = process.argv[2];
-        outputPath = process.argv[4];
-        var inputPath = process.argv[3];
+        var inputPath = process.argv[2];
+        outputPath = process.argv[3];
 
         // get config
         var contextFactory = new (require('./modules/contextFactory'))();
         var inputConfig = require(inputPath);
         contextFactory.initializeConfig(inputConfig);
         var config = contextFactory.getConfig();
+        engine = config.database.engine;
 
         // write the SQL file
         fs.writeFile(outputPath, "", function(err)
@@ -41,7 +41,7 @@
     function processConfig(config)
     {
         var dropTableStr = drop("errortable");
-        var pkAttr = dbms === "mssql" ? "IDENTITY(1,1) PRIMARY KEY" : "PRIMARY KEY";
+        var pkAttr = engine === "mssql" ? "IDENTITY(1,1) PRIMARY KEY" : "AUTO_INCREMENT PRIMARY KEY";
         var createTableStr = "CREATE TABLE errortable (" + nm("id") + " INT NOT NULL " + pkAttr + ", " + 
             nm("tag") + " VARCHAR (10) NOT NULL, " + nm("statuscode") + " INT NOT NULL, " + nm("msg") + " VARCHAR (255) NOT NULL," +
             nm("url") + " VARCHAR (255) NOT NULL, " + nm("timestamp") + " BIGINT NOT NULL);\n";
@@ -119,7 +119,7 @@
      */
     function drop(tableName)
     {
-        if(dbms === "mssql")
+        if(engine === "mssql")
             return "IF exists (select * from sys.objects where name = '" + tableName + "') DROP TABLE " + tableName + ";\n";
         else
             return "DROP TABLE IF EXISTS " + tableName + ";\n";
@@ -132,8 +132,8 @@
      */
     function nm(name)
     {
-        var ob = dbms === "mssql" ? "[" : "`";
-        var cb = dbms === "mssql" ? "]" : "`";
+        var ob = engine === "mssql" ? "[" : "`";
+        var cb = engine === "mssql" ? "]" : "`";
         return ob + name + cb;
     }
 
