@@ -58,7 +58,7 @@ A configuration module is required to give the application the necessary informa
 
 Below is the list of settings to be included in a configuration module:
 - **database** - (Required) Database configuration
-    - **system** - (Optional) Database management system to use. Currently we only support "mssql". Default to "mssql".
+    - **engine** - (Required) Database engine to use (mssql/mysql).
     - **connectionString** - (Required) Connection string to connect with database
 - **auth** - (Optional) Authentication configuration. Required if you want to enable authentication.
     - **secretKey** - (Required) Secret key for token encryption.
@@ -70,7 +70,7 @@ Below is the list of settings to be included in a configuration module:
         - **digitChar** - (Required) sWhether or not a password should contain a digit character (true/false).
         - **specialChar** - (Required) Whether or not a password should contain an special character (true/false).
 - **storage** - (Optional) Configuration for file upload. Required if you want to support file uplaod.
-    - **system** - (Optional) Storage system to use. Currently we only support "azure" (Azure Blob Storage). Default to "azure".
+    - **provider** - (Optional) Storage provider to use. Currently we only support "azure" (Azure Blob Storage). Default to "azure".
     - **azureStorageConnectionString** - (Optional) Azure Blob Storage connection string. Required if you want to use Azure Blob Storage.
     - **azureStorageContainerName** - (Optional) Azure Blob Storage account name. Required if you want to use Azure Blob Storage.
 - **monitoring** - (Optional) Configuration for monitoring system. Required if you want to monitor traffic to the application.
