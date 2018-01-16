@@ -133,7 +133,7 @@ module.exports =
             appendWhereClause(query, condition);
             execute(ctx, query, function(dbResponse)
             {
-                return dbResponse[0][""];
+                successCb(dbResponse[0][""]);
             }, completeCb);
         };
 
