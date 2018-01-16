@@ -5,23 +5,24 @@
 Orion allows you to build a REST API app in just a few steps! This library is to be used in combination with Node and Express. It sets up all the necessary CRUD data endpoints, file uploads, authentication endpoints, and error handling.
 
 The latest version of the library supports the following components:
-- Database: **SQL Server**
+- Database: **SQL Server**, **MySQL**
 - Storage: **Azure Blob Storage**
 - Authentication: **First Party**, **Facebook**
 - Monitoring: **Azure Application Insights**
 
 In this documentation:
-- [Getting Started](#getting-started)
+- [Create Your First Orion Application](#create-your-first-orion-application)
 - [Configuration](#configuration)
-- [Client Usage](#client-usage)
-  - [Data Endpoints](#data-endpoints)
-  - [File Uploads](#file-uploads)
-  - [Authentication](#authentication)
-  - [Error logging](#error-logging)
+- [API Endpoints](#api-endpoints)
+- [File Uploads](#file-uploads)
+- [Authentication](#authentication)
+- [Error logging](#error-logging)
+- [User Roles](#user-roles)
 - [Condition Syntax](#condition-syntax)
+- [Methods](#methods)
 - [License](#license)
 
-## Getting Started
+## Create Your First Orion Application
 
 1. Set up a folder for your NodeJS application.
 2. Install Express and Orion to your application and save it to package.json.
@@ -29,13 +30,42 @@ In this documentation:
     $ npm install --save express
     $ npm install --save orion-api
     ```
-3. Create a configuration module. Please see the [configuration](#configuration) section below for more details.
-4. (Optional) Set up database tables based on the configuration you created (if you haven't), using Orion's setup.js. The script is located at the root path of the Orion module source code. It takes the configuration file path and the output file path as arguments.
+3. Create a configuration module. This should contain all the settings for your application, and what entities/tables you will have in the database. For instance, if you only want to have one table for storing blog posts, you can have the following configuration:
+    ```js
+    module.exports =
+    {
+        database:
+        {
+            engine: "mssql",
+            connectionString: _DATABASE_CONNECTION_STRING_
+        },
+        entities:
+        {
+            "blogpost":
+            {
+                "fields":
+                {
+                    "title": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+                    "content": { type: "richtext", isEditable: true, createReq: 2, foreignKey: null }
+                },
+                "allowedRoles":
+                {
+                    "read": ["guest"],
+                    "create": ["guest"],
+                    "update": ["guest"],
+                    "delete": ["guest"]
+                }
+            }
+        }
+    }
+    ```
+    Please see the [configuration](#configuration) section for more configuration options.
+4. (Optional) Set up database tables based on the configuration you created using setup.js. The script is located at the root of the Orion module folder. It takes the configuration file path and the output file path as arguments.
     ```bash
     $ node node_modules/orion-api/setup.js ./config.js ./setup.sql
     ```
-    The above command will create a SQL server query file named setup.sql that you can run on the database server to set up the tables.
-5. Set up *server.js* for the application entry point. Import Express, Orion, and the configuration module you created, and set up the application as follows:
+    The above command will create a SQL query file named setup.sql that you can run on the database server to set up the tables.
+5. Set up **server.js** for the application entry point. Import Express, Orion, and the configuration module you created, and set up the application as follows:
     ```js
     var express = require('express');
     var orion = require('orion-api');
@@ -44,12 +74,19 @@ In this documentation:
     var app = new express();
     orion.setConfig(config);
     orion.setupApiEndpoints(app);
+    
+    // You can add more endpoints to the app object or do other things here
+    
     orion.startApiApp(app);
     ```
 6. You're all set up! You can now run server.js to see your app in action. Unless you specify a port in the startApiApp() call, you will see your app running at port 1337.
     ```bash
-    $ node server.js 
-    $ # your app should now run at http://localhost:1337
+    $ node server.js
+    ```
+    For the blog post example above, you can test it by running a POST to add a blog post entry and GET to retrieve it.
+    ```bash
+    $ curl -d '{"title":"I like trains", "content":"Trains are cool!"}' -H "Content-Type: application/json" -X POST http://localhost:1337/api/data/blogpost
+    $ curl http://localhost:1337/api/data/blogpost/public/findall/id/0/1
     ```
 
 ## Configuration
@@ -75,21 +112,21 @@ Below is the list of settings to be included in a configuration module:
     - **azureStorageContainerName** - (Optional) Azure Blob Storage account name. Required if you want to use Azure Blob Storage.
 - **monitoring** - (Optional) Configuration for monitoring system. Required if you want to monitor traffic to the application.
     - **appInsightsKey** - (Optional) Azure Application Insights key. Required if you want to use Application Insights.
-- **entities** - (Required) An object that contains a list of data entities (tables). The object keys would be the entity names, and the object valuse would be the [entity configurations](#entity-configuration). The entity name should contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
+- **entities** - (Required) An object that contains a list of data entities (tables). Each entry in the object should be a mappings from an entity name to an [entity configuration](#entity-configuration) object. The entity name should contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
 
 #### Entity configuration
 
 The entity configuration is an object that should contain the following properties:
-- **fields** - (Required) An object that contains a list of fields in the entity. The object keys would be the field names and the object values would be the [field configurations](#field-configuration). Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
-- **allowedRoles** - (Required) An object that specify which user roles are allowed to do certain operation. The key of the object should be the operation name (create/read/update/delete) and the value should be an array of roles.
-- **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function takes the user roles and user ID as arguments, and returns a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to only allow read access to a member that is more than 20 years old, you can put the role "member" in the **allowedRoles** and add a function here that returns condition "age>20". See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
-- **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function takes as arguments the action name, user roles, user ID, resource object from DB, and resource object from user, and it returns a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to only give update access to member that lives in Seattle, you can put "member" in the **allowedRoles** and add a function here that returns true only if city == "Seattle".
+- **fields** - (Required) An object that contains a list of fields in the entity. Each entry in the object should be a mapping from a field name to a [field configuration](#field-configuration) object. Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
+- **allowedRoles** - (Required) An object that specify which user roles are allowed to do a certain operation. Each entry in the object should be a mapping from an operation name (create/read/update/delete) to an array of user roles. See [User Roles](#user-roles) for more info on what the user roles can be.
+- **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function takes the user roles and user ID as arguments, and returns a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to allow read access only to members who are more than 20 years old, you can put the role "member" in the **allowedRoles** and add a **getReadCondition** function that returns condition "age>20". See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
+- **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function takes as arguments the action name, user roles, user ID, resource object from DB, and resource object from user, and it returns a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to allow update access only to members who live in Seattle, you can put "member" in the **allowedRoles** and add an **isWriteAllowed** function that returns true only if city == "Seattle".
 
 #### Field configuration
 
-#### Validator function rule
 
-#### Sample configuration
+
+#### Sample complete configuration
 
 ```js
 "item":
@@ -319,16 +356,15 @@ The entity configuration is an object that should contain the following properti
 ```
 
 
+## API Endpoints
 
-## Client Usage
+## File Uploads
 
-#### Data Endpoints
+## Authentication
 
-#### File Uploads
+## Error Logging
 
-#### Authentication
-
-#### Error Logging
+## User Roles
 
 ## Condition Syntax
 
