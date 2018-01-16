@@ -60,7 +60,7 @@ In this documentation:
     }
     ```
     Please see the [configuration](#configuration) section for more configuration options.
-4. (Optional) Set up database tables based on the configuration you created using setup.js. The script is located at the root of the Orion module folder. It takes the configuration file path and the output file path as arguments.
+4. Set up database tables based on the configuration you created using setup.js. The script is located at the root of the Orion module folder. It takes the configuration file path and the output file path as arguments.
     ```bash
     $ node node_modules/orion-api/setup.js ./config.js ./setup.sql
     ```
@@ -85,8 +85,11 @@ In this documentation:
     ```
     For the blog post example above, you can test it by running a POST to add a blog post entry and GET to retrieve it.
     ```bash
+    $ # insert a new blog post entry
     $ curl -d '{"title":"I like trains", "content":"Trains are cool!"}' -H "Content-Type: application/json" -X POST http://localhost:1337/api/data/blogpost
-    $ curl http://localhost:1337/api/data/blogpost/public/findall/id/0/1
+    $
+    $ # retrieve all blog post entries
+    $ curl http://localhost:1337/api/data/blogpost/public/findall/id/0/100
     ```
 
 ## Configuration
