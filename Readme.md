@@ -91,7 +91,7 @@ In this documentation:
     $ # retrieve all blog post entries
     $ curl http://localhost:1337/api/data/blogpost/public/findall/id/0/100
     ```
-    Go to [API Endpoints](#api-endpoints) section for all endpoints that we provide.
+    Go to [API Endpoints](#api-endpoints) section to see all of the endpoints that we provide.
 
 ## Configuration
 
