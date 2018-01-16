@@ -129,9 +129,12 @@ module.exports =
             var joins = resolveFK ? getJoins(ctx, fields, entity) : [];
             var query = new Query();
             var tableName = entity + "table";
-            query.append("select count(*) from `" + tableName + "` where ");
+            query.append("select count(*) as count from `" + tableName + "` where ");
             appendWhereClause(query, condition);
-            execute(ctx, query, successCb, completeCb);
+            execute(ctx, query, function(dbResponse)
+            {
+                successCb(dbResponse[0]["count"]);
+            }, completeCb);
         };
 
         /**
@@ -153,8 +156,11 @@ module.exports =
             {
                 query.append((i === 0 ? "" : ",") + "?", fieldValues[i]);
             }
-            query.append("); select LAST_INSERT_ID() as `identity`;");
-            execute(ctx, query, successCb, completeCb);
+            query.append(")");
+            execute(ctx, query, function(dbResponse)
+            {
+                successCb(dbResponse.insertId);
+            }, completeCb);
         };
 
         /**

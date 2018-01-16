@@ -52,9 +52,8 @@ module.exports =
 
             // execute
             var fields = _this.helper.getFields(ctx, "read");
-            _this.db.count(ctx, fields, ctx.entity, condition, true, function(countResponse)
+            _this.db.count(ctx, fields, ctx.entity, condition, true, function(count)
             {
-                var count = countResponse[0][""];
                 _this.db.select(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode, function(dbResponse)
                 {
                     for(var i=0; i<dbResponse.length; i++)

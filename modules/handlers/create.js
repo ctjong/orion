@@ -45,21 +45,21 @@ module.exports =
                 {
                     verifyUsernameNotExist(ctx, requestBody.username, function()
                     {
-                        _this.db.insert(ctx, ctx.entity, fieldNames, fieldValues, function(dbResponse)
+                        _this.db.insert(ctx, ctx.entity, fieldNames, fieldValues, function(insertedId)
                         {
                             if(ctx.config.emailVerificationRequired)
                             {
                                 //TODO email verification
                             }
-                            ctx.res.send(dbResponse[0].identity.toString());
+                            ctx.res.send(insertedId.toString());
                         });
                     });
                 }
                 else
                 {
-                    _this.db.insert(ctx, ctx.entity, fieldNames, fieldValues, function(dbResponse)
+                    _this.db.insert(ctx, ctx.entity, fieldNames, fieldValues, function(insertedId)
                     {
-                        ctx.res.send(dbResponse[0].identity.toString());
+                        ctx.res.send(insertedId.toString());
                     });
                 }
             });

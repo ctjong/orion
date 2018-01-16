@@ -131,7 +131,10 @@ module.exports =
             var tableName = entity + "table";
             query.append("select count(*) from [" + tableName + "] where ");
             appendWhereClause(query, condition);
-            execute(ctx, query, successCb, completeCb);
+            execute(ctx, query, function(dbResponse)
+            {
+                return dbResponse[0][""];
+            }, completeCb);
         };
 
         /**
@@ -154,7 +157,10 @@ module.exports =
                 query.append((i === 0 ? "" : ",") + "?", fieldValues[i]);
             }
             query.append("); select SCOPE_IDENTITY() as [identity];");
-            execute(ctx, query, successCb, completeCb);
+            execute(ctx, query, function(dbResponse)
+            {
+                successCb(dbResponse[0].identity);
+            }, completeCb);
         };
 
         /**
