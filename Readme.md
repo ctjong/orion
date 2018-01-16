@@ -30,7 +30,7 @@ In this documentation:
     $ npm install --save express
     $ npm install --save orion-api
     ```
-3. Create a configuration module. This should contain all the settings for your application, and what entities/tables you will have in the database. For instance, if you only want to have one table for storing blog posts, you can have the following configuration:
+3. Create a configuration module. This should contain all the settings for your application, and what entities/tables you want to have in the database. For instance, if you only want to have one table for storing blog posts, you can have the following configuration:
     ```js
     module.exports =
     {
@@ -60,11 +60,11 @@ In this documentation:
     }
     ```
     Please see the [configuration](#configuration) section for more configuration options.
-4. Set up database tables based on the configuration you created using setup.js. The script is located at the root of the Orion module folder. It takes the configuration file path and the output file path as arguments.
+4. Set up database tables based on the configuration you created using our setup script. The script is located at the root of the Orion module folder. It takes the configuration file path and the output file path as arguments.
     ```bash
     $ node node_modules/orion-api/setup.js ./config.js ./setup.sql
     ```
-    The above command will create a SQL query file named setup.sql that you can run on the database server to set up the tables.
+    The above command will create an SQL query file named setup.sql that you can run on the database server to set up the tables.
 5. Set up **server.js** for the application entry point. Import Express, Orion, and the configuration module you created, and set up the application as follows:
     ```js
     var express = require('express');
@@ -79,7 +79,7 @@ In this documentation:
     
     orion.startApiApp(app);
     ```
-6. You're all set up! You can now run server.js to see your app in action. Unless you specify a port in the startApiApp() call, you will see your app running at port 1337.
+6. You're all set! You can now run server.js to see your app in action. Unless you specify a port in the startApiApp() call, you will see your app running at port 1337.
     ```bash
     $ node server.js
     ```
@@ -91,6 +91,7 @@ In this documentation:
     $ # retrieve all blog post entries
     $ curl http://localhost:1337/api/data/blogpost/public/findall/id/0/100
     ```
+    See the [API Endpoints](#api-endpoints) section for all the endpoints that we provide.
 
 ## Configuration
 
