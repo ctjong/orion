@@ -7,7 +7,7 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var fs;
+        var fs, path;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -16,6 +16,7 @@ module.exports =
         function _construct()
         {
             fs = require("fs");
+            path = require("path");
         }
 
         //----------------------------------------------
@@ -33,15 +34,15 @@ module.exports =
             var form = new (_this.multiparty.Form)(
             {
                 autoFiles: true,
-                uploadPath: ctx.config.storage.uploadPath
+                uploadDir: ctx.config.storage.uploadPath
             });
             form.on('file', function(name, file)
             {
                 _this.exec.safeExecute(ctx, function()
                 {
-                    var tempName = file.originalFilename;
-                    var finalName = _this.guid.raw() + tempName.substring(tempName.lastIndexOf("."));
                     var tempPath = file.path;
+                    var tempName = path.basename(tempPath);
+                    var finalName = _this.guid.raw() + tempName.substring(tempName.lastIndexOf("."));
                     var finalPath = tempPath.replace(tempName, finalName);
                     fs.rename(tempPath, finalPath, function(error)
                     {

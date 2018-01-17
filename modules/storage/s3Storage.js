@@ -7,17 +7,13 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var s3;
+        var s3 = null;
 
         //----------------------------------------------
         // CONSTRUCTOR
         //----------------------------------------------
 
-        function _construct()
-        {
-            var AWS = require("aws-sdk");
-            s3 = new AWS.S3();
-        }
+        function _construct() { }
 
         //----------------------------------------------
         // PUBLIC
@@ -31,6 +27,7 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
+            initS3(ctx);
             var s3UploadQueue = null;
             var isFirstPartReceived = false;
             var form = new (_this.multiparty.Form)();
@@ -77,8 +74,13 @@ module.exports =
          */
         function deleteFile(ctx, filename, callback)
         {
-            var blobService = storage.createBlobService(ctx.config.storage.azureStorageConnectionString);
-            blobService.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, function (error, response)
+            initS3(ctx);
+            s3.deleteObject(
+            {
+                Bucket: ctx.config.storage.s3Bucket,
+                Key: filename
+            },
+            function(error, data)
             {
                 callback(error);
             });
@@ -89,6 +91,23 @@ module.exports =
         //----------------------------------------------
 
         /**
+         * Initialize the S3 module if it is not set up yet
+         * @param {*} ctx Request context
+         */
+        function initS3(ctx)
+        {
+            if(!!s3)
+                return;
+            var AWS = require("aws-sdk");
+            AWS.config.update(
+            { 
+                accessKeyId: ctx.config.storage.awsAccessKeyId, 
+                secretAccessKey: ctx.config.storage.awsAccessKeyId
+            });
+            s3 = new AWS.S3();
+        }
+
+        /**
          * A queue class for handling uploads to S3
          * @param {*} ctx Request context
          * @param {*} form Submitted form values
@@ -97,7 +116,7 @@ module.exports =
          */
         function UploadQueue(ctx, form, targetFileName, finalCallback)
         {
-            var _this = this;
+            var _thisQueue = this;
             var queue = [];
             var partNum = 1;
             var isStarted = false;
@@ -129,7 +148,7 @@ module.exports =
              */
             function add(stream)
             {
-                var newTask = new UploadTask(ctx, _this, stream, partNum++, function()
+                var newTask = new UploadTask(ctx, _thisQueue, stream, partNum++, function()
                 {
                     if(queue.length === 0)
                         onEmptyQueue();
@@ -155,13 +174,16 @@ module.exports =
                 },
                 function(s3CreateErr, multipart)
                 {
-                    if(s3CreateErr)
-                        throw new _this.error.Error("9674", 400, "error occurred while initiating an S3 upload session.");
-                    _this.uploadId = multipart.UploadId;
-                    var task = queue.shift();
-                    if(task)
-                        task.run();
-                    isStarted = true;
+                    _this.exec.safeExecute(ctx, function()
+                    {
+                        if(s3CreateErr)
+                            throw new _this.error.Error("9674", 400, "error occurred while initiating an S3 upload session.");
+                        _thisQueue.uploadId = multipart.UploadId;
+                        var task = queue.shift();
+                        if(task)
+                            task.run();
+                        isStarted = true;
+                    });
                 });
             }
 
@@ -201,7 +223,6 @@ module.exports =
             }
         }
 
-        this.initialize = initialize;
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
         _construct();
