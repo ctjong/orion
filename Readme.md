@@ -111,7 +111,7 @@ Below is the list of settings to be included in a configuration module:
         - **digitChar** - (Required) sWhether or not a password should contain a digit character (true/false).
         - **specialChar** - (Required) Whether or not a password should contain an special character (true/false).
 - **storage** - (Optional) Configuration for file upload. Required if you want to support file uplaod.
-    - **provider** - (Optional) Storage provider to use. Currently we only support "azure" (Azure Blob Storage). Default to "azure".
+    - **provider** - (Required) Storage provider to use (azure/s3/local).
     - **azureStorageConnectionString** - (Optional) Azure Blob Storage connection string. Required if you want to use Azure Blob Storage.
     - **azureStorageContainerName** - (Optional) Azure Blob Storage account name. Required if you want to use Azure Blob Storage.
 - **monitoring** - (Optional) Configuration for monitoring system. Required if you want to monitor traffic to the application.

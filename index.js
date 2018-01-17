@@ -52,10 +52,14 @@ function setConfig(config)
     // storage system
     if (!!config.storage)
     {
-        if (!config.storage.provider || config.storage.provider  === "azure")
+        if (config.storage.provider  === "azure")
             modules.addDef("storage", './modules/storage/azureStorage');
+        else if (config.storage.provider  === "s3")
+            modules.addDef("storage", './modules/storage/s3Storage');
+        else if (config.storage.provider  === "local")
+            modules.addDef("storage", './modules/storage/localHostStorage');
         else
-            throw "Unsupported storage system " + config.storageSystem;
+            throw "Missing or unsupported storage system: " + config.storageSystem;
     }
 
     // monitoring system
