@@ -39,9 +39,9 @@ module.exports =
                     }
                     else
                     {
-                        _this.db.insert(ctx, "asset", ["ownerid", "filename"], [ctx.userId, name], function (dbResponse)
+                        _this.db.insert(ctx, "asset", ["ownerid", "filename"], [ctx.userId, name], function (insertedId)
                         {
-                            ctx.res.send(dbResponse[0].identity.toString());
+                            ctx.res.send(insertedId.toString());
                         });
                     }
                 });

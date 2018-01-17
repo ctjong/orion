@@ -30,7 +30,6 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
-            var isFirstPartReceived = false;
             var form = new (_this.multiparty.Form)(
             {
                 autoFiles: true,
@@ -40,30 +39,21 @@ module.exports =
             {
                 _this.exec.safeExecute(ctx, function()
                 {
-                    isFirstPartReceived = true;
                     var tempName = file.originalFilename;
                     var finalName = _this.guid.raw() + tempName.substring(tempName.lastIndexOf("."));
                     var tempPath = file.path;
                     var finalPath = tempPath.replace(tempName, finalName);
                     fs.rename(tempPath, finalPath, function(error)
                     {
-                        callback(error, name);
+                        callback(error, finalName);
                     });
-                });
-            });
-            form.on('progress', function(bytesReceived, bytesExpected)
-            {
-                _this.exec.safeExecute(ctx, function()
-                {
-                    if(!isFirstPartReceived && bytesReceived >= bytesExpected)
-                        throw new _this.error.Error("0ae5", 400, "file not received");
                 });
             });
             form.on('error', function(err)
             {
                 _this.exec.safeExecute(ctx, function()
                 {
-                    throw new _this.error.Error("8651", 500, "error while parsing form data");
+                    throw new _this.error.Error("8651", 400, "error while parsing form data");
                 });
             });
             form.parse(req);

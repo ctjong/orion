@@ -57,14 +57,14 @@ module.exports =
                 _this.exec.safeExecute(ctx, function()
                 {
                     if(!isFirstPartReceived && bytesReceived >= bytesExpected)
-                        throw new _this.error.Error("171d", 400, "file not received");
+                        throw new _this.error.Error("171d", 400, "error while parsing the first part");
                 });
             });
             form.on('error', function(err)
             {
                 _this.exec.safeExecute(ctx, function()
                 {
-                    throw new _this.error.Error("ead9", 500, "error while parsing form data");
+                    throw new _this.error.Error("ead9", 400, "error while parsing form data");
                 });
             });
             form.parse(req);

@@ -56,14 +56,14 @@ module.exports =
                 _this.exec.safeExecute(ctx, function()
                 {
                     if(!isFirstPartReceived && bytesReceived >= bytesExpected)
-                        throw new _this.error.Error("49ef", 400, "file not received");
+                        throw new _this.error.Error("49ef", 400, "error while parsing the first part");
                 });
             });
             form.on('error', function(err)
             {
                 _this.exec.safeExecute(ctx, function()
                 {
-                    throw new _this.error.Error("a95a", 500, "error while parsing form data");
+                    throw new _this.error.Error("a95a", 400, "error while parsing form data");
                 });
             });
             form.parse(req);
