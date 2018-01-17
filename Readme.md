@@ -6,7 +6,7 @@ Orion allows you to build a REST API app in just a few steps! This library is to
 
 The latest version of the library supports the following components:
 - Database: **SQL Server**, **MySQL**
-- Storage: **Azure Blob Storage**, **Amazon S3**, **Local Host**
+- Storage: **Azure Blob Storage**, **Amazon S3**, **Local Server**
 - Authentication: **First Party**, **Facebook**
 - Monitoring: **Azure Application Insights**
 
@@ -110,10 +110,14 @@ Below is the list of settings to be included in a configuration module:
         - **lowercaseChar** - (Required) Whether or not a password should contain an lowercase character (true/false).
         - **digitChar** - (Required) sWhether or not a password should contain a digit character (true/false).
         - **specialChar** - (Required) Whether or not a password should contain an special character (true/false).
-- **storage** - (Optional) Configuration for file upload. Required if you want to support file uplaod.
+- **storage** - (Optional) File upload configuration. Required if you want to support file upload.
     - **provider** - (Required) Storage provider to use (azure/s3/local).
-    - **azureStorageConnectionString** - (Optional) Azure Blob Storage connection string. Required if you want to use Azure Blob Storage.
+    - **azureStorageConnectionString** - (Optional) Azure Blob Storage connection string. Required if you want to support file upload to Azure Blob Storage.
     - **azureStorageContainerName** - (Optional) Azure Blob Storage account name. Required if you want to use Azure Blob Storage.
+    - **awsAccessKeyId** - (Optional) AWS Access Key ID to access an Amazon S3 account. Required if you want to support file upload to Amazon S3.
+    - **awsSecretAccessKey** - (Optional) AWS Secret Access Key to access an Amazon S3 account. Required if you want to support file upload to Amazon S3.
+    - **s3Bucket** - (Optional) Amazon S3 bucket name. Required if you want to support file upload to Amazon S3.
+    - **uploadPath** - (Optional) Path in the local server where you want to store uploaded files into, relative to the root of the application. Required if you want to support file upload to the local server.
 - **monitoring** - (Optional) Configuration for monitoring system. Required if you want to monitor traffic to the application.
     - **appInsightsKey** - (Optional) Azure Application Insights key. Required if you want to use Application Insights.
 - **entities** - (Required) An object that contains a list of data entities (tables). Each entry in the object should be a mappings from an entity name to an [entity configuration](#entity-configuration) object. The entity name should contain no space, and preferably be all lowercase to make it consistent with the names in the database system.

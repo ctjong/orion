@@ -31,17 +31,23 @@ module.exports =
                 throw new _this.error.Error("2c74", 401, "anonymous asset deletion is not supported");
             _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, resourceId, null, function(resource, requestBody)
             {
+                if (!resource.filename)
+                    throw new _this.error.Error("cd03", 500, "failed to get file name for the requested resource");
                 _this.storage.deleteFile(ctx, resource.filename, function (error) 
                 {
                     _this.exec.safeExecute(ctx, function()
                     {
-                        _this.db.deleteResource(ctx, "asset", resourceId, function(dbResponse)
-                        { 
-                            if (error)
-                                ctx.res.send("Asset removed with error: " + error);
-                            else
+                        if (error)
+                        {
+                            throw new _this.error.Error("2020", 500, "Asset removal failed: " + error);
+                        }
+                        else
+                        {
+                            _this.db.deleteResource(ctx, "asset", resourceId, function(dbResponse)
+                            { 
                                 ctx.res.send("Asset removed");
-                        });
+                            });
+                        }
                     });
                 });
             });

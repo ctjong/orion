@@ -28,9 +28,11 @@ module.exports =
         function uploadFile(ctx, req, callback)
         {
             initS3(ctx);
-            var s3UploadQueue = null;
             var isFirstPartReceived = false;
-            var form = new (_this.multiparty.Form)();
+            var form = new (_this.multiparty.Form)(
+            {
+                autoFields: true
+            });
             form.on('part', function(stream) 
             {
                 _this.exec.safeExecute(ctx, function()
@@ -38,14 +40,20 @@ module.exports =
                     isFirstPartReceived = true;
                     if (!stream.filename)
                         throw new _this.error.Error("8dad", 400, "submitted file is not a valid file");
-                    var size = stream.byteCount - stream.byteOffset;
                     var name = _this.guid.raw() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    if(!s3UploadQueue)
+                    s3.upload(
                     {
-                        s3UploadQueue = new UploadQueue(ctx, form, name, callback);
-                        s3UploadQueue.start();
-                    }
-                    s3UploadQueue.add(stream);
+                        Bucket: ctx.config.storage.s3Bucket,
+                        Key: name,
+                        ACL: 'public-read',
+                        Body: stream,
+                        ContentLength: stream.byteCount,
+                        ContentType: _this.mime.lookup(name)
+                    },
+                    function(s3UploadErr, data)
+                    {
+                        callback(s3UploadErr, name);
+                    });
                 });
             });
             form.on('progress', function(bytesReceived, bytesExpected)
@@ -77,8 +85,8 @@ module.exports =
             initS3(ctx);
             s3.deleteObject(
             {
-                Bucket: ctx.config.storage.s3Bucket,
-                Key: filename
+                Key: filename,
+                Bucket: ctx.config.storage.s3Bucket
             },
             function(error, data)
             {
@@ -99,128 +107,11 @@ module.exports =
             if(!!s3)
                 return;
             var AWS = require("aws-sdk");
-            AWS.config.update(
+            s3 = new AWS.S3(
             { 
                 accessKeyId: ctx.config.storage.awsAccessKeyId, 
-                secretAccessKey: ctx.config.storage.awsAccessKeyId
+                secretAccessKey: ctx.config.storage.awsSecretAccessKey
             });
-            s3 = new AWS.S3();
-        }
-
-        /**
-         * A queue class for handling uploads to S3
-         * @param {*} ctx Request context
-         * @param {*} form Submitted form values
-         * @param {*} targetFileName Target file name on S3
-         * @param {*} finalCallback Final callback function
-         */
-        function UploadQueue(ctx, form, targetFileName, finalCallback)
-        {
-            var _thisQueue = this;
-            var queue = [];
-            var partNum = 1;
-            var isStarted = false;
-            this.targetFileName = targetFileName;
-            this.uploadId = null;
-
-            /**
-             * Handler to be invoked when this queue is emptied
-             */
-            function onEmptyQueue()
-            {
-                if(form.bytesExpected > 0)
-                    return;
-                s3.completeMultipartUpload(
-                {
-                    Bucket: ctx.config.storage.s3Bucket,
-                    Key: targetFileName,
-                    UploadId: s3UploadId
-                },
-                function(err, data)
-                {
-                    finalCallback(err);
-                });
-            }
-
-            /**
-             * Add a task to the queue for uploading a file part to S3
-             * @param stream Stream object containing the file part to upload
-             */
-            function add(stream)
-            {
-                var newTask = new UploadTask(ctx, _thisQueue, stream, partNum++, function()
-                {
-                    if(queue.length === 0)
-                        onEmptyQueue();
-                    else
-                        queue.shift().run();
-                });
-                if (isStarted && queue.length === 0)
-                    newTask.run();
-                else
-                    queue.push(newTask);
-            }
-
-            /**
-             * Start executing the upload tasks in this queue
-             */
-            function start()
-            {
-                s3.createMultipartUpload(
-                {
-                    Bucket: ctx.config.storage.s3Bucket,
-                    Key: targetFileName,
-                    ContentType: _this.mime.lookup(targetFileName)
-                },
-                function(s3CreateErr, multipart)
-                {
-                    _this.exec.safeExecute(ctx, function()
-                    {
-                        if(s3CreateErr)
-                            throw new _this.error.Error("9674", 400, "error occurred while initiating an S3 upload session.");
-                        _thisQueue.uploadId = multipart.UploadId;
-                        var task = queue.shift();
-                        if(task)
-                            task.run();
-                        isStarted = true;
-                    });
-                });
-            }
-
-            this.add = add;
-            this.start = start;
-        }
-
-        /**
-         * A class representing an S3 upload task
-         * @param {*} ctx Request context
-         * @param {*} uploadQueue Upload queue object
-         * @param {*} stream Stream containing the file part to upload
-         * @param {*} partNum Current part number
-         * @param {*} callback Callback function
-         */
-        function UploadTask(ctx, uploadQueue, stream, partNum, callback)
-        {
-            /**
-             * Run the upload task
-             */
-            this.run = function()
-            {
-                s3.uploadPart(
-                {
-                    Body: stream,
-                    Bucket: ctx.config.storage.s3Bucket,
-                    Key: uploadQueue.targetFileName,
-                    UploadId: uploadQueue.uploadId,
-                    PartNumber: partNum
-                },
-                function(s3UploadErr, data) 
-                {
-                    if(s3UploadErr)
-                        throw new _this.error.Error("cf82", 400, "error occurred while uploading a file part to S3.");
-                    callback();
-                });
-            }
         }
 
         this.uploadFile = uploadFile;

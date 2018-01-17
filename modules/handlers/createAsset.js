@@ -3,7 +3,7 @@
  */
 module.exports = 
 {
-    dependencies: ["storage", "helper", "db"],
+    dependencies: ["storage", "helper", "db", "exec"],
     Instance: function()
     {
         var _this = this;
@@ -33,17 +33,20 @@ module.exports =
             {
                 _this.storage.uploadFile(ctx, req, function (error, name) 
                 {
-                    if (error)
+                    _this.exec.safeExecute(ctx, function()
                     {
-                        throw new _this.error.Error("d2d0", 500, "error while uploading file to storage system");
-                    }
-                    else
-                    {
-                        _this.db.insert(ctx, "asset", ["ownerid", "filename"], [ctx.userId, name], function (insertedId)
+                        if (error)
                         {
-                            ctx.res.send(insertedId.toString());
-                        });
-                    }
+                            throw new _this.error.Error("d2d0", 500, "error while uploading file to storage system");
+                        }
+                        else
+                        {
+                            _this.db.insert(ctx, "asset", ["ownerid", "filename"], [ctx.userId, name], function (insertedId)
+                            {
+                                ctx.res.send(insertedId.toString());
+                            });
+                        }
+                    });
                 });
             });
         };
