@@ -6,7 +6,7 @@ Orion allows you to build a REST API app in just a few steps! This library is to
 
 The latest version of the library supports the following components:
 - Database: **SQL Server**, **MySQL**
-- Storage: **Azure Blob Storage**
+- Storage: **Azure Blob Storage**, **Amazon S3**, **Local Host**
 - Authentication: **First Party**, **Facebook**
 - Monitoring: **Azure Application Insights**
 
