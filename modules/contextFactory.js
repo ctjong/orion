@@ -21,7 +21,7 @@ module.exports = function ()
                 {
                     "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
                     "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
-                    "filename": { type: "string", isEditable: true, createReq: 2, foreignKey: null }
+                    "filename": { type: "string", isEditable: false, createReq: 2, foreignKey: null }
                 },
                 allowedRoles:
                 {
@@ -40,7 +40,7 @@ module.exports = function ()
                     "domainid": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
                     "roles": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
                     "username": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                    "password": { type: "secret", isEditable: false, createReq: 2, foreignKey: null },
+                    "password": { type: "secret", isEditable: true, createReq: 2, foreignKey: null },
                     "email": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
                     "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
                 },
