@@ -139,6 +139,7 @@ Here are the properties that must/may be included in a field configuration objec
     - **int** : integer, default to 0.
     - **float** : floating point number, default to null.
     - **boolean** : boolean type (0/1), default to 0.
+    - **secret** : password type, max 255 characters. This type of field will be hidden from GET requests.
 - **isEditable** : (Required) Whether or not this field is editable by PUT requests (true/false).
 - **createReq** : (Required) Whether or not this field must be included in a POST body. The possible values are:
     - **0** : The field will be ignored when a POST request is processed.
@@ -146,7 +147,7 @@ Here are the properties that must/may be included in a field configuration objec
     - **2** : The field is required, it must be included in a POST body. If not a 400 response code will be returned.
 - **foreignKey** : (Optional) Foreign key configuration, required if the field is a foreign key to another entity. The configuration includes the following properties:
     - **foreginEntity** - (Required) the entity name that the field is linked to. The value of the field will be matched with the "id" field of the target entity.
-    - **resolvedKeyName** - (Required) The library resolves one level of foreign key relationship for a GET request. The resolved object will be appended to the response object, with the value of this **resolvedKeyName** as key. For instance, if entity "blogpost" has field "authorId" that is a foreign key to entity "user" and has **resolvedKeyName** value "author", then a GET response will look something like:
+    - **resolvedKeyName** - (Required) The library resolves one level of foreign key relationship for a GET request. The resolved object will be appended to the response object, with the value of this **resolvedKeyName** as key. For instance, if entity "blogpost" has field "authorId" that is a foreign key to entity "user" and has **resolvedKeyName** value "author", then an item in a GET response will look something like:
         ```
         {
             id: 123
@@ -162,6 +163,54 @@ Here are the properties that must/may be included in a field configuration objec
 
 #### Default fields and entities
 
+There are some fields and entities that we add to the config at runtime, both when an SQL query is being constructed using setup.js and when an actual API app is being initialized.
+
+Here are the default fields:
+
+| name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
+| - | - | - | - | - | - | - 
+| id | id of the resource | id | false | 0 | null | null
+| ownerid | id of the resource owner | int | false | 0 | user | owner
+| createdtime | timestamp of the resource creation | timestamp | false | 0 | null | null
+
+The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". We add the default fields above to every entity specified in the config, except those that are part of the default entities (see below). Default fields cannot be overridden, so if a field with the same name as one of the default fields exists in the config, that field will be ignored.
+
+Here are the default entities:
+- **user** - User entity
+    - **fields**
+        | name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
+        | - | - | - | - | - | - | - 
+        | id | user id | id | false | 0 | null | null
+        | domain | domain where user info is hosted | string | false | 0 | null | null
+        | domainid | user id on its domain | string | false | 0 | null | null
+        | roles | user roles (comma separated) | string | false | 0 | null | null
+        | username | user name | string | true | 2 | null | null
+        | password | user password | secret | true | 2 | null | null
+        | email | user email | string | true | 2 | null | null
+        | createdtime | timestamp of the resource creation | timestamp | false | 0 | null | null
+    - **allowedRoles**
+        | action | roles
+        | - | - 
+        | read | member, owner, admin
+        | create | guest
+        | update | owner, admin
+        | delete | admin
+- **asset** - Asset entity
+    - **fields**
+        | name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
+        | - | - | - | - | - | - | - 
+        | id | id of the resource | id | false | 0 | null | null
+        | ownerid | id of the resource owner | int | false | 0 | user | owner
+        | filename | file name of the asset | string | false | 2 | null | null
+    - **allowedRoles**
+        | action | roles
+        | - | - 
+        | read | owner, admin
+        | create | member
+        | update | 
+        | delete | owner, admin
+
+ The existing fields in the default entities above cannot be overriden, but the list itself can be extended. For instance, in the config you can specify additional fields "firstname" and "lastname" for the user entity. The allowedRoles can be overriden, so in the config you can specify your own permission rules for any of the default entities. You can also specify a getReadCondition and an isWriteAllowed functions for a default entity. 
 
 
 #### Sample complete configuration
