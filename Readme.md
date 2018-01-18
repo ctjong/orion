@@ -176,8 +176,9 @@ Here are the default fields:
 The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". We add the default fields above to every entity specified in the config, except those that are part of the default entities (see below). Default fields cannot be overridden, so if a field with the same name as one of the default fields exists in the config, that field will be ignored.
 
 Here are the default entities:
-- **user** - User entity
+- **user** - User entity for storing user information. This entity will be used if authentication is enabled.
     - **fields**
+    
         | name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
         | - | - | - | - | - | - | - 
         | id | user id | id | false | 0 | null | null
@@ -188,21 +189,27 @@ Here are the default entities:
         | password | user password | secret | true | 2 | null | null
         | email | user email | string | true | 2 | null | null
         | createdtime | timestamp of the resource creation | timestamp | false | 0 | null | null
+        
     - **allowedRoles**
+    
         | action | roles
         | - | - 
         | read | member, owner, admin
         | create | guest
         | update | owner, admin
         | delete | admin
-- **asset** - Asset entity
+        
+- **asset** - Asset entity to be used for keeping track of uploaded files. Will be used if file upload is enabled.
     - **fields**
+    
         | name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
         | - | - | - | - | - | - | - 
         | id | id of the resource | id | false | 0 | null | null
         | ownerid | id of the resource owner | int | false | 0 | user | owner
         | filename | file name of the asset | string | false | 2 | null | null
+        
     - **allowedRoles**
+    
         | action | roles
         | - | - 
         | read | owner, admin
