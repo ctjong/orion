@@ -13,6 +13,10 @@ The latest version of the library supports the following components:
 In this documentation:
 - [Create Your First Orion Application](#create-your-first-orion-application)
 - [Configuration](#configuration)
+    - [Entity Configuration](#entity-configuration)
+    - [Field Configuration](#field-configuration)
+    - [Default Fields and Entities](#default-fields-and-entities)
+    - [Sample Complete Configuration](#sample-complete-configuration)
 - [API Endpoints](#api-endpoints)
 - [File Uploads](#file-uploads)
 - [Authentication](#authentication)
@@ -122,7 +126,7 @@ Below is the list of settings to be included in a configuration module:
     - **appInsightsKey** - (Optional) Azure Application Insights key. Required if you want to use Application Insights.
 - **entities** - (Required) An object that contains a list of data entities (tables). Each entry in the object should be a mappings from an entity name to an [entity configuration](#entity-configuration) object. The entity name should contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
 
-#### Entity configuration
+#### Entity Configuration
 
 Here are the properties that must/may be included in an entity configuration object:
 - **fields** - (Required) An object that contains a list of fields in the entity. Each entry in the object should be a mapping from a field name to a [field configuration](#field-configuration) object. Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
@@ -130,7 +134,7 @@ Here are the properties that must/may be included in an entity configuration obj
 - **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function takes the user roles and user ID as arguments, and returns a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to allow read access only to members who are more than 20 years old, you can put the role "member" in the **allowedRoles** and add a **getReadCondition** function that returns condition "age>20". See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
 - **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function takes as arguments the action name, user roles, user ID, resource object from DB, and resource object from user, and it returns a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to allow update access only to members who live in Seattle, you can put "member" in the **allowedRoles** and add an **isWriteAllowed** function that returns true only if city == "Seattle".
 
-#### Field configuration
+#### Field Configuration
 
 Here are the properties that must/may be included in a field configuration object:
 - **type** - (Required) The data type of the field. Here are the options:
@@ -161,7 +165,7 @@ Here are the properties that must/may be included in a field configuration objec
         }
         ```
 
-#### Default fields and entities
+#### Default Fields and Entities
 
 There are some fields and entities that we add to the config at runtime, both when an SQL query is being constructed using setup.js and when an actual API app is being initialized.
 
@@ -220,7 +224,7 @@ Here are the default entities:
  The existing fields in the default entities above cannot be overriden, but the list itself can be extended. For instance, in the config you can specify additional fields "firstname" and "lastname" for the user entity. The allowedRoles can be overriden, so in the config you can specify your own permission rules for any of the default entities. You can also specify a getReadCondition and an isWriteAllowed functions for a default entity. 
 
 
-#### Sample complete configuration
+#### Sample Complete Configuration
 
 ```js
 ```
