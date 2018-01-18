@@ -124,13 +124,43 @@ Below is the list of settings to be included in a configuration module:
 
 #### Entity configuration
 
-The entity configuration is an object that should contain the following properties:
+Here are the properties that must/may be included in an entity configuration object:
 - **fields** - (Required) An object that contains a list of fields in the entity. Each entry in the object should be a mapping from a field name to a [field configuration](#field-configuration) object. Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
 - **allowedRoles** - (Required) An object that specify which user roles are allowed to do a certain operation. Each entry in the object should be a mapping from an operation name (create/read/update/delete) to an array of user roles. See [User Roles](#user-roles) for more info on what the user roles can be.
 - **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function takes the user roles and user ID as arguments, and returns a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to allow read access only to members who are more than 20 years old, you can put the role "member" in the **allowedRoles** and add a **getReadCondition** function that returns condition "age>20". See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
 - **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function takes as arguments the action name, user roles, user ID, resource object from DB, and resource object from user, and it returns a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to allow update access only to members who live in Seattle, you can put "member" in the **allowedRoles** and add an **isWriteAllowed** function that returns true only if city == "Seattle".
 
 #### Field configuration
+
+Here are the properties that must/may be included in a field configuration object:
+- **type** - (Required) The data type of the field. Here are the options:
+    - **string** : plain text, max 255 characters
+    - **text**: rich text, no maximum. This type of field will only be returned on individual item retrieval (findbyid GET requests)
+    - **int** : integer, default to 0.
+    - **float** : floating point number, default to null.
+    - **boolean** : boolean type (0/1), default to 0.
+- **isEditable** : (Required) Whether or not this field is editable by PUT requests (true/false).
+- **createReq** : (Required) Whether or not this field must be included in a POST body. The possible values are:
+    - **0** : The field will be ignored when a POST request is processed.
+    - **1** : The field is optional, it will be processed if it is included in a POST body.
+    - **2** : The field is required, it must be included in a POST body. If not a 400 response code will be returned.
+- **foreignKey** : (Optional) Foreign key configuration, required if the field is a foreign key to another entity. The configuration includes the following properties:
+    - **foreginEntity** - (Required) the entity name that the field is linked to. The value of the field will be matched with the "id" field of the target entity.
+    - **resolvedKeyName** - (Required) The library resolves one level of foreign key relationship for a GET request. The resolved object will be appended to the response object, with the value of this **resolvedKeyName** as key. For instance, if entity "blogpost" has field "authorId" that is a foreign key to entity "user" and has **resolvedKeyName** value "author", then a GET response will look something like:
+        ```
+        {
+            id: 123
+            title: "Roses are red"
+            authorId: 456 
+            author: 
+            {
+                id: 456,
+                name: "John Doe"
+            }
+        }
+        ```
+
+#### Default fields and entities
 
 
 
