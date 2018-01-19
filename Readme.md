@@ -224,10 +224,9 @@ Here are the default entities:
  The existing fields in the default entities above cannot be overriden, but the list itself can be extended. For instance, in the config you can specify additional fields "firstname" and "lastname" for the user entity. The allowedRoles can be overriden, so in the config you can specify your own permission rules for any of the default entities. You can also specify a getReadCondition and an isWriteAllowed functions for a default entity. 
 
 
-#### Sample Complete Configuration
+#### Sample Complete Configurations
 
-```js
-```
+Here are some sample configurations that utilize the provided features (authentication, storage, granular permission checks). You can find them [here](https://github.com/ctjong/orion/tree/master/sampleConfigs).
 
 
 ## API Endpoints
