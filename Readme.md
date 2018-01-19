@@ -16,7 +16,7 @@ In this documentation:
     - [Entity Configuration](#entity-configuration)
     - [Field Configuration](#field-configuration)
     - [Default Fields and Entities](#default-fields-and-entities)
-    - [Sample Complete Configuration](#sample-complete-configuration)
+    - [Sample Complete Configurations](#sample-complete-configurations)
 - [API Endpoints](#api-endpoints)
 - [File Uploads](#file-uploads)
 - [Authentication](#authentication)
