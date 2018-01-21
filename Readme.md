@@ -18,9 +18,7 @@ In this documentation:
     - [Default Fields and Entities](#default-fields-and-entities)
     - [Sample Complete Configurations](#sample-complete-configurations)
 - [API Endpoints](#api-endpoints)
-- [File Uploads](#file-uploads)
 - [Authentication](#authentication)
-- [Error logging](#error-logging)
 - [User Roles](#user-roles)
 - [Condition Syntax](#condition-syntax)
 - [Methods](#methods)
@@ -231,35 +229,83 @@ Here are some sample configurations that utilize the provided features (authenti
 
 ## API Endpoints
 
-**GET /api/data/:entity/:accessType/findbyid/:id**
+#### GET /api/data/:entity/:accessType/findbyid/:id
 
-**GET /api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition**
+Retrieve a resource by its ID.
 
-**GET /api/data/:entity/:accessType/findall/:orderByField/:skip/:take**
+Parameters:
+- **entity** - Name of the entity where the resource is in.
+- **accessType** - The mode of access:
+    - **private** - The requester is the owner of the resource. An "accessToken" header containg the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+    - **public** - The requester is not the owner of the resource, or not trying to access it as its owner.
+- **id** - Id of the requested resource.
 
-**POST /api/data/asset**
+Response:
+- **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
+- **items** - An array of items found. Each item will be a JSON object, with 1 level of foreign key resolved.
 
-**POST /api/data/:entity**
+Example:
+TODO
 
-**PUT /api/data/:entity/:id**
+#### GET /api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition
 
-**DELETE /api/data/asset/:id**
+Retrieve resources that match a certain set of conditions.
 
-**DELETE /api/data/:entity/:id**
+Parameters:
+- **entity** - Name of the entity where the resource is in.
+- **accessType** - The mode of access:
+    - **private** - The requester is the owner of the resource. An "accessToken" header containg the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+    - **public** - The requester is not the owner of the resource, or not trying to access it as its owner.
+- **orderByField** - The field to order the results by
+- **skip** - Number of resources to skip. Used for pagination.
+- **take** - Number of resources to take. Used for pagination.
+- **condition** - Condition string to find the target resources. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
 
-**POST /api/auth/token**
+Response:
+- **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
+- **items** - An array of items found. Each item will be a JSON object, with 1 level of foreign key resolved.
 
-**POST /api/auth/token/fb**
+Example:
+TODO
 
-**POST /api/error**
+#### GET /api/data/:entity/:accessType/findall/:orderByField/:skip/:take
 
+Retrieve all resources in a certain entity.
 
+Parameters:
+- **entity** - Name of the entity where the resource is in.
+- **accessType** - The mode of access:
+    - **private** - The requester is the owner of the resource. An "accessToken" header containg the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
+    - **public** - The requester is not the owner of the resource, or not trying to access it as its owner.
+- **orderByField** - The field to order the results by
+- **skip** - Number of resources to skip. Used for pagination.
+- **take** - Number of resources to take. Used for pagination.
 
-## File Uploads
+Response:
+- **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
+- **items** - An array of items found. Each item will be a JSON object, with 1 level of foreign key resolved.
+
+Example:
+TODO
+
+#### POST /api/data/asset
+
+#### POST /api/data/:entity
+
+#### PUT /api/data/:entity/:id
+
+#### DELETE /api/data/asset/:id
+
+#### DELETE /api/data/:entity/:id
+
+#### POST /api/auth/token
+
+#### POST /api/auth/token/fb
+
+#### POST /api/error
+
 
 ## Authentication
-
-## Error Logging
 
 ## User Roles
 
