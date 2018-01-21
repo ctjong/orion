@@ -231,6 +231,30 @@ Here are some sample configurations that utilize the provided features (authenti
 
 ## API Endpoints
 
+**GET /api/data/:entity/:accessType/findbyid/:id**
+
+**GET /api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition**
+
+**GET /api/data/:entity/:accessType/findall/:orderByField/:skip/:take**
+
+**POST /api/data/asset**
+
+**POST /api/data/:entity**
+
+**PUT /api/data/:entity/:id**
+
+**DELETE /api/data/asset/:id**
+
+**DELETE /api/data/:entity/:id**
+
+**POST /api/auth/token**
+
+**POST /api/auth/token/fb**
+
+**POST /api/error**
+
+
+
 ## File Uploads
 
 ## Authentication
