@@ -5,4 +5,4 @@
 /tests
 *.sln
 *.njsproj
-/sampleConfigs
+config-sample.js
