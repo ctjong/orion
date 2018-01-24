@@ -85,11 +85,11 @@ module.exports =
             },
 
             // we only allow update access to the recipient (to flag the message) and the site admin.
-            isWriteAllowed: function(action, roles, userId, dbResource, inputResource)
+            isWriteAllowed: function(action, roles, userId, dbRecord, inputRecord)
             {
                 if(action !== "update" || roles.contains("admin"))
                     return true;
-                return userId === dbResource.recipientid;
+                return userId === dbRecord.recipientid;
             }
         }
     },

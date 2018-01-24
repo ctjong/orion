@@ -29,7 +29,7 @@ module.exports =
                 throw new _this.error.Error("e668", 500, "file upload is not supported for this site");
             if(!ctx.userId) 
                 throw new _this.error.Error("4f53", 401, "anonymous upload is not supported");
-            _this.helper.onBeginWriteRequest(ctx, "create", _this.db, null, { "ownerid": ctx.userId }, function(resource, requestBody)
+            _this.helper.onBeginWriteRequest(ctx, "create", _this.db, null, { "ownerid": ctx.userId }, function(record, requestBody)
             {
                 _this.storage.uploadFile(ctx, req, function (error, name) 
                 {

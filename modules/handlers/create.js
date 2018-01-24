@@ -19,13 +19,13 @@ module.exports =
         //----------------------------------------------
 
         /**
-         * Handle a create resource request
+         * Handle a create record request
          * @param {any} ctx Request context
          * @param {any} requestBody Request body
          */
         function execute (ctx, requestBody)
         {
-            _this.helper.onBeginWriteRequest(ctx, "create", _this.db, null, requestBody, function(resource, requestBody)
+            _this.helper.onBeginWriteRequest(ctx, "create", _this.db, null, requestBody, function(record, requestBody)
             {
                 // get required and optional fields
                 var fields = getConfigFields(ctx);
@@ -219,9 +219,9 @@ module.exports =
          */
         function verifyUsernameNotExist(ctx, username, callback)
         {
-            _this.db.quickFind(ctx, ["username"], "user", {"username": username}, function(resource)
+            _this.db.quickFind(ctx, ["username"], "user", {"username": username}, function(record)
             {
-                if(!!resource) throw "username " + username + " already exists";
+                if(!!record) throw "username " + username + " already exists";
                 callback();
             });
         }

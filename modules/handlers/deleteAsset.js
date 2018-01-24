@@ -21,19 +21,19 @@ module.exports =
         /**
          * Handle a delete asset (file deletion) request
          * @param {any} ctx Request context
-         * @param {any} resourceId Resource ID of the asset to delete
+         * @param {any} recordId Record ID of the asset to delete
          */
-        function execute (ctx, resourceId)
+        function execute (ctx, recordId)
         {
             if (!ctx.config.storage)
                 throw new _this.error.Error("51be", 500, "file delete is not supported for this site");
             if(!ctx.userId)
                 throw new _this.error.Error("2c74", 401, "anonymous asset deletion is not supported");
-            _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, resourceId, null, function(resource, requestBody)
+            _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, recordId, null, function(record, requestBody)
             {
-                if (!resource.filename)
-                    throw new _this.error.Error("cd03", 500, "failed to get file name for the requested resource");
-                _this.storage.deleteFile(ctx, resource.filename, function (error) 
+                if (!record.filename)
+                    throw new _this.error.Error("cd03", 500, "failed to get file name for the requested record");
+                _this.storage.deleteFile(ctx, record.filename, function (error) 
                 {
                     _this.exec.safeExecute(ctx, function()
                     {
@@ -43,7 +43,7 @@ module.exports =
                         }
                         else
                         {
-                            _this.db.deleteResource(ctx, "asset", resourceId, function(dbResponse)
+                            _this.db.deleteRecord(ctx, "asset", recordId, function(dbResponse)
                             { 
                                 ctx.res.send("Asset removed");
                             });

@@ -87,17 +87,17 @@ module.exports =
 
         /**
          * To be invoked at the beginning of a write request (create/update/delete).
-         * This will check if an action is permitted, given the context and target resource.
+         * This will check if an action is permitted, given the context and target record.
          * Also resolve any foreign key that exists in the request body.
          * Throws an exception on failure.
          * @param {any} ctx Request context
          * @param {any} action Action name
          * @param {any} db Database module
-         * @param {any} resourceId Resource ID
+         * @param {any} recordId Record ID
          * @param {any} requestBody Requset body
          * @param {any} callback Callback function
          */
-        function onBeginWriteRequest (ctx, action, db, resourceId, requestBody, callback)
+        function onBeginWriteRequest (ctx, action, db, recordId, requestBody, callback)
         {
             requestBody = _this.fixDataKeysAndTypes(ctx, requestBody);
             var isWriteAllowedFn = ctx.config.entities[ctx.entity].isWriteAllowed;
@@ -113,19 +113,19 @@ module.exports =
             }
             else
             {
-                db.findResourceById(ctx, ctx.entity, resourceId, function(resource)
+                db.findRecordById(ctx, ctx.entity, recordId, function(record)
                 {
-                    if(!resource)
-                        throw new _this.error.Error("7e13", 400, "resource not found with id " + resourceId);
-                    resource = _this.fixDataKeysAndTypes(ctx, resource);
-                    if((ctx.entity === "user" && ctx.userId === resource.id) || (ctx.entity !== "user" && ctx.userId === resource.ownerid))
+                    if(!record)
+                        throw new _this.error.Error("7e13", 400, "record not found with id " + recordId);
+                    record = _this.fixDataKeysAndTypes(ctx, record);
+                    if((ctx.entity === "user" && ctx.userId === record.id) || (ctx.entity !== "user" && ctx.userId === record.ownerid))
                     {
                         ctx.userRoles.push("owner");
                     }
                     validateRoles(ctx, action);
-                    if (!!isWriteAllowedFn && !isWriteAllowedFn(action, ctx.userRoles, ctx.userId, resource, requestBody))
+                    if (!!isWriteAllowedFn && !isWriteAllowedFn(action, ctx.userRoles, ctx.userId, record, requestBody))
                         throw new _this.error.Error("29c8", 400, "bad " + action + " request. operation not allowed.");
-                    callback(resource, requestBody);
+                    callback(record, requestBody);
                 });
             }
         };
@@ -207,10 +207,10 @@ module.exports =
          */
         function resolveForeignKey(ctx, op, requestBody, fieldName, fk, db, callback)
         {
-            db.findResourceById(ctx, fk.foreignEntity, requestBody[fieldName], function(resource)
+            db.findRecordById(ctx, fk.foreignEntity, requestBody[fieldName], function(record)
             {
                 op.active--;
-                requestBody[fk.resolvedKeyName] = _this.fixDataKeysAndTypes(ctx, resource);
+                requestBody[fk.resolvedKeyName] = _this.fixDataKeysAndTypes(ctx, record);
                 if(op.active <= 0)
                     callback(requestBody);
             });

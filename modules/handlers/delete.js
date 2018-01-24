@@ -19,17 +19,17 @@ module.exports =
         //----------------------------------------------
 
         /**
-         * Handle a delete resource request
+         * Handle a delete record request
          * @param {any} ctx Request context
-         * @param {any} resourceId Resource ID to delete
+         * @param {any} recordId Record ID to delete
          */
-        function execute(ctx, resourceId)
+        function execute(ctx, recordId)
         {
-            _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, resourceId, null, function(resource, requestBody)
+            _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, recordId, null, function(record, requestBody)
             {
-                if(ctx.entity === "user" && resource.domain !== "local")
+                if(ctx.entity === "user" && record.domain !== "local")
                     throw new _this.error.Error("d789", 400, "updating external user info is not supported");
-                _this.db.deleteResource(ctx, ctx.entity, resourceId, function(dbResponse)
+                _this.db.deleteRecord(ctx, ctx.entity, recordId, function(dbResponse)
                 {
                     ctx.res.send(dbResponse);
                 });

@@ -130,7 +130,7 @@ Here are the properties that must/may be included in an entity configuration obj
 - **fields** - (Required) An object that contains a list of fields in the entity. Each entry in the object should be a mapping from a field name to a [field configuration](#field-configuration) object. Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
 - **allowedRoles** - (Required) An object that specify which user roles are allowed to do a certain operation. Each entry in the object should be a mapping from an operation name (create/read/update/delete) to an array of user roles. See [User Roles](#user-roles) for more info on what the user roles can be.
 - **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function takes the user roles and user ID as arguments, and returns a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to allow read access only to members who are more than 20 years old, you can put the role "member" in the **allowedRoles** and add a **getReadCondition** function that returns condition "age>20". See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
-- **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function takes as arguments the action name, user roles, user ID, resource object from DB, and resource object from user, and it returns a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to allow update access only to members who live in Seattle, you can put "member" in the **allowedRoles** and add an **isWriteAllowed** function that returns true only if city == "Seattle".
+- **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function takes as arguments the action name, user roles, user ID, record object from DB, and record object from user, and it returns a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to allow update access only to members who live in Seattle, you can put "member" in the **allowedRoles** and add an **isWriteAllowed** function that returns true only if city == "Seattle".
 
 #### Field Configuration
 
@@ -171,9 +171,9 @@ Here are the default fields:
 
 | name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
 | - | - | - | - | - | - | - 
-| id | id of the resource | id | false | 0 | null | null
-| ownerid | id of the resource owner | int | false | 0 | user | owner
-| createdtime | timestamp of the resource creation | timestamp | false | 0 | null | null
+| id | id of the record | id | false | 0 | null | null
+| ownerid | id of the record owner | int | false | 0 | user | owner
+| createdtime | timestamp of the record creation | timestamp | false | 0 | null | null
 
 The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". We add the default fields above to every entity specified in the config, except those that are part of the default entities (see below). Default fields cannot be overridden, so if a field with the same name as one of the default fields exists in the config, that field will be ignored.
 
@@ -190,7 +190,7 @@ Here are the default entities:
         | username | user name | string | true | 2 | null | null
         | password | user password | secret | true | 2 | null | null
         | email | user email | string | true | 2 | null | null
-        | createdtime | timestamp of the resource creation | timestamp | false | 0 | null | null
+        | createdtime | timestamp of the record creation | timestamp | false | 0 | null | null
         
     - **allowedRoles**
     
@@ -206,8 +206,8 @@ Here are the default entities:
     
         | name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
         | - | - | - | - | - | - | - 
-        | id | id of the resource | id | false | 0 | null | null
-        | ownerid | id of the resource owner | int | false | 0 | user | owner
+        | id | id of the record | id | false | 0 | null | null
+        | ownerid | id of the record owner | int | false | 0 | user | owner
         | filename | file name of the asset | string | false | 2 | null | null
         
     - **allowedRoles**
@@ -231,14 +231,14 @@ Here are some sample configurations that utilize the provided features (authenti
 
 #### GET /api/data/:entity/:accessType/findbyid/:id
 
-Retrieve a resource by its ID.
+Retrieve a record by its ID.
 
 Parameters:
-- **entity** - Name of the entity where the resource is in.
+- **entity** - Name of the entity where the record is in.
 - **accessType** - The mode of access:
-    - **private** - The requester is the owner of the resource. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
-    - **public** - The requester is not the owner of the resource, or not trying to access it as its owner.
-- **id** - Id of the requested resource.
+    - **private** - The requester is the owner of the record. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+    - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
+- **id** - Id of the requested record.
 
 Response:
 - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
@@ -249,17 +249,17 @@ TODO
 
 #### GET /api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition
 
-Retrieve resources that match a certain set of conditions.
+Retrieve records that match a certain set of conditions.
 
 Parameters:
-- **entity** - Name of the entity where the resource is in.
+- **entity** - Name of the entity where the record is in.
 - **accessType** - The mode of access:
-    - **private** - The requester is the owner of the resource. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
-    - **public** - The requester is not the owner of the resource, or not trying to access it as its owner.
+    - **private** - The requester is the owner of the record. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+    - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
 - **orderByField** - The field to order the results by
-- **skip** - Number of resources to skip. Used for pagination.
-- **take** - Number of resources to take. Used for pagination.
-- **condition** - Condition string to find the target resources. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
+- **skip** - Number of records to skip. Used for pagination.
+- **take** - Number of records to take. Used for pagination.
+- **condition** - Condition string to find the target records. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
 
 Response:
 - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
@@ -270,16 +270,16 @@ TODO
 
 #### GET /api/data/:entity/:accessType/findall/:orderByField/:skip/:take
 
-Retrieve all resources in a certain entity.
+Retrieve all records in a certain entity.
 
 Parameters:
-- **entity** - Name of the entity where the resource is in.
+- **entity** - Name of the entity where the record is in.
 - **accessType** - The mode of access:
-    - **private** - The requester is the owner of the resource. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
-    - **public** - The requester is not the owner of the resource, or not trying to access it as its owner.
+    - **private** - The requester is the owner of the record. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
+    - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
 - **orderByField** - The field to order the results by
-- **skip** - Number of resources to skip. Used for pagination.
-- **take** - Number of resources to take. Used for pagination.
+- **skip** - Number of records to skip. Used for pagination.
+- **take** - Number of records to take. Used for pagination.
 
 Response:
 - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
@@ -305,15 +305,15 @@ TODO
 
 #### POST /api/data/:entity
 
-Add a new resource to an entity.
+Add a new record to an entity.
 
 If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
 
 Parameters:
-- **entity** - Name of the entity to put the resource in.
+- **entity** - Name of the entity to put the record in.
 
 Request body:
-JSON object representation of the new resource.
+JSON object representation of the new record.
 
 Response:
 The inserted ID

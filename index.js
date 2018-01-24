@@ -125,10 +125,10 @@ function startApiApp(app, port)
 }
 
 /**
- * Find a resource by id
+ * Find a record by id
  * @param {any} originalReq original request context where this is called from
  * @param {any} entity target entity of the read operation
- * @param {any} id resource id
+ * @param {any} id record id
  * @param {any} callback callback function
  */
 function findById(originalReq, entity, id, callback)
@@ -139,12 +139,12 @@ function findById(originalReq, entity, id, callback)
 }
 
 /**
- * Find a resource by condition
+ * Find a record by condition
  * @param {any} originalReq original request context where this is called from
  * @param {any} entity target entity of the read operation
  * @param {any} orderByField field name to order the results by
- * @param {any} skip number of resources to skip (for pagination)
- * @param {any} take number of resources to take (for pagination)
+ * @param {any} skip number of records to skip (for pagination)
+ * @param {any} take number of records to take (for pagination)
  * @param {any} condition condition string
  * @param {any} callback callback function
  */
@@ -156,12 +156,12 @@ function findByCondition(originalReq, entity, orderByField, skip, take, conditio
 }
 
 /**
- * Get all resources for the specified entity
+ * Get all records for the specified entity
  * @param {any} originalReq original request context where this is called from
  * @param {any} entity target entity of the read operation
  * @param {any} orderByField field name to order the results by
- * @param {any} skip number of resources to skip (for pagination)
- * @param {any} take number of resources to take (for pagination)
+ * @param {any} skip number of records to skip (for pagination)
+ * @param {any} take number of records to take (for pagination)
  * @param {any} callback callback function
  */
 function findAll(originalReq, entity, orderByField, skip, take, callback)

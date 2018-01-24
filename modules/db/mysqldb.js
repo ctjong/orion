@@ -23,7 +23,7 @@ module.exports =
         //----------------------------------------------
 
         /**
-         * Quick find a resource based on the given condition
+         * Quick find a record based on the given condition
          * @param {any} ctx Request context
          * @param {any} fields Requested fields
          * @param {any} entity Requested entity
@@ -46,7 +46,7 @@ module.exports =
         };
 
         /**
-         * Find resources that match the given condition
+         * Find records that match the given condition
          * @param {any} ctx Request context
          * @param {any} fields Requested fields
          * @param {any} entity Requested entity
@@ -96,26 +96,26 @@ module.exports =
         };
 
         /**
-         * Find a resource that matches the given id
+         * Find a record that matches the given id
          * @param {any} ctx Request context
          * @param {any} entity Requested entity
-         * @param {any} resourceId Id of resource to find
+         * @param {any} recordId Id of record to find
          * @param {any} successCb Success callback
          * @param {any} completeCb Complete callback
          */
-        function findResourceById(ctx, entity, resourceId, successCb, completeCb)
+        function findRecordById(ctx, entity, recordId, successCb, completeCb)
         {
             var fields = _this.helper.getFields(ctx, "read", entity);
-            var condition = new _this.condition.Condition(entity, "id", "=", resourceId);
+            var condition = new _this.condition.Condition(entity, "id", "=", recordId);
             _this.select(ctx, fields, entity, condition, "id", 0, 1, true, false, function(responseArr)
             {
-                var resource = responseArr[0];
-                successCb(_this.helper.fixDataKeysAndTypes(ctx, resource, entity));
+                var record = responseArr[0];
+                successCb(_this.helper.fixDataKeysAndTypes(ctx, record, entity));
             }, completeCb);
         };
 
         /**
-         * Count the number of resources that match the given condition
+         * Count the number of records that match the given condition
          * @param {any} ctx Request context
          * @param {any} fields Requested fields
          * @param {any} entity Requested entity
@@ -138,11 +138,11 @@ module.exports =
         };
 
         /**
-         * Insert a new resource
+         * Insert a new record
          * @param {any} ctx Request context
          * @param {any} entity Requested entity
-         * @param {any} fieldNames New resource field names
-         * @param {any} fieldValues New resource field values
+         * @param {any} fieldNames New record field names
+         * @param {any} fieldValues New record field values
          * @param {any} successCb Success callback
          * @param {any} completeCb Complete callback
          */
@@ -164,7 +164,7 @@ module.exports =
         };
 
         /**
-         * Update a resource
+         * Update a record
          * @param {any} ctx Request context
          * @param {any} entity Requested entity
          * @param {any} updateFields Fields to update
@@ -192,14 +192,14 @@ module.exports =
         };
 
         /**
-         * Delete a resource from the database
+         * Delete a record from the database
          * @param {any} ctx Request context
          * @param {any} entity Requested entity
-         * @param {any} id Id of resource to delete
+         * @param {any} id Id of record to delete
          * @param {any} successCb Success callback
          * @param {any} completeCb Complete callback
          */
-        function deleteResource(ctx, entity, id, successCb, completeCb)
+        function deleteRecord(ctx, entity, id, successCb, completeCb)
         {
             var query = new Query();
             var tableName = entity + "table";
@@ -429,11 +429,11 @@ module.exports =
 
         this.quickFind = quickFind;
         this.select = select;
-        this.findResourceById = findResourceById;
+        this.findRecordById = findRecordById;
         this.count = count;
         this.insert = insert;
         this.update = update;
-        this.deleteResource = deleteResource;
+        this.deleteRecord = deleteRecord;
         _construct();
     }
 };
