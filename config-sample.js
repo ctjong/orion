@@ -30,6 +30,7 @@ module.exports =
     },
     entities:
     {
+        // Extend the default user entity by adding new fields "firstname" and "lastname"
         "user":
         {
             fields:
@@ -38,6 +39,8 @@ module.exports =
                 "lastname": { type: "string", isEditable: true, createReq: 2, foreignKey: null }
             }
         },
+
+        // An item entity, only readable and modifiable by owner
         "item":
         {
             fields:

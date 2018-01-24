@@ -240,7 +240,7 @@ Parameters:
     - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
 - **id** - Id of the requested record.
 
-Response:
+Success response:
 - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
 - **items** - An array of items found. Each item will be a JSON object, with 1 level of foreign key resolved.
 
@@ -261,7 +261,7 @@ Parameters:
 - **take** - Number of records to take. Used for pagination.
 - **condition** - Condition string to find the target records. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
 
-Response:
+Success response:
 - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
 - **items** - An array of items found. Each item will be a JSON object, with 1 level of foreign key resolved.
 
@@ -281,7 +281,7 @@ Parameters:
 - **skip** - Number of records to skip. Used for pagination.
 - **take** - Number of records to take. Used for pagination.
 
-Response:
+Success response:
 - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
 - **items** - An array of items found. Each item will be a JSON object, with 1 level of foreign key resolved.
 
@@ -290,14 +290,14 @@ TODO
 
 #### POST /api/data/asset
 
-Upload a file into the file storage specified in the config.
+Upload a file into the file storage (specified in the config) and add a database entry for it.
 
 If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
 
 Request body:
 - **file** - File to upload
 
-Response:
+Success response:
 The inserted asset ID
 
 Example:
@@ -313,25 +313,107 @@ Parameters:
 - **entity** - Name of the entity to put the record in.
 
 Request body:
-JSON object representation of the new record.
+JSON object representation of the new record
 
-Response:
-The inserted ID
+Success response:
+The inserted ID, with 200 status code
 
 Example:
 TODO
 
 #### PUT /api/data/:entity/:id
 
+Update a record in an entity.
+
+If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+
+Parameters:
+- **entity** - Name of the entity where the record is in
+- **id** - Id of the record to update
+
+Request body:
+JSON object representation of the new record
+
+Success response:
+200 status code
+
+Example:
+TODO
+
 #### DELETE /api/data/asset/:id
+
+Delete an uploaded file from the file storage and from database.
+
+If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+
+Parameters:
+- **id** - Id of the asset to delete
+
+Success response:
+200 status code
+
+Example:
+TODO
 
 #### DELETE /api/data/:entity/:id
 
+Delete a record from an entity.
+
+If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+
+Parameters:
+- **entity** - Name of the entity where the record is in
+- **id** - Id of the record to delete
+
+Success response:
+200 status code
+
+Example:
+TODO
+
 #### POST /api/auth/token
+
+Get an access token using a set of login credentials. This can be used if all first party authentication settings are specified in the config. See [Authentication](#authentication) section for more details on how to get the access token.
+
+Request body:
+- **username** - Submitted user name 
+- **password** - Submitted password
+
+Success response:
+- **token** - Access token
+- **id** - User ID
+- additional user fields specified in the config
+
+Example:
+TODO
 
 #### POST /api/auth/token/fb
 
+Get an access token using a temporary Facebook token. See [Authentication](#authentication) section for more details on how to get the access token using Facebook token.
+
+Request body:
+- **fbtoken** - Facebook token
+
+Success response:
+- **token** - The access token
+- **id** - User ID
+- additional user fields specified in the config
+
+Example:
+TODO
+
 #### POST /api/error
+
+Log an error message. The logs will be stored in a table called "errortable" in the database. There is currently no built-in endpoint for retrieving these logs, so it would have to be manually retrieved from the database.
+
+Request body:
+- **msg** - Error message
+
+Success response:
+200 status code
+
+Example:
+TODO
 
 
 ## Authentication
