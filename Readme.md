@@ -236,7 +236,7 @@ Retrieve a resource by its ID.
 Parameters:
 - **entity** - Name of the entity where the resource is in.
 - **accessType** - The mode of access:
-    - **private** - The requester is the owner of the resource. An "accessToken" header containg the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+    - **private** - The requester is the owner of the resource. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
     - **public** - The requester is not the owner of the resource, or not trying to access it as its owner.
 - **id** - Id of the requested resource.
 
@@ -254,7 +254,7 @@ Retrieve resources that match a certain set of conditions.
 Parameters:
 - **entity** - Name of the entity where the resource is in.
 - **accessType** - The mode of access:
-    - **private** - The requester is the owner of the resource. An "accessToken" header containg the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+    - **private** - The requester is the owner of the resource. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
     - **public** - The requester is not the owner of the resource, or not trying to access it as its owner.
 - **orderByField** - The field to order the results by
 - **skip** - Number of resources to skip. Used for pagination.
@@ -275,7 +275,7 @@ Retrieve all resources in a certain entity.
 Parameters:
 - **entity** - Name of the entity where the resource is in.
 - **accessType** - The mode of access:
-    - **private** - The requester is the owner of the resource. An "accessToken" header containg the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
+    - **private** - The requester is the owner of the resource. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
     - **public** - The requester is not the owner of the resource, or not trying to access it as its owner.
 - **orderByField** - The field to order the results by
 - **skip** - Number of resources to skip. Used for pagination.
@@ -290,7 +290,36 @@ TODO
 
 #### POST /api/data/asset
 
+Upload a file into the file storage specified in the config.
+
+If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+
+Request body:
+- **file** - File to upload
+
+Response:
+The inserted asset ID
+
+Example:
+TODO
+
 #### POST /api/data/:entity
+
+Add a new resource to an entity.
+
+If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+
+Parameters:
+- **entity** - Name of the entity to put the resource in.
+
+Request body:
+JSON object representation of the new resource.
+
+Response:
+The inserted ID
+
+Example:
+TODO
 
 #### PUT /api/data/:entity/:id
 
