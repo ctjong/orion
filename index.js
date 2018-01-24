@@ -34,10 +34,16 @@ modules.addDef("helper", './modules/services/helper');
 /**
  * Set project configuration
  * @param {any} config configuration json
+ * @param {any} initFn initializer function
  */
-function setConfig(config)
+function create(config, initFn)
 {
+    var express = require("express");
+    var app = new express();
+    app.express = express;
     contextFactory.initializeConfig(config);
+    if(initFn)
+        initFn(app);
 
     // database system
     if (!config.database || !config.database.engine)
@@ -68,60 +74,23 @@ function setConfig(config)
         if (!!config.monitoring.appInsightsKey)
             require("applicationinsights").setup(config.monitoring.appInsightsKey).start();
     }
-}
 
-/**
- * Set up API endpoints for the given app
- * @param {any} app Express API app
- */
-function setupApiEndpoints(app)
-{
-    verifyConfig();
+    // setup endpoints
+    setupApiEndpoints(app);
 
-    // log request details to console
-    app.use("", function (req, res, next) 
+    // app's starter function
+    app.start = function(port)
     {
-        console.log("===============================================================");
-        console.log(req.method + " " + req.originalUrl);
-        console.log("===============================================================");
-        next();
-    });
-
-    // configure endpoints
-    configureDataEndpoints(app);
-    configureAuthEndpoints(app);
-    configureUtilityEndpoints(app);
-
-    // catch exceptions and errors
-    app.use(function (err, req, res, next) 
-    {
-        try
+        var finalPort = port || process.env.PORT || 1337;
+        var server = app.listen(finalPort, function () 
         {
-            modules.get("exec").handleError(err, req, res, modules.get("db"));
-        }
-        catch (ex)
-        {
-            console.error(err);
-            res.status(500).send(err);
-        }
-    });
-}
+            var host = server.address().address;
+            var port = server.address().port;
+            console.log("Listening at http://%s:%s", host, port);
+        });
+    }
 
-/**
- * Start the given API app at the given port (if provided)
- * @param {any} app API app
- * @param {any} port port for incoming requests (optional). Default is 1337.
- */
-function startApiApp(app, port)
-{
-    verifyConfig();
-    var finalPort = port || process.env.PORT || 1337;
-    var server = app.listen(finalPort, function () 
-    {
-        var host = server.address().address;
-        var port = server.address().port;
-        console.log("Listening at http://%s:%s", host, port);
-    });
+    return app;
 }
 
 /**
@@ -175,6 +144,41 @@ function findAll(originalReq, entity, orderByField, skip, take, callback)
 /*===================================================
     PRIVATE FUNCTIONS
 ===================================================*/
+
+/**
+ * Set up API endpoints for the given app
+ * @param {any} app Express API app
+ */
+function setupApiEndpoints(app)
+{
+    // log request details to console
+    app.use("", function (req, res, next) 
+    {
+        console.log("===============================================================");
+        console.log(req.method + " " + req.originalUrl);
+        console.log("===============================================================");
+        next();
+    });
+
+    // configure endpoints
+    configureDataEndpoints(app);
+    configureAuthEndpoints(app);
+    configureUtilityEndpoints(app);
+
+    // catch exceptions and errors
+    app.use(function (err, req, res, next) 
+    {
+        try
+        {
+            modules.get("exec").handleError(err, req, res, modules.get("db"));
+        }
+        catch (ex)
+        {
+            console.error(err);
+            res.status(500).send(err);
+        }
+    });
+}
 
 /**
  * Verify that config is properly set in context factory
@@ -342,9 +346,7 @@ function executeDirectRead(originalReq, entity, params, isFullMode, callback)
     EXPOSE PUBLIC FUNCTIONS
 ===================================================*/
 
-exports.setConfig = setConfig;
-exports.setupApiEndpoints = setupApiEndpoints;
-exports.startApiApp = startApiApp;
+exports.create = create;
 exports.findById = findById;
 exports.findByCondition = findByCondition;
 exports.findAll = findAll;
