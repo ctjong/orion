@@ -1,4 +1,4 @@
-# Orion Server
+# Orion API
 
 [![npm](https://img.shields.io/npm/dt/orion-server.svg)]() [![npm](https://img.shields.io/npm/v/orion-server.svg)]() [![David](https://img.shields.io/david/ctjong/orion.svg)]()
 
@@ -68,7 +68,7 @@ In this documentation:
     The above command will create an SQL query file named setup.sql that you can run on the database server to set up the tables.
 5. Set up **server.js** for the application entry point. Import Orion and the configuration module, and set up the application as follows:
     ```js
-    var orion = require('orion-server');
+    var orion = require('orion-api');
     var config = require('./config');
 
     var app = orion.create(config);
