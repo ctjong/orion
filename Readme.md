@@ -187,9 +187,11 @@ Here are the default entities:
         | domain | domain where user info is hosted | string | false | 0 | null | null
         | domainid | user id on its domain | string | false | 0 | null | null
         | roles | user roles (comma separated) | string | false | 0 | null | null
-        | username | user name | string | true | 2 | null | null
-        | password | user password | secret | true | 2 | null | null
-        | email | user email | string | true | 2 | null | null
+        | username | username | string | true | 2 | null | null
+        | password | password | secret | true | 2 | null | null
+        | email | email | string | true | 2 | null | null
+        | firstname | first name | string | true | 1 | null | null
+        | lastname | last name | string | true | 1 | null | null
         | createdtime | timestamp of the record creation | timestamp | false | 0 | null | null
         
     - **allowedRoles**
@@ -382,7 +384,8 @@ Request body:
 Success response:
 - **token** - Access token
 - **id** - User ID
-- additional user fields specified in the config
+- **firstname** - User's first name
+- **lastname** - User's last name
 
 Example:
 TODO
@@ -397,7 +400,8 @@ Request body:
 Success response:
 - **token** - The access token
 - **id** - User ID
-- additional user fields specified in the config
+- **firstname** - User's first name
+- **lastname** - User's last name
 
 Example:
 TODO

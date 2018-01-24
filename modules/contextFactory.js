@@ -42,6 +42,8 @@ module.exports = function ()
                     "username": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
                     "password": { type: "secret", isEditable: true, createReq: 2, foreignKey: null },
                     "email": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+                    "firstname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
+                    "lastname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
                     "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
                 },
                 allowedRoles:

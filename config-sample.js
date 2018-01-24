@@ -30,13 +30,13 @@ module.exports =
     },
     entities:
     {
-        // Extend the default user entity by adding new fields "firstname" and "lastname"
+        // Extend the default user entity by adding new fields "dateofbirth" and "cityofbirth"
         "user":
         {
             fields:
             {
-                "firstname": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "lastname": { type: "string", isEditable: true, createReq: 2, foreignKey: null }
+                "dateofbirth": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+                "cityofbirth": { type: "string", isEditable: true, createReq: 2, foreignKey: null }
             }
         },
 
