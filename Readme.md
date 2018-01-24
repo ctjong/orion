@@ -1,8 +1,8 @@
-# Orion API
+# Orion Server
 
-[![npm](https://img.shields.io/npm/dt/orion-api.svg)]() [![npm](https://img.shields.io/npm/v/orion-api.svg)]() [![David](https://img.shields.io/david/ctjong/orion.svg)]()
+[![npm](https://img.shields.io/npm/dt/orion-server.svg)]() [![npm](https://img.shields.io/npm/v/orion-server.svg)]() [![David](https://img.shields.io/david/ctjong/orion.svg)]()
 
-Orion allows you to build a REST API app in just a few steps! This library is to be used in combination with Node and Express. It sets up all the necessary CRUD data endpoints, file uploads, authentication endpoints, and error handling.
+Orion is a configurable server application, which allows you to build a fully functional REST API in just a few steps! This library is built on top of [Express](https://expressjs.com/). It sets up all the necessary CRUD data endpoints, file uploads, authentication endpoints, and error handling.
 
 The latest version of the library supports the following components:
 - Database: **SQL Server**, **MySQL**
@@ -21,16 +21,15 @@ In this documentation:
 - [Authentication](#authentication)
 - [User Roles](#user-roles)
 - [Condition Syntax](#condition-syntax)
-- [Methods](#methods)
+- [API Reference](#api-reference)
 - [License](#license)
 
 ## Create Your First Orion Application
 
-1. Set up a folder for your NodeJS application.
-2. Install Express and Orion to your application and save it to package.json.
+1. Set up a folder for your server application.
+2. Install Orion to your application.
     ```bash
-    $ npm install --save express
-    $ npm install --save orion-api
+    $ npm install --save orion-server
     ```
 3. Create a configuration module. This should contain all the settings for your application, and what entities/tables you want to have in the database. For instance, if you only want to have one table for storing blog posts, you can have the following configuration:
     ```js
@@ -64,24 +63,21 @@ In this documentation:
     Please see the [configuration](#configuration) section for more configuration options.
 4. Set up database tables based on the configuration you created using our setup script. The script is located at the root of the Orion module folder. It takes the configuration file path and the output file path as arguments.
     ```bash
-    $ node node_modules/orion-api/setup.js ./config.js ./setup.sql
+    $ node node_modules/orion-server/setup.js ./config.js ./setup.sql
     ```
     The above command will create an SQL query file named setup.sql that you can run on the database server to set up the tables.
-5. Set up **server.js** for the application entry point. Import Express, Orion, and the configuration module you created, and set up the application as follows:
+5. Set up **server.js** for the application entry point. Import Orion and the configuration module, and set up the application as follows:
     ```js
-    var express = require('express');
-    var orion = require('orion-api');
+    var orion = require('orion-server');
     var config = require('./config');
 
-    var app = new express();
-    orion.setConfig(config);
-    orion.setupApiEndpoints(app);
+    var app = orion.create(config);
     
     // You can add more endpoints to the app object or do other things here
     
-    orion.startApiApp(app);
+    app.start();
     ```
-6. You're all set! You can now run server.js to see your app in action. Unless you specify a port in the startApiApp() call, you will see your app running at port 1337.
+6. You're all set! You can now run server.js to see your app in action. Unless you specify a port in the start() call, you will see your app running at port 1337.
     ```bash
     $ node server.js
     ```
@@ -425,6 +421,8 @@ TODO
 ## User Roles
 
 ## Condition Syntax
+
+## API Reference
 
 ## License
 

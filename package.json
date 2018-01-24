@@ -1,7 +1,7 @@
 {
-  "name": "orion-api",
-  "version": "1.0.36",
-  "description": "REST API engine",
+  "name": "orion-server",
+  "version": "1.0.0",
+  "description": "REST API server application",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -13,7 +13,8 @@
   "keywords": [
     "orion",
     "rest",
-    "api"
+    "api",
+    "server"
   ],
   "author": "Christopher Tjong",
   "license": "MIT",
