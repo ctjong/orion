@@ -242,9 +242,6 @@ Here are some sample configurations that utilize the provided features (authenti
     - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
     - **items** - An array of items found. Each item will be a JSON object, with 1 level of foreign key resolved.
 
-    Example:
-    TODO
-
 - **GET /api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition**
 
     Retrieve records that match a certain set of conditions.
@@ -263,9 +260,6 @@ Here are some sample configurations that utilize the provided features (authenti
     - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
     - **items** - An array of items found. Each item will be a JSON object, with 1 level of foreign key resolved.
 
-    Example:
-    TODO
-
 - **GET /api/data/:entity/:accessType/findall/:orderByField/:skip/:take**
 
     Retrieve all records in a certain entity.
@@ -283,9 +277,6 @@ Here are some sample configurations that utilize the provided features (authenti
     - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
     - **items** - An array of items found. Each item will be a JSON object, with 1 level of foreign key resolved.
 
-    Example:
-    TODO
-
 - **POST /api/data/asset**
 
     Upload a file into the file storage (specified in the config) and add a database entry for it.
@@ -295,11 +286,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Request body:
     - **file** - File to upload
 
-    Success response:
-    The inserted asset ID
-
-    Example:
-    TODO
+    Success response: The inserted asset ID
 
 - **POST /api/data/:entity**
 
@@ -313,11 +300,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Request body:
     JSON object representation of the new record
 
-    Success response:
-    The inserted ID, with 200 status code
-
-    Example:
-    TODO
+    Success response: The inserted ID
 
 - **PUT /api/data/:entity/:id**
 
@@ -332,11 +315,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Request body:
     JSON object representation of the new record
 
-    Success response:
-    200 status code
-
-    Example:
-    TODO
+    Success response: 200 status code
 
 - **DELETE /api/data/asset/:id**
 
@@ -347,11 +326,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Parameters:
     - **id** - Id of the asset to delete
 
-    Success response:
-    200 status code
-
-    Example:
-    TODO
+    Success response: 200 status code
 
 - **DELETE /api/data/:entity/:id**
 
@@ -363,11 +338,7 @@ Here are some sample configurations that utilize the provided features (authenti
     - **entity** - Name of the entity where the record is in
     - **id** - Id of the record to delete
 
-    Success response:
-    200 status code
-
-    Example:
-    TODO
+    Success response: 200 status code
 
 - **POST /api/auth/token**
 
@@ -383,9 +354,6 @@ Here are some sample configurations that utilize the provided features (authenti
     - **firstname** - User's first name
     - **lastname** - User's last name
 
-    Example:
-    TODO
-
 - **POST /api/auth/token/fb**
 
     Get an access token using a temporary Facebook token. See [Authentication](#authentication) section for more details on how to get the access token using Facebook token.
@@ -399,9 +367,6 @@ Here are some sample configurations that utilize the provided features (authenti
     - **firstname** - User's first name
     - **lastname** - User's last name
 
-    Example:
-    TODO
-
 - **POST /api/error**
 
     Log an error message. The logs will be stored in a table called "errortable" in the database. There is currently no built-in endpoint for retrieving these logs, so it would have to be manually retrieved from the database.
@@ -409,11 +374,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Request body:
     - **msg** - Error message
 
-    Success response:
-    200 status code
-
-    Example:
-    TODO
+    Success response: 200 status code
 
 
 ## Authentication
