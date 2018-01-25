@@ -234,7 +234,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Parameters:
     - **entity** - Name of the entity where the record is in.
     - **accessType** - The mode of access:
-        - **private** - The requester is the owner of the record. An Authentication header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+        - **private** - The requester is the owner of the record. An Authorization header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
         - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
     - **id** - Id of the requested record.
 
@@ -249,7 +249,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Parameters:
     - **entity** - Name of the entity where the record is in.
     - **accessType** - The mode of access:
-        - **private** - The requester is the owner of the record. An Authentication header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+        - **private** - The requester is the owner of the record. An Authorization header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
         - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
     - **orderByField** - The field to order the results by
     - **skip** - Number of records to skip. Used for pagination.
@@ -267,7 +267,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Parameters:
     - **entity** - Name of the entity where the record is in.
     - **accessType** - The mode of access:
-        - **private** - The requester is the owner of the record. An Authentication header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
+        - **private** - The requester is the owner of the record. An Authorization header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
         - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
     - **orderByField** - The field to order the results by
     - **skip** - Number of records to skip. Used for pagination.
@@ -281,7 +281,7 @@ Here are some sample configurations that utilize the provided features (authenti
 
     Upload a file into the file storage (specified in the config) and add a database entry for it.
 
-    If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
 
     Request body:
     - **file** - File to upload
@@ -292,7 +292,7 @@ Here are some sample configurations that utilize the provided features (authenti
 
     Add a new record to an entity.
 
-    If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
 
     Parameters:
     - **entity** - Name of the entity to put the record in.
@@ -306,7 +306,7 @@ Here are some sample configurations that utilize the provided features (authenti
 
     Update a record in an entity.
 
-    If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
 
     Parameters:
     - **entity** - Name of the entity where the record is in
@@ -321,7 +321,7 @@ Here are some sample configurations that utilize the provided features (authenti
 
     Delete an uploaded file from the file storage and from database.
 
-    If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
 
     Parameters:
     - **id** - Id of the asset to delete
@@ -332,7 +332,7 @@ Here are some sample configurations that utilize the provided features (authenti
 
     Delete a record from an entity.
 
-    If the endpoint is set to be open to authenticated users only, an Authentication header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
 
     Parameters:
     - **entity** - Name of the entity where the record is in
