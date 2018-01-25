@@ -47,10 +47,6 @@ module.exports =
                     {
                         _this.db.insert(ctx, ctx.entity, fieldNames, fieldValues, function(insertedId)
                         {
-                            if(ctx.config.emailVerificationRequired)
-                            {
-                                //TODO email verification
-                            }
                             ctx.res.send(insertedId.toString());
                         });
                     });
