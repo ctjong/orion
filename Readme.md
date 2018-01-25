@@ -16,7 +16,7 @@ In this documentation:
     - [Entity Configuration](#entity-configuration)
     - [Field Configuration](#field-configuration)
     - [Default Fields and Entities](#default-fields-and-entities)
-    - [Sample Complete Configuration](#sample-complete-configuration)
+    - [Sample Full Configuration](#sample-full-configuration)
 - [API Endpoints](#api-endpoints)
 - [Authentication](#authentication)
 - [User Roles](#user-roles)
@@ -220,7 +220,7 @@ Here are the default entities:
  The existing fields in the default entities above cannot be overriden, but the list itself can be extended. For instance, in the config you can specify additional fields "firstname" and "lastname" for the user entity. The allowedRoles can be overriden, so in the config you can specify your own permission rules for any of the default entities. You can also specify a getReadCondition and an isWriteAllowed functions for a default entity. 
 
 
-#### Sample Complete Configuration
+#### Sample Full Configuration
 
 Here is a sample configuration that utilize the provided features (authentication, storage, granular permission checks). You can find it [here](https://github.com/ctjong/orion/blob/master/config-sample.js).
 
@@ -378,6 +378,14 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
 
 ## Authentication
+
+The library is using OAuth mechanism to authorize users for accessing certain API resources. This mechanism allows API requests to be executed on behalf of a user using an access token. This token is issued by a certain token provider when the user is logged in / authenticated. The Orion application acts as the token provider in this scenario, and users can request for a token in two ways, by submitting login credentials, or by submitting a Facebook token.
+
+#### By submitting login credentials
+
+#### By submitting a Facebook token
+
+#### Using the retrieved token 
 
 ## User Roles
 
