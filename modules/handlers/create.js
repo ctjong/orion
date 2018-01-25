@@ -104,10 +104,6 @@ module.exports =
          */
         function validateRequirements(ctx, requestBody, requiredFields)
         {
-            if(ctx.config.captchaEnabled)
-            {
-                //TODO validate captcha
-            }
             for(i=0; i<requiredFields.length; i++)
             {
                 var requiredField = requiredFields[i];

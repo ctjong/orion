@@ -6,7 +6,6 @@ var modules = new (require('./modules/moduleCollection'))();
 var contextFactory = new (require('./modules/contextFactory'))();
 
 modules.add("body-parser", 'body-parser');
-modules.add("captcha", 'svg-captcha');
 modules.add("crypto", 'crypto');
 modules.add("guid", 'guid');
 modules.add("multiparty", 'multiparty');
@@ -296,15 +295,6 @@ function configureUtilityEndpoints(app)
                 res.status(200).send();
             }
         );
-    });
-
-    // captcha
-    app.get('/api/captcha', function (req, res)
-    {
-        var captcha = modules.get("captcha").create();
-        req.session.captchaExpected = captcha.text;
-        res.set('Content-Type', 'image/svg+xml');
-        res.send(captcha.data);
     });
 }
 
