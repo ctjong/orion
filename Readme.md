@@ -227,7 +227,7 @@ Here are some sample configurations that utilize the provided features (authenti
 
 ## API Endpoints
 
-#### GET /api/data/:entity/:accessType/findbyid/:id
+- **GET /api/data/:entity/:accessType/findbyid/:id**
 
     Retrieve a record by its ID.
 
@@ -245,7 +245,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### GET /api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition
+- **GET /api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition**
 
     Retrieve records that match a certain set of conditions.
 
@@ -266,7 +266,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### GET /api/data/:entity/:accessType/findall/:orderByField/:skip/:take
+- **GET /api/data/:entity/:accessType/findall/:orderByField/:skip/:take**
 
     Retrieve all records in a certain entity.
 
@@ -286,7 +286,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### POST /api/data/asset
+- **POST /api/data/asset**
 
     Upload a file into the file storage (specified in the config) and add a database entry for it.
 
@@ -301,7 +301,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### POST /api/data/:entity
+- **POST /api/data/:entity**
 
     Add a new record to an entity.
 
@@ -319,7 +319,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### PUT /api/data/:entity/:id
+- **PUT /api/data/:entity/:id**
 
     Update a record in an entity.
 
@@ -338,7 +338,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### DELETE /api/data/asset/:id
+- **DELETE /api/data/asset/:id**
 
     Delete an uploaded file from the file storage and from database.
 
@@ -353,7 +353,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### DELETE /api/data/:entity/:id
+- **DELETE /api/data/:entity/:id**
 
     Delete a record from an entity.
 
@@ -369,7 +369,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### POST /api/auth/token
+- **POST /api/auth/token**
 
     Get an access token using a set of login credentials. This can be used if all first party authentication settings are specified in the config. See [Authentication](#authentication) section for more details on how to get the access token.
 
@@ -386,7 +386,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### POST /api/auth/token/fb
+- **POST /api/auth/token/fb**
 
     Get an access token using a temporary Facebook token. See [Authentication](#authentication) section for more details on how to get the access token using Facebook token.
 
@@ -402,7 +402,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Example:
     TODO
 
-#### POST /api/error
+- **POST /api/error**
 
     Log an error message. The logs will be stored in a table called "errortable" in the database. There is currently no built-in endpoint for retrieving these logs, so it would have to be manually retrieved from the database.
 
