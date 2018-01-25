@@ -234,7 +234,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Parameters:
     - **entity** - Name of the entity where the record is in.
     - **accessType** - The mode of access:
-        - **private** - The requester is the owner of the record. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+        - **private** - The requester is the owner of the record. An Authentication header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
         - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
     - **id** - Id of the requested record.
 
@@ -249,7 +249,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Parameters:
     - **entity** - Name of the entity where the record is in.
     - **accessType** - The mode of access:
-        - **private** - The requester is the owner of the record. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+        - **private** - The requester is the owner of the record. An Authentication header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
         - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
     - **orderByField** - The field to order the results by
     - **skip** - Number of records to skip. Used for pagination.
@@ -267,7 +267,7 @@ Here are some sample configurations that utilize the provided features (authenti
     Parameters:
     - **entity** - Name of the entity where the record is in.
     - **accessType** - The mode of access:
-        - **private** - The requester is the owner of the record. An "accessToken" header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
+        - **private** - The requester is the owner of the record. An Authentication header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
         - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
     - **orderByField** - The field to order the results by
     - **skip** - Number of records to skip. Used for pagination.
