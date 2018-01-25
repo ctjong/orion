@@ -222,7 +222,7 @@ Here are the default entities:
 
 #### Sample Complete Configuration
 
-Here is a sample configuration that utilize the provided features (authentication, storage, granular permission checks). You can find it [here](https://github.com/ctjong/orion/blob/master/config.sample.js).
+Here is a sample configuration that utilize the provided features (authentication, storage, granular permission checks). You can find it [here](https://github.com/ctjong/orion/blob/master/config-sample.js).
 
 
 ## API Endpoints
