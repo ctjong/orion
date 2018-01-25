@@ -7,6 +7,7 @@ module.exports =
     },
     auth: 
     {
+        tokenLifetimeInMins: 5,
         secretKey: process.env.SAMPLE_SECRET_KEY,
         salt: process.env.SAMPLE_SALT,
         passwordReqs:

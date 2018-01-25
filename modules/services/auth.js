@@ -31,10 +31,15 @@ module.exports =
                 {
                     var token = authHeader.replace("Bearer ", "");
                     var decoded = _this.jwt.verify(token, ctx.config.auth.secretKey);
-                    ctx.userId = parseInt(decoded.id);
-                    ctx.userName = decoded.name;
-                    ctx.userRoles = decoded.roles.split(",");
-                    ctx.userDomain = decoded.domain;
+                    var expiry = parseInt(decoded.expiry);
+                    var now = new Date().getTime();
+                    if(expiry >= now)
+                    {
+                        ctx.userId = parseInt(decoded.id);
+                        ctx.userName = decoded.name;
+                        ctx.userRoles = decoded.roles.split(",");
+                        ctx.userDomain = decoded.domain;
+                    }
                 }
                 catch(e)
                 {
@@ -171,7 +176,8 @@ module.exports =
          */
         function createAndSendToken(ctx, id, domain, domainId, roles, firstName, lastName)
         {
-            var tokenPayload = { id: id, domain: domain, domainId: domainId, roles: roles };
+            var expiry = new Date().getTime() + ctx.config.auth.tokenLifetimeInMins * 60000;
+            var tokenPayload = { id: id, domain: domain, domainId: domainId, roles: roles, expiry: expiry };
             var token = _this.jwt.sign(tokenPayload, ctx.config.auth.secretKey);
             ctx.res.json({"token": token, "id": id, "firstname": firstName, "lastname": lastName});
         }

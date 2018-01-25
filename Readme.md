@@ -100,6 +100,7 @@ Below is the list of settings to be included in a configuration module:
     - **engine** - (Required) Database engine to use (mssql/mysql).
     - **connectionString** - (Required) Connection string to connect with database
 - **auth** - (Optional) Authentication configuration. Required if you want to enable authentication.
+    - **tokenLifetimeInMins** - (Required) Token lifetime in minutes.
     - **secretKey** - (Required) Secret key for token encryption.
     - **salt** - (Optional) Salt string for password encryption. Required if you want to support first party authentication.
     - **passwordReqs** - (Optional) New password requirements. Required if you want to support first party authentication.
