@@ -15,7 +15,8 @@ In this documentation:
 - [Configuration](#configuration)
     - [Entity Configuration](#entity-configuration)
     - [Field Configuration](#field-configuration)
-    - [Default Fields and Entities](#default-fields-and-entities)
+    - [Default Fields](#default-fields)
+    - [Default Entities](#default-entities)
     - [Sample Full Configuration](#sample-full-configuration)
 - [API Endpoints](#api-endpoints)
 - [Authentication](#authentication)
@@ -160,11 +161,9 @@ Here are the properties that must/may be included in a field configuration objec
         }
         ```
 
-#### Default Fields and Entities
+#### Default Fields
 
-There are some fields and entities that we add to the config at runtime, both when an SQL query is being constructed using setup.js and when an actual API app is being initialized.
-
-Here are the default fields:
+These are some fields that we add to the config at runtime, both when an SQL query is being constructed using setup.js and when an actual API app is being initialized.
 
 | name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
 | - | - | - | - | - | - | - 
@@ -172,9 +171,13 @@ Here are the default fields:
 | ownerid | id of the record owner | int | false | 0 | user | owner
 | createdtime | timestamp of the record creation | timestamp | false | 0 | null | null
 
-The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". We add the default fields above to every entity specified in the config, except those that are part of the default entities (see below). Default fields cannot be overridden, so if a field with the same name as one of the default fields exists in the config, that field will be ignored.
+The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". We add the default fields above to every entity specified in the config, except those that are part of the [default entities](#default-entities). Default fields cannot be overridden, so if a field with the same name as one of the default fields exists in the config, that field will be ignored.
 
-Here are the default entities:
+
+#### Default Entities
+
+There are also some entities that we add to the config at runtime, both when an SQL query is being constructed using setup.js and when an actual API app is being initialized.
+
 - **user** - User entity for storing user information. This entity will be used if authentication is enabled.
     - **fields**
     
@@ -232,10 +235,13 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
     Retrieve a record by its ID.
 
+    Headers:
+    - **Authorization** - Required only if the access type is private. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+
     Parameters:
     - **entity** - Name of the entity where the record is in.
     - **accessType** - The mode of access:
-        - **private** - The requester is the owner of the record. An Authorization header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+        - **private** - The requester is the owner of the record. An Authorization header is required.
         - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
     - **id** - Id of the requested record.
 
@@ -247,12 +253,15 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
     Retrieve records that match a certain set of conditions.
 
-    Parameters:
+    Request headers:
+    - **Authorization** - Required only if the access type is private. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+
+    Request parameters:
     - **entity** - Name of the entity where the record is in.
     - **accessType** - The mode of access:
-        - **private** - The requester is the owner of the record. An Authorization header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token.
+        - **private** - The requester is the owner of the record. An Authorization header is required.
         - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
-    - **orderByField** - The field to order the results by
+    - **orderByField** - The field to order the results by. You can add "~" in front of the field name to sort in descending order.
     - **skip** - Number of records to skip. Used for pagination.
     - **take** - Number of records to take. Used for pagination.
     - **condition** - Condition string to find the target records. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
@@ -265,12 +274,15 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
     Retrieve all records in a certain entity.
 
-    Parameters:
+    Request headers:
+    - **Authorization** - Required only if the access type is private. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+
+    Request parameters:
     - **entity** - Name of the entity where the record is in.
     - **accessType** - The mode of access:
-        - **private** - The requester is the owner of the record. An Authorization header containing the bearer token is required to prove the owner's identity. See [Authentication](#authentication) section for more details on how to get the access token. 
+        - **private** - The requester is the owner of the record. An Authorization header is required.
         - **public** - The requester is not the owner of the record, or not trying to access it as its owner.
-    - **orderByField** - The field to order the results by
+    - **orderByField** - The field to order the results by. You can add "~" in front of the field name to sort in descending order.
     - **skip** - Number of records to skip. Used for pagination.
     - **take** - Number of records to take. Used for pagination.
 
@@ -282,7 +294,8 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
     Upload a file into the file storage (specified in the config) and add a database entry for it.
 
-    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    Request headers:
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
 
     Request body:
     - **file** - File to upload
@@ -293,9 +306,10 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
     Add a new record to an entity.
 
-    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    Request headers:
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
 
-    Parameters:
+    Request parameters:
     - **entity** - Name of the entity to put the record in.
 
     Request body:
@@ -307,9 +321,10 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
     Update a record in an entity.
 
-    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    Request headers:
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
 
-    Parameters:
+    Request parameters:
     - **entity** - Name of the entity where the record is in
     - **id** - Id of the record to update
 
@@ -322,9 +337,10 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
     Delete an uploaded file from the file storage and from database.
 
-    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    Request headers:
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
 
-    Parameters:
+    Request parameters:
     - **id** - Id of the asset to delete
 
     Success response: 200 status code
@@ -333,9 +349,10 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
     Delete a record from an entity.
 
-    If the endpoint is set to be open to authenticated users only, an Authorization header containing an access token is required. See [Authentication](#authentication) section for more details on how to get the access token.
+    Request headers:
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
 
-    Parameters:
+    Request parameters:
     - **entity** - Name of the entity where the record is in
     - **id** - Id of the record to delete
 
@@ -343,7 +360,7 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
 - **POST /api/auth/token**
 
-    Get an access token using a set of login credentials. This can be used if all first party authentication settings are specified in the config. See [Authentication](#authentication) section for more details on how to get the access token.
+    Get an access token using a set of login credentials. This can be used if all first party authentication settings are specified in the config. See [Authentication](#authentication) section for more details.
 
     Request body:
     - **username** - Submitted user name 
@@ -357,7 +374,7 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
 - **POST /api/auth/token/fb**
 
-    Get an access token using a temporary Facebook token. See [Authentication](#authentication) section for more details on how to get the access token using Facebook token.
+    Get an access token using a temporary Facebook token. See [Authentication](#authentication) section for more details.
 
     Request body:
     - **fbtoken** - Facebook token
@@ -370,7 +387,7 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
 - **POST /api/error**
 
-    Log an error message. The logs will be stored in a table called "errortable" in the database. There is currently no built-in endpoint for retrieving these logs, so it would have to be manually retrieved from the database.
+    Log an error message. The logs will be stored in a table called "errortable" in the database. There is currently no built-in endpoint for retrieving these logs, so it would have to be manually retrieved by database admin.
 
     Request body:
     - **msg** - Error message
@@ -380,19 +397,76 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
 ## Authentication
 
-The library is using OAuth mechanism to authorize users for accessing certain API resources. This mechanism allows API requests to be executed on behalf of a user using an access token. This token is issued by a certain token provider when the user is logged in / authenticated. The Orion application acts as the token provider in this scenario, and users can request for a token in two ways, by submitting login credentials, or by submitting a Facebook token.
+The library is using OAuth mechanism to authorize users for accessing certain API resources. This mechanism allows API requests to be executed on behalf of a user using an access token. This token is issued by a certain token provider when the user is logged in / authenticated. The Orion application acts as the token provider in this scenario, and users can request for a token in two ways, by submitting login credentials using the **"POST /api/auth/token"** endpoint, or by submitting a Facebook token using the **"POST /api/auth/token/fb"** endpoint.
 
-#### By submitting login credentials
+After you retrieve the Orion token, you will need to attach it to the header of each API request you make, so typically you would want to store the token in the browser's localStorage/sessionStorage, or in the local app data for mobile apps. The token's expiration is controlled in the config. When an expired token is used in a request, it will be treated as if no token is provided, so in most cases a 401 response will be returned and the user will have to log in again.
 
-#### By submitting a Facebook token
+For Facebook authentication, you need to request for a Facebook token first before exchanging it with Orion token. The way to retrieve the Facebook token depends on the platform of your client app. See [Facebook documentation](https://developers.facebook.com/docs/facebook-login/access-tokens/#usertokens) for more details.
 
-#### Using the retrieved token 
 
 ## User Roles
 
+Here is a list of user roles supported by the library. These roles (except admin) are automatically assigned to the requester of each incoming request. A user can have multiple roles (i.e. can be both "member" and "owner").
+Role | Description
+- | -
+guest | Unauthenticated user. Assigned when with no token provided.
+member | Authenticated user. Assigned when a valid token is provided.
+owner | Owner of the target record. Assigned if the request is a GET in private mode OR if the request is a POST/PUT/DELETE and the target record is owned by the user.
+admin | Site administrator. There is no endpoint to assign this to users programmatically, so this needs to be set manually by database admin.
+
+
 ## Condition Syntax
 
+The condition can be written in this format "{fieldName}{comparison-operator}{fieldValue}". Multiple conditions can also be joined to create a compound condition string "{condition1}{logical-operator}{condition2}".
+
+Operators:
+- **Comparison operators**: "~", "<>", "<=", ">=", "<", ">", "=".
+    The "~" operator can be used for string/text fields, to match strings with a certain substring in it. The other operators can be used for int/float/timestamp fields.
+- **Logical operators**: "&" (and), "|" (or)
+
+**Note:** if you want to include the condition string in a URL, it will have to be URL-encoded. This can be done using the "encodeURIComponent()" method in Javascript, or similar method in other languages.
+
 ## API Reference
+
+**Orion object**
+
+The object retrieved when requiring the "orion-api" module.
+
+- **Methods**
+    - **create(config, initFn)** - Create an Orion application.
+        - **param:config** - (Required) Configuration module.
+        - **param:initFn** - (Optional) An initializer function. It passes in an OrionApp object as parameter which you can perform action on.
+        - **return** - An OrionApp object.
+    - **findById(originalReq, entity, id, callback)** - Execute a "find by ID" action. This does the same thing as the GET endpoint but this one can be executed directly from server code.
+        - **param:originalReq** - (Required) Express Request object.
+        - **param:entity** - (Required) Target entity.
+        - **param:id** - (Required) Target record id.
+        - **param:callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
+    - **findByCondition(originalReq, entity, orderByField, skip, take, condition, callback)** - Execute a "find by condition" action. This does the same thing as the GET endpoint but this one can be executed directly from server code.
+        - **param:originalReq** - (Required) Express Request object.
+        - **param:entity** - (Required) Target entity.
+        - **param:orderByField** - (Required) The field to order the results by. You can add "~" in front of the field name to sort in descending order.
+        - **skip** - (Required) Number of records to skip. Used for pagination.
+        - **take** - (Required) Number of records to take. Used for pagination.
+        - **condition** - (Required) Condition string to find the target records. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
+        - **param:callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
+    - **findAll(originalReq, entity, orderByField, skip, take, callback)** - Execute a "find by condition" action. This does the same thing as the GET endpoint but this one can be executed directly from server code.
+        - **param:originalReq** - (Required) Express Request object.
+        - **param:entity** - (Required) Target entity.
+        - **param:orderByField** - (Required) The field to order the results by. You can add "~" in front of the field name to sort in descending order.
+        - **skip** - (Required) Number of records to skip. Used for pagination.
+        - **take** - (Required) Number of records to take. Used for pagination.
+        - **param:callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
+
+**OrionApp object**
+
+The object retrieved when executing the create() method on an Orion object. This object is an extension of an [Express application object](http://expressjs.com/en/api.html#app). The following properties and methods are included in the object in addition to Express app's default properties and methods.
+
+- **Properties**
+    - **express** - [Express module](http://expressjs.com/en/api.html#express).
+- **Methods**
+    - **start(port)** - Start the application at the given port (if provided).
+        - **param:port** - (Optional) Port where the application should listen for incoming requests at. If not provided, the application will use the port listed in the system's environment variable "port". If that is also not provided, the default port 1337 will be used.
 
 ## License
 
