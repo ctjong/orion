@@ -450,7 +450,7 @@ The object retrieved when requiring the "orion-api" module.
         - **take** - (Required) Number of records to take. Used for pagination.
         - **condition** - (Required) Condition string to find the target records. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
         - **param:callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
-    - **findAll(originalReq, entity, orderByField, skip, take, callback)** - Execute a "find by condition" action. This does the same thing as the GET endpoint but this one can be executed directly from server code.
+    - **findAll(originalReq, entity, orderByField, skip, take, callback)** - Execute a "find all" action. This does the same thing as the GET endpoint but this one can be executed directly from server code.
         - **param:originalReq** - (Required) Express Request object.
         - **param:entity** - (Required) Target entity.
         - **param:orderByField** - (Required) The field to order the results by. You can add "~" in front of the field name to sort in descending order.
