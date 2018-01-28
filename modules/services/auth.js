@@ -33,7 +33,7 @@ module.exports =
                     var decoded = _this.jwt.verify(token, ctx.config.auth.secretKey);
                     var expiry = parseInt(decoded.expiry);
                     var now = new Date().getTime();
-                    if(expiry >= now)
+                    if(!isNaN(expiry) && expiry >= now)
                     {
                         ctx.userId = parseInt(decoded.id);
                         ctx.userName = decoded.name;
@@ -176,8 +176,10 @@ module.exports =
          */
         function createAndSendToken(ctx, id, domain, domainId, roles, firstName, lastName)
         {
-            var expiry = new Date().getTime() + ctx.config.auth.tokenLifetimeInMins * 60000;
-            var tokenPayload = { id: id, domain: domain, domainId: domainId, roles: roles, expiry: expiry };
+            var tokenPayload = { id: id, domain: domain, domainId: domainId, roles: roles };
+            var tokenLifetimeInMins = ctx.config.auth.tokenLifetimeInMins;
+            if(!!tokenLifetimeInMins)
+                tokenPayload.expiry = new Date().getTime() + tokenLifetimeInMins * 60000;
             var token = _this.jwt.sign(tokenPayload, ctx.config.auth.secretKey);
             ctx.res.json({"token": token, "id": id, "firstname": firstName, "lastname": lastName});
         }

@@ -101,9 +101,9 @@ Below is the list of settings to be included in a configuration module:
     - **engine** - (Required) Database engine to use (mssql/mysql).
     - **connectionString** - (Required) Connection string to connect with database
 - **auth** - (Optional) Authentication configuration. Required if you want to enable authentication.
-    - **tokenLifetimeInMins** - (Required) Token lifetime in minutes.
     - **secretKey** - (Required) Secret key for token encryption.
     - **salt** - (Optional) Salt string for password encryption. Required if you want to support first party authentication.
+    - **tokenLifetimeInMins** - (Optional) Token lifetime in minutes. If not provided, the token will be set to never expire.
     - **passwordReqs** - (Optional) New password requirements. Required if you want to support first party authentication.
         - **minLength** - (Required) Minimum number of characters in a password (integer).
         - **uppercaseChar** - (Required) Whether or not a password should contain an uppercase character (true/false).
@@ -399,7 +399,7 @@ Here is a sample configuration that utilize the provided features (authenticatio
 
 The library is using OAuth mechanism to authorize users for accessing certain API resources. This mechanism allows API requests to be executed on behalf of a user using an access token. This token is issued by a certain token provider when the user is logged in / authenticated. The Orion application acts as the token provider in this scenario, and users can request for a token in two ways, by submitting login credentials using the **"POST /api/auth/token"** endpoint, or by submitting a Facebook token using the **"POST /api/auth/token/fb"** endpoint.
 
-After you retrieve the Orion token, you will need to attach it to the header of each API request you make, so typically you would want to store the token in the browser's localStorage/sessionStorage, or in the local app data for mobile apps. The token's expiration is controlled in the config. When an expired token is used in a request, it will be treated as if no token is provided, so in most cases a 401 response will be returned and the user will have to log in again.
+After you retrieve the Orion token, you will need to attach it to the header of each API request you make, so typically you would want to store the token in the browser's localStorage/sessionStorage, or in the local app data for mobile apps. The token's lifetime can be controlled in the config (if not specified in the config, the token will be set to never expire). When an expired token is used in a request, it will be treated as if no token is provided, so in most cases a 401 response will be returned and the user will have to log in again.
 
 For Facebook authentication, you need to request for a Facebook token first before exchanging it with Orion token. The way to retrieve the Facebook token depends on the platform of your client app. See [Facebook documentation](https://developers.facebook.com/docs/facebook-login/access-tokens/#usertokens) for more details.
 

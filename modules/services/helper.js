@@ -139,7 +139,7 @@ module.exports =
         function validateRoles(ctx, action)
         {
             if (!ctx.config.entities[ctx.entity].allowedRoles[action].containsAny(ctx.userRoles))
-                throw new _this.error.Error("a058", 401, "Unauthorized");
+                throw new _this.error.Error("c327", 401, "Unauthorized");
         }
 
         //----------------------------------------------
