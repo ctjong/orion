@@ -33,7 +33,7 @@ module.exports =
                     var decoded = _this.jwt.verify(token, ctx.config.auth.secretKey);
                     var expiry = parseInt(decoded.expiry);
                     var now = new Date().getTime();
-                    if(!isNaN(expiry) && expiry >= now)
+                    if(isNaN(expiry) || expiry >= now)
                     {
                         ctx.userId = parseInt(decoded.id);
                         ctx.userName = decoded.name;
