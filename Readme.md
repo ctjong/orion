@@ -22,7 +22,8 @@ In this documentation:
 - [Authentication](#authentication)
 - [User Roles](#user-roles)
 - [Condition Syntax](#condition-syntax)
-- [API Reference](https://github.com/ctjong/orion/tree/master/CONTRIBUTING.md)
+- [API Reference](#api-reference)
+- [Contributing](https://github.com/ctjong/orion/tree/master/CONTRIBUTING.md)
 - [License](https://github.com/ctjong/orion/tree/master/LICENSE)
 
 ## Create Your First Orion Application
