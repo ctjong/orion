@@ -23,6 +23,7 @@ In this documentation:
 - [User Roles](#user-roles)
 - [Condition Syntax](#condition-syntax)
 - [API Reference](#api-reference)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Create Your First Orion Application
@@ -467,6 +468,10 @@ The object retrieved when executing the create() method on an Orion object. This
 - **Methods**
     - **start(port)** - Start the application at the given port (if provided).
         - **param:port** - (Optional) Port where the application should listen for incoming requests at. If not provided, the application will use the port listed in the system's environment variable "port". If that is also not provided, the default port 1337 will be used.
+
+## Contributing
+
+Any change to resources in this repository must be through pull requests. No pull request can be merged without being reviewed by the repository admin. 
 
 ## License
 
