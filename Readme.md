@@ -22,8 +22,8 @@ In this documentation:
 - [Authentication](#authentication)
 - [User Roles](#user-roles)
 - [Condition Syntax](#condition-syntax)
-- [API Reference](#api-reference)
-- [License](#license)
+- [API Reference](https://github.com/ctjong/orion/tree/master/CONTRIBUTING.md)
+- [License](https://github.com/ctjong/orion/tree/master/LICENSE)
 
 ## Create Your First Orion Application
 
@@ -467,7 +467,3 @@ The object retrieved when executing the create() method on an Orion object. This
 - **Methods**
     - **start(port)** - Start the application at the given port (if provided).
         - **param:port** - (Optional) Port where the application should listen for incoming requests at. If not provided, the application will use the port listed in the system's environment variable "port". If that is also not provided, the default port 1337 will be used.
-
-## License
-
-[MIT](https://github.com/ctjong/orion/tree/master/LICENSE)
