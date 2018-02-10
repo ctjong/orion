@@ -471,7 +471,9 @@ The object retrieved when executing the create() method on an Orion object. This
 
 ## Contributing
 
-Any change to resources in this repository must be through pull requests. No pull request can be merged without being reviewed by the repository admin. 
+Any change to resources in this repository must be through pull requests. No pull request can be merged without being reviewed by the repository admin. Please mention which issue you are resolving with the pull request (you can type '#' and select the issue from the list). If the issue hasn't been created yet, please create one first and assign it to yourself.
+
+Please go to [Issues](https://github.com/ctjong/orion/issues) to see the list of all open issues. Thank you!
 
 ## License
 
