@@ -435,29 +435,29 @@ The object retrieved when requiring the "orion-api" module.
 
 - **Methods**
     - **create(config, initFn)** - Create an Orion application.
-        - **param:config** - (Required) Configuration module.
-        - **param:initFn** - (Optional) An initializer function. It passes in an OrionApp object as parameter which you can perform action on.
+        - **config** - (Required) Configuration module.
+        - **initFn** - (Optional) An initializer function. It passes in an OrionApp object as parameter which you can perform action on.
         - **return** - An OrionApp object.
     - **findById(originalReq, entity, id, callback)** - Execute a "find by ID" action. This does the same thing as the GET endpoint but this one can be executed directly from server code.
-        - **param:originalReq** - (Required) Express Request object.
-        - **param:entity** - (Required) Target entity.
-        - **param:id** - (Required) Target record id.
-        - **param:callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
+        - **originalReq** - (Required) Express Request object.
+        - **entity** - (Required) Target entity.
+        - **id** - (Required) Target record id.
+        - **callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
     - **findByCondition(originalReq, entity, orderByField, skip, take, condition, callback)** - Execute a "find by condition" action. This does the same thing as the GET endpoint but this one can be executed directly from server code.
-        - **param:originalReq** - (Required) Express Request object.
-        - **param:entity** - (Required) Target entity.
-        - **param:orderByField** - (Required) The field to order the results by. You can add "~" in front of the field name to sort in descending order.
+        - **originalReq** - (Required) Express Request object.
+        - **entity** - (Required) Target entity.
+        - **orderByField** - (Required) The field to order the results by. You can add "~" in front of the field name to sort in descending order.
         - **skip** - (Required) Number of records to skip. Used for pagination.
         - **take** - (Required) Number of records to take. Used for pagination.
         - **condition** - (Required) Condition string to find the target records. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
-        - **param:callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
+        - **callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
     - **findAll(originalReq, entity, orderByField, skip, take, callback)** - Execute a "find all" action. This does the same thing as the GET endpoint but this one can be executed directly from server code.
-        - **param:originalReq** - (Required) Express Request object.
-        - **param:entity** - (Required) Target entity.
-        - **param:orderByField** - (Required) The field to order the results by. You can add "~" in front of the field name to sort in descending order.
+        - **originalReq** - (Required) Express Request object.
+        - **entity** - (Required) Target entity.
+        - **orderByField** - (Required) The field to order the results by. You can add "~" in front of the field name to sort in descending order.
         - **skip** - (Required) Number of records to skip. Used for pagination.
         - **take** - (Required) Number of records to take. Used for pagination.
-        - **param:callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
+        - **callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
 
 **OrionApp object**
 
@@ -467,4 +467,4 @@ The object retrieved when executing the create() method on an Orion object. This
     - **express** - [Express module](http://expressjs.com/en/api.html#express).
 - **Methods**
     - **start(port)** - Start the application at the given port (if provided).
-        - **param:port** - (Optional) Port where the application should listen for incoming requests at. If not provided, the application will use the port listed in the system's environment variable "port". If that is also not provided, the default port 1337 will be used.
+        - **port** - (Optional) Port where the application should listen for incoming requests at. If not provided, the application will use the port listed in the system's environment variable "port". If that is also not provided, the default port 1337 will be used.
