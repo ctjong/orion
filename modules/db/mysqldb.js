@@ -272,6 +272,7 @@ module.exports =
                 var connPropTokens = connStringParts[i].split('=');
                 connProps[connPropTokens[0]] = connPropTokens[1];
             }
+            //TODO: reuse connection across requests
             var connection = new adapter.createConnection(
             {
                 host: connProps.server,

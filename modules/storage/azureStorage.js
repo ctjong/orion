@@ -30,6 +30,7 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
+            //TODO: reuse connection across requests
             var blobService = adapter.createBlobService(ctx.config.storage.azureStorageConnectionString);
             var isFirstPartReceived = false;
             var form = new (_this.multiparty.Form)();

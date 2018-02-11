@@ -107,6 +107,7 @@ module.exports =
         // PRIVATE
         //----------------------------------------------
 
+        //TODO: do this on server startup
         /**
          * Initialize the S3 adapter module if it is not set up yet
          * @param {*} ctx Request context

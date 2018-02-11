@@ -261,6 +261,7 @@ module.exports =
             console.log(queryString);
             console.log("Query parameters:");
             console.log(queryParams);
+            //TODO: reuse connection across requests
             var connection = new adapter.ConnectionPool(ctx.config.database.connectionString);
             connection.connect(function (err)
             {
