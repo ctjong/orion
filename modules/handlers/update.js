@@ -48,7 +48,7 @@ module.exports = {
                     ctx.res.send(dbResponse);
                 });
             });
-        };
+        }
 
         this.execute = execute;
         _construct();

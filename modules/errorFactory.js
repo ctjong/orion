@@ -26,7 +26,7 @@ module.exports =
             this.tag = tag;
             this.statusCode = statusCode;
             this.msg = msg;
-        };
+        }
 
         /**
          * Parse an error string and construct a new Error object.
@@ -34,10 +34,10 @@ module.exports =
         function parse(errorStr)
         {
             return new _this.Error("", 500, errorStr);
-        };
+        }
 
         this.Error = Error;
         this.parse = parse;
-        _construct()
+        _construct();
     }
 };

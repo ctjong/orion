@@ -43,7 +43,7 @@ module.exports =
             {
                 successCb(responseArr[0]);
             }, completeCb);
-        };
+        }
 
         /**
          * Find records that match the given condition
@@ -93,7 +93,7 @@ module.exports =
             }
             query.append(" LIMIT ? OFFSET ?", take, skip);
             execute(ctx, query, successCb, completeCb);
-        };
+        }
 
         /**
          * Find a record that matches the given id
@@ -112,7 +112,7 @@ module.exports =
                 var record = responseArr[0];
                 successCb(_this.helper.fixDataKeysAndTypes(ctx, record, entity));
             }, completeCb);
-        };
+        }
 
         /**
          * Count the number of records that match the given condition
@@ -133,9 +133,9 @@ module.exports =
             appendWhereClause(query, condition);
             execute(ctx, query, function(dbResponse)
             {
-                successCb(dbResponse[0]["count"]);
+                successCb(dbResponse[0].count);
             }, completeCb);
-        };
+        }
 
         /**
          * Insert a new record
@@ -161,7 +161,7 @@ module.exports =
             {
                 successCb(dbResponse.insertId);
             }, completeCb);
-        };
+        }
 
         /**
          * Update a record
@@ -189,7 +189,7 @@ module.exports =
             query.append(" where ");
             appendWhereClause(query, condition);
             execute(ctx, query, successCb, completeCb);
-        };
+        }
 
         /**
          * Delete a record from the database
@@ -207,7 +207,7 @@ module.exports =
             query.append("delete from `" + tableName + "` where ");
             appendWhereClause(query, condition);
             execute(ctx, query, successCb, completeCb);
-        };
+        }
 
         /**
          * Set a mock adapter module for unit testing
@@ -274,10 +274,10 @@ module.exports =
             }
             var connection = new adapter.createConnection(
             {
-                host: connProps["server"],
-                user: connProps["uid"],
-                password: connProps["pwd"],
-                database: connProps["database"],
+                host: connProps.server,
+                user: connProps.uid,
+                password: connProps.pwd,
+                database: connProps.database,
                 multipleStatements: true
                 });
 
@@ -313,7 +313,7 @@ module.exports =
                 });
             });
             console.log("-------------------------------------------------");
-        };
+        }
 
         /**
          * A class representing an MSSQL query object
@@ -341,7 +341,7 @@ module.exports =
                     }
                 }
                 queryString += str;
-            };
+            }
 
             /**
              * Get the query string
@@ -363,7 +363,7 @@ module.exports =
             this.append = append;
             this.getQueryString = getQueryString;
             this.getQueryParams = getQueryParams;
-        };
+        }
 
         /**
          * Get a join expression for the given Join object
@@ -373,7 +373,7 @@ module.exports =
         function getJoinExpression(joinObj)
         {
             return "INNER JOIN `" + joinObj.e2 + "table` `" + joinObj.e2Alias + "` ON `" + joinObj.e1 + "table`.`" + joinObj.e1JoinField + "` = `" + joinObj.e2Alias + "`.`" + joinObj.e2JoinField + "`";
-        };
+        }
 
         /**
          * Get a select expression for the given Join object
@@ -388,7 +388,7 @@ module.exports =
                 str += (str === "" ? "" : ", ") + "`" + joinObj.e2Alias + "`.`" + joinObj.e2SelectFields[i] + "` AS `" + joinObj.e2Alias + "_" + joinObj.e2SelectFields[i] + "`";
             }
             return str;
-        };
+        }
 
         /**
          * Append where clause to the given query based on the specified condition
@@ -434,7 +434,7 @@ module.exports =
                 }
                 query.append(")");
             }
-        };
+        }
 
         this.quickFind = quickFind;
         this.select = select;

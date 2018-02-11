@@ -34,7 +34,7 @@ modules.addDef("helper", './modules/services/helper');
  * Construct a new Orion application
  * @param {any} config configuration json
  */
-module.exports = function (config)
+function _construct(config)
 {
     var _this = this;
     var express = require("express");
@@ -358,3 +358,6 @@ function executeDirectRead(originalReq, entity, params, isFullMode, callback)
 
     modules.get("read").execute(context, params, isFullMode);
 }
+
+
+module.exports = _construct;

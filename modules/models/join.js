@@ -35,7 +35,7 @@ module.exports =
             this.e1JoinField = e1JoinField;
             this.e2JoinField = e2JoinField;
             this.e2SelectFields = e2SelectFields;
-        };
+        }
 
         /**
          * Create a Join object for resolving a foreign key
@@ -68,7 +68,7 @@ module.exports =
                 e2SelectFields.push(key);
             }
             return new _this.Join(entity, e2, fk.resolvedKeyName, field, "id", e2SelectFields);
-        };
+        }
 
         this.Join = Join;
         this.createForForeignKey = createForForeignKey;

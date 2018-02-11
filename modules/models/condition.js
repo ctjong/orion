@@ -35,7 +35,7 @@ module.exports =
             {
                 return fieldName === conditionKey ? fieldValue : null;
             };
-        };
+        }
 
         /**
          * Construct a Condition that consists of other Conditions
@@ -55,7 +55,7 @@ module.exports =
                 }
                 return null;
             };
-        };
+        }
 
         /**
          * Try to parse the given condition string and return a Condition object
@@ -65,6 +65,7 @@ module.exports =
          */
         function parse(ctx, conditionString)
         {
+            var i;
             var condition = new _this.CompoundCondition("&", []);
             if(conditionString === "") 
             {
@@ -73,7 +74,7 @@ module.exports =
             else if(conditionString.contains("&") || conditionString.contains("|"))
             {
                 var andCondStrs = conditionString.split("&");
-                for(var i=0; i<andCondStrs.length; i++)
+                for(i=0; i<andCondStrs.length; i++)
                 {
                     if(!andCondStrs[i]) continue;
                     var orConds = [];
@@ -92,7 +93,7 @@ module.exports =
                 var operator = null;
                 var fieldValue = null;
                 var operators = ["~", "<>", "<=", ">=", "<", ">", "="];
-                for(var i=0; i<operators.length; i++)
+                for(i=0; i<operators.length; i++)
                 {
                     if(conditionString.contains(operators[i]))
                     {
@@ -125,7 +126,7 @@ module.exports =
                 condition.children.push(new _this.Condition(ctx.entity, fieldName, operator, fieldValue));
             }
             return condition;
-        };
+        }
 
         this.Condition = Condition;
         this.CompoundCondition = CompoundCondition;

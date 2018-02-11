@@ -309,7 +309,7 @@ module.exports =
                 });
             });
             console.log("-------------------------------------------------");
-        };
+        }
 
         /**
          * A class representing an MSSQL query object
@@ -348,7 +348,7 @@ module.exports =
                     str = newStr;
                 }
                 queryString += str;
-            };
+            }
 
             /**
              * Get the query string
@@ -370,7 +370,7 @@ module.exports =
             this.append = append;
             this.getQueryString = getQueryString;
             this.getQueryParams = getQueryParams;
-        };
+        }
 
         /**
          * Get a join expression for the given Join object
@@ -380,7 +380,7 @@ module.exports =
         function getJoinExpression(joinObj)
         {
             return "INNER JOIN [" + joinObj.e2 + "table] [" + joinObj.e2Alias + "] ON [" + joinObj.e1 + "table].[" + joinObj.e1JoinField + "] = [" + joinObj.e2Alias + "].[" + joinObj.e2JoinField + "]";
-        };
+        }
 
         /**
          * Get a select expression for the given Join object
@@ -395,7 +395,7 @@ module.exports =
                 str += (str === "" ? "" : ", ") + "[" + joinObj.e2Alias + "].[" + joinObj.e2SelectFields[i] + "] AS [" + joinObj.e2Alias + "_" + joinObj.e2SelectFields[i] + "]";
             }
             return str;
-        };
+        }
 
         /**
          * Append where clause to the given query based on the specified condition
@@ -441,7 +441,7 @@ module.exports =
                 }
                 query.append(")");
             }
-        };
+        }
 
         this.quickFind = quickFind;
         this.select = select;

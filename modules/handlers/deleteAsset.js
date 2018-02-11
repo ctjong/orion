@@ -51,7 +51,7 @@ module.exports =
                     });
                 });
             });
-        };
+        }
 
         this.execute = execute;
         _construct();

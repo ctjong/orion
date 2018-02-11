@@ -75,14 +75,14 @@ module.exports =
                     // verify login
                     if(!user) 
                         throw new _this.error.Error("13c2", 400, "user not found with userName " + userName);
-                    if(user["domain"] !== "local") throw new _this.error.Error("24a7", 400, "external user login is not supported in this endpoint");
+                    if(user.domain !== "local") throw new _this.error.Error("24a7", 400, "external user login is not supported in this endpoint");
                     var hashedInput = _this.hashPassword(ctx, password);
-                    if(hashedInput !== user["password"]) throw new _this.error.Error("003a", 400, "invalid login");
+                    if(hashedInput !== user.password) throw new _this.error.Error("003a", 400, "invalid login");
                     // generate token
-                    createAndSendToken(ctx, user["id"], "local", "", user["roles"], user["firstname"], user["lastname"]);
+                    createAndSendToken(ctx, user.id, "local", "", user.roles, user.firstname, user.lastname);
                 }
             );
-        };
+        }
 
         /**
          * Try to generate a first party access token for the user with the given Facebook token.
@@ -111,7 +111,7 @@ module.exports =
                         var parsed = JSON.parse(body);
                         if(!parsed.hasOwnProperty("id"))
                             throw new _this.error.Error("3f9c", 400, "bad request");
-                        _this.db.quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed["id"]}, function(readResponse)
+                        _this.db.quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id}, function(readResponse)
                         {
                             if(!readResponse) 
                             {
@@ -119,24 +119,24 @@ module.exports =
                                     ctx,
                                     "user", 
                                     ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 
-                                    ["fb", parsed["id"], "member", parsed["email"], parsed["first_name"], parsed["last_name"], new Date().getTime()], 
+                                    ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name, new Date().getTime()], 
                                     function(createResponse)
                                     {
                                         var id = createResponse[0].identity.toString();
-                                        createAndSendToken(ctx, id, "fb", parsed["id"], "member", parsed["first_name"], parsed["last_name"]);
+                                        createAndSendToken(ctx, id, "fb", parsed.id, "member", parsed.first_name, parsed.last_name);
                                     }
                                 );
                             }
                             else
                             {
-                                createAndSendToken(ctx, readResponse["id"], "fb", parsed["id"], readResponse["roles"], parsed["first_name"], parsed["last_name"]);
+                                createAndSendToken(ctx, readResponse.id, "fb", parsed.id, readResponse.roles, parsed.first_name, parsed.last_name);
                             }
                         });
                     });
                 }
             );
             req.end();
-        };
+        }
 
         /**
          * Encrypt the given plan text password

@@ -208,12 +208,13 @@ module.exports = function ()
      */
     function mergePropNames(obj1, obj2, mergedObj)
     {
+        var propName;
         if (!!obj1)
-            for (var propName in obj1)
+            for (propName in obj1)
                 if (obj1.hasOwnProperty(propName))
                     mergedObj[propName] = null;
         if (!!obj2)
-            for (var propName in obj2)
+            for (propName in obj2)
                 if (obj2.hasOwnProperty(propName))
                     mergedObj[propName] = null;
     }

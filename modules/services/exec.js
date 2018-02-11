@@ -66,7 +66,7 @@ module.exports =
             {
                 res.status(500).send(err.msg);
             }
-        };
+        }
 
         /**
          * Execute the given function and catch any exception that comes out of it
@@ -83,7 +83,7 @@ module.exports =
             {
                 _this.handleError(err, ctx.req, ctx.res);
             }
-        };
+        }
 
         this.handleError = handleError;
         this.safeExecute = safeExecute;

@@ -68,7 +68,7 @@ module.exports =
                 });
             });
             form.parse(req);
-        };
+        }
 
         /**
          * Delete a file from the storage

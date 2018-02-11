@@ -42,7 +42,7 @@ module.exports =
                 }
             }
             return allowedFields;
-        };
+        }
 
         /**
          * Fix the key name and type of each item in the given data object
@@ -83,7 +83,7 @@ module.exports =
                 fixDataTypes(ctx, entity, newData[newKey]);
             }
             return newData;
-        };
+        }
 
         /**
          * To be invoked at the beginning of a write request (create/update/delete).
@@ -128,7 +128,7 @@ module.exports =
                     callback(record, requestBody);
                 });
             }
-        };
+        }
 
         /**
          * Check if the given action is permitted, given the current user roles context.

@@ -63,7 +63,7 @@ module.exports =
                     ctx.res.json({"count": count, "items": dbResponse});
                 });
             });
-        };
+        }
 
         //----------------------------------------------
         // PRIVATE
