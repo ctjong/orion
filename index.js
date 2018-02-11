@@ -27,22 +27,19 @@ modules.addDef("helper", './modules/services/helper');
 
 
 /*===================================================
-    PUBLIC FUNCTIONS
+    CONSTRUCTOR
 ===================================================*/
 
 /**
- * Set project configuration
+ * Construct a new Orion application
  * @param {any} config configuration json
- * @param {any} initFn initializer function
  */
-function create(config, initFn)
+module.exports = function (config)
 {
+    var _this = this;
     var express = require("express");
     var app = new express();
-    app.express = express;
     contextFactory.initializeConfig(config);
-    if(initFn)
-        initFn(app);
 
     // database system
     if (!config.database || !config.database.engine)
@@ -74,22 +71,69 @@ function create(config, initFn)
             require("applicationinsights").setup(config.monitoring.appInsightsKey).start();
     }
 
-    // setup endpoints
-    setupApiEndpoints(app);
+    // public members
+    _this.express = express;
+    _this.app = app;
+    _this.setupApiEndpoints = setupApiEndpoints;
+    _this.start = start;
+    _this.findById = findById;
+    _this.findByCondition = findByCondition;
+    _this.findAll = findAll;
+}
 
-    // app's starter function
-    app.start = function(port)
+/*===================================================
+    PUBLIC FUNCTIONS
+===================================================*/
+
+/**
+ * Set up API endpoints for the current app
+ */
+function setupApiEndpoints()
+{
+    var app = this.app;
+
+    // log request details to console
+    app.use("", function (req, res, next) 
     {
-        var finalPort = port || process.env.PORT || 1337;
-        var server = app.listen(finalPort, function () 
-        {
-            var host = server.address().address;
-            var port = server.address().port;
-            console.log("Listening at http://%s:%s", host, port);
-        });
-    }
+        console.log("===============================================================");
+        console.log(req.method + " " + req.originalUrl);
+        console.log("===============================================================");
+        next();
+    });
 
-    return app;
+    // configure endpoints
+    configureDataEndpoints(app);
+    configureAuthEndpoints(app);
+    configureUtilityEndpoints(app);
+
+    // catch exceptions and errors
+    app.use(function (err, req, res, next) 
+    {
+        try
+        {
+            modules.get("exec").handleError(err, req, res, modules.get("db"));
+        }
+        catch (ex)
+        {
+            console.error(err);
+            res.status(500).send(err);
+        }
+    });
+}
+
+/**
+ * Start the app at the given port
+ * @param {any} port optional port to start the app at
+ */
+function start(port)
+{
+    var finalPort = port || process.env.PORT || 1337;
+    var server = this.app.listen(finalPort, function () 
+    {
+        var host = server.address().address;
+        var port = server.address().port;
+        console.log("Listening at http://%s:%s", host, port);
+    });
 }
 
 /**
@@ -139,45 +183,9 @@ function findAll(originalReq, entity, orderByField, skip, take, callback)
     executeDirectRead(originalReq, entity, params, false, callback);
 }
 
-
 /*===================================================
     PRIVATE FUNCTIONS
 ===================================================*/
-
-/**
- * Set up API endpoints for the given app
- * @param {any} app Express API app
- */
-function setupApiEndpoints(app)
-{
-    // log request details to console
-    app.use("", function (req, res, next) 
-    {
-        console.log("===============================================================");
-        console.log(req.method + " " + req.originalUrl);
-        console.log("===============================================================");
-        next();
-    });
-
-    // configure endpoints
-    configureDataEndpoints(app);
-    configureAuthEndpoints(app);
-    configureUtilityEndpoints(app);
-
-    // catch exceptions and errors
-    app.use(function (err, req, res, next) 
-    {
-        try
-        {
-            modules.get("exec").handleError(err, req, res, modules.get("db"));
-        }
-        catch (ex)
-        {
-            console.error(err);
-            res.status(500).send(err);
-        }
-    });
-}
 
 /**
  * Verify that config is properly set in context factory
@@ -330,13 +338,3 @@ function executeDirectRead(originalReq, entity, params, isFullMode, callback)
 
     modules.get("read").execute(context, params, isFullMode);
 }
-
-
-/*===================================================
-    EXPOSE PUBLIC FUNCTIONS
-===================================================*/
-
-exports.create = create;
-exports.findById = findById;
-exports.findByCondition = findByCondition;
-exports.findAll = findAll;
