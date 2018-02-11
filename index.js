@@ -2,8 +2,8 @@
     GLOBAL VARIABLES AND MODULES INIT
 ===================================================*/
 
-var modules = new (require('./modules/moduleCollection'))();
-var contextFactory = new (require('./modules/contextFactory'))();
+var modules = new (require('./moduleCollection'))();
+var contextFactory = new (require('./contextFactory'))();
 
 modules.add("body-parser", 'body-parser');
 modules.add("crypto", 'crypto');
@@ -12,18 +12,18 @@ modules.add("multiparty", 'multiparty');
 modules.add("mime", 'mime-types');
 modules.add("jwt", 'jsonwebtoken');
 modules.add("https", 'https');
-modules.addDef("error", './modules/errorFactory');
-modules.addDef("condition", './modules/models/condition');
-modules.addDef("join", './modules/models/join');
-modules.addDef("create", './modules/handlers/create');
-modules.addDef("createAsset", './modules/handlers/createAsset');
-modules.addDef("delete", './modules/handlers/delete');
-modules.addDef("deleteAsset", './modules/handlers/deleteAsset');
-modules.addDef("read", './modules/handlers/read');
-modules.addDef("update", './modules/handlers/update');
-modules.addDef("auth", './modules/services/auth');
-modules.addDef("exec", './modules/services/exec');
-modules.addDef("helper", './modules/services/helper');
+modules.addDef("error", './errorFactory');
+modules.addDef("condition", './models/condition');
+modules.addDef("join", './models/join');
+modules.addDef("create", './handlers/create');
+modules.addDef("createAsset", './handlers/createAsset');
+modules.addDef("delete", './handlers/delete');
+modules.addDef("deleteAsset", './handlers/deleteAsset');
+modules.addDef("read", './handlers/read');
+modules.addDef("update", './handlers/update');
+modules.addDef("auth", './services/auth');
+modules.addDef("exec", './services/exec');
+modules.addDef("helper", './services/helper');
 
 
 /*===================================================
@@ -45,9 +45,9 @@ function _construct(config)
     if (!config.database || !config.database.engine)
         throw "Missing/incomplete database configuration";
     if (config.database.engine === "mssql")
-        modules.addDef("db", './modules/db/mssqldb');
+        modules.addDef("db", './adapters/db/mssqldb');
     else if (config.database.engine === "mysql")
-        modules.addDef("db", './modules/db/mysqldb');
+        modules.addDef("db", './adapters/db/mysqldb');
     else
         throw "Unsupported database management system " + config.dbms;
 
@@ -55,11 +55,11 @@ function _construct(config)
     if (!!config.storage)
     {
         if (config.storage.provider  === "azure")
-            modules.addDef("storage", './modules/storage/azureStorage');
+            modules.addDef("storage", './adapters/storage/azureStorage');
         else if (config.storage.provider  === "s3")
-            modules.addDef("storage", './modules/storage/s3Storage');
+            modules.addDef("storage", './adapters/storage/s3Storage');
         else if (config.storage.provider  === "local")
-            modules.addDef("storage", './modules/storage/localHostStorage');
+            modules.addDef("storage", './adapters/storage/localHostStorage');
         else
             throw "Missing or unsupported storage system: " + config.storageSystem;
     }
