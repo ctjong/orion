@@ -75,8 +75,18 @@ module.exports =
             });
         }
 
+        /**
+         * Set a mock fs module for unit testing
+         * @param {any} mockModule Mock module
+         */
+        function setMockAdapter(mockModule)
+        {
+            // do nothing, we are not using any adapter here.
+        }
+
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
+        this.setMockAdapter = setMockAdapter;
         _construct();
     }
 };

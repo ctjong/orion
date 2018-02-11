@@ -79,6 +79,8 @@ module.exports = function (config)
     _this.findById = findById;
     _this.findByCondition = findByCondition;
     _this.findAll = findAll;
+    _this.setMockSqlAdapter = setMockSqlAdapter;
+    _this.setMockStorageAdapter = setMockStorageAdapter;
 }
 
 /*===================================================
@@ -181,6 +183,24 @@ function findAll(originalReq, entity, orderByField, skip, take, callback)
     verifyConfig();
     var params = { accessType: "public", orderByField: orderByField, skip: skip, take: take };
     executeDirectRead(originalReq, entity, params, false, callback);
+}
+
+/**
+ * Set a mock sql adapter module for unit testing
+ * @param {any} mockModule mock module
+ */
+function setMockSqlAdapter(mockModule)
+{
+    modules.get("db").setMockAdapter(mockModule);
+}
+
+/**
+ * Set a mock storage adapter module for unit testing
+ * @param {any} mockModule mock module
+ */
+function setMockStorageAdapter(mockModule)
+{
+    modules.get("storage").setMockAdapter(mockModule);
 }
 
 /*===================================================

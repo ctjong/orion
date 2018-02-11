@@ -7,7 +7,7 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var sql;
+        var adapter;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -15,7 +15,7 @@ module.exports =
 
         function _construct()
         {
-            sql = require("mssql");
+            adapter = require("mssql");
         }
 
         //----------------------------------------------
@@ -43,7 +43,7 @@ module.exports =
             {
                 successCb(responseArr[0]);
             }, completeCb);
-        };
+        }
 
         /**
          * Find records that match the given condition
@@ -93,7 +93,7 @@ module.exports =
             }
             query.append(" OFFSET (?) ROWS FETCH NEXT (?) ROWS ONLY", skip, take);
             execute(ctx, query, successCb, completeCb);
-        };
+        }
 
         /**
          * Find a record that matches the given id
@@ -112,7 +112,7 @@ module.exports =
                 var record = responseArr[0];
                 successCb(_this.helper.fixDataKeysAndTypes(ctx, record, entity));
             }, completeCb);
-        };
+        }
 
         /**
          * Count the number of records that match the given condition
@@ -135,7 +135,7 @@ module.exports =
             {
                 successCb(dbResponse[0][""]);
             }, completeCb);
-        };
+        }
 
         /**
          * Insert a new record
@@ -161,7 +161,7 @@ module.exports =
             {
                 successCb(dbResponse[0].identity);
             }, completeCb);
-        };
+        }
 
         /**
          * Update a record
@@ -189,7 +189,7 @@ module.exports =
             query.append(" where ");
             appendWhereClause(query, condition);
             execute(ctx, query, successCb, completeCb);
-        };
+        }
 
         /**
          * Delete a record from the database
@@ -207,7 +207,16 @@ module.exports =
             query.append("delete from [" + tableName + "] where ");
             appendWhereClause(query, condition);
             execute(ctx, query, successCb, completeCb);
-        };
+        }
+
+        /**
+         * Set a mock adapter module for unit testing
+         * @param {any} mockModule mock module
+         */
+        function setMockAdapter(mockModule)
+        {
+            adapter = mockModule;
+        }
 
         //----------------------------------------------
         // PRIVATE
@@ -252,7 +261,7 @@ module.exports =
             console.log(queryString);
             console.log("Query parameters:");
             console.log(queryParams);
-            var connection = new sql.ConnectionPool(ctx.config.database.connectionString);
+            var connection = new adapter.ConnectionPool(ctx.config.database.connectionString);
             connection.connect(function (err)
             {
                 if (err)
@@ -262,7 +271,7 @@ module.exports =
                     console.log(err);
                     throw new _this.error.Error("f8cb", 500, "error while connecting to database");
                 }
-                var request = new sql.Request(connection);
+                var request = new adapter.Request(connection);
                 for (var key in queryParams)
                 {
                     if (!queryParams.hasOwnProperty(key))
@@ -270,7 +279,7 @@ module.exports =
                     var paramValue = queryParams[key];
                     if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
                     {
-                        request.input(key, sql.BigInt, paramValue);
+                        request.input(key, adapter.BigInt, paramValue);
                     }
                     else
                     {
@@ -441,6 +450,7 @@ module.exports =
         this.insert = insert;
         this.update = update;
         this.deleteRecord = deleteRecord;
+        this.setMockAdapter = setMockAdapter;
         _construct();
     }
 };

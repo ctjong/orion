@@ -7,7 +7,7 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var storage;
+        var adapter;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -15,7 +15,7 @@ module.exports =
 
         function _construct()
         {
-            storage = require("azure-storage");
+            adapter = require("azure-storage");
         }
 
         //----------------------------------------------
@@ -30,7 +30,7 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
-            var blobService = storage.createBlobService(ctx.config.storage.azureStorageConnectionString);
+            var blobService = adapter.createBlobService(ctx.config.storage.azureStorageConnectionString);
             var isFirstPartReceived = false;
             var form = new (_this.multiparty.Form)();
             form.on('part', function(stream) 
@@ -70,17 +70,33 @@ module.exports =
             form.parse(req);
         };
 
+        /**
+         * Delete a file from the storage
+         * @param {*} ctx Request context 
+         * @param {*} filename File name
+         * @param {*} callback Callback function
+         */
         function deleteFile(ctx, filename, callback)
         {
-            var blobService = storage.createBlobService(ctx.config.storage.azureStorageConnectionString);
+            var blobService = adapter.createBlobService(ctx.config.storage.azureStorageConnectionString);
             blobService.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, function (error, response)
             {
                 callback(error);
             });
         }
 
+        /**
+         * Set a mock adapter module for unit testing
+         * @param {any} mockModule Mock module
+         */
+        function setMockAdapter(mockModule)
+        {
+            adapter = mockModule;
+        }
+
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
+        this.setMockAdapter = setMockAdapter;
         _construct();
     }
 };

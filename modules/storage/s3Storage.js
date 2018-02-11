@@ -7,7 +7,7 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var s3 = null;
+        var adapter = null;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -27,7 +27,7 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
-            initS3(ctx);
+            initAdapter(ctx);
             var isFirstPartReceived = false;
             var form = new (_this.multiparty.Form)(
             {
@@ -41,7 +41,7 @@ module.exports =
                     if (!stream.filename)
                         throw new _this.error.Error("8dad", 400, "submitted file is not a valid file");
                     var name = _this.guid.raw() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    s3.upload(
+                    adapter.upload(
                     {
                         Bucket: ctx.config.storage.s3Bucket,
                         Key: name,
@@ -82,8 +82,8 @@ module.exports =
          */
         function deleteFile(ctx, filename, callback)
         {
-            initS3(ctx);
-            s3.deleteObject(
+            initAdapter(ctx);
+            adapter.deleteObject(
             {
                 Key: filename,
                 Bucket: ctx.config.storage.s3Bucket
@@ -94,20 +94,29 @@ module.exports =
             });
         }
 
+        /**
+         * Set a mock adapter module for unit testing
+         * @param {any} mockModule Mock module
+         */
+        function setMockAdapter(mockModule)
+        {
+            adapter = mockModule;
+        }
+
         //----------------------------------------------
         // PRIVATE
         //----------------------------------------------
 
         /**
-         * Initialize the S3 module if it is not set up yet
+         * Initialize the S3 adapter module if it is not set up yet
          * @param {*} ctx Request context
          */
-        function initS3(ctx)
+        function initAdapter(ctx)
         {
-            if(!!s3)
+            if(!!adapter)
                 return;
             var AWS = require("aws-sdk");
-            s3 = new AWS.S3(
+            adapter = new AWS.S3(
             { 
                 accessKeyId: ctx.config.storage.awsAccessKeyId, 
                 secretAccessKey: ctx.config.storage.awsSecretAccessKey
@@ -116,6 +125,7 @@ module.exports =
 
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
+        this.setMockAdapter = setMockAdapter;
         _construct();
     }
 };

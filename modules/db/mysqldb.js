@@ -7,7 +7,7 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var sql;
+        var adapter;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -15,7 +15,7 @@ module.exports =
 
         function _construct()
         {
-            sql = require("mysql");
+            adapter = require("mysql");
         }
 
         //----------------------------------------------
@@ -209,6 +209,15 @@ module.exports =
             execute(ctx, query, successCb, completeCb);
         };
 
+        /**
+         * Set a mock adapter module for unit testing
+         * @param {any} mockModule mock module
+         */
+        function setMockAdapter(mockModule)
+        {
+            adapter = mockModule;
+        }
+
         //----------------------------------------------
         // PRIVATE
         //----------------------------------------------
@@ -263,7 +272,7 @@ module.exports =
                 var connPropTokens = connStringParts[i].split('=');
                 connProps[connPropTokens[0]] = connPropTokens[1];
             }
-            var connection = new sql.createConnection(
+            var connection = new adapter.createConnection(
             {
                 host: connProps["server"],
                 user: connProps["uid"],
@@ -434,6 +443,7 @@ module.exports =
         this.insert = insert;
         this.update = update;
         this.deleteRecord = deleteRecord;
+        this.setMockAdapter = setMockAdapter;
         _construct();
     }
 };
