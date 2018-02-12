@@ -1,5 +1,5 @@
 /**
- * A mock S3 adapter module
+ * A mock S3 provider module
  */
 module.exports = 
 {

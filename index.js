@@ -79,8 +79,8 @@ function _construct(config)
     _this.findById = findById;
     _this.findByCondition = findByCondition;
     _this.findAll = findAll;
-    _this.setMockSqlAdapter = setMockSqlAdapter;
-    _this.setMockStorageAdapter = setMockStorageAdapter;
+    _this.setMockSqlProvider = setMockSqlProvider;
+    _this.setMockStorageProvider = setMockStorageProvider;
 }
 
 /*===================================================
@@ -189,7 +189,7 @@ function findAll(originalReq, entity, orderByField, skip, take, callback)
  * Set a mock sql adapter module for unit testing
  * @param {any} mockModule mock module
  */
-function setMockSqlAdapter(mockModule)
+function setMockSqlProvider(mockModule)
 {
     modules.get("db").setMockAdapter(mockModule);
 }
@@ -198,7 +198,7 @@ function setMockSqlAdapter(mockModule)
  * Set a mock storage adapter module for unit testing
  * @param {any} mockModule mock module
  */
-function setMockStorageAdapter(mockModule)
+function setMockStorageProvider(mockModule)
 {
     modules.get("storage").setMockAdapter(mockModule);
 }

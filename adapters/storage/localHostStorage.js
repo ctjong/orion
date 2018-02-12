@@ -79,14 +79,14 @@ module.exports =
          * Set a mock fs module for unit testing
          * @param {any} mockModule Mock module
          */
-        function setMockAdapter(mockModule)
+        function setMockProvider(mockModule)
         {
-            // do nothing, we are not using any adapter here.
+            // do nothing, we are not using any provider here.
         }
 
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
-        this.setMockAdapter = setMockAdapter;
+        this.setMockProvider = setMockProvider;
         _construct();
     }
 };

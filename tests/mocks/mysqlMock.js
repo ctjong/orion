@@ -1,5 +1,5 @@
 /**
- * A mock mysql adapter module
+ * A mock mysql provider module
  */
 module.exports = 
 {

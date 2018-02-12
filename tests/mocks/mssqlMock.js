@@ -1,5 +1,5 @@
 /**
- * A mock mssql adapter module
+ * A mock mssql provider module
  */
 module.exports = 
 {

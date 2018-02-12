@@ -7,7 +7,7 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var adapter;
+        var provider;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -15,7 +15,7 @@ module.exports =
 
         function _construct()
         {
-            adapter = require("mssql");
+            provider = require("mssql");
         }
 
         //----------------------------------------------
@@ -210,12 +210,12 @@ module.exports =
         }
 
         /**
-         * Set a mock adapter module for unit testing
+         * Set a mock provider module for unit testing
          * @param {any} mockModule mock module
          */
-        function setMockAdapter(mockModule)
+        function setMockProvider(mockModule)
         {
-            adapter = mockModule;
+            provider = mockModule;
         }
 
         //----------------------------------------------
@@ -262,7 +262,7 @@ module.exports =
             console.log("Query parameters:");
             console.log(queryParams);
             //TODO: reuse connection across requests
-            var connection = new adapter.ConnectionPool(ctx.config.database.connectionString);
+            var connection = new provider.ConnectionPool(ctx.config.database.connectionString);
             connection.connect(function (err)
             {
                 if (err)
@@ -272,7 +272,7 @@ module.exports =
                     console.log(err);
                     throw new _this.error.Error("f8cb", 500, "error while connecting to database");
                 }
-                var request = new adapter.Request(connection);
+                var request = new provider.Request(connection);
                 for (var key in queryParams)
                 {
                     if (!queryParams.hasOwnProperty(key))
@@ -280,7 +280,7 @@ module.exports =
                     var paramValue = queryParams[key];
                     if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
                     {
-                        request.input(key, adapter.BigInt, paramValue);
+                        request.input(key, provider.BigInt, paramValue);
                     }
                     else
                     {
@@ -451,7 +451,7 @@ module.exports =
         this.insert = insert;
         this.update = update;
         this.deleteRecord = deleteRecord;
-        this.setMockAdapter = setMockAdapter;
+        this.setMockProvider = setMockProvider;
         _construct();
     }
 };

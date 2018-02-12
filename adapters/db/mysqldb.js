@@ -7,7 +7,7 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var adapter;
+        var provider;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -15,7 +15,7 @@ module.exports =
 
         function _construct()
         {
-            adapter = require("mysql");
+            provider = require("mysql");
         }
 
         //----------------------------------------------
@@ -210,12 +210,12 @@ module.exports =
         }
 
         /**
-         * Set a mock adapter module for unit testing
+         * Set a mock provider module for unit testing
          * @param {any} mockModule mock module
          */
-        function setMockAdapter(mockModule)
+        function setMockProvider(mockModule)
         {
-            adapter = mockModule;
+            provider = mockModule;
         }
 
         //----------------------------------------------
@@ -273,7 +273,7 @@ module.exports =
                 connProps[connPropTokens[0]] = connPropTokens[1];
             }
             //TODO: reuse connection across requests
-            var connection = new adapter.createConnection(
+            var connection = new provider.createConnection(
             {
                 host: connProps.server,
                 user: connProps.uid,
@@ -444,7 +444,7 @@ module.exports =
         this.insert = insert;
         this.update = update;
         this.deleteRecord = deleteRecord;
-        this.setMockAdapter = setMockAdapter;
+        this.setMockProvider = setMockProvider;
         _construct();
     }
 };

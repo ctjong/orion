@@ -1,5 +1,5 @@
 /**
- * A mock azure blob storage adapter module
+ * A mock azure blob storage provider module
  */
 module.exports = 
 {

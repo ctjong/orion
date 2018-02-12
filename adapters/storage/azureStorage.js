@@ -7,7 +7,7 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var adapter;
+        var provider;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -15,7 +15,7 @@ module.exports =
 
         function _construct()
         {
-            adapter = require("azure-storage");
+            provider = require("azure-storage");
         }
 
         //----------------------------------------------
@@ -31,7 +31,7 @@ module.exports =
         function uploadFile(ctx, req, callback)
         {
             //TODO: reuse connection across requests
-            var blobService = adapter.createBlobService(ctx.config.storage.azureStorageConnectionString);
+            var blobService = provider.createBlobService(ctx.config.storage.azureStorageConnectionString);
             var isFirstPartReceived = false;
             var form = new (_this.multiparty.Form)();
             form.on('part', function(stream) 
@@ -79,7 +79,7 @@ module.exports =
          */
         function deleteFile(ctx, filename, callback)
         {
-            var blobService = adapter.createBlobService(ctx.config.storage.azureStorageConnectionString);
+            var blobService = provider.createBlobService(ctx.config.storage.azureStorageConnectionString);
             blobService.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, function (error, response)
             {
                 callback(error);
@@ -87,17 +87,17 @@ module.exports =
         }
 
         /**
-         * Set a mock adapter module for unit testing
+         * Set a mock provider module for unit testing
          * @param {any} mockModule Mock module
          */
-        function setMockAdapter(mockModule)
+        function setMockProvider(mockModule)
         {
-            adapter = mockModule;
+            provider = mockModule;
         }
 
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
-        this.setMockAdapter = setMockAdapter;
+        this.setMockProvider = setMockProvider;
         _construct();
     }
 };
