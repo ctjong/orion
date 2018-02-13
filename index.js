@@ -50,6 +50,7 @@ function _construct(config)
         modules.addDef("db", './adapters/db/mysqldb');
     else
         throw "Unsupported database management system " + config.dbms;
+    modules.get("db").initialize(config);
 
     // storage system
     if (!!config.storage)
@@ -62,6 +63,7 @@ function _construct(config)
             modules.addDef("storage", './adapters/storage/localHostStorage');
         else
             throw "Missing or unsupported storage system: " + config.storageSystem;
+        modules.get("storage").initialize(config);
     }
 
     // monitoring system
@@ -79,8 +81,8 @@ function _construct(config)
     _this.findById = findById;
     _this.findByCondition = findByCondition;
     _this.findAll = findAll;
-    _this.setMockSqlProvider = setMockSqlProvider;
-    _this.setMockStorageProvider = setMockStorageProvider;
+    _this.getDatabaseAdapter = getDatabaseAdapter;
+    _this.getStorageAdapter = getStorageAdapter;
 }
 
 /*===================================================
@@ -186,21 +188,21 @@ function findAll(originalReq, entity, orderByField, skip, take, callback)
 }
 
 /**
- * Set a mock sql adapter module for unit testing
- * @param {any} mockModule mock module
+ * Get the database adapter for this application
+ * @returns database adapter module
  */
-function setMockSqlProvider(mockModule)
+function getDatabaseAdapter()
 {
-    modules.get("db").setMockAdapter(mockModule);
+    return modules.get("db");
 }
 
 /**
- * Set a mock storage adapter module for unit testing
- * @param {any} mockModule mock module
+ * Get the storage adapter for this application
+ * @returns storage adapter module
  */
-function setMockStorageProvider(mockModule)
+function getStorageAdapter()
 {
-    modules.get("storage").setMockAdapter(mockModule);
+    return modules.get("storage");
 }
 
 /*===================================================

@@ -20,6 +20,21 @@ module.exports =
         //----------------------------------------------
 
         /**
+         * Initialize the adapter
+         */
+        function initialize(config)
+        {
+            if(!!provider || !config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
+                return;
+            var AWS = require("aws-sdk");
+            provider = new AWS.S3(
+            { 
+                accessKeyId: config.storage.awsAccessKeyId, 
+                secretAccessKey: config.storage.awsSecretAccessKey
+            });
+        }
+
+        /**
          * Upload a file to Azure Blob Storage
          * @param {any} ctx Request context
          * @param {any} req Request object
@@ -27,7 +42,6 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
-            initProvider(ctx);
             var isFirstPartReceived = false;
             var form = new (_this.multiparty.Form)(
             {
@@ -82,7 +96,6 @@ module.exports =
          */
         function deleteFile(ctx, filename, callback)
         {
-            initProvider(ctx);
             provider.deleteObject(
             {
                 Key: filename,
@@ -95,38 +108,17 @@ module.exports =
         }
 
         /**
-         * Set a mock provider module for unit testing
-         * @param {any} mockModule Mock module
+         * Set the provider module for this adapter
+         * @param {any} providerModule provider module
          */
-        function setMockProvider(mockModule)
+        function setProvider(providerModule)
         {
-            provider = mockModule;
-        }
-
-        //----------------------------------------------
-        // PRIVATE
-        //----------------------------------------------
-
-        //TODO: do this on server startup
-        /**
-         * Initialize the S3 provider module if it is not set up yet
-         * @param {*} ctx Request context
-         */
-        function initProvider(ctx)
-        {
-            if(!!provider)
-                return;
-            var AWS = require("aws-sdk");
-            provider = new AWS.S3(
-            { 
-                accessKeyId: ctx.config.storage.awsAccessKeyId, 
-                secretAccessKey: ctx.config.storage.awsSecretAccessKey
-            });
+            provider = providerModule;
         }
 
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
-        this.setMockProvider = setMockProvider;
+        this.setProvider = setProvider;
         _construct();
     }
 };

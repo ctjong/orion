@@ -7,20 +7,49 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var provider;
+        var pool;
+        var connectionLimit = 10;
 
         //----------------------------------------------
         // CONSTRUCTOR
         //----------------------------------------------
 
-        function _construct()
-        {
-            provider = require("mysql");
-        }
+        function _construct() { }
 
         //----------------------------------------------
         // PUBLIC
         //----------------------------------------------
+
+        /**
+         * Initialize the adapter
+         * @param {any} config Site configuration
+         */
+        function initialize(config)
+        {
+            if(!!pool ||!config.database.connectionString)
+                return;
+            var sql = require("mysql");
+
+            // there is an issue with creating mysql connection based on connection string.
+            // so we have to convert the string into a connection properties object.
+            var connString = config.database.connectionString;
+            var connStringParts = connString.split(";");
+            var connProps = {};
+            for (var i = 0; i < connStringParts.length; i++)
+            {
+                var connPropTokens = connStringParts[i].split('=');
+                connProps[connPropTokens[0]] = connPropTokens[1];
+            }
+            pool = sql.createPool(
+            {
+                host: connProps.server,
+                user: connProps.uid,
+                password: connProps.pwd,
+                database: connProps.database,
+                multipleStatements: true
+            });
+            pool.sql = sql;
+        }
 
         /**
          * Quick find a record based on the given condition
@@ -210,12 +239,12 @@ module.exports =
         }
 
         /**
-         * Set a mock provider module for unit testing
-         * @param {any} mockModule mock module
+         * Set the connection pool to be used by this adapter
+         * @param {any} connectionPool connection pool
          */
-        function setMockProvider(mockModule)
+        function setConnectionPool(connectionPool)
         {
-            provider = mockModule;
+            pool = connectionPool;
         }
 
         //----------------------------------------------
@@ -262,27 +291,7 @@ module.exports =
             console.log("Query parameters:");
             console.log(queryParams);
 
-            // there is an issue with creating mysql connection based on connection string.
-            // so we have to convert the string into a connection properties object.
-            var connString = ctx.config.database.connectionString;
-            var connStringParts = connString.split(";");
-            var connProps = {};
-            for (var i = 0; i < connStringParts.length; i++)
-            {
-                var connPropTokens = connStringParts[i].split('=');
-                connProps[connPropTokens[0]] = connPropTokens[1];
-            }
-            //TODO: reuse connection across requests
-            var connection = new provider.createConnection(
-            {
-                host: connProps.server,
-                user: connProps.uid,
-                password: connProps.pwd,
-                database: connProps.database,
-                multipleStatements: true
-                });
-
-            connection.connect(function (err)
+            pool.getConnection(function (err, connection)
             {
                 if (err)
                 {
@@ -437,6 +446,7 @@ module.exports =
             }
         }
 
+        this.initialize = initialize;
         this.quickFind = quickFind;
         this.select = select;
         this.findRecordById = findRecordById;
@@ -444,7 +454,7 @@ module.exports =
         this.insert = insert;
         this.update = update;
         this.deleteRecord = deleteRecord;
-        this.setMockProvider = setMockProvider;
+        this.setConnectionPool = setConnectionPool;
         _construct();
     }
 };

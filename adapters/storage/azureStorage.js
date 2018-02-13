@@ -13,14 +13,22 @@ module.exports =
         // CONSTRUCTOR
         //----------------------------------------------
 
-        function _construct()
-        {
-            provider = require("azure-storage");
-        }
+        function _construct() { }
 
         //----------------------------------------------
         // PUBLIC
         //----------------------------------------------
+
+        /**
+         * Initialize the adapter
+         */
+        function initialize()
+        {
+            if(!!provider || !config.storage.azureStorageConnectionString)
+                return;
+            var azure = require("azure-storage");
+            provider = azure.createBlobService(config.storage.azureStorageConnectionString);
+        }
 
         /**
          * Upload a file to Azure Blob Storage
@@ -31,7 +39,6 @@ module.exports =
         function uploadFile(ctx, req, callback)
         {
             //TODO: reuse connection across requests
-            var blobService = provider.createBlobService(ctx.config.storage.azureStorageConnectionString);
             var isFirstPartReceived = false;
             var form = new (_this.multiparty.Form)();
             form.on('part', function(stream) 
@@ -43,7 +50,7 @@ module.exports =
                         throw new _this.error.Error("ffce", 400, "submitted file is not a valid file");
                     var size = stream.byteCount - stream.byteOffset;
                     var name = _this.guid.raw() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    blobService.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
+                    provider.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
                     {
                         contentSettings: { contentType: _this.mime.lookup(name) }
                     }, 
@@ -79,25 +86,24 @@ module.exports =
          */
         function deleteFile(ctx, filename, callback)
         {
-            var blobService = provider.createBlobService(ctx.config.storage.azureStorageConnectionString);
-            blobService.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, function (error, response)
+            provider.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, function (error, response)
             {
                 callback(error);
             });
         }
 
         /**
-         * Set a mock provider module for unit testing
-         * @param {any} mockModule Mock module
+         * Set the provider module for this adapter
+         * @param {any} providerModule provider module
          */
-        function setMockProvider(mockModule)
+        function setProvider(providerModule)
         {
-            provider = mockModule;
+            provider = providerModule;
         }
 
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
-        this.setMockProvider = setMockProvider;
+        this.setProvider = setProvider;
         _construct();
     }
 };

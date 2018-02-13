@@ -7,20 +7,30 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var provider;
+        var pool;
 
         //----------------------------------------------
         // CONSTRUCTOR
         //----------------------------------------------
 
-        function _construct()
-        {
-            provider = require("mssql");
-        }
+        function _construct() { }
 
         //----------------------------------------------
         // PUBLIC
         //----------------------------------------------
+
+        /**
+         * Initialize the adapter
+         * @param {any} config Site configuration
+         */
+        function initialize(config)
+        {
+            if(!!pool || !config.database.connectionString)
+                return;
+            var sql = require("mssql");
+            pool = new sql.ConnectionPool(config.database.connectionString);
+            pool.sql = sql;
+        }
 
         /**
          * Quick find a record based on the given condition
@@ -210,12 +220,12 @@ module.exports =
         }
 
         /**
-         * Set a mock provider module for unit testing
-         * @param {any} mockModule mock module
+         * Set the connection pool to be used by this adapter
+         * @param {any} connectionPool connection pool
          */
-        function setMockProvider(mockModule)
+        function setConnectionPool(connectionPool)
         {
-            provider = mockModule;
+            pool = connectionPool;
         }
 
         //----------------------------------------------
@@ -261,9 +271,8 @@ module.exports =
             console.log(queryString);
             console.log("Query parameters:");
             console.log(queryParams);
-            //TODO: reuse connection across requests
-            var connection = new provider.ConnectionPool(ctx.config.database.connectionString);
-            connection.connect(function (err)
+
+            pool.connect(function (err)
             {
                 if (err)
                 {
@@ -272,7 +281,7 @@ module.exports =
                     console.log(err);
                     throw new _this.error.Error("f8cb", 500, "error while connecting to database");
                 }
-                var request = new provider.Request(connection);
+                var request = new pool.sql.Request(connection);
                 for (var key in queryParams)
                 {
                     if (!queryParams.hasOwnProperty(key))
@@ -280,7 +289,7 @@ module.exports =
                     var paramValue = queryParams[key];
                     if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
                     {
-                        request.input(key, provider.BigInt, paramValue);
+                        request.input(key, pool.sql.BigInt, paramValue);
                     }
                     else
                     {
@@ -444,6 +453,7 @@ module.exports =
             }
         }
 
+        this.initialize = initialize;
         this.quickFind = quickFind;
         this.select = select;
         this.findRecordById = findRecordById;
@@ -451,7 +461,7 @@ module.exports =
         this.insert = insert;
         this.update = update;
         this.deleteRecord = deleteRecord;
-        this.setMockProvider = setMockProvider;
+        this.setConnectionPool = setConnectionPool;
         _construct();
     }
 };
