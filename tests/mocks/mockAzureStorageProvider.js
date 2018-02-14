@@ -3,18 +3,15 @@
  */
 module.exports = 
 {
-    createBlobService: function(connectionString)
+    createBlockBlobFromStream: function(containerName, name, stream, size, options, callback)
     {
-        this.createBlockBlobFromStream = function(containerName, name, stream, size, options, callback)
-        {
-            //options={contentSettings: { contentType: _this.mime.lookup(name) }}
-            //callback=fn(err)
-            //TODO
-        };
-        this.deleteBlob = function(containerName, filename, callback)
-        {
-            //callback=fn(err, response)
-            //TODO
-        };
+        //options={contentSettings: { contentType: _this.mime.lookup(name) }}
+        //callback=fn(err)
+        //TODO
+    },
+    deleteBlob: function(containerName, filename, callback)
+    {
+        //callback=fn(err, response)
+        //TODO
     }
 };
