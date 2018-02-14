@@ -1,7 +1,7 @@
 /**
  * A mock S3 provider module
  */
-module.exports = 
+var mock = 
 {
     upload: function(options, callback)
     {
@@ -16,3 +16,5 @@ module.exports =
         //TODO
     }
 };
+
+module.exports = mock;

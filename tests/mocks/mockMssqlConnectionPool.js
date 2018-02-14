@@ -1,7 +1,7 @@
 /**
  * A mock mssql provider module
  */
-module.exports = 
+var mock = 
 {
     connect: function(err)
     {
@@ -25,3 +25,5 @@ module.exports =
         BigInt: "bigint"
     }
 };
+
+module.exports = mock;

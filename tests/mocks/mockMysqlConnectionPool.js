@@ -1,7 +1,7 @@
 /**
  * A mock mysql provider module
  */
-module.exports = 
+var mock = 
 {
     getConnection: function(callback)
     {
@@ -10,3 +10,5 @@ module.exports =
         //TODO
     }
 };
+
+module.exports = mock;

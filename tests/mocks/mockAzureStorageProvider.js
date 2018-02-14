@@ -1,7 +1,7 @@
 /**
  * A mock azure blob storage provider module
  */
-module.exports = 
+var mock = 
 {
     createBlockBlobFromStream: function(containerName, name, stream, size, options, callback)
     {
@@ -15,3 +15,5 @@ module.exports =
         //TODO
     }
 };
+
+module.exports = mock;
