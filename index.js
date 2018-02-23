@@ -117,8 +117,9 @@ module.exports = function(config)
     /**
      * Start the app at the given port
      * @param {any} port optional port to start the app at
+     * @param {any} callback optional callback function
      */
-    _this.start = function(port)
+    _this.start = function(port, callback)
     {
         var finalPort = port || process.env.PORT || 1337;
         var server = _this.app.listen(finalPort, function () 
@@ -126,6 +127,8 @@ module.exports = function(config)
             var host = server.address().address;
             var port = server.address().port;
             console.log("Listening at http://%s:%s", host, port);
+            if(!!callback)
+                callback();
         });
     };
 
