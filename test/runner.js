@@ -52,55 +52,61 @@ var runner = function(chai)
     {
         it(name, function(done)
         {
-            suppressStdout(function(endSuppress)
+            disableStdout();
+            pool.reset();
+            if(!!queryResults)
+                pool.setQueryResults(queryResults);
+            if(!!queryFunction)
+                pool.setQueryFunction(queryFunction);
+            if(typeof connectSuccess !== "undefined")
+                pool.setConnectSuccess(connectSuccess);
+
+            var requestAwaiter;
+            var request = chai.request(orionApp.app);
+            if(reqMethod === "get")
+                requestAwaiter = request.get(reqUrl);
+            if(reqMethod === "post")
+                requestAwaiter = request.post(reqUrl).send(reqBody);
+            if(reqMethod === "put")
+                requestAwaiter = request.put(reqUrl).send(reqBody);
+            if(reqMethod === "delete")
+                requestAwaiter = request.delete(reqUrl);
+            if(!!accessToken)
+                requestAwaiter.set("Authorization", "Bearer " + accessToken);
+
+            requestAwaiter.end(function(err, res)
             {
-                pool.reset();
-                if(!!queryResults)
-                    pool.setQueryResults(queryResults);
-                if(!!queryFunction)
-                    pool.setQueryFunction(queryFunction);
-                if(typeof connectSuccess !== "undefined")
-                    pool.setConnectSuccess(connectSuccess);
-
-                var requestAwaiter;
-                var request = chai.request(orionApp.app);
-                if(reqMethod === "get")
-                    requestAwaiter = request.get(reqUrl);
-                if(reqMethod === "post")
-                    requestAwaiter = request.post(reqUrl).send(reqBody);
-                if(reqMethod === "put")
-                    requestAwaiter = request.put(reqUrl).send(reqBody);
-                if(reqMethod === "delete")
-                    requestAwaiter = request.delete(reqUrl);
-                if(!!accessToken)
-                    requestAwaiter.set("Authorization", "Bearer " + accessToken);
-
-                requestAwaiter.end(function(err, res)
-                {
-                    res.should.have.status(expectedStatus);
-                    if(!!additionalCheck)
-                        additionalCheck(err, res, function(){ endSuppress(done); });
-                    else
-                    endSuppress();
-                    done();
-                });
+                res.should.have.status(expectedStatus);
+                if(!!additionalCheck)
+                    additionalCheck(err, res, function(){ endSuppress(done); });
+                else
+                enableStdout();
+                done();
             });
         });
     }
 
     /**
-     * Run a function without logging to stdout
+     * Enable stdout
      * @param {*} fn function to execute
      */
-    function suppressStdout(fn)
+    function enableStdout()
+    {
+        console.log = activeLogFunction;
+    }
+
+    /**
+     * Disable stdout
+     */
+    function disableStdout()
     {
         console.log = inactiveLogFunction;
-        fn(function() { console.log = activeLogFunction; });
     }
 
     this.startNewSession = startNewSession;
     this.runTest = runTest;
-    this.suppressStdout = suppressStdout;
+    this.enableStdout = enableStdout;
+    this.disableStdout = disableStdout;
     _construct();
 };
 

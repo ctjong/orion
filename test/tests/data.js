@@ -4,16 +4,14 @@ module.exports = function(orion, chai, runner, name, config, mockConnectionPool)
 
     beforeEach(function(done)
     {
-        runner.suppressStdout(function(endSuppress)
+        runner.disableStdout();
+        orionApp = new orion(config);
+        orionApp.setupApiEndpoints();
+        orionApp.getDatabaseAdapter().setConnectionPool(mockConnectionPool);
+        orionApp.start(1337, function()
         {
-            orionApp = new orion(config);
-            orionApp.setupApiEndpoints();
-            orionApp.getDatabaseAdapter().setConnectionPool(mockConnectionPool);
-            orionApp.start(1337, function()
-            {
-                endSuppress();
-                done();
-            });
+            runner.enableStdout();
+            done();
         });
         runner.startNewSession(orionApp, mockConnectionPool, null);
     });
