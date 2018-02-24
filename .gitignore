@@ -6,3 +6,4 @@ npm-debug.log
 UpgradeLog.htm
 package-lock.json
 *.user
+.vscode
