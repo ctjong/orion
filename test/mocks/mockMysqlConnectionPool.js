@@ -4,25 +4,25 @@
 var mock = 
 {
     connectSuccess: true,
-    queryFunction: null,
-    queryResults: null,
+    queryChecker: null,
+    querySuccess: null,
     setConnectSuccess: function(isSuccess)
     {
         mock.connectSuccess = isSuccess;
     },
-    setQueryFunction: function(queryFunction)
+    setQueryChecker: function(queryChecker)
     {
-        mock.queryFunction = queryFunction;
+        mock.queryChecker = queryChecker;
     },
-    setQueryResults: function(queryResults)
+    setQuerySuccess: function(querySuccess)
     {
-        mock.queryResults = queryResults;
+        mock.querySuccess = querySuccess;
     },
     reset: function()
     {
         mock.connectSuccess = true;
-        mock.queryFunction = null;
-        mock.queryResults = null;
+        mock.queryChecker = null;
+        mock.querySuccess = null;
     },
     getConnection: function(callback)
     {
@@ -30,8 +30,14 @@ var mock =
         {
             query: function(queryString, queryParams, callback)
             {
-                mock.queryFunction(queryString, queryParams);
-                callback(mock.queryResults ? null : "error", mock.queryResults, []);
+                if(mock.queryChecker)
+                    mock.queryChecker(queryString, mock.inputQueryParams);
+                if(!mock.querySuccess)
+                    callback("error");
+                else if(queryString.toLowerCase().indexOf("insert"))
+                    callback(null, [{'identity':'1'}], []);
+                else
+                    callback(null, [], []);
             }
         };
         callback(mock.connectSuccess ? null : "error", connection);

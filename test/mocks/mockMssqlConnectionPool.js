@@ -4,26 +4,26 @@
 var mock = 
 {
     connectSuccess: true,
-    queryFunction: null,
-    queryResults: null,
+    queryChecker: null,
+    querySuccess: null,
     inputQueryParams: null,
     setConnectSuccess: function(isSuccess)
     {
         mock.connectSuccess = isSuccess;
     },
-    setQueryFunction: function(queryFunction)
+    setQueryChecker: function(queryChecker)
     {
-        mock.queryFunction = queryFunction;
+        mock.queryChecker = queryChecker;
     },
-    setQueryResults: function(queryResults)
+    setQuerySuccess: function(querySuccess)
     {
-        mock.queryResults = queryResults;
+        mock.querySuccess = querySuccess;
     },
     reset: function()
     {
         mock.connectSuccess = true;
-        mock.queryFunction = null;
-        mock.queryResults = null;
+        mock.queryChecker = null;
+        mock.querySuccess = null;
     },
     connect: function(callback)
     {
@@ -40,12 +40,14 @@ var mock =
             };
             this.query = function(queryString, callback)
             {
-                if(mock.queryFunction)
-                    mock.queryFunction(queryString, mock.inputQueryParams);
-                if(!mock.queryResults)
+                if(mock.queryChecker)
+                    mock.queryChecker(queryString, mock.inputQueryParams);
+                if(!mock.querySuccess)
                     callback("error");
+                else if(queryString.toLowerCase().indexOf("insert"))
+                    callback(null, {recordset: [{'identity':'1'}]});
                 else
-                    callback(null, {recordset: mock.queryResults});
+                    callback(null, {recordset: []});
             };
         },
         BigInt: "bigint"

@@ -1,4 +1,4 @@
-var runner = function(chai)
+var runner = function(chai, assert)
 {
     var activeLogFunction;
     var inactiveLogFunction;
@@ -14,7 +14,9 @@ var runner = function(chai)
     function _construct()
     {
         activeLogFunction = console.log;
+        activeErrFunction = console.error;
         inactiveLogFunction = function() { };
+        inactiveErrFunction = function() { };
     }
 
     //----------------------------------------------
@@ -41,25 +43,34 @@ var runner = function(chai)
      * @param {*} reqMethod request method
      * @param {*} reqBody request body
      * @param {*} accessToken access token
-     * @param {*} expectedStatus expected response status
+     * @param {*} expectedStatusCodes expected response status codes
+     * @param {*} expectedQueryString expected query string
+     * @param {*} expectedQueryParams expected query parameters
      * @param {*} additionalCheck additional check to execute. signarture = fn(err, res, done).
-     * @param {*} queryResults query results to be returned by connection pool
-     * @param {*} queryFunction query function to be executed before DB request is fired
+     * @param {*} querySuccess whether or not query request should succeed
      * @param {*} connectSuccess whether or not connect request should succeed
      */
-    function runTest(name, reqUrl, reqMethod, reqBody, accessToken, expectedStatus, 
-        additionalCheck, queryResults, queryFunction, connectSuccess)
+    function runTest(name, reqUrl, reqMethod, reqBody, accessToken, expectedStatusCodes, 
+        expectedQueryString, expectedQueryParams, querySuccess, connectSuccess)
     {
         it(name, function(done)
         {
-            disableStdout();
             pool.reset();
-            if(!!queryResults)
-                pool.setQueryResults(queryResults);
-            if(!!queryFunction)
-                pool.setQueryFunction(queryFunction);
+            if(typeof querySuccess !== "undefined")
+                pool.setQuerySuccess(querySuccess);
             if(typeof connectSuccess !== "undefined")
                 pool.setConnectSuccess(connectSuccess);
+
+            if(!!expectedQueryString || !!expectedQueryParams)
+            {
+                pool.setQueryChecker(function(queryString, queryParams)
+                {
+                    assert.equal(expectedQueryString, queryString, "Query string does not match the expected");
+                    assert.equal(expectedQueryParams.length, queryParams.length, "Query parameters count does not match the expected");
+                    for(var i=0; i<expectedQueryParams.length; i++)
+                        assert.equal(expectedQueryParams[i], queryParams[i], "Query parameter at index " + i + " does not match the expected");
+                });
+            }
 
             var requestAwaiter;
             var request = chai.request(orionApp.app);
@@ -76,11 +87,7 @@ var runner = function(chai)
 
             requestAwaiter.end(function(err, res)
             {
-                res.should.have.status(expectedStatus);
-                if(!!additionalCheck)
-                    additionalCheck(err, res, function(){ endSuppress(done); });
-                else
-                enableStdout();
+                assert(expectedStatusCodes.indexOf(res.status) >= 0, "Status code " + res.status + " is not expected");
                 done();
             });
         });
@@ -93,20 +100,22 @@ var runner = function(chai)
     function enableStdout()
     {
         console.log = activeLogFunction;
+        console.error = activeErrFunction;
     }
 
     /**
      * Disable stdout
      */
-    function disableStdout()
+    function disableConsole()
     {
         console.log = inactiveLogFunction;
+        console.error = inactiveErrFunction;
     }
 
     this.startNewSession = startNewSession;
     this.runTest = runTest;
     this.enableStdout = enableStdout;
-    this.disableStdout = disableStdout;
+    this.disableConsole = disableConsole;
     _construct();
 };
 

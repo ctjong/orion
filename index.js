@@ -108,8 +108,12 @@ module.exports = function(config)
             }
             catch (ex)
             {
-                console.error(err);
-                res.status(500).send(err);
+                try
+                {
+                    console.error(err);
+                    res.status(500).send(err);
+                }
+                catch(ex2) { }
             }
         });
     };
