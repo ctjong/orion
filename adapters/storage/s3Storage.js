@@ -116,6 +116,7 @@ module.exports =
             provider = providerModule;
         }
 
+        this.initialize = initialize;
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
         this.setProvider = setProvider;

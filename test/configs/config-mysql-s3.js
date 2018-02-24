@@ -2,8 +2,7 @@ module.exports =
 {
     database:
     {
-        engine: "mysql",
-        connectionString: "samplestring"
+        engine: "mysql"
     },
     auth: 
     {
@@ -21,10 +20,7 @@ module.exports =
     },
     storage: 
     {
-        provider: "s3",
-        awsAccessKeyId: "samplestring",
-        awsSecretAccessKey: "samplestring",
-        s3Bucket: "samplestring"
+        provider: "s3"
     },
     monitoring:
     {

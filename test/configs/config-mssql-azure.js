@@ -2,8 +2,7 @@ module.exports =
 {
     database:
     {
-        engine: "mssql",
-        connectionString: "samplestring",
+        engine: "mssql"
     },
     auth: 
     {
@@ -21,9 +20,7 @@ module.exports =
     },
     storage: 
     {
-        provider: "azure",
-        azureStorageConnectionString: "samplestring",
-        azureStorageContainerName: "samplestring"
+        provider: "azure"
     },
     monitoring:
     {

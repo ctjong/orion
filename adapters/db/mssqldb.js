@@ -281,7 +281,7 @@ module.exports =
                     console.log(err);
                     throw new _this.error.Error("f8cb", 500, "error while connecting to database");
                 }
-                var request = new pool.sql.Request(connection);
+                var request = new pool.sql.Request(pool);
                 for (var key in queryParams)
                 {
                     if (!queryParams.hasOwnProperty(key))

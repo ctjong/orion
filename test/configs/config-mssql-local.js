@@ -2,8 +2,7 @@ module.exports =
 {
     database:
     {
-        engine: "mssql",
-        connectionString: "samplestring"
+        engine: "mssql"
     },
     auth: 
     {

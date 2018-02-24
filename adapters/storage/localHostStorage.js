@@ -24,6 +24,14 @@ module.exports =
         //----------------------------------------------
 
         /**
+         * Initialize the adapter
+         */
+        function initialize(config)
+        {
+            // do nothing
+        }
+
+        /**
          * Upload a file to Azure Blob Storage
          * @param {any} ctx Request context
          * @param {any} req Request object
@@ -84,6 +92,7 @@ module.exports =
             // nothing to do here, we are not using any provider
         }
 
+        this.initialize = initialize;
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
         this.setProvider = setProvider;

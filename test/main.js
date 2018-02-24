@@ -1,7 +1,8 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var orion = require('../index');
 var assert = require('assert');
+var runnerClass = require('./runner');
+var orion = require('../index');
 
 var mockMssqlConnectionPool = require('../test/mocks/mockMssqlConnectionPool');
 var mockMysqlConnectionPool = require('../test/mocks/mockMysqlConnectionPool');
@@ -15,6 +16,7 @@ var mysqlLocalConfig = require('../test/configs/config-mysql-local');
 
 var should = chai.should();
 chai.use(chaiHttp);
+var runner = new runnerClass(chai);
 
 var dataTests = require('../test/tests/data');
-dataTests(orion, chai, "data-mssql", mssqlAzureConfig, mockMssqlConnectionPool);
+dataTests(orion, chai, runner, "data-mssql", mssqlAzureConfig, mockMssqlConnectionPool);

@@ -22,7 +22,7 @@ module.exports =
         /**
          * Initialize the adapter
          */
-        function initialize()
+        function initialize(config)
         {
             if(!!provider || !config.storage.azureStorageConnectionString)
                 return;
@@ -101,6 +101,7 @@ module.exports =
             provider = providerModule;
         }
 
+        this.initialize = initialize;
         this.uploadFile = uploadFile;
         this.deleteFile = deleteFile;
         this.setProvider = setProvider;

@@ -42,7 +42,7 @@ module.exports = function ()
      */
     function addDef(moduleName, moduleDefPath)
     {
-        moduleDefs[moduleName] = require("../" + moduleDefPath);
+        moduleDefs[moduleName] = require(moduleDefPath);
     }
 
     /**

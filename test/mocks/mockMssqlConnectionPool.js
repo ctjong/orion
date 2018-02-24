@@ -6,6 +6,7 @@ var mock =
     connectSuccess: true,
     queryFunction: null,
     queryResults: null,
+    inputQueryParams: null,
     setConnectSuccess: function(isSuccess)
     {
         mock.connectSuccess = isSuccess;
@@ -32,15 +33,19 @@ var mock =
     {
         Request: function(connection)
         {
-            this.inputQueryParams = {};
+            mock.inputQueryParams = {};
             this.input = function(arg0, arg1, arg2)
             {
-                inputQueryParams[arg0] = !arg2 ? ["string", arg1] :  [arg1, arg2];
+                mock.inputQueryParams[arg0] = !arg2 ? ["string", arg1] :  [arg1, arg2];
             };
             this.query = function(queryString, callback)
             {
-                mock.queryFunction(queryString, this.inputQueryParams);
-                callback(mock.queryResults ? null : "error", mock.queryResults);
+                if(mock.queryFunction)
+                    mock.queryFunction(queryString, mock.inputQueryParams);
+                if(!mock.queryResults)
+                    callback("error");
+                else
+                    callback(null, {recordset: mock.queryResults});
             };
         },
         BigInt: "bigint"
