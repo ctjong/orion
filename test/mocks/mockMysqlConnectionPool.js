@@ -4,8 +4,9 @@
 var mock = 
 {
     connectSuccess: true,
+    querySuccess: true,
     queryChecker: null,
-    querySuccess: null,
+    inputQueryParams: null,
     setConnectSuccess: function(isSuccess)
     {
         mock.connectSuccess = isSuccess;
@@ -21,8 +22,8 @@ var mock =
     reset: function()
     {
         mock.connectSuccess = true;
+        mock.querySuccess = true;
         mock.queryChecker = null;
-        mock.querySuccess = null;
     },
     getConnection: function(callback)
     {
@@ -34,8 +35,10 @@ var mock =
                     mock.queryChecker(queryString, mock.inputQueryParams);
                 if(!mock.querySuccess)
                     callback("error");
-                else if(queryString.toLowerCase().indexOf("insert"))
+                else if(queryString.toLowerCase().indexOf("insert") >= 0)
                     callback(null, [{'identity':'1'}], []);
+                else if(queryString.toLowerCase().indexOf("count(*)") >= 0)
+                    callback(null, [{'':'1'}], []);
                 else
                     callback(null, [], []);
             }

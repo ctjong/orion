@@ -53,7 +53,10 @@ module.exports =
                         function(){}, 
                         function()
                         {
-                            res.status(err.statusCode).send(err.msg);
+                            try
+                            {
+                                res.status(err.statusCode).send(err.msg);
+                            } catch(err5) {}
                         }
                     );
                 }
@@ -64,7 +67,10 @@ module.exports =
             }
             catch(err3)
             {
-                res.status(500).send(err.msg);
+                try
+                {
+                    res.status(500).send(err.msg);
+                } catch(err4) {}
             }
         }
 
