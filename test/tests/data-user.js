@@ -7,7 +7,6 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"invalidemail","firstName":"firstName","lastName":"lastName"},
         null,
         [400],
-        null,
         null
     );
 
@@ -18,7 +17,6 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         null,
         [400],
-        null,
         null
     );
 
@@ -29,7 +27,6 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"test","confirmPassword":"test","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         null,
         [400],
-        null,
         null
     );
 
@@ -40,7 +37,6 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"gavin","lastName":"belson"},
         null,
         [200,500],
-        null,
         null
     );
 
@@ -51,7 +47,6 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"gavin","lastName":"belson"},
         null,
         [500],
-        null,
         null
     );
 
@@ -62,7 +57,6 @@ module.exports = function(runner, params)
         {"username":"user2","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"peter","lastName":"gregory"},
         null,
         [200,500],
-        null,
         null
     );
 
@@ -73,7 +67,6 @@ module.exports = function(runner, params)
         {"username":"user3","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"brian","lastName":"griffin"},
         null,
         [200,500],
-        null,
         null
     );
 
@@ -84,7 +77,6 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword123"},
         null,
         [400],
-        null,
         null
     );
 
@@ -95,7 +87,6 @@ module.exports = function(runner, params)
         {"username":"invaliduser","password":"testpassword"},
         null,
         [400],
-        null,
         null
     );
 
@@ -106,7 +97,6 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword"},
         null,
         [200],
-        null,
         null
     );
 
@@ -117,7 +107,6 @@ module.exports = function(runner, params)
         {"username":"user2","password":"testpassword"},
         null,
         [200],
-        null,
         null
     );
 
@@ -128,7 +117,6 @@ module.exports = function(runner, params)
         {"username":"user3","password":"testpassword"},
         null,
         [200],
-        null,
         null
     );
 
@@ -139,7 +127,6 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -150,7 +137,6 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -161,7 +147,6 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [401],
-        null,
         null
     );
 
@@ -172,7 +157,6 @@ module.exports = function(runner, params)
         {"firstName":"eddard","lastName":"stark"},
         params.user1Token,
         [401],
-        null,
         null
     );
 
@@ -183,7 +167,6 @@ module.exports = function(runner, params)
         {"firstName":"catelyn","lastName":"tully"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -194,7 +177,6 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -205,7 +187,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [401],
-        null,
         null
     );
 };

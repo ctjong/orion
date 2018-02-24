@@ -7,7 +7,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         null,
         [401],
-        null,
         null
     );
 
@@ -18,7 +17,6 @@ module.exports = function(runner, params)
         {"recipientid":"2"},
         params.user1Token,
         [400],
-        null,
         null
     );
 
@@ -29,7 +27,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -40,7 +37,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -51,7 +47,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user2Token,
         [200],
-        null,
         null
     );
 
@@ -62,7 +57,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user3Token,
         [200],
-        null,
         null
     );
 
@@ -73,7 +67,6 @@ module.exports = function(runner, params)
         {"flagged":"1"},
         params.user2Token,
         [200],
-        null,
         null
     );
 
@@ -84,7 +77,6 @@ module.exports = function(runner, params)
         {"flagged":"0"},
         params.user1Token,
         [400],
-        null,
         null
     );
 
@@ -95,7 +87,6 @@ module.exports = function(runner, params)
         {"text":"test message edited"},
         params.user1Token,
         [400],
-        null,
         null
     );
 
@@ -106,7 +97,6 @@ module.exports = function(runner, params)
         {"text":"test message edited"},
         params.user2Token,
         [400],
-        null,
         null
     );
 
@@ -117,7 +107,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [401],
-        null,
         null
     );
 };

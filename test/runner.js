@@ -44,14 +44,12 @@ var runner = function(chai, assert)
      * @param {*} reqBody request body
      * @param {*} accessToken access token
      * @param {*} expectedStatusCodes expected response status codes
-     * @param {*} expectedQueryString expected query string
-     * @param {*} expectedQueryParams expected query parameters
-     * @param {*} additionalCheck additional check to execute. signarture = fn(err, res, done).
+     * @param {*} expectedQueries list of expected query strings and parameters
      * @param {*} querySuccess whether or not query request should succeed
      * @param {*} connectSuccess whether or not connect request should succeed
      */
     function runTest(name, reqUrl, reqMethod, reqBody, accessToken, expectedStatusCodes, 
-        expectedQueryString, expectedQueryParams, querySuccess, connectSuccess)
+        expectedQueries, querySuccess, connectSuccess)
     {
         it(name, function(done)
         {
@@ -61,14 +59,15 @@ var runner = function(chai, assert)
             if(typeof connectSuccess !== "undefined")
                 pool.setConnectSuccess(connectSuccess);
 
-            if(!!expectedQueryString || !!expectedQueryParams)
+            if(!!expectedQueries)
             {
-                pool.setQueryChecker(function(queryString, queryParams)
+                pool.onQueryReceived(function(actualString, actualParams)
                 {
-                    assert.equal(expectedQueryString, queryString, "Query string does not match the expected");
-                    assert.equal(expectedQueryParams.length, queryParams.length, "Query parameters count does not match the expected");
-                    for(var i=0; i<expectedQueryParams.length; i++)
-                        assert.equal(expectedQueryParams[i], queryParams[i], "Query parameter at index " + i + " does not match the expected");
+                    var expected = expectedQueries.shift();
+                    assert.equal(expected.string, actualString, "Query string does not match the expected");
+                    assert.equal(expected.params.length, actualParams.length, "Query parameters count does not match the expected");
+                    for(var i=0; i<expected.params.length; i++)
+                        assert.equal(expected.params[i], actualParams[i], "Query parameter at index " + i + " does not match the expected");
                 });
             }
 
@@ -88,6 +87,7 @@ var runner = function(chai, assert)
             requestAwaiter.end(function(err, res)
             {
                 assert(expectedStatusCodes.indexOf(res.status) >= 0, "Status code " + res.status + " is not expected");
+                assert(!expectedQueries || expectedQueries === [], "Not all expected queries were received");
                 done();
             });
         });

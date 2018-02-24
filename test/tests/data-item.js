@@ -7,7 +7,6 @@ module.exports = function(runner, params)
         {"name":"item123","date":"20171234"},
         null,
         [401],
-        null,
         null
     );
 
@@ -18,7 +17,6 @@ module.exports = function(runner, params)
         {"name":"item123"},
         params.user1Token,
         [400],
-        null,
         null
     );
 
@@ -29,7 +27,6 @@ module.exports = function(runner, params)
         {"name":"item1","date":"20170101"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -40,7 +37,6 @@ module.exports = function(runner, params)
         {"name":"item2","date":"20170202"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -51,7 +47,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [401],
-        null,
         null
     );
 
@@ -60,9 +55,7 @@ module.exports = function(runner, params)
         '/api/data/item/private/findbyid/11',
         'get',
         null,
-        null,
         [401],
-        null,
         null
     );
 
@@ -73,7 +66,6 @@ module.exports = function(runner, params)
         null,
         params.user2Token,
         [401],
-        null,
         null
     );
 
@@ -84,7 +76,6 @@ module.exports = function(runner, params)
         null,
         "Bearer wrongtokenwrongtokenwrongtokenwrongtokenwrongtoken",
         [401],
-        null,
         null
     );
 
@@ -95,7 +86,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -104,9 +94,7 @@ module.exports = function(runner, params)
         '/api/data/item/private/findbycondition/id/0/2/date%3E20170000',
         'get',
         null,
-        null,
         [401],
-        null,
         null
     );
 
@@ -117,7 +105,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -128,7 +115,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -137,9 +123,7 @@ module.exports = function(runner, params)
         '/api/data/item/private/findall/id/0/2',
         'get',
         null,
-        null,
         [401],
-        null,
         null
     );
 
@@ -150,7 +134,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -161,7 +144,6 @@ module.exports = function(runner, params)
         {"name":"item123"},
         params.user2Token,
         [401],
-        null,
         null
     );
 
@@ -172,7 +154,6 @@ module.exports = function(runner, params)
         {"name":"item123"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -183,7 +164,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -194,7 +174,6 @@ module.exports = function(runner, params)
         {"name":"new item","name123":"new invalid item"},
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -205,7 +184,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -216,7 +194,6 @@ module.exports = function(runner, params)
         null,
         params.user2Token,
         [401],
-        null,
         null
     );
 
@@ -227,7 +204,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -238,7 +214,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         null
     );
 
@@ -249,7 +224,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [400],
-        null,
         null
     );
 
@@ -260,7 +234,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         null
     );
 };
