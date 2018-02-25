@@ -5,8 +5,7 @@ var Runner = require('./runner');
 var orion = require('../index');
 var testConfigFactory = require('./testConfigFactory');
 var MockConnectionPool = require('../test/mocks/mockConnectionPool');
-var mockAzureStorageProvider = require('../test/mocks/mockAzureStorageProvider');
-var mockS3StorageProvider = require('../test/mocks/mockS3StorageProvider');
+var MockStorageProvider = require('../test/mocks/mockStorageProvider');
 var dataTests = require('../test/tests/data');
 
 var should = chai.should();
