@@ -1,5 +1,7 @@
 module.exports = function(runner, params)
 {
+    // TODO: expected query strings and parameters
+
     runner.runTest(
         'POST | user-newUserInvalidEmail | 400',
         '/api/data/user',
