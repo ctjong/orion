@@ -3,6 +3,20 @@
  */
 var mock = function(engine)
 {
+    var resultsOptions = 
+    [
+        {
+            queryKeywords: ["count(*)"],
+            queryParams: {},
+            results: [{'':'1'}]
+        },
+        {
+            queryKeywords: ["insert into"],
+            queryParams: {},
+            results: [{'identity':'1'}]
+        }
+    ];
+
     var connectSuccess = true;
     var querySuccess = true;
     var queryReceivedHandler = null;
@@ -115,12 +129,41 @@ var mock = function(engine)
     {
         if(queryReceivedHandler)
             queryReceivedHandler(queryString, queryParams);
+        queryString = queryString.toLowerCase();
 
         var results = [];
-        if(queryString.toLowerCase().indexOf("insert") >= 0)
-            results = [{'identity':'1'}];
-        else if(queryString.toLowerCase().indexOf("count(*)") >= 0)
-            results = [{'':'1'}];
+        for(var i=0; i<resultsOptions.length; i++)
+        {
+            var option = resultsOptions[i];
+            var isMatch = true;
+            for(var j=0; j<option.queryKeywords.length; j++)
+            {
+                var keyword = option.queryKeywords[j];
+                if (queryString.indexOf(keyword) < 0)
+                {
+                    isMatch = false;
+                    break;
+                }
+            }
+            if(!isMatch)
+                continue;
+
+            for(var paramKey in option.queryParams)
+            {
+                if(!option.queryParams.hasOwnProperty(paramKey))
+                    continue;
+                if(queryParams[paramKey] !== option.queryParams[paramKey])
+                {
+                    isMatch = false;
+                    break;
+                }
+            }
+            if(!isMatch)
+                continue;
+
+            results = option.results;
+            break;
+        }
 
         if(!querySuccess)
             callback("error");
