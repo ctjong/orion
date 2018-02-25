@@ -18,6 +18,9 @@ var mock = function(engine)
     // PUBLIC
     //----------------------------------------------
 
+    /**
+     * MSSQL object containing database connection functions and properties
+     */
     var mssql =
     {
         InputQueryParams: null,
@@ -36,11 +39,19 @@ var mock = function(engine)
         BigInt: "bigint"
     };
 
+    /**
+     * Connect to an MSSQL database
+     * @param {*} callback callback function
+     */
     function mssqlConnect(callback)
     {
         callback(connectSuccess ? null : "error");
     }
 
+    /**
+     * Get a connection object for connecting with an MYSQL database
+     * @param {*} callback callback function
+     */
     function mysqlGetConnection(callback)
     {
         var connection = 
@@ -53,21 +64,36 @@ var mock = function(engine)
         callback(connectSuccess ? null : "error", connection);
     }
 
+    /**
+     * Set whether or not connect requests should succeed
+     * @param {*} connectSuccessArg connect requests result
+     */
     function setConnectSuccess(connectSuccessArg)
     {
         connectSuccess = connectSuccessArg;
     }
 
+    /**
+     * Set whether or not query requests should succeed
+     * @param {*} connectSuccessArg query requests result
+     */
     function setQuerySuccess(querySuccessArg)
     {
         querySuccess = querySuccessArg;
     }
 
+    /**
+     * To be invoked when a query is received to be set to database
+     * @param {*} queryReceivedHandlerArg handler function
+     */
     function onQueryReceived(queryReceivedHandlerArg)
     {
         queryReceivedHandler = queryReceivedHandlerArg;
     }
 
+    /** 
+     * Reset the mock connection pool
+     */
     function reset()
     {
         connectSuccess = true;
@@ -79,24 +105,26 @@ var mock = function(engine)
     // PRIVATE
     //----------------------------------------------
 
+    /**
+     * Process a query
+     * @param {*} queryString query string
+     * @param {*} queryParams query parameters
+     * @param {*} callback callback function
+     */
     function processQuery(queryString, queryParams, callback)
     {
         if(queryReceivedHandler)
             queryReceivedHandler(queryString, queryParams);
-        if(!querySuccess)
-            doCallback(callback, false);
-        else if(queryString.toLowerCase().indexOf("insert") >= 0)
-            doCallback(callback, true, [{'identity':'1'}]);
-        else if(queryString.toLowerCase().indexOf("count(*)") >= 0)
-            doCallback(callback, true, [{'':'1'}]);
-        else
-            doCallback(callback, true, []);
-    }
 
-    function doCallback(callback, isSuccess, results)
-    {
-        var errObject = isSuccess ? null : "error";
-        if(engine === "mssql")
+        var results = [];
+        if(queryString.toLowerCase().indexOf("insert") >= 0)
+            results = [{'identity':'1'}];
+        else if(queryString.toLowerCase().indexOf("count(*)") >= 0)
+            results = [{'':'1'}];
+
+        if(!querySuccess)
+            callback("error");
+        else if(engine === "mssql")
             callback(null, {recordset: results});
         else
             callback(null, results, []);
