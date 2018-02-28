@@ -10,15 +10,10 @@ module.exports = function(orion, chai, runner, name, config, mockConnectionPool)
             return;
         }
 
-        runner.disableConsole();
         orionApp = new orion(config);
         orionApp.setupApiEndpoints();
         orionApp.getDatabaseAdapter().setConnectionPool(mockConnectionPool);
-        orionApp.start(1337, function()
-        {
-            runner.enableStdout();
-            done();
-        });
+        orionApp.start(1337, done);
         runner.startNewSession(orionApp, mockConnectionPool, null);
     });
 
