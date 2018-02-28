@@ -63,15 +63,14 @@ var runner = function(chai, assert)
 
             if(!!expectedQueries)
             {
-                pool.onQueryReceived(function(actualString, actualParams)
+                pool.onQueryReceived(function(actualString, actualParams, engine)
                 {
                     var expected = expectedQueries.shift();
-                    var expectedString = queries[expected.name];
-                    assert.equal(expectedString, actualString, "Query string does not match the expected");
-                    assert.equal(expected.params.length, actualParams.length, "Query parameters count does not match the expected");
+                    var expectedString = queries[expected.name][engine];
+                    assert.equal(actualString, expectedString, "Query string does not match the expected");
                     for(var i=0; i<expected.params.length; i++)
                         if(expected.params[i] !== "skip")
-                            assert.equal(expected.params[i], actualParams[i], "Query parameter at index " + i + " does not match the expected");
+                            assert.equal(actualParams[i], expected.params[i], "Query parameter at index " + i + " does not match the expected");
                 });
             }
 
@@ -91,7 +90,7 @@ var runner = function(chai, assert)
             requestAwaiter.end(function(err, res)
             {
                 assert(expectedStatusCodes.indexOf(res.status) >= 0, "Status code " + res.status + " is not expected");
-                assert(!expectedQueries || expectedQueries === [], "Not all expected queries were received");
+                assert(!expectedQueries || expectedQueries.length === 0, "Not all expected queries were received");
                 done();
             });
         });

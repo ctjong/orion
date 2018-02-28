@@ -4,7 +4,7 @@ module.exports =
     {
         "mssql": "insert into [errortable] ([tag],[statuscode],[msg],[url],[timestamp]) values (@value0 ,@value1 ,@value2 ,@value3 ,@value4 ); select SCOPE_IDENTITY() as [identity];",
         "mysql": "insert into `errortable` (`tag`,`statuscode`,`msg`,`url`,`timestamp`) values (?,?,?,?,?)",
-        "results": []
+        "results": [{"identity":"1"}]
     },
     "selectUserNameByUserName":
     {
@@ -22,7 +22,7 @@ module.exports =
     {
         "mssql": "select count(*) from [usertable] where ([usertable].[id]=@value0 )",
         "mysql": "select count(*) as count from `usertable` where (`usertable`.`id`=?)",
-        "results": []
+        "results": [{"":"1"}]
     },
     "selectUserDataById":
     {
@@ -34,7 +34,7 @@ module.exports =
     {
         "mssql": "select count(*) from [usertable] where ([usertable].[id]=@value0  AND [usertable].[id]=@value1 )",
         "mysql": "select count(*) as count from `usertable` where (`usertable`.`id`=? AND `usertable`.`id`=?)",
-        "results": []
+        "results": [{"":"1"}]
     },
     "selectUserDataById2":
     {
@@ -58,13 +58,13 @@ module.exports =
     {
         "mssql": "insert into [itemtable] ([name],[date],[ownerid],[createdtime]) values (@value0 ,@value1 ,@value2 ,@value3 ); select SCOPE_IDENTITY() as [identity];",
         "mysql": "insert into `itemtable` (`name`,`date`,`ownerid`,`createdtime`) values (?,?,?,?)",
-        "results": []
+        "results": [{"identity":"1"}]
     },
     "countItemByIdAndOwner":
     {
         "mssql": "select count(*) from [itemtable] where ([itemtable].[id]=@value0  AND [itemtable].[ownerid]=@value1 )",
         "mysql": "select count(*) as count from `itemtable` where (`itemtable`.`id`=? AND `itemtable`.`ownerid`=?)",
-        "results": []
+        "results": [{"":"1"}]
     },
     "selectItemByIdAndOwner":
     {
@@ -76,7 +76,7 @@ module.exports =
     {
         "mssql": "select count(*) from [itemtable] where (([itemtable].[date]>@value0 ) AND [itemtable].[ownerid]=@value1 )",
         "mysql": "select count(*) as count from `itemtable` where ((`itemtable`.`date`>?) AND `itemtable`.`ownerid`=?)",
-        "results": []
+        "results": [{"":"1"}]
     },
     "selectItemByDateAndOwner":
     {
@@ -88,7 +88,7 @@ module.exports =
     {
         "mssql": "select count(*) from [itemtable] where (([itemtable].[name] like '%item1%') AND [itemtable].[ownerid]=@value0 )",
         "mysql": "select count(*) as count from `itemtable` where ((`itemtable`.`name` like '%item1%') AND `itemtable`.`ownerid`=?)",
-        "results": []
+        "results": [{"":"1"}]
     },
     "selectItemByNameAndOwner":
     {
@@ -100,7 +100,7 @@ module.exports =
     {
         "mssql": "select count(*) from [itemtable] where ([itemtable].[ownerid]=@value0 )",
         "mysql": "select count(*) as count from `itemtable` where (`itemtable`.`ownerid`=?)",
-        "results": []
+        "results": [{"":"1"}]
     },
     "selectItemByOwner":
     {
@@ -130,13 +130,13 @@ module.exports =
     {
         "mssql": "insert into [messagetable] ([recipientid],[text],[ownerid],[createdtime]) values (@value0 ,@value1 ,@value2 ,@value3 ); select SCOPE_IDENTITY() as [identity];",
         "mysql": "insert into `messagetable` (`recipientid`,`text`,`ownerid`,`createdtime`) values (?,?,?,?)",
-        "results": []
+        "results": [{"identity":"1"}]
     },
     "countMessageByOwnerAndRecipient":
     {
         "mssql": "select count(*) from [messagetable] where (((([messagetable].[ownerid]=@value0 )) AND (([messagetable].[recipientid]=@value1 ))) AND ((([messagetable].[ownerid]=@value2 ) OR ([messagetable].[recipientid]=@value3 ))))",
         "mysql": "select count(*) as count from `messagetable` where ((((`messagetable`.`ownerid`=?)) AND ((`messagetable`.`recipientid`=?))) AND (((`messagetable`.`ownerid`=?) OR (`messagetable`.`recipientid`=?))))",
-        "results": []
+        "results": [{"":"1"}]
     },
     "selectMessageByOwnerAndRecipient":
     {

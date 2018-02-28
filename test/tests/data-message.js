@@ -9,7 +9,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         null,
         [401],
-        null,
         [{"name":"insertError","params":[]}]
     );
 
@@ -20,7 +19,6 @@ module.exports = function(runner, params)
         {"recipientid":"2"},
         params.user1Token,
         [400],
-        null,
         [{"name":"selectUserDataById3","params":[]},{"name":"selectUserDataById3","params":[]}]
     );
 
@@ -31,7 +29,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user1Token,
         [200],
-        null,
         [{"name":"selectUserDataById3","params":[]},{"name":"selectUserDataById3","params":[]},{"name":"insertMessage","params":[]}]
     );
 
@@ -42,7 +39,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user1Token,
         [200],
-        null,
         [{"name":"countMessageByOwnerAndRecipient","params":[]},{"name":"selectMessageByOwnerAndRecipient","params":[]}]
     );
 
@@ -53,7 +49,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user2Token,
         [200],
-        null,
         [{"name":"countMessageByOwnerAndRecipient","params":[]},{"name":"selectMessageByOwnerAndRecipient","params":[]}]
     );
 
@@ -64,7 +59,6 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user3Token,
         [200],
-        null,
         [{"name":"countMessageByOwnerAndRecipient","params":[]},{"name":"selectMessageByOwnerAndRecipient","params":[]}]
     );
 
@@ -75,7 +69,6 @@ module.exports = function(runner, params)
         {"flagged":"1"},
         params.user2Token,
         [200],
-        null,
         [{"name":"selectMessageById","params":[]},{"name":"updateMessageById","params":[]}]
     );
 
@@ -86,7 +79,6 @@ module.exports = function(runner, params)
         {"flagged":"0"},
         params.user1Token,
         [400],
-        null,
         [{"name":"selectMessageById","params":[]}]
     );
 
@@ -97,7 +89,6 @@ module.exports = function(runner, params)
         {"text":"test message edited"},
         params.user1Token,
         [400],
-        null,
         [{"name":"selectMessageById","params":[]}]
     );
 
@@ -108,7 +99,6 @@ module.exports = function(runner, params)
         {"text":"test message edited"},
         params.user2Token,
         [400],
-        null,
         [{"name":"selectMessageById","params":[]}]
     );
 };

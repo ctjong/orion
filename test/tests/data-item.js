@@ -9,7 +9,6 @@ module.exports = function(runner, params)
         {"name":"item123","date":"20171234"},
         null,
         [401],
-        null,
         [{"name":"insertError","params":[]}]
     );
 
@@ -20,7 +19,6 @@ module.exports = function(runner, params)
         {"name":"item123"},
         params.user1Token,
         [400],
-        null,
         [{"name":"selectUserDataById3","params":[]}]
     );
 
@@ -31,7 +29,6 @@ module.exports = function(runner, params)
         {"name":"item1","date":"20170101"},
         params.user1Token,
         [200],
-        null,
         [{"name":"selectUserDataById3","params":[]},{"name":"insertItem","params":[]}]
     );
 
@@ -42,7 +39,6 @@ module.exports = function(runner, params)
         {"name":"item2","date":"20170202"},
         params.user1Token,
         [200],
-        null,
         [{"name":"selectUserDataById3","params":[]},{"name":"insertItem","params":[]}]
     );
 
@@ -53,7 +49,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [401],
-        null,
         [{"name":"insertError","params":[]}]
     );
 
@@ -63,7 +58,6 @@ module.exports = function(runner, params)
         'get',
         null,
         [401],
-        null,
         [{"name":"insertError","params":[]}]
     );
 
@@ -74,7 +68,6 @@ module.exports = function(runner, params)
         null,
         params.user2Token,
         [401],
-        null,
         [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}]
     );
 
@@ -85,7 +78,6 @@ module.exports = function(runner, params)
         null,
         "Bearer wrongtokenwrongtokenwrongtokenwrongtokenwrongtoken",
         [401],
-        null,
         [{"name":"insertError","params":[]}]
     );
 
@@ -96,7 +88,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}]
     );
 
@@ -106,7 +97,6 @@ module.exports = function(runner, params)
         'get',
         null,
         [401],
-        null,
         [{"name":"insertError","params":[]}]
     );
 
@@ -117,7 +107,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         [{"name":"countItemByDateAndOwner","params":[]},{"name":"selectItemByDateAndOwner","params":[]}]
     );
 
@@ -128,7 +117,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         [{"name":"countItemByNameAndOwner","params":[]},{"name":"selectItemByNameAndOwner","params":[]}]
     );
 
@@ -138,7 +126,6 @@ module.exports = function(runner, params)
         'get',
         null,
         [401],
-        null,
         [{"name":"insertError","params":[]}]
     );
 
@@ -149,7 +136,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         [{"name":"countItemByOwner","params":[]},{"name":"selectItemByOwner","params":[]}]
     );
 
@@ -160,7 +146,6 @@ module.exports = function(runner, params)
         {"name":"item123"},
         params.user2Token,
         [401],
-        null,
         [{"name":"selectItemById","params":[]}]
     );
 
@@ -171,7 +156,6 @@ module.exports = function(runner, params)
         {"name":"item123"},
         params.user1Token,
         [200],
-        null,
         [{"name":"selectItemById","params":[]},{"name":"updateItemById","params":[]}]
     );
 
@@ -182,7 +166,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}]
     );
 
@@ -193,7 +176,6 @@ module.exports = function(runner, params)
         {"name":"new item","name123":"new invalid item"},
         params.user1Token,
         [200],
-        null,
         [{"name":"selectItemById","params":[]},{"name":"updateItemById","params":[]}]
     );
 
@@ -204,7 +186,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}]
     );
 
@@ -215,7 +196,6 @@ module.exports = function(runner, params)
         null,
         params.user2Token,
         [401],
-        null,
         [{"name":"selectItemById","params":[]}]
     );
 
@@ -226,7 +206,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         [{"name":"selectItemById","params":[]},{"name":"deleteItemById","params":[]}]
     );
 
@@ -237,7 +216,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         [{"name":"selectItemById","params":[]},{"name":"deleteItemById","params":[]}]
     );
 
@@ -248,7 +226,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [400],
-        null,
         [{"name":"selectItemById","params":[]}]
     );
 
@@ -259,7 +236,6 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        null,
         [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}]
     );
 };

@@ -41,8 +41,7 @@ module.exports = function(orion, chai, runner, name, config, mockConnectionPool)
             {"msg":"test error"},
             null,
             [200],
-            null,
-            null
+            [{"name":"insertError","params":[]}]
         );
 
         runner.runTest(
@@ -51,9 +50,7 @@ module.exports = function(orion, chai, runner, name, config, mockConnectionPool)
             'get',
             null,
             null,
-            [400],
-            null,
-            null
+            [400]
         );
 
         require("./data-user")(runner, params);
