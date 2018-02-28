@@ -1,6 +1,6 @@
 module.exports = function(runner, params)
 {
-    // TODO: expected query strings and parameters
+    //TODO: query params
 
     runner.runTest(
         'POST | message-noToken | 401',
@@ -9,7 +9,8 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         null,
         [401],
-        null
+        null,
+        [{"name":"insertError","params":[]}]
     );
 
     runner.runTest(
@@ -19,7 +20,8 @@ module.exports = function(runner, params)
         {"recipientid":"2"},
         params.user1Token,
         [400],
-        null
+        null,
+        [{"name":"selectUserDataById3","params":[]},{"name":"selectUserDataById3","params":[]}]
     );
 
     runner.runTest(
@@ -29,7 +31,8 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user1Token,
         [200],
-        null
+        null,
+        [{"name":"selectUserDataById3","params":[]},{"name":"selectUserDataById3","params":[]},{"name":"insertMessage","params":[]}]
     );
 
     runner.runTest(
@@ -39,7 +42,8 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user1Token,
         [200],
-        null
+        null,
+        [{"name":"countMessageByOwnerAndRecipient","params":[]},{"name":"selectMessageByOwnerAndRecipient","params":[]}]
     );
 
     runner.runTest(
@@ -49,7 +53,8 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user2Token,
         [200],
-        null
+        null,
+        [{"name":"countMessageByOwnerAndRecipient","params":[]},{"name":"selectMessageByOwnerAndRecipient","params":[]}]
     );
 
     runner.runTest(
@@ -59,7 +64,8 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user3Token,
         [200],
-        null
+        null,
+        [{"name":"countMessageByOwnerAndRecipient","params":[]},{"name":"selectMessageByOwnerAndRecipient","params":[]}]
     );
 
     runner.runTest(
@@ -69,7 +75,8 @@ module.exports = function(runner, params)
         {"flagged":"1"},
         params.user2Token,
         [200],
-        null
+        null,
+        [{"name":"selectMessageById","params":[]},{"name":"updateMessageById","params":[]}]
     );
 
     runner.runTest(
@@ -79,7 +86,8 @@ module.exports = function(runner, params)
         {"flagged":"0"},
         params.user1Token,
         [400],
-        null
+        null,
+        [{"name":"selectMessageById","params":[]}]
     );
 
     runner.runTest(
@@ -89,7 +97,8 @@ module.exports = function(runner, params)
         {"text":"test message edited"},
         params.user1Token,
         [400],
-        null
+        null,
+        [{"name":"selectMessageById","params":[]}]
     );
 
     runner.runTest(
@@ -99,16 +108,7 @@ module.exports = function(runner, params)
         {"text":"test message edited"},
         params.user2Token,
         [400],
-        null
-    );
-
-    runner.runTest(
-        'DEL | message-user1DelMsg | 401',
-        '/api/data/message/21',
-        'delete',
         null,
-        params.user1Token,
-        [401],
-        null
+        [{"name":"selectMessageById","params":[]}]
     );
 };

@@ -1,3 +1,5 @@
+var queries = require("./queries");
+
 var runner = function(chai, assert)
 {
     var activeLogFunction;
@@ -64,10 +66,12 @@ var runner = function(chai, assert)
                 pool.onQueryReceived(function(actualString, actualParams)
                 {
                     var expected = expectedQueries.shift();
-                    assert.equal(expected.string, actualString, "Query string does not match the expected");
+                    var expectedString = queries[expected.name];
+                    assert.equal(expectedString, actualString, "Query string does not match the expected");
                     assert.equal(expected.params.length, actualParams.length, "Query parameters count does not match the expected");
                     for(var i=0; i<expected.params.length; i++)
-                        assert.equal(expected.params[i], actualParams[i], "Query parameter at index " + i + " does not match the expected");
+                        if(expected.params[i] !== "skip")
+                            assert.equal(expected.params[i], actualParams[i], "Query parameter at index " + i + " does not match the expected");
                 });
             }
 

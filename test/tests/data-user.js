@@ -1,6 +1,6 @@
 module.exports = function(runner, params)
 {
-    // TODO: expected query strings and parameters
+    //TODO: query params
 
     runner.runTest(
         'POST | user-newUserInvalidEmail | 400',
@@ -9,7 +9,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"invalidemail","firstName":"firstName","lastName":"lastName"},
         null,
         [400],
-        null
+        null,
+        [{"name":"insertError","params":[]}]
     );
 
     runner.runTest(
@@ -19,7 +20,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         null,
         [400],
-        null
+        null,
+        [{"name":"insertError","params":[]}]
     );
 
     runner.runTest(
@@ -29,7 +31,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"test","confirmPassword":"test","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         null,
         [400],
-        null
+        null,
+        [{"name":"insertError","params":[]}]
     );
 
     runner.runTest(
@@ -39,7 +42,8 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"gavin","lastName":"belson"},
         null,
         [200,500],
-        null
+        null,
+        [{"name":"selectUserNameByUserName","params":[]}]
     );
 
     runner.runTest(
@@ -49,7 +53,8 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"gavin","lastName":"belson"},
         null,
         [500],
-        null
+        null,
+        [{"name":"selectUserNameByUserName","params":[]}]
     );
 
     runner.runTest(
@@ -59,7 +64,8 @@ module.exports = function(runner, params)
         {"username":"user2","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"peter","lastName":"gregory"},
         null,
         [200,500],
-        null
+        null,
+        [{"name":"selectUserNameByUserName","params":[]}]
     );
 
     runner.runTest(
@@ -69,7 +75,8 @@ module.exports = function(runner, params)
         {"username":"user3","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"brian","lastName":"griffin"},
         null,
         [200,500],
-        null
+        null,
+        [{"name":"selectUserNameByUserName","params":[]}]
     );
 
     runner.runTest(
@@ -79,7 +86,8 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword123"},
         null,
         [400],
-        null
+        null,
+        [{"name":"selectUserDataByUserName","params":[]}]
     );
 
     runner.runTest(
@@ -89,7 +97,8 @@ module.exports = function(runner, params)
         {"username":"invaliduser","password":"testpassword"},
         null,
         [400],
-        null
+        null,
+        [{"name":"selectUserDataByUserName","params":[]}]
     );
 
     runner.runTest(
@@ -99,7 +108,8 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword"},
         null,
         [200],
-        null
+        null,
+        [{"name":"selectUserDataByUserName","params":[]}]
     );
 
     runner.runTest(
@@ -109,7 +119,8 @@ module.exports = function(runner, params)
         {"username":"user2","password":"testpassword"},
         null,
         [200],
-        null
+        null,
+        [{"name":"selectUserDataByUserName","params":[]}]
     );
 
     runner.runTest(
@@ -119,7 +130,8 @@ module.exports = function(runner, params)
         {"username":"user3","password":"testpassword"},
         null,
         [200],
-        null
+        null,
+        [{"name":"selectUserDataByUserName","params":[]}]
     );
 
     runner.runTest(
@@ -129,7 +141,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [200],
-        null
+        null,
+        [{"name":"countUserById","params":[]},{"name":"selectUserDataById","params":[]}]
     );
 
     runner.runTest(
@@ -139,7 +152,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [200],
-        null
+        null,
+        [{"name":"countUserById2","params":[]},{"name":"selectUserDataById2","params":[]}]
     );
 
     runner.runTest(
@@ -149,7 +163,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [401],
-        null
+        null,
+        [{"name":"insertError","params":[]}]
     );
 
     runner.runTest(
@@ -159,7 +174,8 @@ module.exports = function(runner, params)
         {"firstName":"eddard","lastName":"stark"},
         params.user1Token,
         [401],
-        null
+        null,
+        [{"name":"selectUserDataById3","params":[]}]
     );
 
     runner.runTest(
@@ -169,7 +185,8 @@ module.exports = function(runner, params)
         {"firstName":"catelyn","lastName":"tully"},
         params.user1Token,
         [200],
-        null
+        null,
+        [{"name":"selectUserDataById3","params":[]},{"name":"updateUserFullNameById","params":[]}]
     );
 
     runner.runTest(
@@ -179,7 +196,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [200],
-        null
+        null,
+        [{"name":"countUserById2","params":[]},{"name":"selectUserDataById2","params":[]}]
     );
 
     runner.runTest(
@@ -189,6 +207,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [401],
-        null
+        null,
+        [{"name":"selectUserDataById3","params":[]}]
     );
 };
