@@ -69,8 +69,12 @@ var runner = function(chai, assert)
                     var expectedString = queries[expected.name][engine];
                     assert.equal(actualString, expectedString, "Query string does not match the expected");
                     for(var i=0; i<expected.params.length; i++)
-                        if(expected.params[i] !== "skip")
-                            assert.equal(actualParams[i], expected.params[i], "Query parameter at index " + i + " does not match the expected");
+                    {
+                        if(expected.params[i] === "skip")
+                            continue;
+                        var actualValue = engine === "mssql" ? actualParams["value" + i] : actualParams[i];
+                        assert.equal(actualValue, expected.params[i], "Query parameter at index " + i + " does not match the expected");
+                    }
                 });
             }
 

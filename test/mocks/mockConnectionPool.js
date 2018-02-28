@@ -130,21 +130,7 @@ var mock = function(engine)
     function processQuery(queryString, queryParams, callback)
     {
         if(queryReceivedHandler)
-        {
-            var queryParamsParam = [];
-            if(engine === "mssql")
-            {
-                for(var key in queryParams)
-                {
-                    if(!queryParams.hasOwnProperty(key))
-                        continue;
-                    queryParamsParam.push(queryParams[key]);
-                }
-            }
-            else
-                queryParamsParam = queryParams;
-            queryReceivedHandler(queryString, queryParamsParam, engine);
-        }
+            queryReceivedHandler(queryString, queryParams, engine);
         queryString = queryString.toLowerCase();
 
         var results = [];
