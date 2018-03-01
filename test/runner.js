@@ -135,8 +135,7 @@ var Runner = function(config, dbEngine, storageProviderName)
             isServerStarted = true;
             callback();
         });
-    };
-
+    }
 
     //----------------------------------------------
     // PRIVATE
