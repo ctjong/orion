@@ -73,7 +73,7 @@ var mock = function(engine)
     }
 
     /**
-     * To be invoked when a query is received to be set to database
+     * To be invoked when a query is received to be sent to database
      * @param {*} queryReceivedHandlerArg handler function
      */
     function onQueryReceived(queryReceivedHandlerArg)
