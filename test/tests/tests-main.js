@@ -48,8 +48,8 @@ module.exports = function(Orion, chai, runner, name, config, mockConnectionPool)
             [400]
         );
 
-        require("./data-user")(runner, params);
-        require("./data-item")(runner, params);
-        require("./data-message")(runner, params);
+        require("./tests-user")(runner, params);
+        require("./tests-item")(runner, params);
+        require("./tests-message")(runner, params);
     });
 };
