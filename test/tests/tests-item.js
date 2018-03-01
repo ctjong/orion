@@ -57,6 +57,7 @@ module.exports = function(runner, params)
         '/api/data/item/private/findbyid/11',
         'get',
         null,
+        null,
         [401],
         [{"name":"insertError","params":[]}]
     );

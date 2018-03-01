@@ -103,7 +103,7 @@ var runner = function(chai, assert)
                     }
                 }
 
-                assert(expectedStatusCodes.indexOf(parseInt(res.status)) >= 0, "Status code " + res.status + " is not expected");
+                assert(expectedStatusCodes.indexOf(res.status) >= 0, "Status code " + res.status + " is not expected");
                 done();
             });
         });
