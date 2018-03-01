@@ -4,9 +4,11 @@
  */
 module.exports = function(config)
 {
-    var _this = this;
+    var express = require("express");
+    var _this = new express();
     var modules = null;
     var contextFactory = null;
+    _this.express = express;
 
     /*===================================================
         CONSTRUCTOR
@@ -14,8 +16,6 @@ module.exports = function(config)
 
     function _construct()
     {
-        _this.express = require("express");
-        _this.app = new _this.express();
         modules = new (require('./moduleCollection'))();
         contextFactory = new (require('./contextFactory'))();
         contextFactory.initializeConfig(config);
@@ -79,14 +79,12 @@ module.exports = function(config)
     ===================================================*/
 
     /**
-     * Set up API endpoints for the current app
+     * Set up API endpoints
      */
     _this.setupApiEndpoints = function()
     {
-        var app = _this.app;
-
         // log request details to console
-        app.use("", function (req, res, next) 
+        _this.use("", function (req, res, next) 
         {
             console.log("===============================================================");
             console.log(req.method + " " + req.originalUrl);
@@ -95,12 +93,12 @@ module.exports = function(config)
         });
 
         // configure endpoints
-        configureDataEndpoints(app);
-        configureAuthEndpoints(app);
-        configureUtilityEndpoints(app);
+        configureDataEndpoints();
+        configureAuthEndpoints();
+        configureUtilityEndpoints();
 
         // catch exceptions and errors
-        app.use(function (err, req, res, next) 
+        _this.use(function (err, req, res, next) 
         {
             try
             {
@@ -126,7 +124,7 @@ module.exports = function(config)
     _this.start = function(port, callback)
     {
         var finalPort = port || process.env.PORT || 1337;
-        var server = _this.app.listen(finalPort, function () 
+        var server = _this.listen(finalPort, function () 
         {
             var host = server.address().address;
             var port = server.address().port;
@@ -216,13 +214,12 @@ module.exports = function(config)
 
     /**
      * Configure CRUD data endpoints for the given app
-     * @param {any} app API app
      */
-    function configureDataEndpoints(app)
+    function configureDataEndpoints()
     {
-        app.use('/api/data/:entity', modules.get("body-parser").json());
-        app.use('/api/data/:entity', modules.get("body-parser").urlencoded({ extended: true }));
-        app.use('/api/data/:entity', function (req, res, next) 
+        _this.use('/api/data/:entity', modules.get("body-parser").json());
+        _this.use('/api/data/:entity', modules.get("body-parser").urlencoded({ extended: true }));
+        _this.use('/api/data/:entity', function (req, res, next) 
         {
             req.context = new contextFactory.Context(req, res, req.params.entity);
             modules.get("auth").initUserContext(req.context);
@@ -230,79 +227,77 @@ module.exports = function(config)
         });
 
         // GET Endpoints
-        app.get('/api/data/:entity/:accessType/findbyid/:id', function (req, res) 
+        _this.get('/api/data/:entity/:accessType/findbyid/:id', function (req, res) 
         {
             modules.get("read").execute(req.context, req.params, true);
         });
-        app.get('/api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition', function (req, res) 
+        _this.get('/api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition', function (req, res) 
         {
             modules.get("read").execute(req.context, req.params, false);
         });
-        app.get('/api/data/:entity/:accessType/findall/:orderByField/:skip/:take', function (req, res) 
+        _this.get('/api/data/:entity/:accessType/findall/:orderByField/:skip/:take', function (req, res) 
         {
             modules.get("read").execute(req.context, req.params, false);
         });
 
         // POST Endpoints
-        app.post('/api/data/asset', function (req, res)
+        _this.post('/api/data/asset', function (req, res)
         {
             modules.get("createAsset").execute(req.context, req);
         });
 
-        app.post('/api/data/:entity', function (req, res)
+        _this.post('/api/data/:entity', function (req, res)
         {
             modules.get("create").execute(req.context, req.body);
         });
 
         // PUT Endpoints
-        app.put('/api/data/:entity/:id', function (req, res)
+        _this.put('/api/data/:entity/:id', function (req, res)
         {
             modules.get("update").execute(req.context, req.body, req.params.id);
         });
 
         // DELETE Endpoints
-        app.delete('/api/data/asset/:id', function (req, res)
+        _this.delete('/api/data/asset/:id', function (req, res)
         {
             modules.get("deleteAsset").execute(req.context, req.params.id);
         });
 
-        app.delete('/api/data/:entity/:id', function (req, res)
+        _this.delete('/api/data/:entity/:id', function (req, res)
         {
             modules.get("delete").execute(req.context, req.params.id);
         });
     }
 
     /**
-     * Configure authentication endpoints for the given app
-     * @param {any} app API app
+     * Configure authentication endpoints
      */
-    function configureAuthEndpoints(app)
+    function configureAuthEndpoints()
     {
-        app.use('/api/auth', modules.get("body-parser").json());
-        app.use('/api/auth', function (req, res, next)
+        _this.use('/api/auth', modules.get("body-parser").json());
+        _this.use('/api/auth', function (req, res, next)
         {
             req.context = new contextFactory.Context(req, res, "user");
             next();
         });
-        app.post('/api/auth/token', function (req, res)
+        _this.post('/api/auth/token', function (req, res)
         {
             modules.get("auth").generateLocalUserToken(req.context, req.body.username, req.body.password);
         });
-        app.post('/api/auth/token/fb', function (req, res)
+        _this.post('/api/auth/token/fb', function (req, res)
         {
             modules.get("auth").processFbToken(req.context, req.body.fbtoken);
         });
     }
 
     /**
-     * Configure utility endpoints for the given app
-     * @param {any} app API app
+     * Configure utility endpoints
      */
-    function configureUtilityEndpoints(app)
+    function configureUtilityEndpoints()
     {
         // error logging
-        app.use('/api/error', modules.get("body-parser").json());
-        app.post('/api/error', function (req, res)
+        _this.use('/api/error', modules.get("body-parser").json());
+        _this.post('/api/error', function (req, res)
         {
             var config = contextFactory.getConfig();
             if (!config)
@@ -358,4 +353,5 @@ module.exports = function(config)
     }
 
     _construct();
+    return _this;
 };

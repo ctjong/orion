@@ -1,20 +1,20 @@
-module.exports = function(orion, chai, runner, name, config, mockConnectionPool)
+module.exports = function(Orion, chai, runner, name, config, mockConnectionPool)
 {
-    var orionApp;
+    var orion;
 
     beforeEach(function(done)
     {
-        if(!!orionApp)
+        if(!!orion)
         {
             done();
             return;
         }
 
-        orionApp = new orion(config);
-        orionApp.setupApiEndpoints();
-        orionApp.getDatabaseAdapter().setConnectionPool(mockConnectionPool);
-        orionApp.start(1337, done);
-        runner.startNewSession(orionApp, mockConnectionPool, null);
+        orion = new Orion(config);
+        orion.setupApiEndpoints();
+        orion.getDatabaseAdapter().setConnectionPool(mockConnectionPool);
+        orion.start(1337, done);
+        runner.startNewSession(orion, mockConnectionPool, null);
     });
 
     describe(name, function()

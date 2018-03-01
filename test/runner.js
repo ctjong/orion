@@ -5,7 +5,7 @@ var runner = function(chai, assert)
     var activeLogFunction;
     var inactiveLogFunction;
 
-    var orionApp;
+    var orion;
     var pool;
     var storageProvider;
 
@@ -27,13 +27,13 @@ var runner = function(chai, assert)
 
     /**
      * Start a new testing session
-     * @param {*} orionAppArg Orion application object
+     * @param {*} orionArg Orion application
      * @param {*} poolArg Connection pool object
      * @param {*} storageProviderArg Storage provider object
      */
-    function startNewSession(orionAppArg, poolArg, storageProviderArg)
+    function startNewSession(orionArg, poolArg, storageProviderArg)
     {
-        orionApp = orionAppArg;
+        orion = orionArg;
         pool = poolArg;
         storageProvider = storageProviderArg;
     }
@@ -79,7 +79,7 @@ var runner = function(chai, assert)
             }
 
             var requestAwaiter;
-            var request = chai.request(orionApp.app);
+            var request = chai.request(orion);
             if(reqMethod === "get")
                 requestAwaiter = request.get(reqUrl);
             if(reqMethod === "post")

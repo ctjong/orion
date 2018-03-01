@@ -2,7 +2,7 @@ var chai = require('chai');
 var chaiHttp = require('chai-http');
 var assert = require('assert');
 var Runner = require('./runner');
-var orion = require('../index');
+var Orion = require('../index');
 var testConfigFactory = require('./testConfigFactory');
 var MockConnectionPool = require('../test/mocks/mockConnectionPool');
 var MockStorageProvider = require('../test/mocks/mockStorageProvider');
@@ -18,4 +18,4 @@ var mssqlLocalConfig = testConfigFactory.create("mssql", { provider: "local", up
 var mysqlLocalConfig = testConfigFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
 
 var mockMssqlConnectionPool = new MockConnectionPool("mssql");
-dataTests(orion, chai, runner, "data-mssql", mssqlAzureConfig, mockMssqlConnectionPool);
+dataTests(Orion, chai, runner, "data-mssql", mssqlAzureConfig, mockMssqlConnectionPool);
