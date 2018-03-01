@@ -23,7 +23,7 @@ module.exports = function(config)
         // register modules
         modules.add("body-parser", 'body-parser');
         modules.add("crypto", 'crypto');
-        modules.add("guid", 'guid');
+        modules.add("guid", 'uuid/v1');
         modules.add("multiparty", 'multiparty');
         modules.add("mime", 'mime-types');
         modules.add("jwt", 'jsonwebtoken');

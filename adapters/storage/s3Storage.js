@@ -54,7 +54,7 @@ module.exports =
                     isFirstPartReceived = true;
                     if (!stream.filename)
                         throw new _this.error.Error("8dad", 400, "submitted file is not a valid file");
-                    var name = _this.guid.raw() + stream.filename.substring(stream.filename.lastIndexOf("."));
+                    var name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
                     provider.upload(
                     {
                         Bucket: ctx.config.storage.s3Bucket,

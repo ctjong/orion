@@ -49,7 +49,7 @@ module.exports =
                     if (!stream.filename)
                         throw new _this.error.Error("ffce", 400, "submitted file is not a valid file");
                     var size = stream.byteCount - stream.byteOffset;
-                    var name = _this.guid.raw() + stream.filename.substring(stream.filename.lastIndexOf("."));
+                    var name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
                     provider.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
                     {
                         contentSettings: { contentType: _this.mime.lookup(name) }

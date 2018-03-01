@@ -50,7 +50,7 @@ module.exports =
                 {
                     var tempPath = file.path;
                     var tempName = path.basename(tempPath);
-                    var finalName = _this.guid.raw() + tempName.substring(tempName.lastIndexOf("."));
+                    var finalName = _this.guid() + tempName.substring(tempName.lastIndexOf("."));
                     var finalPath = tempPath.replace(tempName, finalName);
                     fs.rename(tempPath, finalPath, function(error)
                     {
