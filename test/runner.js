@@ -61,22 +61,11 @@ var runner = function(chai, assert)
             if(typeof connectSuccess !== "undefined")
                 pool.setConnectSuccess(connectSuccess);
 
-            if(!!expectedQueries)
+            var actualQueries = [];
+            pool.onQueryReceived(function(actualString, actualParams, engine)
             {
-                pool.onQueryReceived(function(actualString, actualParams, engine)
-                {
-                    var expected = expectedQueries.shift();
-                    var expectedString = queries[expected.name][engine];
-                    assert.equal(actualString, expectedString, "Query string does not match the expected");
-                    for(var i=0; i<expected.params.length; i++)
-                    {
-                        if(expected.params[i] === "skip")
-                            continue;
-                        var actualValue = engine === "mssql" ? actualParams["value" + i] : actualParams[i];
-                        assert.equal(actualValue, expected.params[i], "Query parameter at index " + i + " does not match the expected");
-                    }
-                });
-            }
+                actualQueries.push({ string: actualString, params: actualParams, engine: engine });
+            });
 
             var requestAwaiter;
             var request = chai.request(orion);
@@ -93,8 +82,28 @@ var runner = function(chai, assert)
 
             requestAwaiter.end(function(err, res)
             {
-                assert(expectedStatusCodes.indexOf(res.status) >= 0, "Status code " + res.status + " is not expected");
-                assert(!expectedQueries || expectedQueries.length === 0, "Not all expected queries were received");
+                if(!!expectedQueries)
+                {
+                    assert.equal(actualQueries.length, expectedQueries.length, "Number of received queries is not as expected");
+                    for(var i=0; i<expectedQueries.length; i++)
+                    {
+                        var actualString = actualQueries[i].string;
+                        var actualParams = actualQueries[i].params;
+                        var engine = actualQueries[i].engine;
+                        var expected = expectedQueries[i];
+                        var expectedString = queries[expected.name][engine];
+                        assert.equal(actualString, expectedString, "Query string does not match the expected");
+                        for(var j=0; j<expected.params.length; j++)
+                        {
+                            if(expected.params[i] === "skip")
+                                continue;
+                            var actualValue = engine === "mssql" ? actualParams["value" + j] : actualParams[j];
+                            assert.equal(actualValue, expected.params[j], "Query parameter at index " + j + " does not match the expected");
+                        }
+                    }
+                }
+
+                assert(expectedStatusCodes.indexOf(parseInt(res.status)) >= 0, "Status code " + res.status + " is not expected");
                 done();
             });
         });
