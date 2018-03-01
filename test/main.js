@@ -1,6 +1,7 @@
 (function()
 {
     var Runner = require('./runner');
+    var configFactory = require('./configFactory');
 
     var errorTests = require('./tests/tests-error');
     var itemTests = require('./tests/tests-item');
@@ -13,7 +14,6 @@
     function main()
     {
         // initialize configs
-        var configFactory = require('./configFactory');
         var mssqlAzureConfig = configFactory.create("mssql", { provider: "azure" });
         var mysqlS3Config = configFactory.create("mysql", { provider: "s3" });
         var mssqlLocalConfig = configFactory.create("mssql", { provider: "local", uploadPath: "uploads" });
