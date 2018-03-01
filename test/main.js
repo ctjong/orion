@@ -1,4 +1,5 @@
-(function(){
+(function()
+{
     var Runner = require('./runner');
 
     var errorTests = require('./tests/tests-error');
