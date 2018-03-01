@@ -3,6 +3,9 @@
  */
 var mock = function(provider)
 {
+    var fs = require("fs");
+    var fileReceivedHandler = null;
+
     //----------------------------------------------
     // CONSTRUCTOR
     //----------------------------------------------
@@ -24,9 +27,10 @@ var mock = function(provider)
      */
     function azureCreateBlockBlobFromStream(containerName, name, stream, size, options, callback)
     {
-        //options={contentSettings: { contentType: _this.mime.lookup(name) }}
-        //callback=fn(err)
-        //TODO
+        var mime = null;
+        if(!!options && !!options.contentSettings && !!options.contentSettings.contentType)
+            mime = options.contentSettings.contentType;
+        processFile(name, stream, size, mime, callback);
     }
 
     /**
@@ -65,10 +69,44 @@ var mock = function(provider)
         //TODO
     }
 
+    /**
+     * Set a handler to be invoked when a file is received
+     * @param {*} handler 
+     */
+    function onFileReceived(handler)
+    {
+        fileReceivedHandler = handler;
+    }
+
+    //----------------------------------------------
+    // PRIVATE
+    //----------------------------------------------
+
+    /**
+     * Process an uploaded file
+     * @param {*} name File name
+     * @param {*} stream File stream
+     * @param {*} size File size
+     * @param {*} mime Mime type
+     * @param {*} callback Callback function
+     */
+    function processFile(name, stream, size, mime, callback)
+    {
+        // save the uploaded file to the system temp folder
+        var wstream = fs.createWriteStream(process.env.temp + "\\" + name);
+        stream.pipe(wstream);
+
+        if(!!fileReceivedHandler)
+            fileReceivedHandler(name, stream, size, mime);
+
+        callback(null);
+    }
+
     this.createBlockBlobFromStream = azureCreateBlockBlobFromStream;
     this.deleteBlob = azureDeleteBlob;
     this.upload = s3Upload;
     this.deleteObject = s3DeleteObject;
+    this.onFileReceived = onFileReceived;
     _construct();
 };
 

@@ -3,6 +3,7 @@
     var Runner = require('./runner');
     var configFactory = require('./configFactory');
 
+    var assetTests = require('./tests/tests-asset');
     var errorTests = require('./tests/tests-error');
     var itemTests = require('./tests/tests-item');
     var messageTests = require('./tests/tests-message');
@@ -20,13 +21,14 @@
         var mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
     
         // run tests
-        startTestSession(mssqlAzureConfig, "mssql", null, "mssql-azure", [errorTests, itemTests, messageTests, userTests]);
-        startTestSession(mysqlS3Config, "mysql", null, "mysql-s3", [errorTests, itemTests, messageTests, userTests]);
+        // startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [errorTests, itemTests, messageTests, userTests]);
+        startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [assetTests]);
+        // startTestSession(mysqlS3Config, "mysql", "s3", "mysql-s3", [errorTests, itemTests, messageTests, userTests]);
     }
 
     /**
      * Start a new test session
-     * @param {*} config Config
+     * @param {*} config Config module
      * @param {*} engine Database engine
      * @param {*} storageProviderName Storage provider name
      * @param {*} sessionName Session name

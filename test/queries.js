@@ -135,4 +135,9 @@ module.exports =
         "mssql": "update [messagetable] set flagged=@value0  where [messagetable].[id]=@value1",
         "mysql": "update `messagetable` set flagged=? where `messagetable`.`id`=?"
     },
+    "insertAsset":
+    {
+        "mssql": "insert into [assettable] ([ownerid],[filename]) values (@value0 ,@value1 ); select SCOPE_IDENTITY() as [identity];",
+        "mysql": "insert into `assettable` (`ownerid`,`filename`) values (?,?)"
+    }
 };
