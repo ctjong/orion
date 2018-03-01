@@ -4,7 +4,8 @@
 var mock = function(provider)
 {
     var fs = require("fs");
-    var fileReceivedHandler = null;
+    var filePartReceivedHandler = null;
+    var wstream = null;
 
     //----------------------------------------------
     // CONSTRUCTOR
@@ -30,7 +31,7 @@ var mock = function(provider)
         var mime = null;
         if(!!options && !!options.contentSettings && !!options.contentSettings.contentType)
             mime = options.contentSettings.contentType;
-        processFile(name, stream, size, mime, callback);
+        processFilePart(name, stream, size, mime, callback);
     }
 
     /**
@@ -70,12 +71,12 @@ var mock = function(provider)
     }
 
     /**
-     * Set a handler to be invoked when a file is received
+     * Set a handler to be invoked when a file part is received
      * @param {*} handler 
      */
-    function onFileReceived(handler)
+    function onFilePartReceived(handler)
     {
-        fileReceivedHandler = handler;
+        filePartReceivedHandler = handler;
     }
 
     //----------------------------------------------
@@ -83,30 +84,33 @@ var mock = function(provider)
     //----------------------------------------------
 
     /**
-     * Process an uploaded file
+     * Process an uploaded file part
      * @param {*} name File name
      * @param {*} stream File stream
      * @param {*} size File size
      * @param {*} mime Mime type
      * @param {*} callback Callback function
      */
-    function processFile(name, stream, size, mime, callback)
+    function processFilePart(name, stream, size, mime, callback)
     {
         // save the uploaded file to the system temp folder
-        var wstream = fs.createWriteStream(process.env.temp + "\\" + name);
+        var targetPath = process.env.temp + "\\" + name;
+        if(!wstream || wstream.path !== targetPath)
+        {
+            wstream = fs.createWriteStream(targetPath);
+            wstream.on('finish', callback);
+        }
         stream.pipe(wstream);
 
-        if(!!fileReceivedHandler)
-            fileReceivedHandler(name, stream, size, mime);
-
-        callback(null);
+        if(!!filePartReceivedHandler)
+            filePartReceivedHandler(name, stream, size, mime);
     }
 
     this.createBlockBlobFromStream = azureCreateBlockBlobFromStream;
     this.deleteBlob = azureDeleteBlob;
     this.upload = s3Upload;
     this.deleteObject = s3DeleteObject;
-    this.onFileReceived = onFileReceived;
+    this.onFilePartReceived = onFilePartReceived;
     _construct();
 };
 
