@@ -85,7 +85,7 @@ var Runner = function(config, dbEngine, storageProviderName)
     }
 
     /**
-     * Run an upload test
+     * Run an upload file test
      * @param {*} name test name
      * @param {*} filePath path to the file to upload
      * @param {*} accessToken access token
@@ -94,7 +94,8 @@ var Runner = function(config, dbEngine, storageProviderName)
      * @param {*} expectedQueries list of expected query strings and parameters
      * @param {*} queryResults results to return for each query
      */
-    function runUploadTest(name, filePath, accessToken, expectedMimeType, expectedStatusCodes, expectedQueries, queryResults)
+    function runUploadTest(name, filePath, accessToken, expectedMimeType, expectedStatusCodes, 
+        expectedQueries, queryResults)
     {
         it(name, function(done)
         {
