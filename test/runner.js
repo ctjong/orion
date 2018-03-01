@@ -1,13 +1,30 @@
-var queries = require("./queries");
-
-var runner = function(chai, assert)
+/**
+ * Test runner class
+ * @param {*} config Config module
+ * @param {*} dbEngine Database engine
+ * @param {*} storageProviderName Storage provider name
+ */
+var Runner = function(config, dbEngine, storageProviderName)
 {
+    var queries = require("./queries");
+    var Orion = require('../index');
+    var MockConnectionPool = require('./mocks/mockConnectionPool');
+    var MockStorageProvider = require('./mocks/mockStorageProvider');
+    var chai = require('chai');
+    var chaiHttp = require('chai-http');
+    var assert = require('assert');
+    chai.use(chaiHttp);
+
+    var _this = this;
     var activeLogFunction;
     var inactiveLogFunction;
+    var orion = null;
+    var pool = null;
+    var storageProvider = null;
 
-    var orion;
-    var pool;
-    var storageProvider;
+    var maxServerStartRetries = 10;
+
+    _this.isServerStarted = false;
 
     //----------------------------------------------
     // CONSTRUCTOR
@@ -26,19 +43,6 @@ var runner = function(chai, assert)
     //----------------------------------------------
 
     /**
-     * Start a new testing session
-     * @param {*} orionArg Orion application
-     * @param {*} poolArg Connection pool object
-     * @param {*} storageProviderArg Storage provider object
-     */
-    function startNewSession(orionArg, poolArg, storageProviderArg)
-    {
-        orion = orionArg;
-        pool = poolArg;
-        storageProvider = storageProviderArg;
-    }
-
-    /**
      * Run a test
      * @param {*} name test name
      * @param {*} reqUrl request URL
@@ -47,35 +51,31 @@ var runner = function(chai, assert)
      * @param {*} accessToken access token
      * @param {*} expectedStatusCodes expected response status codes
      * @param {*} expectedQueries list of expected query strings and parameters
-     * @param {*} querySuccess whether or not query request should succeed
-     * @param {*} connectSuccess whether or not connect request should succeed
+     * @param {*} queryResults results to return for each query
      */
     function runTest(name, reqUrl, reqMethod, reqBody, accessToken, expectedStatusCodes, 
-        expectedQueries, querySuccess, connectSuccess)
+        expectedQueries, queryResults)
     {
         it(name, function(done)
         {
             pool.reset();
-            if(typeof querySuccess !== "undefined")
-                pool.setQuerySuccess(querySuccess);
-            if(typeof connectSuccess !== "undefined")
-                pool.setConnectSuccess(connectSuccess);
-
             var actualQueries = [];
             pool.onQueryReceived(function(actualString, actualParams, engine)
             {
                 actualQueries.push({ string: actualString, params: actualParams, engine: engine });
+                if(!!queryResults && !!queryResults.length)
+                    pool.setQueryResults(queryResults.shift());
             });
 
             var requestAwaiter;
             var request = chai.request(orion);
             if(reqMethod === "get")
                 requestAwaiter = request.get(reqUrl);
-            if(reqMethod === "post")
+            else if(reqMethod === "post")
                 requestAwaiter = request.post(reqUrl).send(reqBody);
-            if(reqMethod === "put")
+            else if(reqMethod === "put")
                 requestAwaiter = request.put(reqUrl).send(reqBody);
-            if(reqMethod === "delete")
+            else if(reqMethod === "delete")
                 requestAwaiter = request.delete(reqUrl);
             if(!!accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
@@ -92,7 +92,7 @@ var runner = function(chai, assert)
                         var engine = actualQueries[i].engine;
                         var expected = expectedQueries[i];
                         var expectedString = queries[expected.name][engine];
-                        assert.equal(actualString, expectedString, "Query string does not match the expected");
+                        assert.equal(actualString.trim().toLowerCase(), expectedString.trim().toLowerCase(), "Query string does not match the expected");
                         for(var j=0; j<expected.params.length; j++)
                         {
                             if(expected.params[i] === "skip")
@@ -109,30 +109,59 @@ var runner = function(chai, assert)
         });
     }
 
-    /**
-     * Enable stdout
-     * @param {*} fn function to execute
+    /** 
+     * Start an Orion app
+     * @param {*} callback Callback function
      */
-    function enableStdout()
+    function startServer(callback)
     {
-        console.log = activeLogFunction;
-        console.error = activeErrFunction;
-    }
+        if(_this.isServerStarted)
+        {
+            callback();
+            return;
+        }
+
+        orion = new Orion(config);
+        orion.setupApiEndpoints();
+
+        pool = new MockConnectionPool(dbEngine);
+        orion.getDatabaseAdapter().setConnectionPool(pool);
+
+        //TODO init mock storage provider
+        //TODO orion.getStorageAdapter().setProvider(provider);
+
+        startServerInternal(orion, 0, function()
+        {
+            isServerStarted = true;
+            callback();
+        });
+    };
+
+
+    //----------------------------------------------
+    // PRIVATE
+    //----------------------------------------------
 
     /**
-     * Disable stdout
+     * Start an Orion app
+     * @param {*} orion orion app
+     * @param {*} numRetries number of retries so far
+     * @param {*} callback callback function
      */
-    function disableConsole()
+    function startServerInternal(orion, numRetries, callback)
     {
-        console.log = inactiveLogFunction;
-        console.error = inactiveErrFunction;
+        if(numRetries > maxServerStartRetries)
+            throw "Failed to start app. Max retries exceeded.";
+        var port = 1337 + numRetries;
+        orion.start(port, callback).on("error", function()
+        {
+            startServerInternal(orion, numRetries + 1, callback);
+        });
     }
 
-    this.startNewSession = startNewSession;
     this.runTest = runTest;
-    this.enableStdout = enableStdout;
-    this.disableConsole = disableConsole;
+    this.startServer = startServer;
     _construct();
 };
 
-module.exports = runner;
+module.exports = Runner;

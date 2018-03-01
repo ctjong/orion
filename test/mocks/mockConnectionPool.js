@@ -3,24 +3,7 @@
  */
 var mock = function(engine)
 {
-    // TODO: expand results options
-
-    var resultsOptions = 
-    [
-        {
-            queryKeywords: ["count(*)"],
-            queryParams: {},
-            results: [{'':'1'}]
-        },
-        {
-            queryKeywords: ["insert into"],
-            queryParams: {},
-            results: [{'identity':'1'}]
-        }
-    ];
-
-    var connectSuccess = true;
-    var querySuccess = true;
+    var queryResults = [];
     var queryReceivedHandler = null;
     var inputQueryParams = null;
 
@@ -77,25 +60,16 @@ var mock = function(engine)
                 processQuery(queryString, queryParams, callback);
             }
         };
-        callback(connectSuccess ? null : "error", connection);
+        callback(null, connection);
     }
 
     /**
-     * Set whether or not connect requests should succeed
-     * @param {*} connectSuccessArg connect requests result
+     * Set the results for the active query
+     * @param {*} nextQueryResultsArg query results
      */
-    function setConnectSuccess(connectSuccessArg)
+    function setQueryResults(nextQueryResultsArg)
     {
-        connectSuccess = connectSuccessArg;
-    }
-
-    /**
-     * Set whether or not query requests should succeed
-     * @param {*} connectSuccessArg query requests result
-     */
-    function setQuerySuccess(querySuccessArg)
-    {
-        querySuccess = querySuccessArg;
+        queryResults = nextQueryResultsArg;
     }
 
     /**
@@ -113,7 +87,7 @@ var mock = function(engine)
     function reset()
     {
         connectSuccess = true;
-        querySuccess = true;
+        nextQueryStatus = true;
         queryReceivedHandler = null;
     }
 
@@ -133,53 +107,28 @@ var mock = function(engine)
             queryReceivedHandler(queryString, queryParams, engine);
         queryString = queryString.toLowerCase();
 
-        var results = [];
-        for(var i=0; i<resultsOptions.length; i++)
+        var currentQueryResults = queryResults;
+        queryResults = [];
+        if(currentQueryResults.length === 0 && queryString.indexOf("insert into") >= 0)
+            currentQueryResults = {"lastinsertedid":"1"};
+        if(typeof currentQueryResults.lastinsertedid !== "undefined")
         {
-            var option = resultsOptions[i];
-            var isMatch = true;
-            for(var j=0; j<option.queryKeywords.length; j++)
-            {
-                var keyword = option.queryKeywords[j];
-                if (queryString.indexOf(keyword) < 0)
-                {
-                    isMatch = false;
-                    break;
-                }
-            }
-            if(!isMatch)
-                continue;
-
-            for(var paramKey in option.queryParams)
-            {
-                if(!option.queryParams.hasOwnProperty(paramKey))
-                    continue;
-                if(queryParams[paramKey] !== option.queryParams[paramKey])
-                {
-                    isMatch = false;
-                    break;
-                }
-            }
-            if(!isMatch)
-                continue;
-
-            results = option.results;
-            break;
+            if(engine === "mssql")
+                currentQueryResults = [{"identity": currentQueryResults.lastinsertedid}];
+            else
+                currentQueryResults = {"insertId": currentQueryResults.lastinsertedid};
         }
 
-        if(!querySuccess)
-            callback("error");
-        else if(engine === "mssql")
-            callback(null, {recordset: results});
+        if(engine === "mssql")
+            callback(null, {recordset: currentQueryResults});
         else
-            callback(null, results, []);
+            callback(null, currentQueryResults, []);
     }
 
     this.sql = mssql;
     this.connect = mssqlConnect;
     this.getConnection = mysqlGetConnection;
-    this.setConnectSuccess = setConnectSuccess;
-    this.setQuerySuccess = setQuerySuccess;
+    this.setQueryResults = setQueryResults;
     this.onQueryReceived = onQueryReceived;
     this.reset = reset;
     _construct();

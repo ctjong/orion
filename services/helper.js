@@ -183,16 +183,26 @@ module.exports =
          */
         function resolveForeignKeys(ctx, requestBody, db, callback)
         {
-            var op = { active: 0 };
+            var fieldName;
             var fields = ctx.config.entities[ctx.entity].fields;
-            for(var fieldName in fields)
+            var fieldNamesToResolve = [];
+            for(fieldName in fields)
             {
                 if(!fields.hasOwnProperty(fieldName) || !fields[fieldName].foreignKey)
                     continue;
-                resolveForeignKey(ctx, op, requestBody, fieldName, fields[fieldName].foreignKey, db, callback);
+                fieldNamesToResolve.push(fieldName);
             }
-            if(op.active <= 0)
+            if(fieldNamesToResolve.length === 0)
                 callback(requestBody);
+            else
+            {
+                var op = { active: fieldNamesToResolve.length, isCallbackCalled: false };
+                for(var i=0; i<fieldNamesToResolve.length; i++)
+                {
+                    fieldName = fieldNamesToResolve[i];
+                    resolveForeignKey(ctx, op, requestBody, fieldName, fields[fieldName].foreignKey, db, callback);
+                }
+            }
         }
 
         /**
@@ -211,10 +221,12 @@ module.exports =
             {
                 op.active--;
                 requestBody[fk.resolvedKeyName] = _this.fixDataKeysAndTypes(ctx, record);
-                if(op.active <= 0)
+                if(op.active <= 0 && !op.isCallbackCalled)
+                {
                     callback(requestBody);
+                    op.isCallbackCalled = true;
+                }
             });
-            op.active++;
         }
 
         this.getFields = getFields;

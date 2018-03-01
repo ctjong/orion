@@ -9,7 +9,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"invalidemail","firstName":"firstName","lastName":"lastName"},
         null,
         [400],
-        [{"name":"insertError","params":[]}]
+        [{"name":"insertError","params":[]}],
+        [{"lastinsertedid":"1"}]
     );
 
     runner.runTest(
@@ -19,7 +20,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         null,
         [400],
-        [{"name":"insertError","params":[]}]
+        [{"name":"insertError","params":[]}],
+        [{"lastinsertedid":"1"}]
     );
 
     runner.runTest(
@@ -29,17 +31,19 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"test","confirmPassword":"test","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         null,
         [400],
-        [{"name":"insertError","params":[]}]
+        [{"name":"insertError","params":[]}],
+        [{"lastinsertedid":"1"}]
     );
 
     runner.runTest(
-        'POST | user-newUserGoodReqUser1 | 200/500',
+        'POST | user-newUserGoodReqUser1 | 200',
         '/api/data/user',
         'post',
         {"username":"user1","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"gavin","lastName":"belson"},
         null,
-        [200,500],
-        [{"name":"selectUserNameByUserName","params":[]}]
+        [200],
+        [{"name":"selectUserNameByUserName","params":[]},{"name":"insertUser","params":[]}],
+        [[],{"lastinsertedid":"1"}]
     );
 
     runner.runTest(
@@ -49,27 +53,30 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"gavin","lastName":"belson"},
         null,
         [500],
-        [{"name":"selectUserNameByUserName","params":[]}]
+        [{"name":"selectUserNameByUserName","params":[]}],
+        [[{"username":"user1"}]]
     );
 
     runner.runTest(
-        'POST | user-newUserGoodReqUser2 | 200/500',
+        'POST | user-newUserGoodReqUser2 | 200',
         '/api/data/user',
         'post',
         {"username":"user2","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"peter","lastName":"gregory"},
         null,
-        [200,500],
-        [{"name":"selectUserNameByUserName","params":[]}]
+        [200],
+        [{"name":"selectUserNameByUserName","params":[]},{"name":"insertUser","params":[]}],
+        [[],{"lastinsertedid":"1"}]
     );
 
     runner.runTest(
-        'POST | user-newUserGoodReqUser3 | 200/500',
+        'POST | user-newUserGoodReqUser3 | 200',
         '/api/data/user',
         'post',
         {"username":"user3","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"brian","lastName":"griffin"},
         null,
-        [200,500],
-        [{"name":"selectUserNameByUserName","params":[]}]
+        [200],
+        [{"name":"selectUserNameByUserName","params":[]},{"name":"insertUser","params":[]}],
+        [[],{"lastinsertedid":"1"}]
     );
 
     runner.runTest(
@@ -99,7 +106,8 @@ module.exports = function(runner, params)
         {"username":"user1","password":"testpassword"},
         null,
         [200],
-        [{"name":"selectUserDataByUserName","params":[]}]
+        [{"name":"selectUserDataByUserName","params":[]}],
+        [[{"id":1,"password":params.hashedPassword,"roles":"member","domain":"local","firstname":"test","lastname":"test"}]]
     );
 
     runner.runTest(
@@ -109,7 +117,8 @@ module.exports = function(runner, params)
         {"username":"user2","password":"testpassword"},
         null,
         [200],
-        [{"name":"selectUserDataByUserName","params":[]}]
+        [{"name":"selectUserDataByUserName","params":[]}],
+        [[{"id":2,"password":params.hashedPassword,"roles":"member","domain":"local","firstname":"test","lastname":"test"}]]
     );
 
     runner.runTest(
@@ -119,7 +128,8 @@ module.exports = function(runner, params)
         {"username":"user3","password":"testpassword"},
         null,
         [200],
-        [{"name":"selectUserDataByUserName","params":[]}]
+        [{"name":"selectUserDataByUserName","params":[]}],
+        [[{"id":3,"password":params.hashedPassword,"roles":"member","domain":"local","firstname":"test","lastname":"test"}]]
     );
 
     runner.runTest(
@@ -129,7 +139,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [200],
-        [{"name":"countUserById","params":[]},{"name":"selectUserDataById","params":[]}]
+        [{"name":"countUserById","params":[]},{"name":"selectUserDataById","params":[]}],
+        [[{"":"1"}]]
     );
 
     runner.runTest(
@@ -139,7 +150,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [200],
-        [{"name":"countUserById2","params":[]},{"name":"selectUserDataById2","params":[]}]
+        [{"name":"countUserById2","params":[]},{"name":"selectUserDataById2","params":[]}],
+        [[{"":"1"}]]
     );
 
     runner.runTest(
@@ -149,7 +161,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [401],
-        [{"name":"insertError","params":[]}]
+        [{"name":"insertError","params":[]}],
+        [{"lastinsertedid":"1"}]
     );
 
     runner.runTest(
@@ -159,7 +172,8 @@ module.exports = function(runner, params)
         {"firstName":"eddard","lastName":"stark"},
         params.user1Token,
         [401],
-        [{"name":"selectUserDataById3","params":[]}]
+        [{"name":"selectUserDataById3","params":[]}],
+        [[{"id":2}]]
     );
 
     runner.runTest(
@@ -169,7 +183,8 @@ module.exports = function(runner, params)
         {"firstName":"catelyn","lastName":"tully"},
         params.user1Token,
         [200],
-        [{"name":"selectUserDataById3","params":[]},{"name":"updateUserFullNameById","params":[]}]
+        [{"name":"selectUserDataById3","params":[]},{"name":"updateUserFullNameById","params":[]}],
+        [[{"id":1,"firstName":"test","lastName":"test","domain":"local","username":"test","roles":"member"}]]
     );
 
     runner.runTest(
@@ -179,7 +194,8 @@ module.exports = function(runner, params)
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         params.user1Token,
         [200],
-        [{"name":"countUserById2","params":[]},{"name":"selectUserDataById2","params":[]}]
+        [{"name":"countUserById2","params":[]},{"name":"selectUserDataById2","params":[]}],
+        [[{"":"1"}]]
     );
 
     runner.runTest(
@@ -189,6 +205,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [401],
-        [{"name":"selectUserDataById3","params":[]}]
+        [{"name":"selectUserDataById3","params":[]}],
+        [[{"id":1}]]
     );
 };

@@ -132,6 +132,7 @@ module.exports = function(config)
             if(!!callback)
                 callback();
         });
+        return server;
     };
 
     /**
