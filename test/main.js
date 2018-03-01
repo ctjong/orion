@@ -1,6 +1,11 @@
 (function(){
     var Runner = require('./runner');
 
+    var errorTests = require('./tests/tests-error');
+    var itemTests = require('./tests/tests-item');
+    var messageTests = require('./tests/tests-message');
+    var userTests = require('./tests/tests-user');
+
     /** 
      * Test entry point
      */
@@ -14,18 +19,19 @@
         var mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
     
         // run tests
-        startTestSession(mssqlAzureConfig, "mssql", null, "data-mssql");
-        startTestSession(mysqlS3Config, "mysql", null, "data-mysql");
+        startTestSession(mssqlAzureConfig, "mssql", null, "mssql-azure", [errorTests, itemTests, messageTests, userTests]);
+        startTestSession(mysqlS3Config, "mysql", null, "mysql-s3", [errorTests, itemTests, messageTests, userTests]);
     }
 
     /**
-     * 
-     * @param {*} config 
-     * @param {*} engine 
-     * @param {*} storageProviderName 
-     * @param {*} sessionName 
+     * Start a new test session
+     * @param {*} config Config
+     * @param {*} engine Database engine
+     * @param {*} storageProviderName Storage provider name
+     * @param {*} sessionName Session name
+     * @param {*} tests List of tests to run
      */
-    function startTestSession(config, engine, storageProviderName, sessionName)
+    function startTestSession(config, engine, storageProviderName, sessionName, tests)
     {
         var runner = new Runner(config, engine, storageProviderName);
 
@@ -49,10 +55,8 @@
                 hashedPassword: "3a6ad575db2b6a2a170f26505dff23a2b0ec337b34c011269ccd4e024e25847eea9e5023e58dd4084c94dea5127ab4e3f7c2122a2ef208c81e6035de37ccfec8"
             };
 
-            require("./tests/tests-errors")(runner, params);
-            require("./tests/tests-user")(runner, params);
-            require("./tests/tests-item")(runner, params);
-            require("./tests/tests-message")(runner, params);
+            for(var i=0; i<tests.length; i++)
+                tests[i](runner, params);
         });
     }
 
