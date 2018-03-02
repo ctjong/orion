@@ -67,7 +67,7 @@ var mock = function(provider)
      */
     function s3DeleteObject(options, callback)
     {
-        processFileDelete(optoins.Key, callback);
+        processFileDelete(options.Key, callback);
     }
 
     /**

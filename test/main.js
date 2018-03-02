@@ -21,9 +21,9 @@
         var mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
     
         // run tests
-        // startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [errorTests, itemTests, messageTests, userTests]);
-        startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [assetTests]);
-        // startTestSession(mysqlS3Config, "mysql", "s3", "mysql-s3", [errorTests, itemTests, messageTests, userTests]);
+        startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [errorTests, itemTests, messageTests, userTests, assetTests]);
+        startTestSession(mysqlS3Config, "mysql", "s3", "mysql-s3", [errorTests, itemTests, messageTests, userTests, assetTests]);
+        //TODO add tests for local uploads
     }
 
     /**

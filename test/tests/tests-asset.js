@@ -1,6 +1,15 @@
 module.exports = function(runner, params)
 {
-    //TODO: query params
+    runner.runFileUploadTest(
+        'POST | asset-noToken | 200',
+        '/api/data/asset',
+        './test/files/test.jpg',
+        null,
+        'image/jpeg',
+        [401],
+        [],
+        []
+    );
 
     runner.runFileUploadTest(
         'POST | asset-goodToken | 200',
@@ -15,10 +24,10 @@ module.exports = function(runner, params)
 
     runner.runFileDeleteTest(
         'DELETE | asset-goodToken | 200',
-        '/api/data/asset/1',
+        '/api/data/asset/12',
         params.user1Token,
         [200],
-        [{"name":"selectAssetById","params":[]},{"name":"deleteAssetById","params":[]}],
-        [[{"ownerid":"1","filename":"testfilename.jpg"}]]
+        [{"name":"selectAssetById","params":[12]},{"name":"deleteAssetById","params":[12]}],
+        [[{"id":"12","ownerid":"1","filename":"testfilename.jpg"}]]
     );
 };
