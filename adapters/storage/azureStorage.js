@@ -7,7 +7,7 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var provider;
+        var provider = null;
 
         //----------------------------------------------
         // CONSTRUCTOR

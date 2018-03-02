@@ -26,7 +26,7 @@ In this documentation:
 - [Contributing](https://github.com/ctjong/orion/tree/master/CONTRIBUTING.md)
 - [License](https://github.com/ctjong/orion/tree/master/LICENSE)
 
-## Create Your First Orion Application
+## Create Your First Orion Application (TODO)
 
 1. Set up a folder for your server application.
 2. Install Orion to your application.

@@ -8,7 +8,7 @@ module.exports =
     {
         var _this = this;
         var path = require("path");
-        var provider;
+        var provider = null;
 
         //----------------------------------------------
         // CONSTRUCTOR
