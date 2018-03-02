@@ -38,7 +38,6 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
-            //TODO: reuse connection across requests
             var isFirstPartReceived = false;
             var form = new (_this.multiparty.Form)();
             form.on('part', function(stream) 

@@ -19,11 +19,12 @@
         var mysqlS3Config = configFactory.create("mysql", { provider: "s3" });
         var mssqlLocalConfig = configFactory.create("mssql", { provider: "local", uploadPath: "uploads" });
         var mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
-    
+
         // run tests
         startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [errorTests, itemTests, messageTests, userTests, assetTests]);
         startTestSession(mysqlS3Config, "mysql", "s3", "mysql-s3", [errorTests, itemTests, messageTests, userTests, assetTests]);
-        //TODO add tests for local uploads
+        startTestSession(mssqlLocalConfig, "mssql", "local", "mssql-local", [assetTests]);
+        startTestSession(mysqlLocalConfig, "mysql", "local", "mysql-local", [assetTests]);
     }
 
     /**

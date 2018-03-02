@@ -7,17 +7,14 @@ module.exports =
     Instance: function()
     {
         var _this = this;
-        var fs, path;
+        var path = require("path");
+        var provider;
 
         //----------------------------------------------
         // CONSTRUCTOR
         //----------------------------------------------
 
-        function _construct()
-        {
-            fs = require("fs");
-            path = require("path");
-        }
+        function _construct() { }
 
         //----------------------------------------------
         // PUBLIC
@@ -28,7 +25,9 @@ module.exports =
          */
         function initialize(config)
         {
-            // do nothing
+            if(!!provider)
+                return;
+            provider = require("fs");
         }
 
         /**
@@ -52,7 +51,7 @@ module.exports =
                     var tempName = path.basename(tempPath);
                     var finalName = _this.guid() + tempName.substring(tempName.lastIndexOf("."));
                     var finalPath = tempPath.replace(tempName, finalName);
-                    fs.rename(tempPath, finalPath, function(error)
+                    provider.rename(tempPath, finalPath, function(error)
                     {
                         callback(error, finalName);
                     });
@@ -77,7 +76,7 @@ module.exports =
         function deleteFile(ctx, filename, callback)
         {
             var fullPath = ctx.config.storage.uploadPath + "/" + filename;
-            fs.unlink(fullPath, function (error)
+            provider.unlink(fullPath, function (error)
             {
                 callback(error);
             });
@@ -89,7 +88,7 @@ module.exports =
          */
         function setProvider(providerModule)
         {
-            // nothing to do here, we are not using any provider
+            provider = providerModule;
         }
 
         this.initialize = initialize;

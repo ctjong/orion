@@ -4,6 +4,7 @@
 var mock = function(provider)
 {
     var fs = require("fs");
+    var path = require("path");
     var filePartReceivedHandler = null;
     var fileDeletedHandler = null;
     var wstream = null;
@@ -32,7 +33,7 @@ var mock = function(provider)
         var mime = null;
         if(!!options && !!options.contentSettings && !!options.contentSettings.contentType)
             mime = options.contentSettings.contentType;
-        processFilePart(name, stream, size, mime, callback);
+        processFilePart(name, mime, stream, null, callback);
     }
 
     /**
@@ -55,9 +56,8 @@ var mock = function(provider)
     {
         var name = options.Key;
         var stream = options.Body;
-        var size = options.ContentLength;
         var mime = options.ContentType;
-        processFilePart(name, stream, size, mime, callback);
+        processFilePart(name, mime, stream, null, callback);
     }
 
     /**
@@ -68,6 +68,29 @@ var mock = function(provider)
     function s3DeleteObject(options, callback)
     {
         processFileDelete(options.Key, callback);
+    }
+
+    /**
+     * Rename an uploaded file
+     * @param {*} tempPath Temporary upload path
+     * @param {*} finalPath Final upload path
+     * @param {*} callback Callback function
+     */
+    function localRename(tempPath, finalPath, callback)
+    {
+        var filename = path.basename(tempPath);
+        processFilePart(filename, null, null, tempPath, callback);
+    }
+
+    /**
+     * Remove an uploaded file
+     * @param {*} fullPath Full path of the file to delete
+     * @param {*} callback Callback function
+     */
+    function localUnlink(fullPath, callback)
+    {
+        var filename = path.basename(fullPath);
+        processFileDelete(filename, callback);
     }
 
     /**
@@ -95,24 +118,31 @@ var mock = function(provider)
     /**
      * Process an uploaded file part
      * @param {*} name File name
-     * @param {*} stream File stream
-     * @param {*} size File size
      * @param {*} mime Mime type
+     * @param {*} stream File stream
+     * @param {*} tempPath Temporary file path
      * @param {*} callback Callback function
      */
-    function processFilePart(name, stream, size, mime, callback)
+    function processFilePart(name, mime, stream, tempPath, callback)
     {
         // save the uploaded file to the system temp folder
         var targetPath = process.env.temp + "\\" + name;
-        if(!wstream || wstream.path !== targetPath)
+        if(!!stream)
         {
-            wstream = fs.createWriteStream(targetPath);
-            wstream.on('finish', callback);
+            if(!wstream || wstream.path !== targetPath)
+            {
+                wstream = fs.createWriteStream(targetPath);
+                wstream.on('finish', callback);
+            }
+            stream.pipe(wstream);
         }
-        stream.pipe(wstream);
+        else if(!!tempPath)
+        {
+            fs.rename(tempPath, targetPath, callback);
+        }
 
         if(!!filePartReceivedHandler)
-            filePartReceivedHandler(name, stream, size, mime);
+            filePartReceivedHandler(name, mime);
     }
 
     /**
@@ -131,6 +161,8 @@ var mock = function(provider)
     this.deleteBlob = azureDeleteBlob;
     this.upload = s3Upload;
     this.deleteObject = s3DeleteObject;
+    this.rename = localRename;
+    this.unlink = localUnlink;
     this.onFilePartReceived = onFilePartReceived;
     this.onFileDeleted = onFileDeleted;
     _construct();

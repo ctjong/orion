@@ -107,7 +107,7 @@ var Runner = function(config, dbEngine, storageProviderName)
             var inputFileSize = fs.statSync(filePath).size;
             var uploadedFileName = null;
             var uploadedFileMime = null;
-            storageProvider.onFilePartReceived(function(name, stream, size, mime)
+            storageProvider.onFilePartReceived(function(name, mime)
             {
                 uploadedFileName = name;
                 uploadedFileMime = mime;
@@ -126,9 +126,9 @@ var Runner = function(config, dbEngine, storageProviderName)
                     var uploadedFilePath = process.env.temp + "\\" + uploadedFileName;
                     var uploadedFile = fs.readFileSync(uploadedFilePath);
                     var uploadedFileSize = fs.statSync(uploadedFilePath).size;
-                    assert.equal(uploadedFileMime, expectedMimeType, "Uploaded file's MIME type is incorrect");
-                    assert.equal(uploadedFileSize, inputFileSize, "Uploaded file's size is incorrect");
-                    assert(uploadedFile.equals(inputFile), "Uploaded file content is incorrect");
+                    if(uploadedFileMime !== null)
+                        assert.equal(uploadedFileMime, expectedMimeType, "Uploaded file's MIME type is incorrect");
+                    assert(uploadedFile.equals(inputFile), "Uploaded file is not the identical to input file");
 
                     for(var i=0; i<expectedQueries.length; i++)
                         for(var j=0; j<expectedQueries[i].params.length; j++)
