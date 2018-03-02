@@ -19,6 +19,6 @@ module.exports = function(runner, params)
         params.user1Token,
         [200],
         [{"name":"selectAssetById","params":[]},{"name":"deleteAssetById","params":[]}],
-        [[{"filename":"testfilename.jpg"}]]
+        [[{"ownerid":"1","filename":"testfilename.jpg"}]]
     );
 };

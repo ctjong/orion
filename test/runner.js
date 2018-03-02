@@ -154,6 +154,7 @@ var Runner = function(config, dbEngine, storageProviderName)
         it(name, function(done)
         {
             var actualQueries = [];
+            var expectedFilename = queryResults[0][0].filename;
             onBeforeRequest(actualQueries, queryResults);
             var actualFilename = null;
             storageProvider.onFileDeleted(function(name)
@@ -168,9 +169,6 @@ var Runner = function(config, dbEngine, storageProviderName)
 
             requestAwaiter.end(function(err, res)
             {
-                var expectedFilename = queryResults[0][0].filename;
-                console.log(actualFilename);
-                console.log(expectedFilename);
                 assert.equal(actualFilename, expectedFilename, "Deleted file name is incorrect");
                 onAfterRequest(actualQueries, expectedQueries, res.status, expectedStatusCodes);
                 done();
