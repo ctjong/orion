@@ -85,8 +85,9 @@ var Runner = function(config, dbEngine, storageProviderName)
     }
 
     /**
-     * Run an upload file test
+     * Run a file upload test
      * @param {*} name test name
+     * @param {*} reqUrl request URL
      * @param {*} filePath path to the file to upload
      * @param {*} accessToken access token
      * @param {*} expectedMimeType expected MIME type of the uploaded file
@@ -94,8 +95,8 @@ var Runner = function(config, dbEngine, storageProviderName)
      * @param {*} expectedQueries list of expected query strings and parameters
      * @param {*} queryResults results to return for each query
      */
-    function runUploadTest(name, filePath, accessToken, expectedMimeType, expectedStatusCodes, 
-        expectedQueries, queryResults)
+    function runFileUploadTest(name, reqUrl, filePath, accessToken, expectedMimeType, 
+        expectedStatusCodes, expectedQueries, queryResults)
     {
         it(name, function(done)
         {
@@ -113,7 +114,7 @@ var Runner = function(config, dbEngine, storageProviderName)
             });
 
             var requestAwaiter = chai.request(orion)
-                .post("/api/data/asset")
+                .post(reqUrl)
                 .attach("file", inputFile, inputFileName);
             if(!!accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
@@ -135,7 +136,45 @@ var Runner = function(config, dbEngine, storageProviderName)
                 onAfterRequest(actualQueries, expectedQueries, res.status, expectedStatusCodes);
                 done();
             });
+        });
+    }
 
+    /**
+     * Run a file delete test
+     * @param {*} name test name
+     * @param {*} reqUrl request URL
+     * @param {*} accessToken access token
+     * @param {*} expectedMimeType expected MIME type of the uploaded file
+     * @param {*} expectedStatusCodes expected response status codes
+     * @param {*} expectedQueries list of expected query strings and parameters
+     * @param {*} queryResults results to return for each query
+     */
+    function runFileDeleteTest(name, reqUrl, accessToken, expectedStatusCodes, expectedQueries, queryResults)
+    {
+        it(name, function(done)
+        {
+            var actualQueries = [];
+            onBeforeRequest(actualQueries, queryResults);
+            var actualFilename = null;
+            storageProvider.onFileDeleted(function(name)
+            {
+                actualFilename = name;
+            });
+
+            var requestAwaiter = chai.request(orion)
+                .delete(reqUrl);
+            if(!!accessToken)
+                requestAwaiter.set("Authorization", "Bearer " + accessToken);
+
+            requestAwaiter.end(function(err, res)
+            {
+                var expectedFilename = queryResults[0][0].filename;
+                console.log(actualFilename);
+                console.log(expectedFilename);
+                assert.equal(actualFilename, expectedFilename, "Deleted file name is incorrect");
+                onAfterRequest(actualQueries, expectedQueries, res.status, expectedStatusCodes);
+                done();
+            });
         });
     }
 
@@ -237,7 +276,8 @@ var Runner = function(config, dbEngine, storageProviderName)
     }
 
     this.runTest = runTest;
-    this.runUploadTest = runUploadTest;
+    this.runFileUploadTest = runFileUploadTest;
+    this.runFileDeleteTest = runFileDeleteTest;
     this.startServer = startServer;
     _construct();
 };

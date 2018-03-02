@@ -139,5 +139,25 @@ module.exports =
     {
         "mssql": "insert into [assettable] ([ownerid],[filename]) values (@value0 ,@value1 ); select SCOPE_IDENTITY() as [identity];",
         "mysql": "insert into `assettable` (`ownerid`,`filename`) values (?,?)"
+    },
+    "countAssetByIdAndOwner":
+    {
+        "mssql": "select count(*) from [assettable] where ([assettable].[id]=@value0  AND [assettable].[ownerid]=@value1 )",
+        "mysql": "select count(*) as count from `assettable` where (`assettable`.`id`=?  AND `assettable`.`ownerid`=? )"
+    },
+    "selectAssetByIdAndOwner":
+    {
+        "mssql": "select [assettable].[id], [assettable].[ownerid], [assettable].[filename], [owner].[firstname] AS [owner_firstname], [owner].[lastname] AS [owner_lastname], [owner].[id] AS [owner_id], [owner].[domain] AS [owner_domain], [owner].[domainid] AS [owner_domainid], [owner].[roles] AS [owner_roles], [owner].[username] AS [owner_username], [owner].[email] AS [owner_email], [owner].[createdtime] AS [owner_createdtime] from [assettable] INNER JOIN [usertable] [owner] ON [assettable].[ownerid] = [owner].[id] where ([assettable].[id]=@value0  AND [assettable].[ownerid]=@value1 ) order by [assettable].[id]  OFFSET (@value2 ) ROWS FETCH NEXT (@value3 ) ROWS ONLY",
+        "mysql": "select `assettable`.`id`, `assettable`.`ownerid`, `assettable`.`filename`, `owner`.`firstname` AS `owner_firstname`, `owner`.`lastname` AS `owner_lastname`, `owner`.`id` AS `owner_id`, `owner`.`domain` AS `owner_domain`, `owner`.`domainid` AS `owner_domainid`, `owner`.`roles` AS `owner_roles`, `owner`.`username` AS `owner_username`, `owner`.`email` AS `owner_email`, `owner`.`createdtime` AS `owner_createdtime` from `assettable` INNER JOIN `usertable` `owner` ON `assettable`.`ownerid` = `owner`.`id` where (`assettable`.`id`=?  AND `assettable`.`ownerid`=? ) order by `assettable`.`id`  LIMIT ? OFFSET ?"
+    },
+    "selectAssetById":
+    {
+        "mssql": "select [assettable].[id], [assettable].[ownerid], [assettable].[filename], [owner].[firstname] AS [owner_firstname], [owner].[lastname] AS [owner_lastname], [owner].[id] AS [owner_id], [owner].[domain] AS [owner_domain], [owner].[domainid] AS [owner_domainid], [owner].[roles] AS [owner_roles], [owner].[username] AS [owner_username], [owner].[email] AS [owner_email], [owner].[createdtime] AS [owner_createdtime] from [assettable] INNER JOIN [usertable] [owner] ON [assettable].[ownerid] = [owner].[id] where [assettable].[id]=@value0  order by [assettable].[id]  OFFSET (@value1 ) ROWS FETCH NEXT (@value2 ) ROWS ONLY",
+        "mysql": "select `assettable`.`id`, `assettable`.`ownerid`, `assettable`.`filename`, `owner`.`firstname` AS `owner_firstname`, `owner`.`lastname` AS `owner_lastname`, `owner`.`id` AS `owner_id`, `owner`.`domain` AS `owner_domain`, `owner`.`domainid` AS `owner_domainid`, `owner`.`roles` AS `owner_roles`, `owner`.`username` AS `owner_username`, `owner`.`email` AS `owner_email`, `owner`.`createdtime` AS `owner_createdtime` from `assettable` INNER JOIN `usertable` `owner` ON `assettable`.`ownerid` = `owner`.`id` where `assettable`.`id`=?  order by `assettable`.`id`  LIMIT ? OFFSET ?"
+    },
+    "deleteAssetById":
+    {
+        "mssql": "delete from [assettable] where [assettable].[id]=@value0",
+        "mysql": "delete from `assettable` where `assettable`.`id`=?"
     }
 };

@@ -5,6 +5,7 @@ var mock = function(provider)
 {
     var fs = require("fs");
     var filePartReceivedHandler = null;
+    var fileDeletedHandler = null;
     var wstream = null;
 
     //----------------------------------------------
@@ -42,8 +43,7 @@ var mock = function(provider)
      */
     function azureDeleteBlob(containerName, filename, callback)
     {
-        //callback=fn(err, response)
-        //TODO
+        processFileDelete(filename, callback);
     }
 
     /**
@@ -53,9 +53,11 @@ var mock = function(provider)
      */
     function s3Upload(options, callback)
     {
-        //options={Bucket: ctx.config.storage.s3Bucket,Key: name,ACL: 'public-read',Body: stream,ContentLength: stream.byteCount,ContentType: _this.mime.lookup(name)}
-        //callback=fn(err, data)
-        //TODO
+        var name = options.Key;
+        var stream = options.Body;
+        var size = options.ContentLength;
+        var mime = options.ContentType;
+        processFilePart(name, stream, size, mime, callback);
     }
 
     /**
@@ -65,18 +67,25 @@ var mock = function(provider)
      */
     function s3DeleteObject(options, callback)
     {
-        //options={Bucket: ctx.config.storage.s3Bucket,Key: name}
-        //callback=fn(err, data)
-        //TODO
+        processFileDelete(optoins.Key, callback);
     }
 
     /**
      * Set a handler to be invoked when a file part is received
-     * @param {*} handler 
+     * @param {*} handler handler function
      */
     function onFilePartReceived(handler)
     {
         filePartReceivedHandler = handler;
+    }
+
+    /**
+     * Set a handler to be invoked when a file is deleted
+     * @param {*} handler handler function
+     */
+    function onFileDeleted(handler)
+    {
+        fileDeletedHandler = handler;
     }
 
     //----------------------------------------------
@@ -106,11 +115,24 @@ var mock = function(provider)
             filePartReceivedHandler(name, stream, size, mime);
     }
 
+    /**
+     * Process a file delete
+     * @param {*} filename File name
+     * @param {*} callback Callback function
+     */
+    function processFileDelete(filename, callback)
+    {
+        if(!!fileDeletedHandler)
+            fileDeletedHandler(filename);
+        callback(null);
+    }
+
     this.createBlockBlobFromStream = azureCreateBlockBlobFromStream;
     this.deleteBlob = azureDeleteBlob;
     this.upload = s3Upload;
     this.deleteObject = s3DeleteObject;
     this.onFilePartReceived = onFilePartReceived;
+    this.onFileDeleted = onFileDeleted;
     _construct();
 };
 
