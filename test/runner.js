@@ -44,6 +44,7 @@ var Runner = function(config, dbEngine, storageProviderName)
     // PUBLIC
     //----------------------------------------------
 
+    //TODO verify response body
     /**
      * Run a test
      * @param {*} name test name
