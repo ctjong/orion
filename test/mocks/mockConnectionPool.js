@@ -109,6 +109,7 @@ var mock = function(engine)
 
         var currentQueryResults = queryResults;
         queryResults = [];
+
         if(currentQueryResults.length === 0 && queryString.indexOf("insert into") >= 0)
             currentQueryResults = {"lastinsertedid":"1"};
         if(typeof currentQueryResults.lastinsertedid !== "undefined")
@@ -117,6 +118,14 @@ var mock = function(engine)
                 currentQueryResults = [{"identity": currentQueryResults.lastinsertedid}];
             else
                 currentQueryResults = {"insertId": currentQueryResults.lastinsertedid};
+        }
+
+        if(typeof currentQueryResults.count !== "undefined")
+        {
+            if(engine === "mssql")
+                currentQueryResults = [{"": currentQueryResults.count}];
+            else
+                currentQueryResults = [{"count": currentQueryResults.count}];
         }
 
         if(engine === "mssql")

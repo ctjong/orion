@@ -15,6 +15,7 @@ var Runner = function(config, dbEngine, storageProviderName)
     var assert = require('assert');
     var fs = require('fs');
     var path = require('path');
+    var jwt = require('jsonwebtoken');
     chai.use(chaiHttp);
 
     var _this = this;
@@ -44,7 +45,6 @@ var Runner = function(config, dbEngine, storageProviderName)
     // PUBLIC
     //----------------------------------------------
 
-    //TODO verify response body
     /**
      * Run a test
      * @param {*} name test name
@@ -280,6 +280,51 @@ var Runner = function(config, dbEngine, storageProviderName)
         }
 
         assert.equal(actualResponse.status, expectedResponseCode, "Status code " + actualResponse.status + " is not expected");
+        var responseBody = Object.keys(actualResponse.body).length > 0 ? actualResponse.body : actualResponse.text;
+        if(!!expectedResponseBody)
+            assertResponseBody(responseBody, expectedResponseBody, "", "");
+    }
+
+    /**
+     * Assert that a response body match the expected
+     * @param {*} actual Actual response body
+     * @param {*} expected Expected response body
+     * @param {*} relativePath Path to the current value from object root
+     * @param {*} currentKey Current object key
+     */
+    function assertResponseBody(actual, expected, relativePath, currentKey)
+    {
+        var fullPath = relativePath + "/" + currentKey;
+        if(typeof actual === "undefined" || actual == null)
+            assert.fail("Missing response body at " + fullPath);
+        if(currentKey === "token")
+        {
+            try
+            {
+                actual = jwt.verify(actual, "samplestring");
+            }
+            catch(e)
+            {
+                assert.fail("Failed to decode token at " + fullPath + ".");
+            }
+        }
+        if(typeof expected === "object")
+        {
+            for(var key in expected)
+            {
+                if(!expected.hasOwnProperty(key))
+                    continue;
+                var childExpected = expected[key];
+                var childActual = actual[key];
+                if(!actual)
+                    assert.fail("Response body with key " + fullPath + "/" + key + " doesn't exist");
+                assertResponseBody(childActual, childExpected, fullPath, key);
+            }
+        }
+        else
+        {
+            assert.equal(actual, expected, "Incorrect response body value at " + fullPath + ". Actual: " + actual + ". Expected: " + expected);
+        }
     }
 
     this.runTest = runTest;

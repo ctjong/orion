@@ -29,8 +29,9 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user1Token,
         [{"name":"selectUserDataById3","params":["2"]},{"name":"insertMessage","params":[]}],
-        [[],[],{"lastinsertedid":"1"}],
-        200
+        [[],{"lastinsertedid":"123"}],
+        200,
+        "123"
     );
 
     runner.runTest(
@@ -40,8 +41,9 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user1Token,
         [{"name":"countMessageByOwnerAndRecipient","params":["1","2","1","1"]},{"name":"selectMessageByOwnerAndRecipient","params":["1","2","1","1"]}],
-        [[{"":"1"}]],
-        200
+        [{"count":"1"},[{"text":"message 123","recipientid":"2","ownerid":"1","id":"1"}]],
+        200,
+        {"count":1,"items":[{"text":"message 123","recipientid":"2","ownerid":"1","id":"1"}]}
     );
 
     runner.runTest(
@@ -51,8 +53,9 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user2Token,
         [{"name":"countMessageByOwnerAndRecipient","params":["1","2","2","2"]},{"name":"selectMessageByOwnerAndRecipient","params":["1","2","2","2"]}],
-        [[{"":"1"}]],
-        200
+        [{"count":"1"},[{"text":"message 123","recipientid":"2","ownerid":"1","id":"1"}]],
+        200,
+        {"count":1,"items":[{"text":"message 123","recipientid":"2","ownerid":"1","id":"1"}]}
     );
 
     runner.runTest(
@@ -62,8 +65,9 @@ module.exports = function(runner, params)
         {"text":"test message","recipientid":"2"},
         params.user3Token,
         [{"name":"countMessageByOwnerAndRecipient","params":["1","2","3","3"]},{"name":"selectMessageByOwnerAndRecipient","params":["1","2","3","3"]}],
-        [[{"":"1"}]],
-        200
+        [{"count":"0"}],
+        200,
+        {"count":0}
     );
 
     runner.runTest(

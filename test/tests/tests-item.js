@@ -29,8 +29,9 @@ module.exports = function(runner, params)
         {"name":"item1","date":"20170101"},
         params.user1Token,
         [{"name":"insertItem","params":["item1","20170101","1"]}],
-        [{"lastinsertedid":"1"}],
-        200
+        [{"lastinsertedid":"123"}],
+        200,
+        "123"
     );
 
     runner.runTest(
@@ -40,8 +41,9 @@ module.exports = function(runner, params)
         {"name":"item2","date":"20170202"},
         params.user1Token,
         [{"name":"insertItem","params":["item2","20170202","1"]}],
-        [{"lastinsertedid":"1"}],
-        200
+        [{"lastinsertedid":"123"}],
+        200,
+        "123"
     );
 
     runner.runTest(
@@ -73,8 +75,9 @@ module.exports = function(runner, params)
         null,
         params.user2Token,
         [{"name":"countItemByIdAndOwner","params":["11","2"]},{"name":"selectItemByIdAndOwner","params":["11","2"]}],
-        [[{"":"0"}], []],
-        200
+        [{"count":"0"}, []],
+        200,
+        {"count":0}
     );
 
     runner.runTest(
@@ -95,8 +98,9 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [{"name":"countItemByIdAndOwner","params":["11","1"]},{"name":"selectItemByIdAndOwner","params":["11","1"]}],
-        [[{"":"1"}]],
-        200
+        [{"count":"1"},[{"name":"item1","ownerid":"1"}]],
+        200,
+        {"count":1,"items":[{"name":"item1","ownerid":"1"}]}
     );
 
     runner.runTest(
@@ -117,8 +121,9 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [{"name":"countItemByDateAndOwner","params":["20170000","1"]},{"name":"selectItemByDateAndOwner","params":["20170000","1"]}],
-        [[{"":"1"}]],
-        200
+        [{"count":"1"},[{"name":"item1","ownerid":"1"}]],
+        200,
+        {"count":1,"items":[{"name":"item1","ownerid":"1"}]}
     );
 
     runner.runTest(
@@ -128,8 +133,9 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [{"name":"countItemByNameAndOwner","params":["%item1%","1"]},{"name":"selectItemByNameAndOwner","params":["%item1%","1"]}],
-        [[{"":"1"}]],
-        200
+        [{"count":"1"},[{"name":"item1","ownerid":"1"}]],
+        200,
+        {"count":1,"items":[{"name":"item1","ownerid":"1"}]}
     );
 
     runner.runTest(
@@ -150,8 +156,9 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [{"name":"countItemByOwner","params":["1"]},{"name":"selectItemByOwner","params":["1"]}],
-        [[{"":"1"}]],
-        200
+        [{"count":"1"},[{"name":"item1","ownerid":"1"}]],
+        200,
+        {"count":1,"items":[{"name":"item1","ownerid":"1"}]}
     );
 
     runner.runTest(
@@ -177,17 +184,6 @@ module.exports = function(runner, params)
     );
 
     runner.runTest(
-        'GET | item-verifyUpdate | 200',
-        '/api/data/item/private/findbyid/11',
-        'get',
-        null,
-        params.user1Token,
-        [{"name":"countItemByIdAndOwner","params":["11","1"]},{"name":"selectItemByIdAndOwner","params":["11","1"]}],
-        [[{"":"1"}]],
-        200
-    );
-
-    runner.runTest(
         'PUT | item-mixedValidFields | 200',
         '/api/data/item/11',
         'put',
@@ -195,17 +191,6 @@ module.exports = function(runner, params)
         params.user1Token,
         [{"name":"selectItemById","params":["11"]},{"name":"updateItemById","params":["new item","11"]}],
         [[{"ownerid":"1"}]],
-        200
-    );
-
-    runner.runTest(
-        'GET | item-verifyUpdate2 | 200',
-        '/api/data/item/private/findbyid/11',
-        'get',
-        null,
-        params.user1Token,
-        [{"name":"countItemByIdAndOwner","params":["11","1"]},{"name":"selectItemByIdAndOwner","params":["11","1"]}],
-        [[{"":"1"}]],
         200
     );
 
@@ -251,16 +236,5 @@ module.exports = function(runner, params)
         [{"name":"selectItemById","params":["12"]}],
         null,
         400
-    );
-
-    runner.runTest(
-        'GET | item-item1VerifyDelete | 200',
-        '/api/data/item/private/findbyid/11',
-        'get',
-        null,
-        params.user1Token,
-        [{"name":"countItemByIdAndOwner","params":["11","1"]},{"name":"selectItemByIdAndOwner","params":["11","1"]}],
-        [[{"":"1"}]],
-        200
     );
 };
