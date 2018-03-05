@@ -78,12 +78,12 @@ module.exports =
     "countItemByNameAndOwner":
     {
         "mssql": "select count(*) from [itemtable] where (([itemtable].[name] like @value0 ) AND [itemtable].[ownerid]=@value1 )",
-        "mysql": "select count(*) as count from `itemtable` where ((`itemtable`.`name` like ? ) AND `itemtable`.`ownerid`=?)"
+        "mysql": "select count(*) as count from `itemtable` where ((`itemtable`.`name` like ?) AND `itemtable`.`ownerid`=?)"
     },
     "selectItemByNameAndOwner":
     {
         "mssql": "select [itemtable].[name], [itemtable].[date], [itemtable].[id], [itemtable].[ownerid], [itemtable].[createdtime], [owner].[firstname] AS [owner_firstname], [owner].[lastname] AS [owner_lastname], [owner].[id] AS [owner_id], [owner].[domain] AS [owner_domain], [owner].[domainid] AS [owner_domainid], [owner].[roles] AS [owner_roles], [owner].[username] AS [owner_username], [owner].[email] AS [owner_email], [owner].[createdtime] AS [owner_createdtime] from [itemtable] INNER JOIN [usertable] [owner] ON [itemtable].[ownerid] = [owner].[id] where (([itemtable].[name] like @value0 ) AND [itemtable].[ownerid]=@value1 ) order by [itemtable].[id]  OFFSET (@value2 ) ROWS FETCH NEXT (@value3 ) ROWS ONLY",
-        "mysql": "select `itemtable`.`name`, `itemtable`.`date`, `itemtable`.`id`, `itemtable`.`ownerid`, `itemtable`.`createdtime`, `owner`.`firstname` AS `owner_firstname`, `owner`.`lastname` AS `owner_lastname`, `owner`.`id` AS `owner_id`, `owner`.`domain` AS `owner_domain`, `owner`.`domainid` AS `owner_domainid`, `owner`.`roles` AS `owner_roles`, `owner`.`username` AS `owner_username`, `owner`.`email` AS `owner_email`, `owner`.`createdtime` AS `owner_createdtime` from `itemtable` INNER JOIN `usertable` `owner` ON `itemtable`.`ownerid` = `owner`.`id` where ((`itemtable`.`name` like ? ) AND `itemtable`.`ownerid`=?) order by `itemtable`.`id`  LIMIT ? OFFSET ?"
+        "mysql": "select `itemtable`.`name`, `itemtable`.`date`, `itemtable`.`id`, `itemtable`.`ownerid`, `itemtable`.`createdtime`, `owner`.`firstname` as `owner_firstname`, `owner`.`lastname` as `owner_lastname`, `owner`.`id` as `owner_id`, `owner`.`domain` as `owner_domain`, `owner`.`domainid` as `owner_domainid`, `owner`.`roles` as `owner_roles`, `owner`.`username` as `owner_username`, `owner`.`email` as `owner_email`, `owner`.`createdtime` as `owner_createdtime` from `itemtable` inner join `usertable` `owner` on `itemtable`.`ownerid` = `owner`.`id` where ((`itemtable`.`name` like ?) and `itemtable`.`ownerid`=?) order by `itemtable`.`id`  limit ? offset ?"
     },
     "countItemByOwner":
     {

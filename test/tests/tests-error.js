@@ -6,9 +6,9 @@ module.exports = function(runner, params)
         'post',
         {"msg":"test error"},
         null,
-        [200],
         [{"name":"insertError","params":[]}],
-        [{"lastinsertedid":"1"}]
+        [{"lastinsertedid":"1"}],
+        200
     );
 
     runner.runTest(
@@ -17,6 +17,8 @@ module.exports = function(runner, params)
         'get',
         null,
         null,
-        [400]
+        null,
+        null,
+        400
     );
 };

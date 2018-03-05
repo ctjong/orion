@@ -52,12 +52,13 @@ var Runner = function(config, dbEngine, storageProviderName)
      * @param {*} reqMethod request method
      * @param {*} reqBody request body
      * @param {*} accessToken access token
-     * @param {*} expectedStatusCodes expected response status codes
      * @param {*} expectedQueries list of expected query strings and parameters
      * @param {*} queryResults results to return for each query
+     * @param {*} expectedResponseCode expected response status code
+     * @param {*} expectedResponseBody expected response body
      */
-    function runTest(name, reqUrl, reqMethod, reqBody, accessToken, expectedStatusCodes, 
-        expectedQueries, queryResults)
+    function runTest(name, reqUrl, reqMethod, reqBody, accessToken, 
+        expectedQueries, queryResults, expectedResponseCode, expectedResponseBody)
     {
         it(name, function(done)
         {
@@ -79,7 +80,7 @@ var Runner = function(config, dbEngine, storageProviderName)
 
             requestAwaiter.end(function(err, res)
             {
-                onAfterRequest(actualQueries, expectedQueries, res.status, expectedStatusCodes);
+                onAfterRequest(actualQueries, res, expectedQueries, expectedResponseCode, expectedResponseBody);
                 done();
             });
         });
@@ -92,12 +93,13 @@ var Runner = function(config, dbEngine, storageProviderName)
      * @param {*} filePath path to the file to upload
      * @param {*} accessToken access token
      * @param {*} expectedMimeType expected MIME type of the uploaded file
-     * @param {*} expectedStatusCodes expected response status codes
      * @param {*} expectedQueries list of expected query strings and parameters
      * @param {*} queryResults results to return for each query
+     * @param {*} expectedResponseCode expected response status code
+     * @param {*} expectedResponseBody expected response body
      */
     function runFileUploadTest(name, reqUrl, filePath, accessToken, expectedMimeType, 
-        expectedStatusCodes, expectedQueries, queryResults)
+        expectedQueries, queryResults, expectedResponseCode, expectedResponseBody)
     {
         it(name, function(done)
         {
@@ -136,7 +138,7 @@ var Runner = function(config, dbEngine, storageProviderName)
                             if(expectedQueries[i].params[j] === 'uploadedName')
                                 expectedQueries[i].params[j] = uploadedFileName;
 
-                    onAfterRequest(actualQueries, expectedQueries, res.status, expectedStatusCodes);
+                    onAfterRequest(actualQueries, res, expectedQueries, expectedResponseCode, expectedResponseBody);
                 }catch(e){}
                 done();
             });
@@ -148,12 +150,13 @@ var Runner = function(config, dbEngine, storageProviderName)
      * @param {*} name test name
      * @param {*} reqUrl request URL
      * @param {*} accessToken access token
-     * @param {*} expectedMimeType expected MIME type of the uploaded file
-     * @param {*} expectedStatusCodes expected response status codes
      * @param {*} expectedQueries list of expected query strings and parameters
      * @param {*} queryResults results to return for each query
+     * @param {*} expectedResponseCode expected response status code
+     * @param {*} expectedResponseBody expected response body
      */
-    function runFileDeleteTest(name, reqUrl, accessToken, expectedStatusCodes, expectedQueries, queryResults)
+    function runFileDeleteTest(name, reqUrl, accessToken, expectedQueries,
+        queryResults, expectedResponseCode, expectedResponseBody)
     {
         it(name, function(done)
         {
@@ -174,7 +177,7 @@ var Runner = function(config, dbEngine, storageProviderName)
             requestAwaiter.end(function(err, res)
             {
                 assert.equal(actualFilename, expectedFilename, "Deleted file name is incorrect");
-                onAfterRequest(actualQueries, expectedQueries, res.status, expectedStatusCodes);
+                onAfterRequest(actualQueries, res, expectedQueries, expectedResponseCode, expectedResponseBody);
                 done();
             });
         });
@@ -247,11 +250,13 @@ var Runner = function(config, dbEngine, storageProviderName)
 
     /**
      * To be invoked after the response to a request has been received
-     * @param {*} actualQueries Actual queries received by DB adapter
-     * @param {*} expectedQueries Expected queries to be received
-     * @param {*} expectedStatusCodes Expected response codes
+     * @param {*} actualQueries actual queries received by DB adapter
+     * @param {*} actualResponse actual response received
+     * @param {*} expectedQueries expected queries to be received
+     * @param {*} expectedResponseCode expected response status code
+     * @param {*} expectedResponseBody expected response body
      */
-    function onAfterRequest(actualQueries, expectedQueries, actualStatusCode, expectedStatusCodes)
+    function onAfterRequest(actualQueries, actualResponse, expectedQueries, expectedResponseCode, expectedResponseBody)
     {
         if(!!expectedQueries)
         {
@@ -274,7 +279,7 @@ var Runner = function(config, dbEngine, storageProviderName)
             }
         }
 
-        assert(expectedStatusCodes.indexOf(actualStatusCode) >= 0, "Status code " + actualStatusCode + " is not expected");
+        assert.equal(actualResponse.status, expectedResponseCode, "Status code " + actualResponse.status + " is not expected");
     }
 
     this.runTest = runTest;
