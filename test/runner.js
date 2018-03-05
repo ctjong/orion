@@ -269,7 +269,7 @@ var Runner = function(config, dbEngine, storageProviderName)
                     if(expected.params[i] === "skip")
                         continue;
                     var actualValue = engine === "mssql" ? actualParams["value" + j][1] : actualParams[j];
-                    assert.equal(actualValue, expected.params[j], "Query parameter at index " + j + " does not match the expected");
+                    assert.equal(actualValue, expected.params[j], "Incorrect query parameter at index " + j + ". Actual: " + actualValue + ". Expected: " + expected.params[i]);
                 }
             }
         }

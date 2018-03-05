@@ -1,7 +1,5 @@
 module.exports = function(runner, params)
 {
-    //TODO: query params
-
     runner.runTest(
         'POST | item-noToken | 401',
         '/api/data/item',
@@ -20,7 +18,7 @@ module.exports = function(runner, params)
         {"name":"item123"},
         params.user1Token,
         [400],
-        [{"name":"selectUserDataById3","params":[]}]
+        [{"name":"insertError","params":[]}]
     );
 
     runner.runTest(
@@ -30,8 +28,8 @@ module.exports = function(runner, params)
         {"name":"item1","date":"20170101"},
         params.user1Token,
         [200],
-        [{"name":"selectUserDataById3","params":[]},{"name":"insertItem","params":[]}],
-        [[],{"lastinsertedid":"1"}]
+        [{"name":"insertItem","params":["item1","20170101","1"]}],
+        [{"lastinsertedid":"1"}]
     );
 
     runner.runTest(
@@ -41,8 +39,8 @@ module.exports = function(runner, params)
         {"name":"item2","date":"20170202"},
         params.user1Token,
         [200],
-        [{"name":"selectUserDataById3","params":[]},{"name":"insertItem","params":[]}],
-        [[],{"lastinsertedid":"1"}]
+        [{"name":"insertItem","params":["item2","20170202","1"]}],
+        [{"lastinsertedid":"1"}]
     );
 
     runner.runTest(
@@ -74,7 +72,7 @@ module.exports = function(runner, params)
         null,
         params.user2Token,
         [200],
-        [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}],
+        [{"name":"countItemByIdAndOwner","params":["11","2"]},{"name":"selectItemByIdAndOwner","params":["11","2"]}],
         [[{"":"0"}], []]
     );
 
@@ -96,7 +94,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}],
+        [{"name":"countItemByIdAndOwner","params":["11","1"]},{"name":"selectItemByIdAndOwner","params":["11","1"]}],
         [[{"":"1"}]]
     );
 
@@ -118,7 +116,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        [{"name":"countItemByDateAndOwner","params":[]},{"name":"selectItemByDateAndOwner","params":[]}],
+        [{"name":"countItemByDateAndOwner","params":["20170000","1"]},{"name":"selectItemByDateAndOwner","params":["20170000","1"]}],
         [[{"":"1"}]]
     );
 
@@ -129,7 +127,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        [{"name":"countItemByNameAndOwner","params":[]},{"name":"selectItemByNameAndOwner","params":[]}],
+        [{"name":"countItemByNameAndOwner","params":["%item1%","1"]},{"name":"selectItemByNameAndOwner","params":["%item1%","1"]}],
         [[{"":"1"}]]
     );
 
@@ -151,7 +149,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        [{"name":"countItemByOwner","params":[]},{"name":"selectItemByOwner","params":[]}],
+        [{"name":"countItemByOwner","params":["1"]},{"name":"selectItemByOwner","params":["1"]}],
         [[{"":"1"}]]
     );
 
@@ -162,7 +160,7 @@ module.exports = function(runner, params)
         {"name":"item123"},
         params.user2Token,
         [401],
-        [{"name":"selectItemById","params":[]}],
+        [{"name":"selectItemById","params":["11"]}],
         [[{"ownerid":"1"}]]
     );
 
@@ -173,7 +171,7 @@ module.exports = function(runner, params)
         {"name":"item123"},
         params.user1Token,
         [200],
-        [{"name":"selectItemById","params":[]},{"name":"updateItemById","params":[]}],
+        [{"name":"selectItemById","params":["11"]},{"name":"updateItemById","params":["item123","11"]}],
         [[{"ownerid":"1"}]]
     );
 
@@ -184,7 +182,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}],
+        [{"name":"countItemByIdAndOwner","params":["11","1"]},{"name":"selectItemByIdAndOwner","params":["11","1"]}],
         [[{"":"1"}]]
     );
 
@@ -195,7 +193,7 @@ module.exports = function(runner, params)
         {"name":"new item","name123":"new invalid item"},
         params.user1Token,
         [200],
-        [{"name":"selectItemById","params":[]},{"name":"updateItemById","params":[]}],
+        [{"name":"selectItemById","params":["11"]},{"name":"updateItemById","params":["new item","11"]}],
         [[{"ownerid":"1"}]]
     );
 
@@ -206,7 +204,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}],
+        [{"name":"countItemByIdAndOwner","params":["11","1"]},{"name":"selectItemByIdAndOwner","params":["11","1"]}],
         [[{"":"1"}]]
     );
 
@@ -217,7 +215,7 @@ module.exports = function(runner, params)
         null,
         params.user2Token,
         [401],
-        [{"name":"selectItemById","params":[]}],
+        [{"name":"selectItemById","params":["11"]}],
         [[{"ownerid":"1"}]]
     );
 
@@ -228,7 +226,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        [{"name":"selectItemById","params":[]},{"name":"deleteItemById","params":[]}],
+        [{"name":"selectItemById","params":["11"]},{"name":"deleteItemById","params":["11"]}],
         [[{"ownerid":"1"}]]
     );
 
@@ -239,7 +237,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        [{"name":"selectItemById","params":[]},{"name":"deleteItemById","params":[]}],
+        [{"name":"selectItemById","params":["12"]},{"name":"deleteItemById","params":["12"]}],
         [[{"ownerid":"1"}]]
     );
 
@@ -250,7 +248,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [400],
-        [{"name":"selectItemById","params":[]}]
+        [{"name":"selectItemById","params":["12"]}]
     );
 
     runner.runTest(
@@ -260,7 +258,7 @@ module.exports = function(runner, params)
         null,
         params.user1Token,
         [200],
-        [{"name":"countItemByIdAndOwner","params":[]},{"name":"selectItemByIdAndOwner","params":[]}],
+        [{"name":"countItemByIdAndOwner","params":["11","1"]},{"name":"selectItemByIdAndOwner","params":["11","1"]}],
         [[{"":"1"}]]
     );
 };

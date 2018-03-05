@@ -422,7 +422,7 @@ module.exports =
                 }
                 else if (condObj.operator === "~")
                 {
-                    query.append("[" + condObj.entity + "table].[" + condObj.fieldName + "] like '%" + condObj.fieldValue + "%'");
+                    query.append("[" + condObj.entity + "table].[" + condObj.fieldName + "] like ?", "%" + condObj.fieldValue + "%");
                 }
                 else if (typeof (condObj.fieldValue) === "string" && condObj.fieldValue.toLowerCase() === "null")
                 {

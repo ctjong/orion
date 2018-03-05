@@ -188,7 +188,7 @@ module.exports =
             var fieldNamesToResolve = [];
             for(fieldName in fields)
             {
-                if(!fields.hasOwnProperty(fieldName) || !fields[fieldName].foreignKey)
+                if(!fields.hasOwnProperty(fieldName) || !fields[fieldName].foreignKey || !requestBody[fieldName])
                     continue;
                 fieldNamesToResolve.push(fieldName);
             }
