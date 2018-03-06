@@ -28,7 +28,14 @@ module.exports =
             if(!!pool || !config.database.connectionString)
                 return;
             var sql = require("mssql");
-            pool = new sql.ConnectionPool(config.database.connectionString);
+            pool = new sql.ConnectionPool(config.database.connectionString, function(err)
+            {
+                if (err)
+                {
+                    console.log(err);
+                    throw new _this.error.Error("f8cb", 500, "error while connecting to database");
+                }
+            });
             pool.sql = sql;
         }
 
@@ -272,51 +279,41 @@ module.exports =
             console.log("Query parameters:");
             console.log(queryParams);
 
-            pool.connect(function (err)
+            var request = new pool.sql.Request(pool);
+            for (var key in queryParams)
+            {
+                if (!queryParams.hasOwnProperty(key))
+                    continue;
+                var paramValue = queryParams[key];
+                if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
+                {
+                    request.input(key, pool.sql.BigInt, paramValue);
+                }
+                else
+                {
+                    request.input(key, paramValue);
+                }
+            }
+            request.query(queryString, function (err, dbResponse)
             {
                 if (err)
                 {
                     if (!!completeCb)
                         _this.exec.safeExecute(ctx, completeCb);
                     console.log(err);
-                    throw new _this.error.Error("f8cb", 500, "error while connecting to database");
+                    throw new _this.error.Error("a07f", 500, "error while sending query to database");
                 }
-                var request = new pool.sql.Request(pool);
-                for (var key in queryParams)
+                else
                 {
-                    if (!queryParams.hasOwnProperty(key))
-                        continue;
-                    var paramValue = queryParams[key];
-                    if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
+                    _this.exec.safeExecute(ctx, function ()
                     {
-                        request.input(key, pool.sql.BigInt, paramValue);
-                    }
-                    else
+                        successCb(dbResponse.recordset);
+                    });
+                    if (!!completeCb) 
                     {
-                        request.input(key, paramValue);
+                        _this.exec.safeExecute(ctx, completeCb);
                     }
                 }
-                request.query(queryString, function (err, dbResponse)
-                {
-                    if (err)
-                    {
-                        if (!!completeCb)
-                            _this.exec.safeExecute(ctx, completeCb);
-                        console.log(err);
-                        throw new _this.error.Error("a07f", 500, "error while sending query to database");
-                    }
-                    else
-                    {
-                        _this.exec.safeExecute(ctx, function ()
-                        {
-                            successCb(dbResponse.recordset);
-                        });
-                        if (!!completeCb) 
-                        {
-                            _this.exec.safeExecute(ctx, completeCb);
-                        }
-                    }
-                });
             });
             console.log("-------------------------------------------------");
         }

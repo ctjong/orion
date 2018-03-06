@@ -39,15 +39,6 @@ var mock = function(engine)
     };
 
     /**
-     * Connect to an MSSQL database
-     * @param {*} callback callback function
-     */
-    function mssqlConnect(callback)
-    {
-        callback(connectSuccess ? null : "error");
-    }
-
-    /**
      * Get a connection object for connecting with an MYSQL database
      * @param {*} callback callback function
      */
@@ -135,7 +126,6 @@ var mock = function(engine)
     }
 
     this.sql = mssql;
-    this.connect = mssqlConnect;
     this.getConnection = mysqlGetConnection;
     this.setQueryResults = setQueryResults;
     this.onQueryReceived = onQueryReceived;

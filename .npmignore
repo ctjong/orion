@@ -2,7 +2,7 @@
 /.vs
 /bin
 /obj
-/tests
+/test
 *.sln
 *.njsproj
 config-sample.js
