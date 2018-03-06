@@ -39,19 +39,14 @@ var mock = function(engine)
     };
 
     /**
-     * Get a connection object for connecting with an MYSQL database
+     * Execute a MYSQL query
+     * @param {*} queryString Query string
+     * @param {*} queryParams Query params
      * @param {*} callback callback function
      */
-    function mysqlGetConnection(callback)
+    function mysqlQuery(queryString, queryParams, callback)
     {
-        var connection = 
-        {
-            query: function(queryString, queryParams, callback)
-            {
-                processQuery(queryString, queryParams, callback);
-            }
-        };
-        callback(null, connection);
+        processQuery(queryString, queryParams, callback);
     }
 
     /**
@@ -126,7 +121,7 @@ var mock = function(engine)
     }
 
     this.sql = mssql;
-    this.getConnection = mysqlGetConnection;
+    this.query = mysqlQuery;
     this.setQueryResults = setQueryResults;
     this.onQueryReceived = onQueryReceived;
     this.reset = reset;

@@ -8,7 +8,6 @@ module.exports =
     {
         var _this = this;
         var pool;
-        var connectionLimit = 10;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -42,10 +41,10 @@ module.exports =
             }
             pool = sql.createPool(
             {
-                host: connProps.server,
-                user: connProps.uid,
-                password: connProps.pwd,
-                database: connProps.database,
+                host: connProps.Server,
+                user: connProps.Uid,
+                password: connProps.Pwd,
+                database: connProps.Database,
                 multipleStatements: true
             });
             pool.sql = sql;
@@ -291,36 +290,26 @@ module.exports =
             console.log("Query parameters:");
             console.log(queryParams);
 
-            pool.getConnection(function (err, connection)
+            pool.query(queryString, queryParams, function (error, results, fields)
             {
-                if (err)
+                if (error)
                 {
                     if (!!completeCb)
                         _this.exec.safeExecute(ctx, completeCb);
-                    console.log(err);
-                    throw new _this.error.Error("f8cb", 500, "error while connecting to database");
+                    console.log(error);
+                    throw new _this.error.Error("a07f", 500, "error while sending query to database");
                 }
-                connection.query(queryString, queryParams, function (error, results, fields)
+                else
                 {
-                    if (error)
+                    _this.exec.safeExecute(ctx, function ()
                     {
-                        if (!!completeCb)
-                            _this.exec.safeExecute(ctx, completeCb);
-                        console.log(error);
-                        throw new _this.error.Error("a07f", 500, "error while sending query to database");
-                    }
-                    else
+                        successCb(results);
+                    });
+                    if (!!completeCb) 
                     {
-                        _this.exec.safeExecute(ctx, function ()
-                        {
-                            successCb(results);
-                        });
-                        if (!!completeCb) 
-                        {
-                            _this.exec.safeExecute(ctx, completeCb);
-                        }
+                        _this.exec.safeExecute(ctx, completeCb);
                     }
-                });
+                }
             });
             console.log("-------------------------------------------------");
         }
