@@ -53,7 +53,7 @@ module.exports =
         }
 
         /**
-         * Try to generate a first party access token for the user with the given credential.
+         * Try to generate an Orion token for the user with the given credential.
          * Throw an exception if credential is invalid or an error occurs.
          * The access token will be sent into the response object in the context.
          * @param {any} ctx Request context
@@ -85,7 +85,7 @@ module.exports =
         }
 
         /**
-         * Try to generate a first party access token for the user with the given Facebook token.
+         * Try to generate an Orion access token for the user with the given Facebook token.
          * Throw an exception if credential is invalid or an error occurs.
          * The access token will be sent into the response object in the context.
          * @param {any} ctx Request context

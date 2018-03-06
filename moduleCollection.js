@@ -36,7 +36,7 @@ module.exports = function ()
 
     /**
      * Add a module definition to the collection. Modules added using this function
-     * requires instantiation before use. This typically is used for adding first party modules.
+     * requires instantiation before use. This typically is used for adding Orion modules.
      * @param {any} moduleName Name to be used to access the module
      * @param {any} modulePath Path to the module definition to add
      */
