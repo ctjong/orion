@@ -46,7 +46,7 @@
         }
     }
     ```
-    Please see the [Configuration Options](configuration-options) page for more configuration options.
+    Save the above file as **config.js**. Please see the [Configuration Options](configuration-options) page for more configuration options.
 4. Set up database tables based on the configuration you created, by running the following command.
     ```bash
     $ npx orion setup ./config.js ./setup.sql
