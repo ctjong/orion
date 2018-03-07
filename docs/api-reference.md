@@ -1,13 +1,13 @@
 # Orion Documentation
 
-- [Home](https://ctjong.github.io/orion)
-- [Create Your First Orion Application](https://ctjong.github.io/orion/docs/create-your-first-orion-application)
-- [API Endpoints](https://ctjong.github.io/orion/docs/api-endpoints)
-- [Configuration](https://ctjong.github.io/orion/docs/configuration)
-- [Authentication](https://ctjong.github.io/orion/docs/authentication)
-- [User Roles](https://ctjong.github.io/orion/docs/user-roles)
-- [Condition Syntax](https://ctjong.github.io/orion/docs/condition-syntax)
-- [API Reference](https://ctjong.github.io/orion/docs/api-reference)
+- [Home](../)
+- [Create Your First Orion Application](create-your-first-orion-application)
+- [API Endpoints](api-endpoints)
+- [Configuration](configuration)
+- [Authentication](authentication)
+- [User Roles](user-roles)
+- [Condition Syntax](condition-syntax)
+- [API Reference](api-reference)
 
 ## API Reference
 
@@ -15,7 +15,7 @@ An Orion application object is an extension of an [Express application object](h
 
 Here are some additional methods that are accessible from an Orion application object:
 
-- **setupApiEndpoints()** - Setup REST API endpoints to do CRUD operations. See [API Endpoints](#api-endpoints) for the list of endpoints created from this function call.
+- **setupApiEndpoints()** - Setup REST API endpoints to do CRUD operations. See [API Endpoints](api-endpoints) for the list of endpoints created from this function call.
 - **start(port, callback)** - Start the server. This function is calling Express's **listen()**.
     - **port** - (Optional) Optional port to start the server at.
     - **callback** - (Optional) Callback to execute after the start process is complete.
@@ -31,7 +31,7 @@ Here are some additional methods that are accessible from an Orion application o
     - **orderByField** - (Required) The field to order the results by. You can add "~" in front of the field name to sort in descending order.
     - **skip** - (Required) Number of records to skip. Used for pagination.
     - **take** - (Required) Number of records to take. Used for pagination.
-    - **condition** - (Required) Condition string to find the target records. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
+    - **condition** - (Required) Condition string to find the target records. See [Condition Syntax](condition-syntax) for more details on how to write the condition.
     - **callback** - (Required) Callback fuction. This passes in a response object as parameter, which has the same structure as the return value of the GET endpoint.
 - **findAll(originalReq, entity, orderByField, skip, take, callback)** - Execute a "find all" action. This does the same thing as the GET endpoint but this one can be executed directly from server code.
     - **originalReq** - (Required) Express Request object.

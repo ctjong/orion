@@ -1,13 +1,13 @@
 # Orion Documentation
 
-- [Home](https://ctjong.github.io/orion)
-- [Create Your First Orion Application](https://ctjong.github.io/orion/docs/create-your-first-orion-application)
-- [API Endpoints](https://ctjong.github.io/orion/docs/api-endpoints)
-- [Configuration](https://ctjong.github.io/orion/docs/configuration)
-- [Authentication](https://ctjong.github.io/orion/docs/authentication)
-- [User Roles](https://ctjong.github.io/orion/docs/user-roles)
-- [Condition Syntax](https://ctjong.github.io/orion/docs/condition-syntax)
-- [API Reference](https://ctjong.github.io/orion/docs/api-reference)
+- [Home](../)
+- [Create Your First Orion Application](create-your-first-orion-application)
+- [API Endpoints](api-endpoints)
+- [Configuration](configuration)
+- [Authentication](authentication)
+- [User Roles](user-roles)
+- [Condition Syntax](condition-syntax)
+- [API Reference](api-reference)
 
 ## Configuration
 
@@ -37,14 +37,14 @@ Below is the list of settings to be included in a configuration module:
     - **uploadPath** - (Optional) Path in the local server where you want to store uploaded files into, relative to the root of the application. Required if you want to support file upload to the local server.
 - **monitoring** - (Optional) Configuration for monitoring system. Required if you want to monitor traffic to the application.
     - **appInsightsKey** - (Optional) Azure Application Insights key. Required if you want to use Application Insights.
-- **entities** - (Required) An object that contains a list of data entities (tables). Each entry in the object should be a mappings from an entity name to an [entity configuration](#entity-configuration) object. The entity name should contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
+- **entities** - (Required) An object that contains a list of data entities (tables). Each entry in the object should be a mappings from an entity name to an [entity configuration](entity-configuration) object. The entity name should contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
 
 #### Entity Configuration
 
 Here are the properties that must/may be included in an entity configuration object:
-- **fields** - (Required) An object that contains a list of fields in the entity. Each entry in the object should be a mapping from a field name to a [field configuration](#field-configuration) object. Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
-- **allowedRoles** - (Required) An object that specify which user roles are allowed to do a certain operation. Each entry in the object should be a mapping from an operation name (create/read/update/delete) to an array of user roles. See [User Roles](#user-roles) for more info on what the user roles can be.
-- **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function passes in as parameters the user roles and user ID, and should return a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to allow read access only to members who are more than 20 years old, you can put the role "member" in the **allowedRoles** and add a **getReadCondition** function that returns condition "age>20". See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
+- **fields** - (Required) An object that contains a list of fields in the entity. Each entry in the object should be a mapping from a field name to a [field configuration](field-configuration) object. Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
+- **allowedRoles** - (Required) An object that specify which user roles are allowed to do a certain operation. Each entry in the object should be a mapping from an operation name (create/read/update/delete) to an array of user roles. See [User Roles](user-roles) for more info on what the user roles can be.
+- **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function passes in as parameters the user roles and user ID, and should return a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to allow read access only to members who are more than 20 years old, you can put the role "member" in the **allowedRoles** and add a **getReadCondition** function that returns condition "age>20". See [Condition Syntax](condition-syntax) for more details on how to write the condition.
 - **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function passes in as parameters the action name, user roles, user ID, record object from DB, and record object from user, and it should return a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to allow update access only to members who live in Seattle, you can put "member" in the **allowedRoles** and add an **isWriteAllowed** function that returns true only if city == "Seattle".
 
 #### Field Configuration
@@ -88,7 +88,7 @@ These are some fields that we add to the config at runtime, both when an SQL que
 | ownerid | id of the record owner | int | false | 0 | user | owner
 | createdtime | timestamp of the record creation | timestamp | false | 0 | null | null
 
-The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". We add the default fields above to every entity specified in the config, except those that are part of the [default entities](#default-entities). Default fields cannot be overridden, so if a field with the same name as one of the default fields exists in the config, that field will be ignored.
+The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". We add the default fields above to every entity specified in the config, except those that are part of the [default entities](default-entities). Default fields cannot be overridden, so if a field with the same name as one of the default fields exists in the config, that field will be ignored.
 
 
 #### Default Entities

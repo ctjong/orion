@@ -18,7 +18,7 @@ Here are the REST API endpoints that the library will set up for you.
     Retrieve a record by its ID.
 
     Headers:
-    - **Authorization** - Required only if the access type is private. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+    - **Authorization** - Required only if the access type is private. The value of this should be in the format "Bearer {token}". See [Authentication](authentication) section for more details on how to get the access token.
 
     Parameters:
     - **entity** - Name of the entity where the record is in.
@@ -36,7 +36,7 @@ Here are the REST API endpoints that the library will set up for you.
     Retrieve records that match a certain set of conditions.
 
     Request headers:
-    - **Authorization** - Required only if the access type is private. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+    - **Authorization** - Required only if the access type is private. The value of this should be in the format "Bearer {token}". See [Authentication](authentication) section for more details on how to get the access token.
 
     Request parameters:
     - **entity** - Name of the entity where the record is in.
@@ -46,7 +46,7 @@ Here are the REST API endpoints that the library will set up for you.
     - **orderByField** - The field to order the results by. You can add "~" in front of the field name to sort in descending order.
     - **skip** - Number of records to skip. Used for pagination.
     - **take** - Number of records to take. Used for pagination.
-    - **condition** - Condition string to find the target records. See [Condition Syntax](#condition-syntax) for more details on how to write the condition.
+    - **condition** - Condition string to find the target records. See [Condition Syntax](condition-syntax) for more details on how to write the condition.
 
     Success response:
     - **count** - Number of items found matching the requested details. This value should always be 1 for this endpoint.
@@ -57,7 +57,7 @@ Here are the REST API endpoints that the library will set up for you.
     Retrieve all records in a certain entity.
 
     Request headers:
-    - **Authorization** - Required only if the access type is private. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+    - **Authorization** - Required only if the access type is private. The value of this should be in the format "Bearer {token}". See [Authentication](authentication) section for more details on how to get the access token.
 
     Request parameters:
     - **entity** - Name of the entity where the record is in.
@@ -77,7 +77,7 @@ Here are the REST API endpoints that the library will set up for you.
     Upload a file into the file storage (specified in the config) and add a database entry for it.
 
     Request headers:
-    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](authentication) section for more details on how to get the access token.
 
     Request body:
     - **file** - File to upload
@@ -89,7 +89,7 @@ Here are the REST API endpoints that the library will set up for you.
     Add a new record to an entity.
 
     Request headers:
-    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](authentication) section for more details on how to get the access token.
 
     Request parameters:
     - **entity** - Name of the entity to put the record in.
@@ -104,7 +104,7 @@ Here are the REST API endpoints that the library will set up for you.
     Update a record in an entity.
 
     Request headers:
-    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](authentication) section for more details on how to get the access token.
 
     Request parameters:
     - **entity** - Name of the entity where the record is in
@@ -120,7 +120,7 @@ Here are the REST API endpoints that the library will set up for you.
     Delete an uploaded file from the file storage and from database.
 
     Request headers:
-    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](authentication) section for more details on how to get the access token.
 
     Request parameters:
     - **id** - Id of the asset to delete
@@ -132,7 +132,7 @@ Here are the REST API endpoints that the library will set up for you.
     Delete a record from an entity.
 
     Request headers:
-    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](#authentication) section for more details on how to get the access token.
+    - **Authorization** - Required only if the endpoint is set to be limited to authenticated users. The value of this should be in the format "Bearer {token}". See [Authentication](authentication) section for more details on how to get the access token.
 
     Request parameters:
     - **entity** - Name of the entity where the record is in
@@ -142,7 +142,7 @@ Here are the REST API endpoints that the library will set up for you.
 
 - **POST /api/auth/token**
 
-    Get an access token using a set of login credentials. This can be used if all Orion JWT authentication settings are specified in the config. See [Authentication](#authentication) section for more details.
+    Get an access token using a set of login credentials. This can be used if all Orion JWT authentication settings are specified in the config. See [Authentication](authentication) section for more details.
 
     Request body:
     - **username** - Submitted user name 
@@ -156,7 +156,7 @@ Here are the REST API endpoints that the library will set up for you.
 
 - **POST /api/auth/token/fb**
 
-    Get an access token using a temporary Facebook token. See [Authentication](#authentication) section for more details.
+    Get an access token using a temporary Facebook token. See [Authentication](authentication) section for more details.
 
     Request body:
     - **fbtoken** - Facebook token
