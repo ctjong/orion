@@ -4,6 +4,7 @@
 - [Create Your First Orion Application](create-your-first-orion-application)
 - [API Endpoints](api-endpoints)
 - [Configuration](configuration)
+- [Sample Configuration](sample-configuration)
 - [Authentication](authentication)
 - [User Roles](user-roles)
 - [Condition Syntax](condition-syntax)

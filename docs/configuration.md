@@ -4,6 +4,7 @@
 - [Create Your First Orion Application](create-your-first-orion-application)
 - [API Endpoints](api-endpoints)
 - [Configuration](configuration)
+- [Sample Configuration](sample-configuration)
 - [Authentication](authentication)
 - [User Roles](user-roles)
 - [Condition Syntax](condition-syntax)
@@ -39,7 +40,7 @@ Below is the list of settings to be included in a configuration module:
     - **appInsightsKey** - (Optional) Azure Application Insights key. Required if you want to use Application Insights.
 - **entities** - (Required) An object that contains a list of data entities (tables). Each entry in the object should be a mappings from an entity name to an [entity configuration](entity-configuration) object. The entity name should contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
 
-#### Entity Configuration
+### Entity Configuration
 
 Here are the properties that must/may be included in an entity configuration object:
 - **fields** - (Required) An object that contains a list of fields in the entity. Each entry in the object should be a mapping from a field name to a [field configuration](field-configuration) object. Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
@@ -47,7 +48,7 @@ Here are the properties that must/may be included in an entity configuration obj
 - **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function passes in as parameters the user roles and user ID, and should return a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to allow read access only to members who are more than 20 years old, you can put the role "member" in the **allowedRoles** and add a **getReadCondition** function that returns condition "age>20". See [Condition Syntax](condition-syntax) for more details on how to write the condition.
 - **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function passes in as parameters the action name, user roles, user ID, record object from DB, and record object from user, and it should return a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to allow update access only to members who live in Seattle, you can put "member" in the **allowedRoles** and add an **isWriteAllowed** function that returns true only if city == "Seattle".
 
-#### Field Configuration
+### Field Configuration
 
 Here are the properties that must/may be included in a field configuration object:
 - **type** - (Required) The data type of the field. Here are the options:
@@ -78,69 +79,62 @@ Here are the properties that must/may be included in a field configuration objec
         }
         ```
 
-#### Default Fields
+### Default Fields and Entities
 
-These are some fields that we add to the config at runtime, both when an SQL query is being constructed using setup.js and when an actual API app is being initialized.
+Here are some default fields and entities that we add automatically to the your configuration at runtime.
 
-| name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
-| - | - | - | - | - | - | - 
-| id | id of the record | id | false | 0 | null | null
-| ownerid | id of the record owner | int | false | 0 | user | owner
-| createdtime | timestamp of the record creation | timestamp | false | 0 | null | null
+```js
+var defaultFields =
+    {
+        "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
+        "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
+        "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
+    };
+
+var defaultEntities =
+    {
+        "asset":
+        {
+            fields:
+            {
+                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
+                "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
+                "filename": { type: "string", isEditable: false, createReq: 2, foreignKey: null }
+            },
+            allowedRoles:
+            {
+                "read": ["owner", "admin"],
+                "create": ["member"],
+                "update": [],
+                "delete": ["owner", "admin"]
+            }
+        },
+        "user":
+        {
+            fields:
+            {
+                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
+                "domain": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
+                "domainid": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
+                "roles": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
+                "username": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+                "password": { type: "secret", isEditable: true, createReq: 2, foreignKey: null },
+                "email": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+                "firstname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
+                "lastname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
+                "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
+            },
+            allowedRoles:
+            {
+                "read": ["member", "owner", "admin"],
+                "create": ["guest"],
+                "update": ["owner", "admin"],
+                "delete": ["admin"]
+            }
+        },
+    };
+```
 
 The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". We add the default fields above to every entity specified in the config, except those that are part of the [default entities](default-entities). Default fields cannot be overridden, so if a field with the same name as one of the default fields exists in the config, that field will be ignored.
 
-
-#### Default Entities
-
-There are also some entities that we add to the config at runtime, both when an SQL query is being constructed using setup.js and when an actual API app is being initialized.
-
-- **user** - User entity for storing user information. This entity will be used if authentication is enabled.
-    - **fields**
-    
-        | name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
-        | - | - | - | - | - | - | - 
-        | id | user id | id | false | 0 | null | null
-        | domain | domain where user info is hosted | string | false | 0 | null | null
-        | domainid | user id on its domain | string | false | 0 | null | null
-        | roles | user roles (comma separated) | string | false | 0 | null | null
-        | username | username | string | true | 2 | null | null
-        | password | password | secret | true | 2 | null | null
-        | email | email | string | true | 2 | null | null
-        | firstname | first name | string | true | 1 | null | null
-        | lastname | last name | string | true | 1 | null | null
-        | createdtime | timestamp of the record creation | timestamp | false | 0 | null | null
-        
-    - **allowedRoles**
-    
-        | action | roles
-        | - | - 
-        | read | member, owner, admin
-        | create | guest
-        | update | owner, admin
-        | delete | admin
-        
-- **asset** - Asset entity to be used for keeping track of uploaded files. Will be used if file upload is enabled.
-    - **fields**
-    
-        | name | value | type | isEditable |  createReq | foreignEntity | resolvedKeyName
-        | - | - | - | - | - | - | - 
-        | id | id of the record | id | false | 0 | null | null
-        | ownerid | id of the record owner | int | false | 0 | user | owner
-        | filename | file name of the asset | string | false | 2 | null | null
-        
-    - **allowedRoles**
-    
-        | action | roles
-        | - | - 
-        | read | owner, admin
-        | create | member
-        | update | 
-        | delete | owner, admin
-
- The existing fields in the default entities above cannot be overriden, but the list itself can be extended. For instance, in the config you can specify additional fields "firstname" and "lastname" for the user entity. The allowedRoles can be overriden, so in the config you can specify your own permission rules for any of the default entities. You can also specify a getReadCondition and an isWriteAllowed functions for a default entity. 
-
-
-#### Sample Full Configuration
-
-Here is a sample configuration that utilize the provided features (authentication, storage, granular permission checks). You can find it [here](https://github.com/ctjong/orion/blob/master/config-sample.js).
+ The **fields** property in default entities cannot be overriden, but the list itself can be extended. For instance, in the config you can specify an additional field "cityofbirth" for the user entity. You can also override the default **allowedRoles** or add **getReadCondition** and **isWriteAllowed** functions to a default entity. 
