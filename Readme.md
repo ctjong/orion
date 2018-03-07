@@ -52,13 +52,13 @@ app.start();
 ## Documentation
 
 - [Home](https://ctjong.github.io/orion)
-- [Create Your First Orion Application](#create-your-first-orion-application)
-- [API Endpoints](#api-endpoints)
-- [Configuration](#configuration)
-- [Authentication](#authentication)
-- [User Roles](#user-roles)
-- [Condition Syntax](#condition-syntax)
-- [API Reference](#api-reference)
+- [Create Your First Orion Application](https://ctjong.github.io/orion/docs/create-your-first-orion-application)
+- [API Endpoints](https://ctjong.github.io/orion/docs/api-endpoints)
+- [Configuration](https://ctjong.github.io/orion/docs/configuration)
+- [Authentication](https://ctjong.github.io/orion/docs/authentication)
+- [User Roles](https://ctjong.github.io/orion/docs/user-roles)
+- [Condition Syntax](https://ctjong.github.io/orion/docs/condition-syntax)
+- [API Reference](https://ctjong.github.io/orion/docs/api-reference)
 - [Contributing](https://github.com/ctjong/orion/tree/master/CONTRIBUTING.md)
 - [License](https://github.com/ctjong/orion/tree/master/LICENSE)
 
