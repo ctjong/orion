@@ -13,6 +13,7 @@
 ## User Roles
 
 Here is a list of user roles supported by the library. These roles (except admin) are automatically assigned to the requester of each incoming request. A user can have multiple roles (i.e. can be both "member" and "owner").
+
 Role | Description
 - | -
 guest | Unauthenticated user. Assigned when with no token provided.
