@@ -16,7 +16,7 @@ Here is a list of user roles supported by the library. These roles (except admin
 
 Role | Description
 - | -
-guest | Unauthenticated user. Assigned when with no token provided.
+guest | Unauthenticated user. Assigned when no token is provided.
 member | Authenticated user. Assigned when a valid token is provided.
 owner | Owner of the target record. Assigned if the request is a GET in private mode OR if the request is a POST/PUT/DELETE and the target record is owned by the user.
 admin | Site administrator. There is no endpoint to assign this to users programmatically, so this needs to be set manually by database admin.

@@ -47,11 +47,14 @@
     }
     ```
     Please see the [Configuration Options](configuration-options) page for more configuration options.
-4. Set up database tables based on the configuration you created using our setup script. The script is located at the root of the Orion module folder. It takes the configuration file path and the output file path as arguments. Note that the input and output paths have to be absolute paths.
+4. Set up database tables based on the configuration you created, by running the following command.
     ```bash
-    $ node node_modules/orion-api/setup.js ~/appPath/config.js ~/appPath/setup.sql
+    $ npx orion setup ./config.js ./setup.sql
     ```
-    The above command will create an SQL query file named setup.sql that you can run on the database server to set up the tables.
+    The above command will create an SQL query file named setup.sql that you can run on the database server to set up the tables. If you don't have **npx** installed, you need to install it first by running:
+    ```bash
+    $ npm install -g npx
+    ```
 5. Set up **server.js** for the application entry point. Import Orion and the configuration module, and set up the application as follows:
     ```js
     var orion = require('orion-api');

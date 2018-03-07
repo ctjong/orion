@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 (function ()
 {
     var engine;
@@ -10,17 +12,30 @@
     function main()
     {
         // process arguments
-        if (process.argv.length < 4)
+        if (process.argv.length < 3)
         {
-            console.log("Usage: node setup <config file path> <output file path>");
+            console.log("Usage: orion <command>");
+            console.log("Available commands: setup");
             return;
         }
-        var inputPath = process.argv[2];
-        outputPath = process.argv[3];
+        var cmd = process.argv[2];
+        if(cmd !== "setup")
+        {
+            console.log("Unrecognized command: " + cmd);
+            return;
+        }
+        if(process.argv.length < 5)
+        {
+            console.log("Usage: orion setup <config file path> <output file path>");
+            return;
+        }
+
+        var inputPath = process.argv[3];
+        outputPath = process.argv[4];
 
         // get config
-        var contextFactory = new (require('./modules/contextFactory'))();
-        var inputConfig = require(inputPath);
+        var contextFactory = new (require('./contextFactory'))();
+        var inputConfig = require(process.cwd() + "/" + inputPath);
         contextFactory.initializeConfig(inputConfig);
         var config = contextFactory.getConfig();
         engine = config.database.engine;

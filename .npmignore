@@ -5,5 +5,5 @@
 /test
 *.sln
 *.njsproj
-config-sample.js
 /docs
+_config.yml
