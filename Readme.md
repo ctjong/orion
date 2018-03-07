@@ -72,8 +72,6 @@ app.start();
 - [User Roles](https://ctjong.github.io/orion/docs/user-roles)
 - [Condition Syntax](https://ctjong.github.io/orion/docs/condition-syntax)
 - [API Reference](https://ctjong.github.io/orion/docs/api-reference)
-- [Contributing](https://github.com/ctjong/orion/tree/master/CONTRIBUTING.md)
-- [License](https://github.com/ctjong/orion/tree/master/LICENSE)
 
 
 ## Links
