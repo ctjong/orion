@@ -20,36 +20,42 @@ $ npm install --save orion-api
 
 ## Example usage
 
-```js
-var orion = require('orion-api');
+**config.js**
 
-var config = 
+```js
+module.exports =
+{
+    database:
     {
-        database:
+        engine: "mssql",
+        connectionString: _DATABASE_CONNECTION_STRING_
+    },
+    entities:
+    {
+        "blogpost":
         {
-            engine: "mssql",
-            connectionString: _DATABASE_CONNECTION_STRING_
-        },
-        entities:
-        {
-            "blogpost":
+            "fields":
             {
-                "fields":
-                {
-                    "title": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                    "content": { type: "richtext", isEditable: true, createReq: 2, foreignKey: null }
-                },
-                "allowedRoles":
-                {
-                    "read": ["guest"],
-                    "create": ["guest"],
-                    "update": ["guest"],
-                    "delete": ["guest"]
-                }
+                "title": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
+                "content": { type: "richtext", isEditable: true, createReq: 2, foreignKey: null }
+            },
+            "allowedRoles":
+            {
+                "read": ["guest"],
+                "create": ["guest"],
+                "update": ["guest"],
+                "delete": ["guest"]
             }
         }
-    };
+    }
+};
+```
 
+**server.js**
+
+```js
+var orion = require('orion-api');
+var config = require('./config');
 var app = new orion(config);
 app.setupApiEndpoints();
 app.start();
