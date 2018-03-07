@@ -12,6 +12,12 @@ The library allows you to use the following services based on your preferences:
 - Authentication: **Facebook token** / **Orion JSON Web Token (JWT)**
 - Monitoring: **Azure Application Insights**
 
+## Installation
+
+```bash
+$ npm install --save orion-api
+```
+
 ## Example usage
 
 ```js
