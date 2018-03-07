@@ -20,37 +20,6 @@ module.exports =
         //----------------------------------------------
 
         /**
-         * Initialize the adapter
-         * @param {any} config Site configuration
-         */
-        function initialize(config)
-        {
-            if(!!pool ||!config.database.connectionString)
-                return;
-            var sql = require("mysql");
-
-            // there is an issue with creating mysql connection based on connection string.
-            // so we have to convert the string into a connection properties object.
-            var connString = config.database.connectionString;
-            var connStringParts = connString.split(";");
-            var connProps = {};
-            for (var i = 0; i < connStringParts.length; i++)
-            {
-                var connPropTokens = connStringParts[i].split('=');
-                connProps[connPropTokens[0]] = connPropTokens[1];
-            }
-            pool = sql.createPool(
-            {
-                host: connProps.Server,
-                user: connProps.Uid,
-                password: connProps.Pwd,
-                database: connProps.Database,
-                multipleStatements: true
-            });
-            pool.sql = sql;
-        }
-
-        /**
          * Quick find a record based on the given condition
          * @param {any} ctx Request context
          * @param {any} fields Requested fields
@@ -282,36 +251,75 @@ module.exports =
          */
         function execute(ctx, query, successCb, completeCb)
         {
-            var queryString = query.getQueryString();
-            var queryParams = query.getQueryParams();
-            console.log("-------------------------------------------------");
-            console.log("Sending query to database:");
-            console.log(queryString);
-            console.log("Query parameters:");
-            console.log(queryParams);
-
-            pool.query(queryString, queryParams, function (error, results, fields)
+            ensurePoolInitialized(ctx, function()
             {
-                if (error)
+                var queryString = query.getQueryString();
+                var queryParams = query.getQueryParams();
+                console.log("-------------------------------------------------");
+                console.log("Sending query to database:");
+                console.log(queryString);
+                console.log("Query parameters:");
+                console.log(queryParams);
+
+                pool.query(queryString, queryParams, function (error, results, fields)
                 {
-                    if (!!completeCb)
-                        _this.exec.safeExecute(ctx, completeCb);
-                    console.log(error);
-                    throw new _this.error.Error("a07f", 500, "error while sending query to database");
-                }
-                else
-                {
-                    _this.exec.safeExecute(ctx, function ()
+                    if (error)
                     {
-                        successCb(results);
-                    });
-                    if (!!completeCb) 
-                    {
-                        _this.exec.safeExecute(ctx, completeCb);
+                        if (!!completeCb)
+                            _this.exec.safeExecute(ctx, completeCb);
+                        console.log(error);
+                        throw new _this.error.Error("a07f", 500, "error while sending query to database");
                     }
-                }
+                    else
+                    {
+                        _this.exec.safeExecute(ctx, function ()
+                        {
+                            successCb(results);
+                        });
+                        if (!!completeCb) 
+                        {
+                            _this.exec.safeExecute(ctx, completeCb);
+                        }
+                    }
+                });
+                console.log("-------------------------------------------------");
             });
-            console.log("-------------------------------------------------");
+        }
+
+        /**
+         * Ensure the connection pool is initialized
+         * @param {any} ctx Request context
+         * @param {any} callback Callback function
+         */
+        function ensurePoolInitialized(ctx, callback)
+        {
+            if(!!pool)
+            {
+                callback();
+                return;
+            }
+            var sql = require("mysql");
+
+            // there is an issue with creating mysql connection based on connection string.
+            // so we have to convert the string into a connection properties object.
+            var connString = ctx.config.database.connectionString;
+            var connStringParts = connString.split(";");
+            var connProps = {};
+            for (var i = 0; i < connStringParts.length; i++)
+            {
+                var connPropTokens = connStringParts[i].split('=');
+                connProps[connPropTokens[0]] = connPropTokens[1];
+            }
+            pool = sql.createPool(
+            {
+                host: connProps.Server,
+                user: connProps.Uid,
+                password: connProps.Pwd,
+                database: connProps.Database,
+                multipleStatements: true
+            });
+            pool.sql = sql;
+            callback();
         }
 
         /**
@@ -435,7 +443,6 @@ module.exports =
             }
         }
 
-        this.initialize = initialize;
         this.quickFind = quickFind;
         this.select = select;
         this.findRecordById = findRecordById;

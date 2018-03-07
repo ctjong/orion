@@ -50,7 +50,6 @@ module.exports = function(config)
             modules.addDef("db", './adapters/db/mysqldb');
         else
             throw "Unsupported database management system " + config.dbms;
-        modules.get("db").initialize(config);
 
         // storage system
         if (!!config.storage)

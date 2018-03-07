@@ -20,15 +20,6 @@ module.exports =
         //----------------------------------------------
 
         /**
-         * Initialize the adapter
-         * @param {any} config Site configuration
-         */
-        function initialize(config)
-        {
-            // initialization should happen on the first request
-        }
-
-        /**
          * Quick find a record based on the given condition
          * @param {any} ctx Request context
          * @param {any} fields Requested fields
@@ -260,7 +251,7 @@ module.exports =
          */
         function execute(ctx, query, successCb, completeCb)
         {
-            ensurePoolInitialized(function()
+            ensurePoolInitialized(ctx, function()
             {
                 var queryString = query.getQueryString();
                 var queryParams = query.getQueryParams();
@@ -312,9 +303,10 @@ module.exports =
 
         /**
          * Ensure the connection pool is initialized
+         * @param {any} ctx Request context
          * @param {any} callback Callback function
          */
-        function ensurePoolInitialized(callback)
+        function ensurePoolInitialized(ctx, callback)
         {
             if(!!pool)
             {
@@ -322,7 +314,7 @@ module.exports =
                 return;
             }
             var sql = require("mssql");
-            pool = new sql.ConnectionPool(config.database.connectionString, function(err)
+            pool = new sql.ConnectionPool(ctx.config.database.connectionString, function(err)
             {
                 if (err)
                 {
@@ -466,7 +458,6 @@ module.exports =
             }
         }
 
-        this.initialize = initialize;
         this.quickFind = quickFind;
         this.select = select;
         this.findRecordById = findRecordById;
