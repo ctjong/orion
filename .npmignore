@@ -6,3 +6,4 @@
 *.sln
 *.njsproj
 config-sample.js
+/docs
