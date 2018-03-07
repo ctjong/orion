@@ -45,7 +45,7 @@
         }
     }
     ```
-    Please see the [configuration](configuration) section for more configuration options.
+    Please see the [configuration](configuration) page for more configuration options.
 4. Set up database tables based on the configuration you created using our setup script. The script is located at the root of the Orion module folder. It takes the configuration file path and the output file path as arguments. Note that the input and output paths have to be absolute paths.
     ```bash
     $ node node_modules/orion-api/setup.js ~/appPath/config.js ~/appPath/setup.sql
@@ -74,4 +74,4 @@
     $ # retrieve all blog post entries
     $ curl http://localhost:1337/api/data/blogpost/public/findall/id/0/100
     ```
-    Go to [API Endpoints](api-endpoints) section to see all of the endpoints that we provide.
+    Go to [API Endpoints](api-endpoints) page to see all of the endpoints that we provide.
