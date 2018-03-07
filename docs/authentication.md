@@ -3,7 +3,7 @@
 - [Home](../)
 - [Create Your First Orion Application](create-your-first-orion-application)
 - [API Endpoints](api-endpoints)
-- [Configuration](configuration)
+- [Configuration Options](configuration-options)
 - [Sample Configuration](sample-configuration)
 - [Authentication](authentication)
 - [User Roles](user-roles)

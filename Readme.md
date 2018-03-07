@@ -54,7 +54,7 @@ app.start();
 - [Home](https://ctjong.github.io/orion)
 - [Create Your First Orion Application](https://ctjong.github.io/orion/docs/create-your-first-orion-application)
 - [API Endpoints](https://ctjong.github.io/orion/docs/api-endpoints)
-- [Configuration](https://ctjong.github.io/orion/docs/configuration)
+- [Configuration Options](https://ctjong.github.io/orion/docs/configuration-options)
 - [Sample Configuration](https://ctjong.github.io/orion/docs/sample-configuration)
 - [Authentication](https://ctjong.github.io/orion/docs/authentication)
 - [User Roles](https://ctjong.github.io/orion/docs/user-roles)

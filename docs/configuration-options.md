@@ -3,14 +3,14 @@
 - [Home](../)
 - [Create Your First Orion Application](create-your-first-orion-application)
 - [API Endpoints](api-endpoints)
-- [Configuration](configuration)
+- [Configuration Options](configuration-options)
 - [Sample Configuration](sample-configuration)
 - [Authentication](authentication)
 - [User Roles](user-roles)
 - [Condition Syntax](condition-syntax)
 - [API Reference](api-reference)
 
-## Configuration
+## Configuration Options
 
 A configuration module is required to give the application the necessary information about your project. This module should specify the connection strings, authentication and authorization settings, user roles and access levels, and most importantly, the data models.
 
