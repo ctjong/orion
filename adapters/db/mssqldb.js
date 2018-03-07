@@ -25,18 +25,7 @@ module.exports =
          */
         function initialize(config)
         {
-            if(!!pool || !config.database.connectionString)
-                return;
-            var sql = require("mssql");
-            pool = new sql.ConnectionPool(config.database.connectionString, function(err)
-            {
-                if (err)
-                {
-                    console.log(err);
-                    throw new _this.error.Error("f8cb", 500, "error while connecting to database");
-                }
-            });
-            pool.sql = sql;
+            // initialization should happen on the first request
         }
 
         /**
@@ -271,51 +260,78 @@ module.exports =
          */
         function execute(ctx, query, successCb, completeCb)
         {
-            var queryString = query.getQueryString();
-            var queryParams = query.getQueryParams();
-            console.log("-------------------------------------------------");
-            console.log("Sending query to database:");
-            console.log(queryString);
-            console.log("Query parameters:");
-            console.log(queryParams);
-
-            var request = new pool.sql.Request(pool);
-            for (var key in queryParams)
+            ensurePoolInitialized(function()
             {
-                if (!queryParams.hasOwnProperty(key))
-                    continue;
-                var paramValue = queryParams[key];
-                if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
+                var queryString = query.getQueryString();
+                var queryParams = query.getQueryParams();
+                console.log("-------------------------------------------------");
+                console.log("Sending query to database:");
+                console.log(queryString);
+                console.log("Query parameters:");
+                console.log(queryParams);
+
+                var request = new pool.sql.Request(pool);
+                for (var key in queryParams)
                 {
-                    request.input(key, pool.sql.BigInt, paramValue);
+                    if (!queryParams.hasOwnProperty(key))
+                        continue;
+                    var paramValue = queryParams[key];
+                    if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
+                    {
+                        request.input(key, pool.sql.BigInt, paramValue);
+                    }
+                    else
+                    {
+                        request.input(key, paramValue);
+                    }
                 }
-                else
+                request.query(queryString, function (err, dbResponse)
                 {
-                    request.input(key, paramValue);
-                }
+                    if (err)
+                    {
+                        if (!!completeCb)
+                            _this.exec.safeExecute(ctx, completeCb);
+                        console.log(err);
+                        throw new _this.error.Error("a07f", 500, "error while sending query to database");
+                    }
+                    else
+                    {
+                        _this.exec.safeExecute(ctx, function ()
+                        {
+                            successCb(dbResponse.recordset);
+                        });
+                        if (!!completeCb) 
+                        {
+                            _this.exec.safeExecute(ctx, completeCb);
+                        }
+                    }
+                });
+                console.log("-------------------------------------------------");
+            });
+        }
+
+        /**
+         * Ensure the connection pool is initialized
+         * @param {any} callback Callback function
+         */
+        function ensurePoolInitialized(callback)
+        {
+            if(!!pool)
+            {
+                callback();
+                return;
             }
-            request.query(queryString, function (err, dbResponse)
+            var sql = require("mssql");
+            pool = new sql.ConnectionPool(config.database.connectionString, function(err)
             {
                 if (err)
                 {
-                    if (!!completeCb)
-                        _this.exec.safeExecute(ctx, completeCb);
                     console.log(err);
-                    throw new _this.error.Error("a07f", 500, "error while sending query to database");
+                    throw new _this.error.Error("f8cb", 500, "error while connecting to database");
                 }
-                else
-                {
-                    _this.exec.safeExecute(ctx, function ()
-                    {
-                        successCb(dbResponse.recordset);
-                    });
-                    if (!!completeCb) 
-                    {
-                        _this.exec.safeExecute(ctx, completeCb);
-                    }
-                }
+                pool.sql = sql;
+                callback();
             });
-            console.log("-------------------------------------------------");
         }
 
         /**
