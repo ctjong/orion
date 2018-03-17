@@ -102,7 +102,10 @@
                 }
                 else if (fieldType === "boolean")
                 {
-                    fieldsStr += "BIT DEFAULT 0";
+                    if(engine === "mssql")
+                        fieldsStr += "BIT DEFAULT 0";
+                    else
+                        fieldsStr += "TINYINT(1) DEFAULT 0";
                 }
             }
             createTableStr += fieldsStr;
