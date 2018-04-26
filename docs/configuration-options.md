@@ -135,6 +135,6 @@ var defaultEntities =
     };
 ```
 
-The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". We add the default fields to every entity specified in the config, except those that are part of the default entities. Default fields cannot be overridden, so if a field with the same name as one of the default fields exists in the config, that field will be ignored.
+The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". The fields specified in **defaultFields** are added to every entity in your config.
 
- The **fields** property in default entities cannot be overriden, but the list itself can be extended. For instance, in the config you can specify an additional field "cityofbirth" for the user entity. You can also override the default **allowedRoles** or add **getReadCondition** and **isWriteAllowed** functions to a default entity. 
+All values in the **defaultEntities** and **defaultFields** are overridable in your config. If an override is specified, the config values will be merged using Object.assign();
