@@ -430,7 +430,7 @@ module.exports =
                     query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "`" + condObj.operator + "?", condObj.fieldValue);
                 }
             }
-            else
+            else if(condObj.children.length > 0)
             {
                 query.append("(");
                 for (var i = 0; i < condObj.children.length; i++)
@@ -440,6 +440,10 @@ module.exports =
                     appendWhereClause(query, childCond);
                 }
                 query.append(")");
+            }
+            else
+            {
+                query.append("1=1");
             }
         }
 
