@@ -110,12 +110,7 @@ module.exports = function ()
         {
             if (!config.entities.hasOwnProperty(entityName) || !!defaultEntities[entityName])
                 continue;
-            for (var defaultFieldName in defaultFields)
-            {
-                if (!defaultFields.hasOwnProperty(defaultFieldName))
-                    continue;
-                config.entities[entityName].fields[defaultFieldName] = defaultFields[defaultFieldName];
-            }
+            config.entities[entityName].fields = Object.assign({}, defaultFields, config.entities[entityName].fields);
         }
 
         // merge defaultEntities into the config
@@ -123,9 +118,21 @@ module.exports = function ()
         {
             if (!defaultEntities.hasOwnProperty(defaultEntityName))
                 continue;
-            var inputEntity = config.entities[defaultEntityName];
             var defaultEntity = defaultEntities[defaultEntityName];
-            config.entities[defaultEntityName] = mergeEntityConfigs(inputEntity, defaultEntity);
+            if(!!config.entities[defaultEntityName])
+            {
+                // the client's config specifies an override for a default entity
+                for(var propName in defaultEntity)
+                {
+                    if (!defaultEntity.hasOwnProperty(propName))
+                        continue;
+                    config.entities[defaultEntityName][propName] = Object.assign({}, defaultEntity[propName], config.entities[defaultEntityName][propName]);
+                }
+            }
+            else
+            {
+                config.entities[defaultEntityName] = defaultEntity;
+            }
         }
     }
 
@@ -143,98 +150,22 @@ module.exports = function ()
     //----------------------------------------------
 
     /**
-     * Merge an input entity config object with a default entity object.
-     * @param {any} inputEntity Input entity config object
-     * @param {any} defaultEntity Default entity config object
-     * @returns merged entity config object
+     * Merge config override with the default values
+     * @param {any} overrideObj Override object from client's config
+     * @param {any} defaultObj Default config object
      */
-    function mergeEntityConfigs(inputEntity, defaultEntity)
+    function mergeDefaultConfig(overrideObj, defaultObj)
     {
-        if (!inputEntity)
-            return defaultEntity;
-
-        // merge property names from both objects
-        var mergedEntity = {};
-        mergePropNames(inputEntity, defaultEntity, mergedEntity);
-
-        // go through each object property
-        for (var propName in mergedEntity)
+        if(typeof defaultObj === "function")
+            return !overrideObj ? defaultObj : overrideObj;
+        var mergedObj = Object.assign({}, overrideObj);
+        for(var key in defaultObj)
         {
-            if (!mergedEntity.hasOwnProperty(propName))
+            if(!defaultObj.hasOwnProperty(key) || !!mergedObj[key])
                 continue;
-
-            if (propName === "fields")
-            {
-                // merge property names from both fields config objects
-                mergedEntity.fields = {};
-                mergePropNames(inputEntity.fields, defaultEntity.fields, mergedEntity.fields);
-                
-                // merge each fields property from both config objects
-                // for this we prioritize the values from default config
-                for (var fieldName in mergedEntity.fields)
-                {
-                    mergePropValue(defaultEntity.fields, inputEntity.fields, fieldName, mergedEntity.fields);
-                }
-            }
-            else if (propName === "allowedRoles")
-            {
-                // merge property names from both allowedRoles config objects
-                mergedEntity.allowedRoles = {};
-                mergePropNames(inputEntity.allowedRoles, defaultEntity.allowedRoles, mergedEntity.allowedRoles);
-
-                // merge each allowedRoles property from both config objects
-                // for this we prioritize the values from input config
-                for (var actionName in mergedEntity.allowedRoles)
-                {
-                    mergePropValue(inputEntity.allowedRoles, defaultEntity.allowedRoles, actionName, mergedEntity.allowedRoles);
-                }
-            }
-            else
-            {
-                // merge other properties from both config objects
-                // for this we prioritize the values from input config
-                mergePropValue(inputEntity, defaultEntity, propName, mergedEntity);
-            }
+            mergedObj[key] = defaultObj[key];
         }
-
-        return mergedEntity;
-    }
-
-    /**
-     * Take property names from two objects and put them into a merged object.
-     * @param {any} obj1 Source object 1
-     * @param {any} obj2 Source object 2
-     * @param {any} mergedObj Target object
-     */
-    function mergePropNames(obj1, obj2, mergedObj)
-    {
-        var propName;
-        if (!!obj1)
-            for (propName in obj1)
-                if (obj1.hasOwnProperty(propName))
-                    mergedObj[propName] = null;
-        if (!!obj2)
-            for (propName in obj2)
-                if (obj2.hasOwnProperty(propName))
-                    mergedObj[propName] = null;
-    }
-
-    /**
-     * Take the property with the given name from two source objects, and put it into a target object,
-     * based on which source object takes priority.
-     * @param {any} highPriObj Higher priority source object
-     * @param {any} lowPriObj Lower priority source object
-     * @param {any} propName Property name
-     * @param {any} mergedObj Target object
-     */
-    function mergePropValue(highPriObj, lowPriObj, propName, mergedObj)
-    {
-        if (!mergedObj.hasOwnProperty(propName))
-            return;
-        if (!!highPriObj && !!highPriObj[propName])
-            mergedObj[propName] = highPriObj[propName];
-        else
-            mergedObj[propName] = lowPriObj[propName];
+        return mergedObj;
     }
 
     this.Context = Context;

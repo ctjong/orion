@@ -253,36 +253,39 @@ module.exports =
         {
             ensurePoolInitialized(ctx, function()
             {
-                var queryString = query.getQueryString();
-                var queryParams = query.getQueryParams();
-                console.log("-------------------------------------------------");
-                console.log("Sending query to database:");
-                console.log(queryString);
-                console.log("Query parameters:");
-                console.log(queryParams);
-
-                pool.query(queryString, queryParams, function (error, results, fields)
+                _this.exec.safeExecute(ctx, function()
                 {
-                    if (error)
+                    var queryString = query.getQueryString();
+                    var queryParams = query.getQueryParams();
+                    console.log("-------------------------------------------------");
+                    console.log("Sending query to database:");
+                    console.log(queryString);
+                    console.log("Query parameters:");
+                    console.log(queryParams);
+
+                    pool.query(queryString, queryParams, function (error, results, fields)
                     {
-                        if (!!completeCb)
-                            _this.exec.safeExecute(ctx, completeCb);
-                        console.log(error);
-                        throw new _this.error.Error("a07f", 500, "error while sending query to database");
-                    }
-                    else
-                    {
-                        _this.exec.safeExecute(ctx, function ()
+                        if (error)
                         {
-                            successCb(results);
-                        });
-                        if (!!completeCb) 
-                        {
-                            _this.exec.safeExecute(ctx, completeCb);
+                            if (!!completeCb)
+                                _this.exec.safeExecute(ctx, completeCb);
+                            console.log(error);
+                            throw new _this.error.Error("a07f", 500, "error while sending query to database");
                         }
-                    }
+                        else
+                        {
+                            _this.exec.safeExecute(ctx, function ()
+                            {
+                                successCb(results);
+                            });
+                            if (!!completeCb) 
+                            {
+                                _this.exec.safeExecute(ctx, completeCb);
+                            }
+                        }
+                    });
+                    console.log("-------------------------------------------------");
                 });
-                console.log("-------------------------------------------------");
             });
         }
 

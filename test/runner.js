@@ -268,7 +268,7 @@ var Runner = function(config, dbEngine, storageProviderName)
                 var engine = actualQueries[i].engine;
                 var expected = expectedQueries[i];
                 var expectedString = queries[expected.name][engine];
-                assert.equal(actualString.trim().toLowerCase(), expectedString.trim().toLowerCase(), "Query string does not match the expected");
+                assetQueryString(actualString.trim().toLowerCase(), expectedString.trim().toLowerCase());
                 for(var j=0; j<expected.params.length; j++)
                 {
                     if(expected.params[i] === "skip")
@@ -325,6 +325,70 @@ var Runner = function(config, dbEngine, storageProviderName)
         {
             assert.equal(actual, expected, "Incorrect response body value at " + fullPath + ". Actual: " + actual + ". Expected: " + expected);
         }
+    }
+
+    /**
+     * Assert that a query string match the expected
+     * @param {*} actual Actual query string
+     * @param {*} expected Expected query string
+     */
+    function assetQueryString(actual, expected)
+    {
+        if(expected.indexOf("select") === 0)
+        {
+            if(assertQueryClause(actual, expected, "select", "from"))
+                return;
+            if(assertQueryClause(actual, expected, "from", "where"))
+                return;
+            var actualEnd = actual.substring(actual.indexOf("from"));
+            var expectedEnd = expected.substring(expected.indexOf("from"));
+            assert.equal(actualEnd, expectedEnd, "Query string does not match the expected");
+        }
+        else
+        {
+            assert.equal(actual, expected, "Query string does not match the expected");
+        }
+    }
+
+    /**
+     * Assert that a query clause matches the expected
+     * @param {*} actual actual query string
+     * @param {*} expected expected query string
+     * @param {*} clauseStart start keyword of the query clause
+     * @param {*} clauseEnd start keyword of the query clause
+     * @return array of values
+     */
+    function assertQueryClause(actual, expected, clauseStart, clauseEnd)
+    {
+        var actualValues = getQueryClauseValues(actual, clauseStart, clauseEnd);
+        var expectedValues = getQueryClauseValues(expected, clauseStart, clauseEnd);
+        actualValues.forEach(function(actualItem, index)
+        {
+            if(actualItem !== expectedValues[index])
+                return false;
+        });
+        return true;
+    }
+
+    /**
+     * Get array of values from a query clause
+     * @param {*} query query string
+     * @param {*} clauseStart start keyword of the query clause
+     * @param {*} clauseEnd start keyword of the query clause
+     * @return array of values
+     */
+    function getQueryClauseValues(query, clauseStart, clauseEnd)
+    {
+        if(query.indexOf(clauseStart) < 0)
+            return "";
+        var clause;
+        if(!clauseEnd)
+            clause = query.substring(clauseStart.length + 1);
+        else
+            clause = query.substring(clauseStart.length + 1, query.indexOf(clauseEnd) - clauseStart.length - 1);
+        var values = clause.split(" ").join("").split(",");
+        values.sort();
+        return values;
     }
 
     this.runTest = runTest;
