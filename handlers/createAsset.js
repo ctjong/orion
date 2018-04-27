@@ -3,7 +3,7 @@
  */
 module.exports = 
 {
-    dependencies: ["storage", "helper", "db", "exec"],
+    dependencies: ["storage", "helper", "db"],
     Instance: function()
     {
         var _this = this;
@@ -26,9 +26,9 @@ module.exports =
         function execute(ctx, req)
         {
             if (!ctx.config.storage)
-                throw new _this.error.Error("e668", 500, "file upload is not supported for this site");
+                throw new _this.exec.Error("e668", 500, "file upload is not supported for this site");
             if(!ctx.userId) 
-                throw new _this.error.Error("4f53", 401, "anonymous upload is not supported");
+                throw new _this.exec.Error("4f53", 401, "anonymous upload is not supported");
             _this.helper.onBeginWriteRequest(ctx, "create", _this.db, null, { "ownerid": ctx.userId }, function(record, requestBody)
             {
                 _this.storage.uploadFile(ctx, req, function (error, name) 
@@ -37,7 +37,7 @@ module.exports =
                     {
                         if (error)
                         {
-                            throw new _this.error.Error("d2d0", 500, "error while uploading file to storage system");
+                            throw new _this.exec.Error("d2d0", 500, "error while uploading file to storage system");
                         }
                         else
                         {

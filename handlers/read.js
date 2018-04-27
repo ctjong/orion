@@ -30,7 +30,7 @@ module.exports =
             if (requestParams.accessType === "private")
             {
                 // private read mode. add owner role directly, add ownerid condition later
-                if (!ctx.userId) throw new _this.error.Error("a058", 401, "Unauthorized");
+                if (!ctx.userId) throw new _this.exec.Error("a058", 401, "Unauthorized");
                 ctx.userRoles.push("owner");
             }
 
@@ -107,7 +107,7 @@ module.exports =
                 var val = parseInt(condition.getValue(fieldName));
                 if(!isNaN(val) && val !== ctx.userId)
                 {
-                    throw new _this.error.Error("a19c", 401, "Unauthorized");
+                    throw new _this.exec.Error("a19c", 401, "Unauthorized");
                 }
                 condition.children.push(new _this.condition.Condition(ctx.entity, fieldName, "=", ctx.userId));
             }

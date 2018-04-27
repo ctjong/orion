@@ -31,7 +31,7 @@ module.exports =
         {
             if(typeof(err) === "string")
             {
-                err = _this.error.parse(err);
+                err = parseError(err);
             }
             console.error(err);
             var config = !!req.context && !!req.context.config ? req.context.config : null;
@@ -91,8 +91,31 @@ module.exports =
             }
         }
 
+        /**
+         * Construct a new Error object. This will contain all details about an error.
+         */
+        function Error(tag, statusCode, msg)
+        {
+            this.tag = tag;
+            this.statusCode = statusCode;
+            this.msg = msg;
+        }
+
+        //----------------------------------------------
+        // PPRIVATE
+        //----------------------------------------------
+
+        /**
+         * Parse an error string and construct a new Error object.
+         */
+        function parseError(errorStr)
+        {
+            return new Error("", 500, errorStr);
+        }
+
         this.handleError = handleError;
         this.safeExecute = safeExecute;
+        this.Error = Error;
         _construct();
     }
 };

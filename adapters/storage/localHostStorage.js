@@ -3,7 +3,7 @@
  */
 module.exports = 
 {
-    dependencies: ["multiparty", "exec", "guid", "mime", "helper", "db"],
+    dependencies: ["multiparty", "guid", "mime", "helper", "db"],
     Instance: function()
     {
         var _this = this;
@@ -61,7 +61,7 @@ module.exports =
             {
                 _this.exec.safeExecute(ctx, function()
                 {
-                    throw new _this.error.Error("8651", 400, "error while parsing form data");
+                    throw new _this.exec.Error("8651", 400, "error while parsing form data");
                 });
             });
             form.parse(req);

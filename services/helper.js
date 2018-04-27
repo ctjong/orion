@@ -107,7 +107,7 @@ module.exports =
                 resolveForeignKeys(ctx, requestBody, db, function (requestBody)
                 {
                     if (!!isWriteAllowedFn && !isWriteAllowedFn(action, ctx.userRoles, ctx.userId, null, requestBody))
-                        throw new _this.error.Error("c75f", 400, "bad create request. operation not allowed.");
+                        throw new _this.exec.Error("c75f", 400, "bad create request. operation not allowed.");
                     callback(null, requestBody);
                 });
             }
@@ -116,7 +116,7 @@ module.exports =
                 db.findRecordById(ctx, ctx.entity, recordId, function(record)
                 {
                     if(!record)
-                        throw new _this.error.Error("7e13", 400, "record not found with id " + recordId);
+                        throw new _this.exec.Error("7e13", 400, "record not found with id " + recordId);
                     record = _this.fixDataKeysAndTypes(ctx, record);
                     if((ctx.entity === "user" && ctx.userId === record.id) || (ctx.entity !== "user" && ctx.userId === record.ownerid))
                     {
@@ -124,7 +124,7 @@ module.exports =
                     }
                     validateRoles(ctx, action);
                     if (!!isWriteAllowedFn && !isWriteAllowedFn(action, ctx.userRoles, ctx.userId, record, requestBody))
-                        throw new _this.error.Error("29c8", 400, "bad " + action + " request. operation not allowed.");
+                        throw new _this.exec.Error("29c8", 400, "bad " + action + " request. operation not allowed.");
                     callback(record, requestBody);
                 });
             }
@@ -139,7 +139,7 @@ module.exports =
         function validateRoles(ctx, action)
         {
             if (!ctx.config.entities[ctx.entity].allowedRoles[action].containsAny(ctx.userRoles))
-                throw new _this.error.Error("c327", 401, "Unauthorized");
+                throw new _this.exec.Error("c327", 401, "Unauthorized");
         }
 
         //----------------------------------------------

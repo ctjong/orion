@@ -3,7 +3,7 @@
  */
 module.exports = 
 {
-    dependencies: ["helper", "condition", "join", "exec"],
+    dependencies: ["helper", "condition", "join"],
     Instance: function()
     {
         var _this = this;
@@ -285,7 +285,7 @@ module.exports =
                             if (!!completeCb)
                                 _this.exec.safeExecute(ctx, completeCb);
                             console.log(err);
-                            throw new _this.error.Error("a07f", 500, "error while sending query to database");
+                            throw new _this.exec.Error("a07f", 500, "error while sending query to database");
                         }
                         else
                         {
@@ -322,7 +322,7 @@ module.exports =
                 if (err)
                 {
                     console.log(err);
-                    throw new _this.error.Error("f8cb", 500, "error while connecting to database");
+                    throw new _this.exec.Error("f8cb", 500, "error while connecting to database");
                 }
                 pool.sql = sql;
                 callback();

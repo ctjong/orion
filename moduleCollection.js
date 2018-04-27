@@ -59,8 +59,8 @@ module.exports = function ()
             if(!moduleDef)
                 throw {tag: "99c0", statusCode: 500, msg: "module not found " + moduleName};
             module = new moduleDef.Instance();
-            if(moduleName !== "error")
-                module.error = new _this.get("error");
+            if(moduleName !== "exec")
+                module.exec = new _this.get("exec");
             var dependencies = moduleDef.dependencies;
             for(var i=0; i<dependencies.length; i++) 
             {

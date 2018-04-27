@@ -108,7 +108,7 @@ module.exports =
                 var fields = ctx.config.entities[ctx.entity].fields;
                 if(!fields.hasOwnProperty(fieldName))
                 {
-                    throw new _this.error.Error("9d1b", 400, "unrecognized field " + fieldName + " found in condition");
+                    throw new _this.exec.Error("9d1b", 400, "unrecognized field " + fieldName + " found in condition");
                 }
                 var fieldType = ctx.config.entities[ctx.entity].fields[fieldName].type;
                 if(fieldType === "int") 

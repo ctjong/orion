@@ -28,7 +28,6 @@ module.exports = function(config)
         modules.add("mime", 'mime-types');
         modules.add("jwt", 'jsonwebtoken');
         modules.add("https", 'https');
-        modules.addDef("error", './errorFactory');
         modules.addDef("condition", './models/condition');
         modules.addDef("join", './models/join');
         modules.addDef("create", './handlers/create');

@@ -43,7 +43,7 @@ module.exports =
                 }
                 catch(e)
                 {
-                    throw new _this.error.Error("5192", 401, "invalid token");
+                    throw new _this.exec.Error("5192", 401, "invalid token");
                 }
             }
             if(ctx.userRoles.length === 0)
@@ -64,7 +64,7 @@ module.exports =
         {
             verifyAuthSupported(ctx);
             if(!userName || !password) 
-                throw new _this.error.Error("003a", 400, "invalid login");
+                throw new _this.exec.Error("003a", 400, "invalid login");
             _this.db.quickFind(
                 ctx, 
                 ["id", "password", "roles", "domain", "firstname", "lastname"], 
@@ -74,10 +74,10 @@ module.exports =
                 {
                     // verify login
                     if(!user) 
-                        throw new _this.error.Error("13c2", 400, "user not found with userName " + userName);
-                    if(user.domain !== "local") throw new _this.error.Error("24a7", 400, "external user login is not supported in this endpoint");
+                        throw new _this.exec.Error("13c2", 400, "user not found with userName " + userName);
+                    if(user.domain !== "local") throw new _this.exec.Error("24a7", 400, "external user login is not supported in this endpoint");
                     var hashedInput = _this.hashPassword(ctx, password);
-                    if(hashedInput !== user.password) throw new _this.error.Error("003a", 400, "invalid login");
+                    if(hashedInput !== user.password) throw new _this.exec.Error("003a", 400, "invalid login");
                     // generate token
                     createAndSendToken(ctx, user.id, "local", "", user.roles, user.firstname, user.lastname);
                 }
@@ -110,7 +110,7 @@ module.exports =
                     {
                         var parsed = JSON.parse(body);
                         if(!parsed.hasOwnProperty("id"))
-                            throw new _this.error.Error("3f9c", 400, "bad request");
+                            throw new _this.exec.Error("3f9c", 400, "bad request");
                         _this.db.quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id}, function(readResponse)
                         {
                             if(!readResponse) 
@@ -157,7 +157,7 @@ module.exports =
         function verifyAuthSupported(ctx)
         {
             if (!ctx.config.auth)
-                throw new _this.error.Error("94e8", 500, "Authentication is not supported for this site");
+                throw new _this.exec.Error("94e8", 500, "Authentication is not supported for this site");
         }
 
         //----------------------------------------------

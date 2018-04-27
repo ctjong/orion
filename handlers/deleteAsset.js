@@ -3,7 +3,7 @@
  */
 module.exports = 
 {
-    dependencies: ["storage", "exec", "helper", "db"],
+    dependencies: ["storage", "helper", "db"],
     Instance: function()
     {
         var _this = this;
@@ -26,20 +26,20 @@ module.exports =
         function execute (ctx, recordId)
         {
             if (!ctx.config.storage)
-                throw new _this.error.Error("51be", 500, "file delete is not supported for this site");
+                throw new _this.exec.Error("51be", 500, "file delete is not supported for this site");
             if(!ctx.userId)
-                throw new _this.error.Error("2c74", 401, "anonymous asset deletion is not supported");
+                throw new _this.exec.Error("2c74", 401, "anonymous asset deletion is not supported");
             _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, recordId, null, function(record, requestBody)
             {
                 if (!record.filename)
-                    throw new _this.error.Error("cd03", 500, "failed to get file name for the requested record");
+                    throw new _this.exec.Error("cd03", 500, "failed to get file name for the requested record");
                 _this.storage.deleteFile(ctx, record.filename, function (error) 
                 {
                     _this.exec.safeExecute(ctx, function()
                     {
                         if (error)
                         {
-                            throw new _this.error.Error("2020", 500, "Asset removal failed: " + error);
+                            throw new _this.exec.Error("2020", 500, "Asset removal failed: " + error);
                         }
                         else
                         {

@@ -3,7 +3,7 @@
  */
 module.exports = 
 {
-    dependencies: ["multiparty", "exec", "guid", "mime", "helper", "db"],
+    dependencies: ["multiparty", "guid", "mime", "helper", "db"],
     Instance: function()
     {
         var _this = this;
@@ -53,7 +53,7 @@ module.exports =
                 {
                     isFirstPartReceived = true;
                     if (!stream.filename)
-                        throw new _this.error.Error("8dad", 400, "submitted file is not a valid file");
+                        throw new _this.exec.Error("8dad", 400, "submitted file is not a valid file");
                     var name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
                     provider.upload(
                     {
@@ -75,14 +75,14 @@ module.exports =
                 _this.exec.safeExecute(ctx, function()
                 {
                     if(!isFirstPartReceived && bytesReceived >= bytesExpected)
-                        throw new _this.error.Error("49ef", 400, "error while parsing the first part");
+                        throw new _this.exec.Error("49ef", 400, "error while parsing the first part");
                 });
             });
             form.on('error', function(err)
             {
                 _this.exec.safeExecute(ctx, function()
                 {
-                    throw new _this.error.Error("a95a", 400, "error while parsing form data");
+                    throw new _this.exec.Error("a95a", 400, "error while parsing form data");
                 });
             });
             form.parse(req);

@@ -36,11 +36,11 @@ module.exports = {
                 }
                 if(Object.keys(updateData).length === 0)
                 {
-                    throw new _this.error.Error("582e", 400, "bad request");
+                    throw new _this.exec.Error("582e", 400, "bad request");
                 }
                 if(ctx.entity === "user" && record.domain !== "local") 
                 {
-                    throw new _this.error.Error("511f", 400, "updating external user info is not supported");
+                    throw new _this.exec.Error("511f", 400, "updating external user info is not supported");
                 }
                 var condition = new _this.condition.Condition(ctx.entity, "id", "=", recordId);
                 _this.db.update(ctx, ctx.entity, updateData, condition, function(dbResponse)
