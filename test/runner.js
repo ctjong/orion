@@ -336,12 +336,12 @@ var Runner = function(config, dbEngine, storageProviderName)
     {
         if(expected.indexOf("select") === 0)
         {
-            if(assertQueryClause(actual, expected, "select", "from"))
+            if(!assertQueryClause(actual, expected, "select", "from", ","))
                 return;
-            if(assertQueryClause(actual, expected, "from", "where"))
+            if(!assertQueryClause(actual, expected, "from", "where", "innerjoin"))
                 return;
-            var actualEnd = actual.substring(actual.indexOf("from"));
-            var expectedEnd = expected.substring(expected.indexOf("from"));
+            var actualEnd = actual.substring(actual.indexOf("where"));
+            var expectedEnd = expected.substring(expected.indexOf("where"));
             assert.equal(actualEnd, expectedEnd, "Query string does not match the expected");
         }
         else
@@ -356,16 +356,22 @@ var Runner = function(config, dbEngine, storageProviderName)
      * @param {*} expected expected query string
      * @param {*} clauseStart start keyword of the query clause
      * @param {*} clauseEnd start keyword of the query clause
+     * @param {*} separator separator string between each clause value
      * @return array of values
      */
-    function assertQueryClause(actual, expected, clauseStart, clauseEnd)
+    function assertQueryClause(actual, expected, clauseStart, clauseEnd, separator)
     {
-        var actualValues = getQueryClauseValues(actual, clauseStart, clauseEnd);
-        var expectedValues = getQueryClauseValues(expected, clauseStart, clauseEnd);
+        var actualValues = getQueryClauseValues(actual, clauseStart, clauseEnd, separator);
+        var expectedValues = getQueryClauseValues(expected, clauseStart, clauseEnd, separator);
+        if(actualValues.length !== expectedValues.length)
+            return false;
         actualValues.forEach(function(actualItem, index)
         {
             if(actualItem !== expectedValues[index])
+            {
+                assert.fail("Query clause is not as expected. Actual: [" + actualValues.join(",") + "]. Expected: [" + expectedValues.join(",") + "].");
                 return false;
+            }
         });
         return true;
     }
@@ -375,18 +381,30 @@ var Runner = function(config, dbEngine, storageProviderName)
      * @param {*} query query string
      * @param {*} clauseStart start keyword of the query clause
      * @param {*} clauseEnd start keyword of the query clause
+     * @param {*} separator separator string between each clause value
      * @return array of values
      */
-    function getQueryClauseValues(query, clauseStart, clauseEnd)
+    function getQueryClauseValues(query, clauseStart, clauseEnd, separator)
     {
-        if(query.indexOf(clauseStart) < 0)
+        var clauseStartIndex = query.indexOf(clauseStart);
+        if(clauseStartIndex < 0)
             return "";
+        else if(clauseStartIndex === 0) 
+            clauseStart += " ";
+        else
+            clauseStart = " " + clauseStart + " ";
+        var clauseBegin = query.indexOf(clauseStart) + clauseStart.length;
         var clause;
         if(!clauseEnd)
-            clause = query.substring(clauseStart.length + 1);
+        {
+            clause = query.substring(clauseBegin);
+        }
         else
-            clause = query.substring(clauseStart.length + 1, query.indexOf(clauseEnd) - clauseStart.length - 1);
-        var values = clause.split(" ").join("").split(",");
+        {
+            clauseEnd = " " + clauseEnd + " ";
+            clause = query.substring(clauseBegin, query.indexOf(clauseEnd));
+        }
+        var values = clause.split(" ").join("").split(separator);
         values.sort();
         return values;
     }
