@@ -253,39 +253,36 @@ module.exports =
         {
             ensurePoolInitialized(ctx, function()
             {
-                _this.exec.safeExecute(ctx, function()
-                {
-                    var queryString = query.getQueryString();
-                    var queryParams = query.getQueryParams();
-                    console.log("-------------------------------------------------");
-                    console.log("Sending query to database:");
-                    console.log(queryString);
-                    console.log("Query parameters:");
-                    console.log(queryParams);
+                var queryString = query.getQueryString();
+                var queryParams = query.getQueryParams();
+                console.log("-------------------------------------------------");
+                console.log("Sending query to database:");
+                console.log(queryString);
+                console.log("Query parameters:");
+                console.log(queryParams);
 
-                    pool.query(queryString, queryParams, function (error, results, fields)
+                pool.query(queryString, queryParams, function (error, results, fields)
+                {
+                    if (error)
                     {
-                        if (error)
+                        if (!!completeCb)
+                            _this.exec.safeCallback(ctx, completeCb);
+                        console.log(error);
+                        _this.exec.sendErrorResponse(ctx, "a07f", 500, "error while sending query to database");
+                    }
+                    else
+                    {
+                        _this.exec.safeCallback(ctx, function ()
                         {
-                            if (!!completeCb)
-                                _this.exec.safeExecute(ctx, completeCb);
-                            console.log(error);
-                            throw new _this.exec.Error("a07f", 500, "error while sending query to database");
-                        }
-                        else
+                            successCb(results);
+                        });
+                        if (!!completeCb) 
                         {
-                            _this.exec.safeExecute(ctx, function ()
-                            {
-                                successCb(results);
-                            });
-                            if (!!completeCb) 
-                            {
-                                _this.exec.safeExecute(ctx, completeCb);
-                            }
+                            _this.exec.safeCallback(ctx, completeCb);
                         }
-                    });
-                    console.log("-------------------------------------------------");
+                    }
                 });
+                console.log("-------------------------------------------------");
             });
         }
 
@@ -298,7 +295,7 @@ module.exports =
         {
             if(!!pool)
             {
-                callback();
+                _this.exec.safeCallback(ctx, callback);
                 return;
             }
             var sql = require("mysql");
@@ -322,7 +319,7 @@ module.exports =
                 multipleStatements: true
             });
             pool.sql = sql;
-            callback();
+            _this.exec.safeCallback(ctx, callback);
         }
 
         /**

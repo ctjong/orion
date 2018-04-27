@@ -108,7 +108,7 @@ module.exports =
                 var requiredField = requiredFields[i];
                 if(!requestBody.hasOwnProperty(requiredField) || !requestBody[requiredField])
                 {
-                    throw new _this.exec.Error("86c5", 400, "missing required field " + requiredFields[i]);
+                    _this.exec.throwError("86c5", 400, "missing required field " + requiredFields[i]);
                 }
             }
             if(ctx.entity === "user") 
@@ -116,7 +116,7 @@ module.exports =
                 _this.auth.verifyAuthSupported(ctx);
                 if(requestBody.password !== requestBody.confirmpassword)
                 {
-                    throw new _this.exec.Error("1b9e", 400, "password doesn't match the confirmation");
+                    _this.exec.throwError("1b9e", 400, "password doesn't match the confirmation");
                 }
                 validateEmail(requestBody.email);
                 verifyPwdRequirements(requestBody.password, ctx.config.auth.passwordReqs);
@@ -173,7 +173,7 @@ module.exports =
             var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if(!re.test(email))
             {
-                throw new _this.exec.Error("dbaa", 400, "email is not valid: " + email);
+                _this.exec.throwError("dbaa", 400, "email is not valid: " + email);
             }
         }
 
@@ -186,23 +186,23 @@ module.exports =
         {
             if(newPassword.length < passwordReqs.minLength)
             {
-                throw new _this.exec.Error("ef60", 400, "password must be at least " + passwordReqs.minLength + " characters long");
+                _this.exec.throwError("ef60", 400, "password must be at least " + passwordReqs.minLength + " characters long");
             }
             if (passwordReqs.lowercaseChar && !newPassword.match(/[a-z]/))
             {
-                throw new _this.exec.Error("8c5e", 400, "password must contain at least one lowercase character.");
+                _this.exec.throwError("8c5e", 400, "password must contain at least one lowercase character.");
             }
             if(passwordReqs.uppercaseChar && !newPassword.match(/[A-Z]/))
             {
-                throw new _this.exec.Error("d625", 400, "password must contain at least one uppercase character.");
+                _this.exec.throwError("d625", 400, "password must contain at least one uppercase character.");
             }
             if (passwordReqs.digitChar && !newPassword.match(/[0-9]/))
             {
-                throw new _this.exec.Error("6db6", 400, "password must contain at least one numeric character.");
+                _this.exec.throwError("6db6", 400, "password must contain at least one numeric character.");
             }
             if (passwordReqs.specialChar && !newPassword.match(/[!#$%&()*+,-./:;<=>?@[\]^_`{|}~]/))
             {
-                throw new _this.exec.Error("8b26", 400, "password must contain at least one special character (!#$%&()*+,-./:;<=>?@[\]^_`{|}~).");
+                _this.exec.throwError("8b26", 400, "password must contain at least one special character (!#$%&()*+,-./:;<=>?@[\]^_`{|}~).");
             }
         }
 

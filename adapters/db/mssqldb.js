@@ -253,54 +253,51 @@ module.exports =
         {
             ensurePoolInitialized(ctx, function()
             {
-                _this.exec.safeExecute(ctx, function()
-                {
-                    var queryString = query.getQueryString();
-                    var queryParams = query.getQueryParams();
-                    console.log("-------------------------------------------------");
-                    console.log("Sending query to database:");
-                    console.log(queryString);
-                    console.log("Query parameters:");
-                    console.log(queryParams);
+                var queryString = query.getQueryString();
+                var queryParams = query.getQueryParams();
+                console.log("-------------------------------------------------");
+                console.log("Sending query to database:");
+                console.log(queryString);
+                console.log("Query parameters:");
+                console.log(queryParams);
 
-                    var request = new pool.sql.Request(pool);
-                    for (var key in queryParams)
+                var request = new pool.sql.Request(pool);
+                for (var key in queryParams)
+                {
+                    if (!queryParams.hasOwnProperty(key))
+                        continue;
+                    var paramValue = queryParams[key];
+                    if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
                     {
-                        if (!queryParams.hasOwnProperty(key))
-                            continue;
-                        var paramValue = queryParams[key];
-                        if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
+                        request.input(key, pool.sql.BigInt, paramValue);
+                    }
+                    else
+                    {
+                        request.input(key, paramValue);
+                    }
+                }
+                request.query(queryString, function (err, dbResponse)
+                {
+                    if (err)
+                    {
+                        if (!!completeCb)
+                            _this.exec.safeCallback(ctx, completeCb);
+                        console.log(err);
+                        _this.exec.sendErrorResponse(ctx, "a07f", 500, "error while sending query to database");
+                    }
+                    else
+                    {
+                        _this.exec.safeCallback(ctx, function ()
                         {
-                            request.input(key, pool.sql.BigInt, paramValue);
-                        }
-                        else
+                            successCb(dbResponse.recordset);
+                        });
+                        if (!!completeCb) 
                         {
-                            request.input(key, paramValue);
+                            _this.exec.safeCallback(ctx, completeCb);
                         }
                     }
-                    request.query(queryString, function (err, dbResponse)
-                    {
-                        if (err)
-                        {
-                            if (!!completeCb)
-                                _this.exec.safeExecute(ctx, completeCb);
-                            console.log(err);
-                            throw new _this.exec.Error("a07f", 500, "error while sending query to database");
-                        }
-                        else
-                        {
-                            _this.exec.safeExecute(ctx, function ()
-                            {
-                                successCb(dbResponse.recordset);
-                            });
-                            if (!!completeCb) 
-                            {
-                                _this.exec.safeExecute(ctx, completeCb);
-                            }
-                        }
-                    });
-                    console.log("-------------------------------------------------");
                 });
+                console.log("-------------------------------------------------");
             });
         }
 
@@ -313,7 +310,7 @@ module.exports =
         {
             if(!!pool)
             {
-                callback();
+                _this.exec.safeCallback(ctx, callback);
                 return;
             }
             var sql = require("mssql");
@@ -322,10 +319,11 @@ module.exports =
                 if (err)
                 {
                     console.log(err);
-                    throw new _this.exec.Error("f8cb", 500, "error while connecting to database");
+                    _this.exec.sendErrorResponse(ctx, "f8cb", 500, "error while connecting to database");
+                    return;
                 }
                 pool.sql = sql;
-                callback();
+                _this.exec.safeCallback(ctx, callback);
             });
         }
 

@@ -45,7 +45,7 @@ module.exports =
             });
             form.on('file', function(name, file)
             {
-                _this.exec.safeExecute(ctx, function()
+                _this.exec.safeCallback(ctx, function()
                 {
                     var tempPath = file.path;
                     var tempName = path.basename(tempPath);
@@ -59,10 +59,7 @@ module.exports =
             });
             form.on('error', function(err)
             {
-                _this.exec.safeExecute(ctx, function()
-                {
-                    throw new _this.exec.Error("8651", 400, "error while parsing form data");
-                });
+                _this.exec.sendErrorResponse(ctx, "8651", 400, "error while parsing form data");
             });
             form.parse(req);
         }

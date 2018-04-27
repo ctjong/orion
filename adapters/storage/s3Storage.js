@@ -49,11 +49,11 @@ module.exports =
             });
             form.on('part', function(stream) 
             {
-                _this.exec.safeExecute(ctx, function()
+                _this.exec.safeCallback(ctx, function()
                 {
                     isFirstPartReceived = true;
                     if (!stream.filename)
-                        throw new _this.exec.Error("8dad", 400, "submitted file is not a valid file");
+                        _this.exec.throwError("8dad", 400, "submitted file is not a valid file");
                     var name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
                     provider.upload(
                     {
@@ -72,18 +72,12 @@ module.exports =
             });
             form.on('progress', function(bytesReceived, bytesExpected)
             {
-                _this.exec.safeExecute(ctx, function()
-                {
-                    if(!isFirstPartReceived && bytesReceived >= bytesExpected)
-                        throw new _this.exec.Error("49ef", 400, "error while parsing the first part");
-                });
+                if(!isFirstPartReceived && bytesReceived >= bytesExpected)
+                    _this.exec.sendErrorResponse(ctx, "49ef", 400, "error while parsing the first part");
             });
             form.on('error', function(err)
             {
-                _this.exec.safeExecute(ctx, function()
-                {
-                    throw new _this.exec.Error("a95a", 400, "error while parsing form data");
-                });
+                _this.exec.sendErrorResponse(ctx, "a95a", 400, "error while parsing form data");
             });
             form.parse(req);
         }

@@ -6,8 +6,8 @@ module.exports = function(runner, params)
         'post',
         {"username":"testuser","password":"testpassword","confirmPassword":"testpassword","email":"invalidemail","firstName":"firstName","lastName":"lastName"},
         null,
-        [{"name":"insertError","params":[]}],
-        [{"lastinsertedid":"1"}],
+        [],
+        [],
         400
     );
 
@@ -17,8 +17,8 @@ module.exports = function(runner, params)
         'post',
         {"username":"testuser","password":"testpassword","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         null,
-        [{"name":"insertError","params":[]}],
-        [{"lastinsertedid":"1"}],
+        [],
+        [],
         400
     );
 
@@ -28,8 +28,8 @@ module.exports = function(runner, params)
         'post',
         {"username":"testuser","password":"test","confirmPassword":"test","email":"test@test.com","firstName":"firstName","lastName":"lastName"},
         null,
-        [{"name":"insertError","params":[]}],
-        [{"lastinsertedid":"1"}],
+        [],
+        [],
         400
     );
 

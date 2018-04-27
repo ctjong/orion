@@ -75,11 +75,12 @@ module.exports =
         }
 
         /**
-         * Execute the given function and catch any exception that comes out of it
+         * Execute a callback and catch any exception that comes out of it.
+         * It's the responsibility of the caller to wrap the callback call with this function.
          * @param {any} ctx Request context
-         * @param {any} fn Function to execute
+         * @param {any} fn Callback function to execute
          */
-        function safeExecute(ctx, fn)
+        function safeCallback(ctx, fn)
         {
             try
             {
@@ -92,6 +93,26 @@ module.exports =
         }
 
         /**
+         * Throw an Error object up the call stack
+         */
+        function throwError(tag, statusCode, msg)
+        {
+            throw new Error(tag, statusCode, msg);
+        }
+
+        /**
+         * Send an error response
+         */
+        function sendErrorResponse(ctx, tag, statusCode, msg)
+        {
+            _this.handleError(new Error(tag, statusCode, msg), ctx.req, ctx.res);
+        }
+
+        //----------------------------------------------
+        // PPRIVATE
+        //----------------------------------------------
+
+        /**
          * Construct a new Error object. This will contain all details about an error.
          */
         function Error(tag, statusCode, msg)
@@ -100,10 +121,6 @@ module.exports =
             this.statusCode = statusCode;
             this.msg = msg;
         }
-
-        //----------------------------------------------
-        // PPRIVATE
-        //----------------------------------------------
 
         /**
          * Parse an error string and construct a new Error object.
@@ -114,8 +131,9 @@ module.exports =
         }
 
         this.handleError = handleError;
-        this.safeExecute = safeExecute;
-        this.Error = Error;
+        this.safeCallback = safeCallback;
+        this.throwError = throwError;
+        this.sendErrorResponse = sendErrorResponse;
         _construct();
     }
 };

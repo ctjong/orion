@@ -28,7 +28,7 @@ module.exports =
             _this.helper.onBeginWriteRequest(ctx, "delete", _this.db, recordId, null, function(record, requestBody)
             {
                 if(ctx.entity === "user" && record.domain !== "local")
-                    throw new _this.exec.Error("d789", 400, "updating external user info is not supported");
+                    _this.exec.throwError("d789", 400, "updating external user info is not supported");
                 _this.db.deleteRecord(ctx, ctx.entity, recordId, function(dbResponse)
                 {
                     ctx.res.send(dbResponse);

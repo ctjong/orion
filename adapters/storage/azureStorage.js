@@ -42,37 +42,34 @@ module.exports =
             var form = new (_this.multiparty.Form)();
             form.on('part', function(stream) 
             {
-                _this.exec.safeExecute(ctx, function()
+                _this.exec.safeCallback(ctx, function()
                 {
                     isFirstPartReceived = true;
                     if (!stream.filename)
-                        throw new _this.exec.Error("ffce", 400, "submitted file is not a valid file");
+                        _this.exec.throwError("ffce", 400, "submitted file is not a valid file");
                     var size = stream.byteCount - stream.byteOffset;
                     var name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
                     provider.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
                     {
                         contentSettings: { contentType: _this.mime.lookup(name) }
-                    }, 
+                    },
                     function(error) 
                     {
-                        callback(error, name);
+                        _this.exec.safeCallback(ctx, function()
+                        {
+                            callback(error, name);
+                        });
                     });
                 });
             });
             form.on('progress', function(bytesReceived, bytesExpected)
             {
-                _this.exec.safeExecute(ctx, function()
-                {
-                    if(!isFirstPartReceived && bytesReceived >= bytesExpected)
-                        throw new _this.exec.Error("171d", 400, "error while parsing the first part");
-                });
+                if(!isFirstPartReceived && bytesReceived >= bytesExpected)
+                    _this.exec.sendErrorResponse(ctx, "171d", 400, "error while parsing the first part");
             });
             form.on('error', function(err)
             {
-                _this.exec.safeExecute(ctx, function()
-                {
-                    throw new _this.exec.Error("ead9", 400, "error while parsing form data");
-                });
+                _this.exec.sendErrorResponse(ctx, "ead9", 400, "error while parsing form data");
             });
             form.parse(req);
         }

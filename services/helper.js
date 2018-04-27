@@ -107,8 +107,11 @@ module.exports =
                 resolveForeignKeys(ctx, requestBody, db, function (requestBody)
                 {
                     if (!!isWriteAllowedFn && !isWriteAllowedFn(action, ctx.userRoles, ctx.userId, null, requestBody))
-                        throw new _this.exec.Error("c75f", 400, "bad create request. operation not allowed.");
-                    callback(null, requestBody);
+                        _this.exec.throwError("c75f", 400, "bad create request. operation not allowed.");
+                    _this.exec.safeCallback(ctx, function()
+                    {
+                        callback(null, requestBody);
+                    });
                 });
             }
             else
@@ -116,7 +119,7 @@ module.exports =
                 db.findRecordById(ctx, ctx.entity, recordId, function(record)
                 {
                     if(!record)
-                        throw new _this.exec.Error("7e13", 400, "record not found with id " + recordId);
+                        _this.exec.throwError("7e13", 400, "record not found with id " + recordId);
                     record = _this.fixDataKeysAndTypes(ctx, record);
                     if((ctx.entity === "user" && ctx.userId === record.id) || (ctx.entity !== "user" && ctx.userId === record.ownerid))
                     {
@@ -124,8 +127,11 @@ module.exports =
                     }
                     validateRoles(ctx, action);
                     if (!!isWriteAllowedFn && !isWriteAllowedFn(action, ctx.userRoles, ctx.userId, record, requestBody))
-                        throw new _this.exec.Error("29c8", 400, "bad " + action + " request. operation not allowed.");
-                    callback(record, requestBody);
+                        _this.exec.throwError("29c8", 400, "bad " + action + " request. operation not allowed.");
+                    _this.exec.safeCallback(ctx, function()
+                    {
+                        callback(record, requestBody);
+                    });
                 });
             }
         }
@@ -139,7 +145,7 @@ module.exports =
         function validateRoles(ctx, action)
         {
             if (!ctx.config.entities[ctx.entity].allowedRoles[action].containsAny(ctx.userRoles))
-                throw new _this.exec.Error("c327", 401, "Unauthorized");
+                _this.exec.throwError("c327", 401, "Unauthorized");
         }
 
         //----------------------------------------------
@@ -193,7 +199,12 @@ module.exports =
                 fieldNamesToResolve.push(fieldName);
             }
             if(fieldNamesToResolve.length === 0)
-                callback(requestBody);
+            {
+                _this.exec.safeCallback(ctx, function()
+                {
+                    callback(requestBody);
+                });
+            }
             else
             {
                 var op = { active: fieldNamesToResolve.length, isCallbackCalled: false };
@@ -223,7 +234,10 @@ module.exports =
                 requestBody[fk.resolvedKeyName] = _this.fixDataKeysAndTypes(ctx, record);
                 if(op.active <= 0 && !op.isCallbackCalled)
                 {
-                    callback(requestBody);
+                    _this.exec.safeCallback(ctx, function()
+                    {
+                        callback(requestBody);
+                    });
                     op.isCallbackCalled = true;
                 }
             });
