@@ -17,7 +17,7 @@ module.exports = function(runner, params)
         'post',
         {"name":"item123"},
         params.user1Token,
-        [],
+        [{"name":"insertError","params":[]}],
         null,
         400
     );

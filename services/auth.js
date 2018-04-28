@@ -102,40 +102,37 @@ module.exports =
                 function(response)
                 {
                     var body = '';
-                    response.on('data', function(d) 
+                    response.on('data', _this.exec.cb(ctx, function(d) 
                     {
                         body += d;
-                    });
-                    response.on('end', function() 
+                    }));
+                    response.on('end', _this.exec.cb(ctx, function() 
                     {
-                        _this.exec.safeCallback(ctx, function()
+                        var parsed = JSON.parse(body);
+                        if(!parsed.hasOwnProperty("id"))
+                            _this.exec.throwError("3f9c", 400, "bad request");
+                        _this.db.quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id}, function(readResponse)
                         {
-                            var parsed = JSON.parse(body);
-                            if(!parsed.hasOwnProperty("id"))
-                                _this.exec.throwError("3f9c", 400, "bad request");
-                            _this.db.quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id}, function(readResponse)
+                            if(!readResponse) 
                             {
-                                if(!readResponse) 
-                                {
-                                    _this.db.insert(
-                                        ctx,
-                                        "user", 
-                                        ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 
-                                        ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name, new Date().getTime()], 
-                                        function(createResponse)
-                                        {
-                                            var id = createResponse[0].identity.toString();
-                                            createAndSendToken(ctx, id, "fb", parsed.id, "member", parsed.first_name, parsed.last_name);
-                                        }
-                                    );
-                                }
-                                else
-                                {
-                                    createAndSendToken(ctx, readResponse.id, "fb", parsed.id, readResponse.roles, parsed.first_name, parsed.last_name);
-                                }
-                            });
+                                _this.db.insert(
+                                    ctx,
+                                    "user", 
+                                    ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 
+                                    ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name, new Date().getTime()], 
+                                    function(createResponse)
+                                    {
+                                        var id = createResponse[0].identity.toString();
+                                        createAndSendToken(ctx, id, "fb", parsed.id, "member", parsed.first_name, parsed.last_name);
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                createAndSendToken(ctx, readResponse.id, "fb", parsed.id, readResponse.roles, parsed.first_name, parsed.last_name);
+                            }
                         });
-                    });
+                    }));
                 }
             );
             req.end();

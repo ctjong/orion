@@ -108,10 +108,7 @@ module.exports =
                 {
                     if (!!isWriteAllowedFn && !isWriteAllowedFn(action, ctx.userRoles, ctx.userId, null, requestBody))
                         _this.exec.throwError("c75f", 400, "bad create request. operation not allowed.");
-                    _this.exec.safeCallback(ctx, function()
-                    {
-                        callback(null, requestBody);
-                    });
+                    callback(null, requestBody);
                 });
             }
             else
@@ -128,10 +125,7 @@ module.exports =
                     validateRoles(ctx, action);
                     if (!!isWriteAllowedFn && !isWriteAllowedFn(action, ctx.userRoles, ctx.userId, record, requestBody))
                         _this.exec.throwError("29c8", 400, "bad " + action + " request. operation not allowed.");
-                    _this.exec.safeCallback(ctx, function()
-                    {
-                        callback(record, requestBody);
-                    });
+                    callback(record, requestBody);
                 });
             }
         }
@@ -200,10 +194,7 @@ module.exports =
             }
             if(fieldNamesToResolve.length === 0)
             {
-                _this.exec.safeCallback(ctx, function()
-                {
-                    callback(requestBody);
-                });
+                callback(requestBody);
             }
             else
             {
@@ -234,10 +225,7 @@ module.exports =
                 requestBody[fk.resolvedKeyName] = _this.fixDataKeysAndTypes(ctx, record);
                 if(op.active <= 0 && !op.isCallbackCalled)
                 {
-                    _this.exec.safeCallback(ctx, function()
-                    {
-                        callback(requestBody);
-                    });
+                    callback(requestBody);
                     op.isCallbackCalled = true;
                 }
             });

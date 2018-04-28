@@ -261,27 +261,22 @@ module.exports =
                 console.log("Query parameters:");
                 console.log(queryParams);
 
-                pool.query(queryString, queryParams, function (error, results, fields)
+                pool.query(queryString, queryParams, _this.exec.cb(ctx, function (error, results, fields)
                 {
                     if (error)
                     {
                         if (!!completeCb)
-                            _this.exec.safeCallback(ctx, completeCb);
+                            completeCb();
                         console.log(error);
                         _this.exec.sendErrorResponse(ctx, "a07f", 500, "error while sending query to database");
                     }
                     else
                     {
-                        _this.exec.safeCallback(ctx, function ()
-                        {
-                            successCb(results);
-                        });
-                        if (!!completeCb) 
-                        {
-                            _this.exec.safeCallback(ctx, completeCb);
-                        }
+                        successCb(results);
+                        if (!!completeCb)
+                            completeCb();
                     }
-                });
+                }));
                 console.log("-------------------------------------------------");
             });
         }
@@ -295,7 +290,7 @@ module.exports =
         {
             if(!!pool)
             {
-                _this.exec.safeCallback(ctx, callback);
+                callback();
                 return;
             }
             var sql = require("mysql");
@@ -319,7 +314,7 @@ module.exports =
                 multipleStatements: true
             });
             pool.sql = sql;
-            _this.exec.safeCallback(ctx, callback);
+            callback();
         }
 
         /**

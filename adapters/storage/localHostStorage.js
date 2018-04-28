@@ -43,24 +43,21 @@ module.exports =
                 autoFiles: true,
                 uploadDir: ctx.config.storage.uploadPath
             });
-            form.on('file', function(name, file)
+            form.on('file', _this.exec.cb(ctx, function(name, file)
             {
-                _this.exec.safeCallback(ctx, function()
+                var tempPath = file.path;
+                var tempName = path.basename(tempPath);
+                var finalName = _this.guid() + tempName.substring(tempName.lastIndexOf("."));
+                var finalPath = tempPath.replace(tempName, finalName);
+                provider.rename(tempPath, finalPath, _this.exec.cb(ctx, function(error)
                 {
-                    var tempPath = file.path;
-                    var tempName = path.basename(tempPath);
-                    var finalName = _this.guid() + tempName.substring(tempName.lastIndexOf("."));
-                    var finalPath = tempPath.replace(tempName, finalName);
-                    provider.rename(tempPath, finalPath, function(error)
-                    {
-                        callback(error, finalName);
-                    });
-                });
-            });
-            form.on('error', function(err)
+                    callback(error, finalName);
+                }));
+            }));
+            form.on('error', _this.exec.cb(ctx, function(err)
             {
                 _this.exec.sendErrorResponse(ctx, "8651", 400, "error while parsing form data");
-            });
+            }));
             form.parse(req);
         }
 

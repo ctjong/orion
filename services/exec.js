@@ -76,19 +76,22 @@ module.exports =
 
         /**
          * Execute a callback and catch any exception that comes out of it.
-         * It's the responsibility of the caller to wrap the callback call with this function.
+         * Any callback that is being passed to a library function should be wrapped in this.
          * @param {any} ctx Request context
          * @param {any} fn Callback function to execute
          */
-        function safeCallback(ctx, fn)
+        function cb(ctx, fn)
         {
-            try
+            return function()
             {
-                fn();
-            }
-            catch(err)
-            {
-                _this.handleError(err, ctx.req, ctx.res);
+                try
+                {
+                    fn.apply(null, arguments);
+                }
+                catch(err)
+                {
+                    _this.handleError(err, ctx.req, ctx.res);
+                }
             }
         }
 
@@ -131,7 +134,7 @@ module.exports =
         }
 
         this.handleError = handleError;
-        this.safeCallback = safeCallback;
+        this.cb = cb;
         this.throwError = throwError;
         this.sendErrorResponse = sendErrorResponse;
         _construct();

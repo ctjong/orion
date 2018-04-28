@@ -276,27 +276,22 @@ module.exports =
                         request.input(key, paramValue);
                     }
                 }
-                request.query(queryString, function (err, dbResponse)
+                request.query(queryString, _this.exec.cb(ctx, function(err, dbResponse)
                 {
                     if (err)
                     {
                         if (!!completeCb)
-                            _this.exec.safeCallback(ctx, completeCb);
+                            completeCb();
                         console.log(err);
                         _this.exec.sendErrorResponse(ctx, "a07f", 500, "error while sending query to database");
                     }
                     else
                     {
-                        _this.exec.safeCallback(ctx, function ()
-                        {
-                            successCb(dbResponse.recordset);
-                        });
+                        successCb(dbResponse.recordset);
                         if (!!completeCb) 
-                        {
-                            _this.exec.safeCallback(ctx, completeCb);
-                        }
+                            completeCb();
                     }
-                });
+                }));
                 console.log("-------------------------------------------------");
             });
         }
@@ -310,11 +305,11 @@ module.exports =
         {
             if(!!pool)
             {
-                _this.exec.safeCallback(ctx, callback);
+                callback();
                 return;
             }
             var sql = require("mssql");
-            pool = new sql.ConnectionPool(ctx.config.database.connectionString, function(err)
+            pool = new sql.ConnectionPool(ctx.config.database.connectionString, _this.exec.cb(ctx, function(err)
             {
                 if (err)
                 {
@@ -323,8 +318,8 @@ module.exports =
                     return;
                 }
                 pool.sql = sql;
-                _this.exec.safeCallback(ctx, callback);
-            });
+                callback();
+            }));
         }
 
         /**

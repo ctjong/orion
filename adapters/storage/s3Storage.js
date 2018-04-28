@@ -47,38 +47,35 @@ module.exports =
             {
                 autoFields: true
             });
-            form.on('part', function(stream) 
+            form.on('part', _this.exec.cb(ctx, function(stream) 
             {
-                _this.exec.safeCallback(ctx, function()
+                isFirstPartReceived = true;
+                if (!stream.filename)
+                    _this.exec.throwError("8dad", 400, "submitted file is not a valid file");
+                var name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
+                provider.upload(
                 {
-                    isFirstPartReceived = true;
-                    if (!stream.filename)
-                        _this.exec.throwError("8dad", 400, "submitted file is not a valid file");
-                    var name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    provider.upload(
-                    {
-                        Bucket: ctx.config.storage.s3Bucket,
-                        Key: name,
-                        ACL: 'public-read',
-                        Body: stream,
-                        ContentLength: stream.byteCount,
-                        ContentType: _this.mime.lookup(name)
-                    },
-                    function(s3UploadErr, data)
-                    {
-                        callback(s3UploadErr, name);
-                    });
-                });
-            });
-            form.on('progress', function(bytesReceived, bytesExpected)
+                    Bucket: ctx.config.storage.s3Bucket,
+                    Key: name,
+                    ACL: 'public-read',
+                    Body: stream,
+                    ContentLength: stream.byteCount,
+                    ContentType: _this.mime.lookup(name)
+                },
+                _this.exec.cb(ctx, function(s3UploadErr, data)
+                {
+                    callback(s3UploadErr, name);
+                }));
+            }));
+            form.on('progress', _this.exec.cb(ctx, function(bytesReceived, bytesExpected)
             {
                 if(!isFirstPartReceived && bytesReceived >= bytesExpected)
                     _this.exec.sendErrorResponse(ctx, "49ef", 400, "error while parsing the first part");
-            });
-            form.on('error', function(err)
+            }));
+            form.on('error', _this.exec.cb(ctx, function(err)
             {
                 _this.exec.sendErrorResponse(ctx, "a95a", 400, "error while parsing form data");
-            });
+            }));
             form.parse(req);
         }
 
