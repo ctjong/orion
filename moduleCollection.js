@@ -1,12 +1,8 @@
 /**
  * A module for managing all modules used in this application.
  */
-module.exports = function ()
+module.exports = class ModuleCollection
 {
-    const _this = this;
-    const modules = {};
-    const moduleDefs = {};
-
     //----------------------------------------------
     // CONSTRUCTOR
     //----------------------------------------------
@@ -14,8 +10,10 @@ module.exports = function ()
     /**
      * Construct the collection. This should be called on application start up.
      */
-    function _construct()
+    constructor()
     {
+        this.modules = {};
+        this.moduleClasses = {};
         extendNativeFunctions();
     }
 
@@ -29,9 +27,9 @@ module.exports = function ()
      * @param {any} moduleName Name to be used to access the module
      * @param {any} modulePath Path to the module to add
      */
-    function add(moduleName, modulePath)
+    add(moduleName, modulePath)
     {
-        modules[moduleName] = require(modulePath);
+        this.modules[moduleName] = require(modulePath);
     }
 
     /**
@@ -40,9 +38,9 @@ module.exports = function ()
      * @param {any} moduleName Name to be used to access the module
      * @param {any} modulePath Path to the module definition to add
      */
-    function addDef(moduleName, moduleDefPath)
+    addClass(moduleName, moduleClassPath)
     {
-        moduleDefs[moduleName] = require(moduleDefPath);
+        this.moduleClasses[moduleName] = require(moduleClassPath);
     }
 
     /**
@@ -50,68 +48,66 @@ module.exports = function ()
      * been instantiated, instantiate it first.
      * @param {any} moduleName Module name
      */
-    function get(moduleName)
+    get(moduleName)
     {
-        let moduleObj = modules[moduleName];
+        let moduleObj = this.modules[moduleName];
         if(!moduleObj)
         {
-            const moduleDef = moduleDefs[moduleName];
-            if(!moduleDef)
+            const moduleClass = this.moduleClasses[moduleName];
+            if(!moduleClass)
                 throw {tag: "99c0", statusCode: 500, msg: "module not found " + moduleName};
-                moduleObj = new moduleDef.Instance();
+            moduleObj = new moduleClass();
             if(moduleName !== "exec")
-            moduleObj.exec = new _this.get("exec");
-            const dependencies = moduleDef.dependencies;
+            {
+                moduleObj.exec = this.get("exec");
+            }
+            const dependencies = moduleObj.getDependencyNames();
             for(let i=0; i<dependencies.length; i++) 
             {
                 const dpName = dependencies[i];
-                moduleObj[dpName] = _this.get(dpName);
+                moduleObj[dpName] = this.get(dpName);
             }
-            modules[moduleName] = moduleObj;
+            this.modules[moduleName] = moduleObj;
         }
         return moduleObj;
     }
-
-    //----------------------------------------------
-    // PRIVATE
-    //----------------------------------------------
-
-    /**
-     * Extend native JS functions to be used in this application. This should be called on 
-     * application start up, so we are calling it from the constructor.
-     */
-    function extendNativeFunctions() 
-    {
-        String.prototype.format = function() 
-        {
-            const args = arguments;
-            return this.replace(/{(\d+)}/g, function(match, number) 
-            {
-                return typeof args[number] != 'undefined' ? args[number] : match;
-            });
-        };
-        String.prototype.contains = function(substring)
-        {
-            return this.indexOf(substring) >= 0;
-        };
-        Array.prototype.contains = function(item) 
-        {
-            return this.indexOf(item) >= 0;
-        };
-        Array.prototype.containsAny = function(array) 
-        {
-            for(let i=0; i<array.length; i++)
-            {
-                if(!this.contains(array[i]))
-                    continue;
-                return true;
-            }
-            return false;
-        };
-    }
-
-    this.add = add;
-    this.addDef = addDef;
-    this.get = get;
-    _construct();
 };
+
+
+//----------------------------------------------
+// PRIVATE
+//----------------------------------------------
+
+/**
+ * Extend native JS functions to be used in this application. This should be called on 
+ * application start up, so we are calling it from the constructor.
+ */
+const extendNativeFunctions = () =>
+{
+    String.prototype.format = function() 
+    {
+        const args = arguments;
+        return this.replace(/{(\d+)}/g, (match, number) => 
+        {
+            return typeof args[number] != 'undefined' ? args[number] : match;
+        });
+    };
+    String.prototype.contains = function (substring)
+    {
+        return this.indexOf(substring) >= 0;
+    };
+    Array.prototype.contains = function (item)
+    {
+        return this.indexOf(item) >= 0;
+    };
+    Array.prototype.containsAny = function (array)
+    {
+        for(let i=0; i<array.length; i++)
+        {
+            if(!this.contains(array[i]))
+                continue;
+            return true;
+        }
+        return false;
+    };
+}

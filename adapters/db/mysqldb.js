@@ -1,296 +1,266 @@
+const Module = require("../../module");
+
 /**
  * A module for handling interaction with an MSSQL database
  */
-module.exports = 
+module.exports = class MysqldbAdapter extends Module
 {
-    dependencies: ["helper", "condition", "join"],
-    Instance: function()
+    constructor()
     {
-        const _this = this;
-        let pool;
+        super();
+        this.pool = null;
+    }
 
-        //----------------------------------------------
-        // CONSTRUCTOR
-        //----------------------------------------------
+    /**
+     * Get a list of dependency names for this module
+     */
+    getDependencyNames()
+    {
+        return ["helper", "conditionFactory", "joinFactory"];
+    }
 
-        function _construct() { }
-
-        //----------------------------------------------
-        // PUBLIC
-        //----------------------------------------------
-
-        /**
-         * Quick find a record based on the given condition
-         * @param {any} ctx Request context
-         * @param {any} fields Requested fields
-         * @param {any} entity Requested entity
-         * @param {any} conditionMap Search condition
-         * @param {any} successCb Success callback
-         * @param {any} completeCb Complete callback
-         */
-        function quickFind(ctx, fields, entity, conditionMap, successCb, completeCb)
+    /**
+     * Quick find a record based on the given condition
+     * @param {any} ctx Request context
+     * @param {any} fields Requested fields
+     * @param {any} entity Requested entity
+     * @param {any} conditionMap Search condition
+     * @param {any} successCb Success callback
+     * @param {any} completeCb Complete callback
+     */
+    quickFind(ctx, fields, entity, conditionMap, successCb, completeCb)
+    {
+        const condition = this.conditionFactory.createCompound("&", []);
+        for(const key in conditionMap)
         {
-            const condition = new _this.condition.CompoundCondition("&", []);
-            for(const key in conditionMap)
-            {
-                if(!conditionMap.hasOwnProperty(key)) continue;
-                condition.children.push(new _this.condition.Condition(entity, key, "=", conditionMap[key]));
-            }
-            _this.select(ctx, fields, entity, condition, "id", 0, 1, false, false, function(responseArr)
-            {
-                successCb(responseArr[0]);
-            }, completeCb);
+            if(!conditionMap.hasOwnProperty(key)) continue;
+            condition.children.push(this.conditionFactory.createSingle(entity, key, "=", conditionMap[key]));
         }
-
-        /**
-         * Find records that match the given condition
-         * @param {any} ctx Request context
-         * @param {any} fields Requested fields
-         * @param {any} entity Requested entity
-         * @param {any} condition Search condition
-         * @param {any} orderByField Field to order the results by
-         * @param {any} skip Number of matches to skip
-         * @param {any} take Number of matches to take
-         * @param {any} resolveFK Whether or not foreign keys should be resolved
-         * @param {any} isFullMode Whether or not result should be returned in full mode
-         * @param {any} successCb Success callback
-         * @param {any} completeCb Complete callback
-         */
-        function select(ctx, fields, entity, condition, orderByField, skip, take, resolveFK, isFullMode, successCb, completeCb)
+        this.select(ctx, fields, entity, condition, "id", 0, 1, false, false, (responseArr) =>
         {
-            const joins = resolveFK ? getJoins(ctx, fields, entity) : [];
-            const query = new Query();
-            const tableName = entity + "table";
-            query.append("select ");
-            for(let i=0; i<fields.length; i++)
-            {
-                const fieldName = fields[i];
-                if(!isFullMode && fieldName.contains("richtext")) continue;
-                query.append((i === 0 ? "": ", ") + "`" + entity + "table`.`" + fieldName + "`");
-            }
-            for(let i=0; i<joins.length; i++)
-            {
-                query.append(", " + getSelectExpression(joins[i]));
-            }
-            query.append(" from `" + tableName + "`");
-            for(let i=0; i<joins.length; i++)
-            {
-                query.append(" " + getJoinExpression(joins[i]));
-            }
-            query.append(" where ");
-            appendWhereClause(query, condition);
-            orderByField = decodeURIComponent(orderByField);
-            if(orderByField.indexOf("~") === 0)
-            {
-                query.append(" order by `" + entity + "table`.`" + orderByField.substring(1) + "` desc ");
-            }
-            else
-            {
-                query.append(" order by `" + entity + "table`.`" + orderByField + "` ");
-            }
-            query.append(" LIMIT ? OFFSET ?", take, skip);
-            execute(ctx, query, successCb, completeCb);
+            successCb(responseArr[0]);
+        }, completeCb);
+    }
+
+    /**
+     * Find records that match the given condition
+     * @param {any} ctx Request context
+     * @param {any} fields Requested fields
+     * @param {any} entity Requested entity
+     * @param {any} condition Search condition
+     * @param {any} orderByField Field to order the results by
+     * @param {any} skip Number of matches to skip
+     * @param {any} take Number of matches to take
+     * @param {any} resolveFK Whether or not foreign keys should be resolved
+     * @param {any} isFullMode Whether or not result should be returned in full mode
+     * @param {any} successCb Success callback
+     * @param {any} completeCb Complete callback
+     */
+    select(ctx, fields, entity, condition, orderByField, skip, take, resolveFK, isFullMode, successCb, completeCb)
+    {
+        const joins = resolveFK ? getJoins(ctx, fields, entity, this.joinFactory) : [];
+        const query = new Query();
+        const tableName = entity + "table";
+        query.append("select ");
+        for(let i=0; i<fields.length; i++)
+        {
+            const fieldName = fields[i];
+            if(!isFullMode && fieldName.contains("richtext")) continue;
+            query.append((i === 0 ? "": ", ") + "`" + entity + "table`.`" + fieldName + "`");
         }
-
-        /**
-         * Find a record that matches the given id
-         * @param {any} ctx Request context
-         * @param {any} entity Requested entity
-         * @param {any} recordId Id of record to find
-         * @param {any} successCb Success callback
-         * @param {any} completeCb Complete callback
-         */
-        function findRecordById(ctx, entity, recordId, successCb, completeCb)
+        for(let i=0; i<joins.length; i++)
         {
-            const fields = _this.helper.getFields(ctx, "read", entity);
-            const condition = new _this.condition.Condition(entity, "id", "=", recordId);
-            _this.select(ctx, fields, entity, condition, "id", 0, 1, true, false, function(responseArr)
-            {
-                const record = responseArr[0];
-                successCb(_this.helper.fixDataKeysAndTypes(ctx, record, entity));
-            }, completeCb);
+            query.append(", " + getSelectExpression(joins[i]));
         }
-
-        /**
-         * Count the number of records that match the given condition
-         * @param {any} ctx Request context
-         * @param {any} fields Requested fields
-         * @param {any} entity Requested entity
-         * @param {any} condition Condition
-         * @param {any} resolveFK Whether or not foreign keys should be resolved
-         * @param {any} successCb Success callback
-         * @param {any} completeCb Complete callback
-         */
-        function count(ctx, fields, entity, condition, resolveFK, successCb, completeCb)
+        query.append(" from `" + tableName + "`");
+        for(let i=0; i<joins.length; i++)
         {
-            const joins = resolveFK ? getJoins(ctx, fields, entity) : [];
-            const query = new Query();
-            const tableName = entity + "table";
-            query.append("select count(*) as count from `" + tableName + "` where ");
-            appendWhereClause(query, condition);
-            execute(ctx, query, function(dbResponse)
-            {
-                successCb(dbResponse[0].count);
-            }, completeCb);
+            query.append(" " + getJoinExpression(joins[i]));
         }
-
-        /**
-         * Insert a new record
-         * @param {any} ctx Request context
-         * @param {any} entity Requested entity
-         * @param {any} fieldNames New record field names
-         * @param {any} fieldValues New record field values
-         * @param {any} successCb Success callback
-         * @param {any} completeCb Complete callback
-         */
-        function insert(ctx, entity, fieldNames, fieldValues, successCb, completeCb)
+        query.append(" where ");
+        appendWhereClause(query, condition);
+        orderByField = decodeURIComponent(orderByField);
+        if(orderByField.indexOf("~") === 0)
         {
-            const query = new Query();
-            const tableName = entity + "table";
-            const fieldNamesStr = "`" + fieldNames.join("`,`") + "`";
-            query.append("insert into `" + tableName + "` (" + fieldNamesStr + ") values (");
-            for(let i=0; i<fieldValues.length; i++)
-            {
-                query.append((i === 0 ? "" : ",") + "?", fieldValues[i]);
-            }
-            query.append(")");
-            execute(ctx, query, function(dbResponse)
-            {
-                successCb(dbResponse.insertId);
-            }, completeCb);
+            query.append(" order by `" + entity + "table`.`" + orderByField.substring(1) + "` desc ");
         }
-
-        /**
-         * Update a record
-         * @param {any} ctx Request context
-         * @param {any} entity Requested entity
-         * @param {any} updateFields Fields to update
-         * @param {any} condition Update condition
-         * @param {any} successCb Success callback
-         * @param {any} completeCb Complete callback
-         */
-        function update(ctx, entity, updateFields, condition, successCb, completeCb)
+        else
         {
-            const query = new Query();
-            let isFirstSetClause = true;
-            const tableName = entity + "table";
-            query.append("update `" + tableName + "` set ");
+            query.append(" order by `" + entity + "table`.`" + orderByField + "` ");
+        }
+        query.append(" LIMIT ? OFFSET ?", take, skip);
+        this.execute(ctx, query, successCb, completeCb);
+    }
 
-            for(const fieldName in updateFields)
+    /**
+     * Find a record that matches the given id
+     * @param {any} ctx Request context
+     * @param {any} entity Requested entity
+     * @param {any} recordId Id of record to find
+     * @param {any} successCb Success callback
+     * @param {any} completeCb Complete callback
+     */
+    findRecordById(ctx, entity, recordId, successCb, completeCb)
+    {
+        const fields = this.helper.getFields(ctx, "read", entity);
+        const condition = this.conditionFactory.createSingle(entity, "id", "=", recordId);
+        this.select(ctx, fields, entity, condition, "id", 0, 1, true, false, (responseArr) =>
+        {
+            const record = responseArr[0];
+            successCb(this.helper.fixDataKeysAndTypes(ctx, record, entity));
+        }, completeCb);
+    }
+
+    /**
+     * Count the number of records that match the given condition
+     * @param {any} ctx Request context
+     * @param {any} fields Requested fields
+     * @param {any} entity Requested entity
+     * @param {any} condition Condition
+     * @param {any} resolveFK Whether or not foreign keys should be resolved
+     * @param {any} successCb Success callback
+     * @param {any} completeCb Complete callback
+     */
+    count(ctx, fields, entity, condition, resolveFK, successCb, completeCb)
+    {
+        const joins = resolveFK ? getJoins(ctx, fields, entity, this.joinFactory) : [];
+        const query = new Query();
+        const tableName = entity + "table";
+        query.append("select count(*) as count from `" + tableName + "` where ");
+        appendWhereClause(query, condition);
+        this.execute(ctx, query, (dbResponse) =>
+        {
+            successCb(dbResponse[0].count);
+        }, completeCb);
+    }
+
+    /**
+     * Insert a new record
+     * @param {any} ctx Request context
+     * @param {any} entity Requested entity
+     * @param {any} fieldNames New record field names
+     * @param {any} fieldValues New record field values
+     * @param {any} successCb Success callback
+     * @param {any} completeCb Complete callback
+     */
+    insert(ctx, entity, fieldNames, fieldValues, successCb, completeCb)
+    {
+        const query = new Query();
+        const tableName = entity + "table";
+        const fieldNamesStr = "`" + fieldNames.join("`,`") + "`";
+        query.append("insert into `" + tableName + "` (" + fieldNamesStr + ") values (");
+        for(let i=0; i<fieldValues.length; i++)
+        {
+            query.append((i === 0 ? "" : ",") + "?", fieldValues[i]);
+        }
+        query.append(")");
+        this.execute(ctx, query, (dbResponse) =>
+        {
+            successCb(dbResponse.insertId);
+        }, completeCb);
+    }
+
+    /**
+     * Update a record
+     * @param {any} ctx Request context
+     * @param {any} entity Requested entity
+     * @param {any} updateFields Fields to update
+     * @param {any} condition Update condition
+     * @param {any} successCb Success callback
+     * @param {any} completeCb Complete callback
+     */
+    update(ctx, entity, updateFields, condition, successCb, completeCb)
+    {
+        const query = new Query();
+        let isFirstSetClause = true;
+        const tableName = entity + "table";
+        query.append("update `" + tableName + "` set ");
+
+        for(const fieldName in updateFields)
+        {
+            if(!updateFields.hasOwnProperty(fieldName)) 
+                continue;
+            query.append((isFirstSetClause ? "" : ",") + fieldName + "=?", updateFields[fieldName]);
+            isFirstSetClause = false;
+        }
+        query.append(" where ");
+        appendWhereClause(query, condition);
+        this.execute(ctx, query, successCb, completeCb);
+    }
+
+    /**
+     * Delete a record from the database
+     * @param {any} ctx Request context
+     * @param {any} entity Requested entity
+     * @param {any} id Id of record to delete
+     * @param {any} successCb Success callback
+     * @param {any} completeCb Complete callback
+     */
+    deleteRecord(ctx, entity, id, successCb, completeCb)
+    {
+        const query = new Query();
+        const tableName = entity + "table";
+        const condition = this.conditionFactory.createSingle(entity, "id", "=", id);
+        query.append("delete from `" + tableName + "` where ");
+        appendWhereClause(query, condition);
+        this.execute(ctx, query, successCb, completeCb);
+    }
+
+    /**
+     * Set the connection this.pool to be used by this adapter
+     * @param {any} connectionPool connection this.pool
+     */
+    setConnectionPool(connectionPool)
+    {
+        this.pool = connectionPool;
+    }
+
+    /**
+     * Execute a query
+     * @param {any} ctx Request context
+     * @param {any} query Query to execute
+     * @param {any} successCb Success callback
+     * @param {any} completeCb Complete callback
+     */
+    async execute(ctx, query, successCb, completeCb)
+    {
+        await this.ensurePoolInitializedAsync(ctx);
+        const queryString = query.getQueryString();
+        const queryParams = query.getQueryParams();
+        console.log("-------------------------------------------------");
+        console.log("Sending query to database:");
+        console.log(queryString);
+        console.log("Query parameters:");
+        console.log(queryParams);
+
+        const response = await this.queryAsync(queryString, queryParams);
+        if (response.error)
+        {
+            if (!!completeCb)
+                completeCb();
+            console.log(error);
+            this.exec.sendErrorResponse(ctx, "a07f", 500, "error while sending query to database");
+        }
+        else
+        {
+            successCb(response.results);
+            if (!!completeCb)
+                completeCb();
+        }
+        console.log("-------------------------------------------------");
+    }
+
+    /**
+     * Ensure the connection this.pool is initialized
+     * @param {any} ctx Request context
+     */
+    ensurePoolInitializedAsync(ctx)
+    {
+        return new Promise(resolve =>
+        {
+            if(!!this.pool)
             {
-                if(!updateFields.hasOwnProperty(fieldName)) 
-                    continue;
-                query.append((isFirstSetClause ? "" : ",") + fieldName + "=?", updateFields[fieldName]);
-                isFirstSetClause = false;
-            }
-            query.append(" where ");
-            appendWhereClause(query, condition);
-            execute(ctx, query, successCb, completeCb);
-        }
-
-        /**
-         * Delete a record from the database
-         * @param {any} ctx Request context
-         * @param {any} entity Requested entity
-         * @param {any} id Id of record to delete
-         * @param {any} successCb Success callback
-         * @param {any} completeCb Complete callback
-         */
-        function deleteRecord(ctx, entity, id, successCb, completeCb)
-        {
-            const query = new Query();
-            const tableName = entity + "table";
-            const condition = new _this.condition.Condition(entity, "id", "=", id);
-            query.append("delete from `" + tableName + "` where ");
-            appendWhereClause(query, condition);
-            execute(ctx, query, successCb, completeCb);
-        }
-
-        /**
-         * Set the connection pool to be used by this adapter
-         * @param {any} connectionPool connection pool
-         */
-        function setConnectionPool(connectionPool)
-        {
-            pool = connectionPool;
-        }
-
-        //----------------------------------------------
-        // PRIVATE
-        //----------------------------------------------
-
-        /**
-         * Get Join objects to resolve foreign keys
-         * @param {any} ctx Request context
-         * @param {any} fields Fields in the requested entity
-         * @param {any} entity Requested entity
-         * @returns an array of Joins
-         */
-        function getJoins(ctx, fields, entity)
-        {
-            const joins = [];
-            const ctxFields = ctx.config.entities[entity].fields;
-            for(let f=0; f<fields.length; f++)
-            {
-                const fldName = fields[f];
-                const fieldObj = ctxFields[fldName];
-                if(!!fieldObj.foreignKey) 
-                {
-                    joins.push(new _this.join.createForForeignKey(ctx, entity, fldName));
-                }
-            }
-            return joins;
-        }
-
-        /**
-         * Execute a query
-         * @param {any} ctx Request context
-         * @param {any} query Query to execute
-         * @param {any} successCb Success callback
-         * @param {any} completeCb Complete callback
-         */
-        function execute(ctx, query, successCb, completeCb)
-        {
-            ensurePoolInitialized(ctx, function()
-            {
-                const queryString = query.getQueryString();
-                const queryParams = query.getQueryParams();
-                console.log("-------------------------------------------------");
-                console.log("Sending query to database:");
-                console.log(queryString);
-                console.log("Query parameters:");
-                console.log(queryParams);
-
-                pool.query(queryString, queryParams, _this.exec.cb(ctx, function (error, results, fields)
-                {
-                    if (error)
-                    {
-                        if (!!completeCb)
-                            completeCb();
-                        console.log(error);
-                        _this.exec.sendErrorResponse(ctx, "a07f", 500, "error while sending query to database");
-                    }
-                    else
-                    {
-                        successCb(results);
-                        if (!!completeCb)
-                            completeCb();
-                    }
-                }));
-                console.log("-------------------------------------------------");
-            });
-        }
-
-        /**
-         * Ensure the connection pool is initialized
-         * @param {any} ctx Request context
-         * @param {any} callback Callback function
-         */
-        function ensurePoolInitialized(ctx, callback)
-        {
-            if(!!pool)
-            {
-                callback();
+                resolve();
                 return;
             }
             const sql = require("mysql");
@@ -305,7 +275,7 @@ module.exports =
                 const connPropTokens = connStringParts[i].split('=');
                 connProps[connPropTokens[0]] = connPropTokens[1];
             }
-            pool = sql.createPool(
+            this.pool = sql.createPool(
             {
                 host: connProps.Server,
                 user: connProps.Uid,
@@ -313,143 +283,175 @@ module.exports =
                 database: connProps.Database,
                 multipleStatements: true
             });
-            pool.sql = sql;
-            callback();
-        }
+            this.pool.sql = sql;
+            resolve();
+        });
+    }
 
-        /**
-         * A class representing an MSSQL query object
-         */
-        function Query()
+    /**
+     * Run a query
+     */
+    queryAsync(queryString, queryParams)
+    {
+        return new Promise(resolve =>
         {
-            const _this = this;
-            const paramsCounter = 0;
-            let queryString = "";
-            let queryParams = [];
-
-            /**
-             * Append the given string and params to the query
-             */
-            function append()
+            this.pool.query(queryString, queryParams, (error, results) =>
             {
-                const str = arguments[0];
-                if (!str)
-                    return;
-                if (arguments.length > 1)
-                {
-                    for (let i = 1; i < arguments.length; i++)
-                    {
-                        queryParams.push(arguments[i]);
-                    }
-                }
-                queryString += str;
-            }
+                resolve({ error, results });
+            });
+        });
+    }
+}
 
-            /**
-             * Get the query string
-             */
-            // Get the query string
-            function getQueryString()
-            {
-                return queryString;
-            }
 
-            /**
-             * Get the query parameters
-             */
-            function getQueryParams()
-            {
-                return queryParams;
-            }
 
-            this.append = append;
-            this.getQueryString = getQueryString;
-            this.getQueryParams = getQueryParams;
-        }
+//----------------------------------------------
+// PRIVATE
+//----------------------------------------------
 
-        /**
-         * Get a join expression for the given Join object
-         * @param {any} joinObj Join object
-         * @returns a JOIN clause string
-         */
-        function getJoinExpression(joinObj)
+/**
+ * Get Join objects to resolve foreign keys
+ * @param {any} ctx Request context
+ * @param {any} fields Fields in the requested entity
+ * @param {any} entity Requested entity
+ * @param {any} joinFactory JoinFactory module
+ * @returns an array of Joins
+ */
+const getJoins = (ctx, fields, entity, joinFactory) =>
+{
+    const joins = [];
+    const ctxFields = ctx.config.entities[entity].fields;
+    for(let f=0; f<fields.length; f++)
+    {
+        const fldName = fields[f];
+        const fieldObj = ctxFields[fldName];
+        if(!!fieldObj.foreignKey) 
         {
-            return "INNER JOIN `" + joinObj.e2 + "table` `" + joinObj.e2Alias + "` ON `" + joinObj.e1 + "table`.`" + joinObj.e1JoinField + "` = `" + joinObj.e2Alias + "`.`" + joinObj.e2JoinField + "`";
+            joins.push(joinFactory.createForForeignKey(ctx, entity, fldName));
         }
+    }
+    return joins;
+}
 
-        /**
-         * Get a select expression for the given Join object
-         * @param {any} joinObj Join object
-         * @returns a SELECT clause string
-         */
-        function getSelectExpression(joinObj)
+/**
+ * A class representing an MSSQL query object
+ */
+class Query
+{
+    constructor()
+    {
+        this.paramsCounter = 0;
+        this.queryString = "";
+        this.queryParams = [];
+    }
+
+    /**
+     * Append the given string and params to the query
+     */
+    append(...args)
+    {
+        const str = args[0];
+        if (!str)
+            return;
+        if (args.length > 1)
         {
-            let str = "";
-            for (let i = 0; i < joinObj.e2SelectFields.length; i++)
+            for (let i = 1; i < args.length; i++)
             {
-                str += (str === "" ? "" : ", ") + "`" + joinObj.e2Alias + "`.`" + joinObj.e2SelectFields[i] + "` AS `" + joinObj.e2Alias + "_" + joinObj.e2SelectFields[i] + "`";
+                this.queryParams.push(args[i]);
             }
-            return str;
         }
+        this.queryString += str;
+    }
 
-        /**
-         * Append where clause to the given query based on the specified condition
-         * @param {any} query Query object
-         * @param {any} condObj Condition object
-         */
-        function appendWhereClause(query, condObj)
+    /**
+     * Get the query string
+     */
+    // Get the query string
+    getQueryString()
+    {
+        return this.queryString;
+    }
+
+    /**
+     * Get the query parameters
+     */
+    getQueryParams()
+    {
+        return this.queryParams;
+    }
+}
+
+/**
+ * Get a join expression for the given Join object
+ * @param {any} joinObj Join object
+ * @returns a JOIN clause string
+ */
+const getJoinExpression = (joinObj) =>
+{
+    return "INNER JOIN `" + joinObj.e2 + "table` `" + joinObj.e2Alias + "` ON `" + joinObj.e1 + "table`.`" + joinObj.e1JoinField + "` = `" + joinObj.e2Alias + "`.`" + joinObj.e2JoinField + "`";
+}
+
+/**
+ * Get a select expression for the given Join object
+ * @param {any} joinObj Join object
+ * @returns a SELECT clause string
+ */
+const getSelectExpression = (joinObj) =>
+{
+    let str = "";
+    for (let i = 0; i < joinObj.e2SelectFields.length; i++)
+    {
+        str += (str === "" ? "" : ", ") + "`" + joinObj.e2Alias + "`.`" + joinObj.e2SelectFields[i] + "` AS `" + joinObj.e2Alias + "_" + joinObj.e2SelectFields[i] + "`";
+    }
+    return str;
+}
+
+/**
+ * Append where clause to the given query based on the specified condition
+ * @param {any} query Query object
+ * @param {any} condObj Condition object
+ */
+const appendWhereClause = (query, condObj) =>
+{
+    if (!condObj.children)
+    {
+        if (condObj.fieldName === "1" && condObj.fieldValue === "1")
         {
-            if (!condObj.children)
+            query.append("1=1");
+        }
+        else if (condObj.operator === "~")
+        {
+            query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` like ?", "%" + condObj.fieldValue + "%");
+        }
+        else if (typeof (condObj.fieldValue) === "string" && condObj.fieldValue.toLowerCase() === "null")
+        {
+            if (condObj.operator == "=")
             {
-                if (condObj.fieldName === "1" && condObj.fieldValue === "1")
-                {
-                    query.append("1=1");
-                }
-                else if (condObj.operator === "~")
-                {
-                    query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` like ?", "%" + condObj.fieldValue + "%");
-                }
-                else if (typeof (condObj.fieldValue) === "string" && condObj.fieldValue.toLowerCase() === "null")
-                {
-                    if (condObj.operator == "=")
-                    {
-                        query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` is null");
-                    }
-                    else
-                    {
-                        query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` is not null");
-                    }
-                }
-                else
-                {
-                    query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "`" + condObj.operator + "?", condObj.fieldValue);
-                }
-            }
-            else if(condObj.children.length > 0)
-            {
-                query.append("(");
-                for (let i = 0; i < condObj.children.length; i++)
-                {
-                    const childCond = condObj.children[i];
-                    if (i > 0) query.append(condObj.operator === "&" ? " AND " : " OR ");
-                    appendWhereClause(query, childCond);
-                }
-                query.append(")");
+                query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` is null");
             }
             else
             {
-                query.append("1=1");
+                query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` is not null");
             }
         }
-
-        this.quickFind = quickFind;
-        this.select = select;
-        this.findRecordById = findRecordById;
-        this.count = count;
-        this.insert = insert;
-        this.update = update;
-        this.deleteRecord = deleteRecord;
-        this.setConnectionPool = setConnectionPool;
-        _construct();
+        else
+        {
+            query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "`" + condObj.operator + "?", condObj.fieldValue);
+        }
     }
-};
+    else if(condObj.children.length > 0)
+    {
+        query.append("(");
+        for (let i = 0; i < condObj.children.length; i++)
+        {
+            const childCond = condObj.children[i];
+            if (i > 0) query.append(condObj.operator === "&" ? " AND " : " OR ");
+            appendWhereClause(query, childCond);
+        }
+        query.append(")");
+    }
+    else
+    {
+        query.append("1=1");
+    }
+}

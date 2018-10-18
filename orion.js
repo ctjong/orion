@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-(function ()
+(() =>
 {
     const engine;
     const outputPath;
@@ -9,7 +9,7 @@
     /**
      * Entry point of the script.
      */
-    function main()
+    const main = () =>
     {
         // process arguments
         if (process.argv.length < 3)
@@ -41,7 +41,7 @@
         engine = config.database.engine;
 
         // write the SQL file
-        fs.writeFile(outputPath, "", function(err)
+        fs.writeFile(outputPath, "", (err) =>
         {
             if (err)
                 throw err;
@@ -53,7 +53,7 @@
      * Process the given config module and try to output an SQL file to setup the database.
      * @param {any} config Config module
      */
-    function processConfig(config)
+    const processConfig = (config) =>
     {
         const dropTableStr = drop("errortable");
         const pkAttr = engine === "mssql" ? "IDENTITY(1,1) PRIMARY KEY" : "AUTO_INCREMENT PRIMARY KEY";
@@ -122,7 +122,7 @@
             }
         }
         const str = dropTableStr + createTableStr;
-        fs.writeFile(outputPath, str, function(err)
+        fs.writeFile(outputPath, str, (err) =>
         {
             if(err)
                 return console.log(err);
@@ -135,7 +135,7 @@
      * @param tableName table name 
      * @returns drop table query
      */
-    function drop(tableName)
+    const drop = (tableName) =>
     {
         if(engine === "mssql")
             return "IF exists (select * from sys.objects where name = '" + tableName + "') DROP TABLE " + tableName + ";\n";
@@ -148,7 +148,7 @@
      * @param nm table/column name
      * @returns formatted name
      */
-    function nm(name)
+    const nm = (name) =>
     {
         const ob = engine === "mssql" ? "[" : "`";
         const cb = engine === "mssql" ? "]" : "`";

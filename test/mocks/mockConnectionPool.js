@@ -1,41 +1,15 @@
 /**
  * A mock connection pool module
  */
-const mock = function(engine)
+module.exports = class MockConnectionPool
 {
-    let queryResults = [];
-    let queryReceivedHandler = null;
-
-    //----------------------------------------------
-    // CONSTRUCTOR
-    //----------------------------------------------
-
-    function _construct() { }
-
-    //----------------------------------------------
-    // PUBLIC
-    //----------------------------------------------
-
-    /**
-     * MSSQL object containing database connection functions and properties
-     */
-    const mssql =
+    constructor(engine)
     {
-        InputQueryParams: null,
-        Request: function(connection)
-        {
-            mssql.InputQueryParams = {};
-            this.input = function(arg0, arg1, arg2)
-            {
-                mssql.InputQueryParams[arg0] = !arg2 ? ["string", arg1] : [arg1, arg2];
-            };
-            this.query = function(queryString, callback)
-            {
-                processQuery(queryString, mssql.InputQueryParams, callback);
-            };
-        },
-        BigInt: "bigint"
-    };
+        this.engine = engine;
+        this.sql = new MssqlWrapper(this);
+        this.queryResults = [];
+        this.queryReceivedHandler = null;
+    }
 
     /**
      * Execute a MYSQL query
@@ -43,57 +17,52 @@ const mock = function(engine)
      * @param {*} queryParams Query params
      * @param {*} callback callback function
      */
-    function mysqlQuery(queryString, queryParams, callback)
+    query (queryString, queryParams, callback)
     {
-        processQuery(queryString, queryParams, callback);
+        this.processQuery(this.engine, queryString, queryParams, callback);
     }
 
     /**
      * Set the results for the active query
      * @param {*} nextQueryResultsArg query results
      */
-    function setQueryResults(nextQueryResultsArg)
+    setQueryResults(nextQueryResultsArg)
     {
-        queryResults = nextQueryResultsArg;
+        this.queryResults = nextQueryResultsArg;
     }
 
     /**
      * To be invoked when a query is received to be sent to database
      * @param {*} queryReceivedHandlerArg handler function
      */
-    function onQueryReceived(queryReceivedHandlerArg)
+    onQueryReceived(queryReceivedHandlerArg)
     {
-        queryReceivedHandler = queryReceivedHandlerArg;
+        this.queryReceivedHandler = queryReceivedHandlerArg;
     }
 
     /** 
      * Reset the mock connection pool
      */
-    function reset()
+    reset()
     {
-        connectSuccess = true;
-        nextQueryStatus = true;
-        queryReceivedHandler = null;
+        this.queryReceivedHandler = null;
     }
-
-    //----------------------------------------------
-    // PRIVATE
-    //----------------------------------------------
 
     /**
      * Process a query
+     * @param {*} engine engine
      * @param {*} queryString query string
      * @param {*} queryParams query parameters
      * @param {*} callback callback function
      */
-    function processQuery(queryString, queryParams, callback)
+    processQuery(engine, queryString, queryParams, callback)
     {
-        if(queryReceivedHandler)
-            queryReceivedHandler(queryString, queryParams, engine);
+        if(this.queryReceivedHandler)
+            this.queryReceivedHandler(queryString, queryParams, engine);
         queryString = queryString.toLowerCase();
 
-        let currentQueryResults = queryResults;
-        queryResults = [];
+        let currentQueryResults = this.queryResults;
+        this.queryResults = [];
 
         if(currentQueryResults.length === 0 && queryString.indexOf("insert into") >= 0)
             currentQueryResults = {"lastinsertedid":"1"};
@@ -118,13 +87,39 @@ const mock = function(engine)
         else
             callback(null, currentQueryResults, []);
     }
-
-    this.sql = mssql;
-    this.query = mysqlQuery;
-    this.setQueryResults = setQueryResults;
-    this.onQueryReceived = onQueryReceived;
-    this.reset = reset;
-    _construct();
 };
 
-module.exports = mock;
+
+//----------------------------------------------
+// PRIVATE
+//----------------------------------------------
+
+/**
+ * MSSQL wrapper object containing database connection functions and properties
+ */
+class MssqlWrapper
+{
+    constructor(pool)
+    {
+        this.pool = pool
+        this.InputQueryParams = null;
+        this.BigInt = "bigint";
+    }
+
+    Request()
+    {
+        this.InputQueryParams = {};
+        const obj =
+        {
+            input : (arg0, arg1, arg2) =>
+            {
+                this.InputQueryParams[arg0] = !arg2 ? ["string", arg1] : [arg1, arg2];
+            },
+            query : (queryString, callback) =>
+            {
+                this.pool.processQuery(this.pool.engine, queryString, this.InputQueryParams, callback);
+            }
+        };
+        return obj;
+    }
+};

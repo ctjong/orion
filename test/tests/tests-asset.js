@@ -1,4 +1,4 @@
-module.exports = function(runner, params)
+module.exports = (runner, params) =>
 {
     runner.runFileUploadTest(
         'POST | asset-noToken | 200',

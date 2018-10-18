@@ -7,3 +7,5 @@ UpgradeLog.htm
 package-lock.json
 *.user
 .vscode
+coverage
+.nyc_output

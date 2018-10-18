@@ -1,6 +1,6 @@
 module.exports = 
 {
-    create: function(dbEngine, storageSetting)
+    create: (dbEngine, storageSetting) =>
     {
         const config = 
         {
@@ -67,13 +67,13 @@ module.exports =
                         "update": ["member", "admin"],
                         "delete": ["admin"]
                     },
-                    getReadCondition: function(roles, userId)
+                    getReadCondition: (roles, userId) =>
                     {
                         if(roles.contains("admin"))
                             return "";
                         return "ownerid=" + userId + "|recipientid=" + userId;
                     },
-                    isWriteAllowed: function(action, roles, userId, dbResource, inputResource)
+                    isWriteAllowed: (action, roles, userId, dbResource, inputResource) =>
                     {
                         if(action !== "update" || roles.contains("admin"))
                             return true;

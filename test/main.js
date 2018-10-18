@@ -1,4 +1,4 @@
-(function()
+(() =>
 {
     const Runner = require('./runner');
     const configFactory = require('./configFactory');
@@ -12,7 +12,7 @@
     /** 
      * Test entry point
      */
-    function main()
+    const main = () =>
     {
         // initialize configs
         const mssqlAzureConfig = configFactory.create("mssql", { provider: "azure" });
@@ -35,11 +35,11 @@
      * @param {*} sessionName Session name
      * @param {*} tests List of tests to run
      */
-    function startTestSession(config, engine, storageProviderName, sessionName, tests)
+    const startTestSession = (config, engine, storageProviderName, sessionName, tests) =>
     {
         const runner = new Runner(config, engine, storageProviderName);
 
-        before(function(done)
+        before((done) =>
         {
             if(!runner.isServerStarted)
                 runner.startServer(done);

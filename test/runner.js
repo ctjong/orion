@@ -1,39 +1,37 @@
+const queries = require("./queries");
+const Orion = require('../index');
+const MockConnectionPool = require('./mocks/mockConnectionPool');
+const MockStorageProvider = require('./mocks/mockStorageProvider');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const jwt = require('jsonwebtoken');
+chai.use(chaiHttp);
+
+let orion = null;
+let pool = null;
+let storageProvider = null;
+let config = null;
+let dbEngine = null;
+let storageProviderName = null;
+const maxServerStartRetries = 10;
+
 /**
  * Test runner class
  * @param {*} config Config module
  * @param {*} dbEngine Database engine
  * @param {*} storageProviderName Storage provider name
  */
-const Runner = function(config, dbEngine, storageProviderName)
+module.exports = class Runner
 {
-    const queries = require("./queries");
-    const Orion = require('../index');
-    const MockConnectionPool = require('./mocks/mockConnectionPool');
-    const MockStorageProvider = require('./mocks/mockStorageProvider');
-    const chai = require('chai');
-    const chaiHttp = require('chai-http');
-    const assert = require('assert');
-    const fs = require('fs');
-    const path = require('path');
-    const jwt = require('jsonwebtoken');
-    chai.use(chaiHttp);
-
-    const _this = this;
-    let orion = null;
-    let pool = null;
-    let storageProvider = null;
-
-    const maxServerStartRetries = 10;
-
-    _this.isServerStarted = false;
-
-    //----------------------------------------------
-    // CONSTRUCTOR
-    //----------------------------------------------
-
-    function _construct()
+    constructor(configArg, dbEngineArg, storageProviderNameArg)
     {
-        inactiveErrFunction = function() { };
+        config = configArg;
+        dbEngine = dbEngineArg;
+        storageProviderName = storageProviderNameArg;
+        this.isServerStarted = false;
     }
 
     //----------------------------------------------
@@ -52,10 +50,10 @@ const Runner = function(config, dbEngine, storageProviderName)
      * @param {*} expectedResponseCode expected response status code
      * @param {*} expectedResponseBody expected response body
      */
-    function runTest(name, reqUrl, reqMethod, reqBody, accessToken, 
+    runTest(name, reqUrl, reqMethod, reqBody, accessToken, 
         expectedQueries, queryResults, expectedResponseCode, expectedResponseBody)
     {
-        it(name, function(done)
+        it(name, (done) =>
         {
             const actualQueries = [];
             onBeforeRequest(actualQueries, queryResults);
@@ -73,7 +71,7 @@ const Runner = function(config, dbEngine, storageProviderName)
             if(!!accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
 
-            requestAwaiter.end(function(err, res)
+            requestAwaiter.end((err, res) =>
             {
                 onAfterRequest(actualQueries, res, expectedQueries, expectedResponseCode, expectedResponseBody);
                 done();
@@ -93,10 +91,10 @@ const Runner = function(config, dbEngine, storageProviderName)
      * @param {*} expectedResponseCode expected response status code
      * @param {*} expectedResponseBody expected response body
      */
-    function runFileUploadTest(name, reqUrl, filePath, accessToken, expectedMimeType, 
+    runFileUploadTest(name, reqUrl, filePath, accessToken, expectedMimeType, 
         expectedQueries, queryResults, expectedResponseCode, expectedResponseBody)
     {
-        it(name, function(done)
+        it(name, (done) =>
         {
             const actualQueries = [];
             onBeforeRequest(actualQueries, queryResults);
@@ -104,7 +102,7 @@ const Runner = function(config, dbEngine, storageProviderName)
             const inputFileName = path.basename(filePath);
             const uploadedFileName = null;
             const uploadedFileMime = null;
-            storageProvider.onFilePartReceived(function(name, mime)
+            storageProvider.onFilePartReceived((name, mime) =>
             {
                 uploadedFileName = name;
                 uploadedFileMime = mime;
@@ -116,7 +114,7 @@ const Runner = function(config, dbEngine, storageProviderName)
             if(!!accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
 
-            requestAwaiter.end(function(err, res)
+            requestAwaiter.end((err, res) =>
             {
                 try
                 {
@@ -148,16 +146,16 @@ const Runner = function(config, dbEngine, storageProviderName)
      * @param {*} expectedResponseCode expected response status code
      * @param {*} expectedResponseBody expected response body
      */
-    function runFileDeleteTest(name, reqUrl, accessToken, expectedQueries,
+    runFileDeleteTest(name, reqUrl, accessToken, expectedQueries,
         queryResults, expectedResponseCode, expectedResponseBody)
     {
-        it(name, function(done)
+        it(name, (done) =>
         {
             const actualQueries = [];
             const expectedFilename = queryResults[0][0].filename;
             onBeforeRequest(actualQueries, queryResults);
             let actualFilename = null;
-            storageProvider.onFileDeleted(function(name)
+            storageProvider.onFileDeleted((name) =>
             {
                 actualFilename = name;
             });
@@ -167,7 +165,7 @@ const Runner = function(config, dbEngine, storageProviderName)
             if(!!accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
 
-            requestAwaiter.end(function(err, res)
+            requestAwaiter.end((err, res) =>
             {
                 assert.equal(actualFilename, expectedFilename, "Deleted file name is incorrect");
                 onAfterRequest(actualQueries, res, expectedQueries, expectedResponseCode, expectedResponseBody);
@@ -180,9 +178,9 @@ const Runner = function(config, dbEngine, storageProviderName)
      * Start an Orion app
      * @param {*} callback Callback function
      */
-    function startServer(callback)
+    startServer(callback)
     {
-        if(_this.isServerStarted)
+        if(this.isServerStarted)
         {
             callback();
             return;
@@ -197,211 +195,204 @@ const Runner = function(config, dbEngine, storageProviderName)
         storageProvider = new MockStorageProvider(storageProviderName);
         orion.getStorageAdapter().setProvider(storageProvider);
 
-        startServerInternal(orion, 0, function()
+        startServerInternal(orion, 0, () =>
         {
-            isServerStarted = true;
+            this.isServerStarted = true;
             callback();
         });
     }
+}
 
-    //----------------------------------------------
-    // PRIVATE
-    //----------------------------------------------
 
-    /**
-     * Start an Orion app
-     * @param {*} orion orion app
-     * @param {*} numRetries number of retries so far
-     * @param {*} callback callback function
-     */
-    function startServerInternal(orion, numRetries, callback)
+//----------------------------------------------
+// PRIVATE
+//----------------------------------------------
+
+/**
+ * Start an Orion app
+ * @param {*} orion orion app
+ * @param {*} numRetries number of retries so far
+ * @param {*} callback callback function
+ */
+const startServerInternal = (orion, numRetries, callback) =>
+{
+    if(numRetries > maxServerStartRetries)
+        throw "Failed to start app. Max retries exceeded.";
+    const port = 1337 + numRetries;
+    orion.start(port, callback).on("error", function()
     {
-        if(numRetries > maxServerStartRetries)
-            throw "Failed to start app. Max retries exceeded.";
-        const port = 1337 + numRetries;
-        orion.start(port, callback).on("error", function()
-        {
-            startServerInternal(orion, numRetries + 1, callback);
-        });
-    }
+        startServerInternal(orion, numRetries + 1, callback);
+    });
+}
 
-    /** 
-     * To be invoked before firing a request
-     * @param {*} actualQueries Actual queries received by DB adapter
-     * @param {*} queryResults List of results to be returned for each incoming query
-     */
-    function onBeforeRequest(actualQueries, queryResults)
+/** 
+ * To be invoked before firing a request
+ * @param {*} actualQueries Actual queries received by DB adapter
+ * @param {*} queryResults List of results to be returned for each incoming query
+ */
+const onBeforeRequest = (actualQueries, queryResults) =>
+{
+    pool.reset();
+    pool.onQueryReceived((actualString, actualParams, engine) =>
     {
-        pool.reset();
-        pool.onQueryReceived(function(actualString, actualParams, engine)
-        {
-            actualQueries.push({ string: actualString, params: actualParams, engine: engine });
-            if(!!queryResults && !!queryResults.length)
-                pool.setQueryResults(queryResults.shift());
-        });
-    }
+        actualQueries.push({ string: actualString, params: actualParams, engine: engine });
+        if(!!queryResults && !!queryResults.length)
+            pool.setQueryResults(queryResults.shift());
+    });
+}
 
-    /**
-     * To be invoked after the response to a request has been received
-     * @param {*} actualQueries actual queries received by DB adapter
-     * @param {*} actualResponse actual response received
-     * @param {*} expectedQueries expected queries to be received
-     * @param {*} expectedResponseCode expected response status code
-     * @param {*} expectedResponseBody expected response body
-     */
-    function onAfterRequest(actualQueries, actualResponse, expectedQueries, expectedResponseCode, expectedResponseBody)
+/**
+ * To be invoked after the response to a request has been received
+ * @param {*} actualQueries actual queries received by DB adapter
+ * @param {*} actualResponse actual response received
+ * @param {*} expectedQueries expected queries to be received
+ * @param {*} expectedResponseCode expected response status code
+ * @param {*} expectedResponseBody expected response body
+ */
+const onAfterRequest = (actualQueries, actualResponse, expectedQueries, expectedResponseCode, expectedResponseBody) =>
+{
+    if(!!expectedQueries)
     {
-        if(!!expectedQueries)
+        assert.equal(actualQueries.length, expectedQueries.length, "Number of received queries is not as expected");
+        for(let i=0; i<expectedQueries.length; i++)
         {
-            assert.equal(actualQueries.length, expectedQueries.length, "Number of received queries is not as expected");
-            for(let i=0; i<expectedQueries.length; i++)
+            const actualString = actualQueries[i].string;
+            const actualParams = actualQueries[i].params;
+            const engine = actualQueries[i].engine;
+            const expected = expectedQueries[i];
+            const expectedString = queries[expected.name][engine];
+            assetQueryString(actualString.trim().toLowerCase(), expectedString.trim().toLowerCase());
+            for(let j=0; j<expected.params.length; j++)
             {
-                const actualString = actualQueries[i].string;
-                const actualParams = actualQueries[i].params;
-                const engine = actualQueries[i].engine;
-                const expected = expectedQueries[i];
-                const expectedString = queries[expected.name][engine];
-                assetQueryString(actualString.trim().toLowerCase(), expectedString.trim().toLowerCase());
-                for(let j=0; j<expected.params.length; j++)
-                {
-                    if(expected.params[i] === "skip")
-                        continue;
-                    const actualValue = engine === "mssql" ? actualParams["value" + j][1] : actualParams[j];
-                    assert.equal(actualValue, expected.params[j], "Incorrect query parameter at index " + j + ". Actual: " + actualValue + ". Expected: " + expected.params[i]);
-                }
-            }
-        }
-
-        assert.equal(actualResponse.status, expectedResponseCode, "Status code " + actualResponse.status + " is not expected");
-        const responseBody = Object.keys(actualResponse.body).length > 0 ? actualResponse.body : actualResponse.text;
-        if(!!expectedResponseBody)
-            assertResponseBody(responseBody, expectedResponseBody, "", "");
-    }
-
-    /**
-     * Assert that a response body match the expected
-     * @param {*} actual Actual response body
-     * @param {*} expected Expected response body
-     * @param {*} relativePath Path to the current value from object root
-     * @param {*} currentKey Current object key
-     */
-    function assertResponseBody(actual, expected, relativePath, currentKey)
-    {
-        const fullPath = relativePath + "/" + currentKey;
-        if(typeof actual === "undefined" || actual == null)
-            assert.fail("Missing response body at " + fullPath);
-        if(currentKey === "token")
-        {
-            try
-            {
-                actual = jwt.verify(actual, "samplestring");
-            }
-            catch(e)
-            {
-                assert.fail("Failed to decode token at " + fullPath + ".");
-            }
-        }
-        if(typeof expected === "object")
-        {
-            for(const key in expected)
-            {
-                if(!expected.hasOwnProperty(key))
+                if(expected.params[i] === "skip")
                     continue;
-                const childExpected = expected[key];
-                const childActual = actual[key];
-                if(!actual)
-                    assert.fail("Response body with key " + fullPath + "/" + key + " doesn't exist");
-                assertResponseBody(childActual, childExpected, fullPath, key);
+                const actualValue = engine === "mssql" ? actualParams["value" + j][1] : actualParams[j];
+                assert.equal(actualValue, expected.params[j], "Incorrect query parameter at index " + j + ". Actual: " + actualValue + ". Expected: " + expected.params[i]);
             }
         }
-        else
-        {
-            assert.equal(actual, expected, "Incorrect response body value at " + fullPath + ". Actual: " + actual + ". Expected: " + expected);
-        }
     }
 
-    /**
-     * Assert that a query string match the expected
-     * @param {*} actual Actual query string
-     * @param {*} expected Expected query string
-     */
-    function assetQueryString(actual, expected)
+    assert.equal(actualResponse.status, expectedResponseCode, "Status code " + actualResponse.status + " is not expected");
+    const responseBody = Object.keys(actualResponse.body).length > 0 ? actualResponse.body : actualResponse.text;
+    if(!!expectedResponseBody)
+        assertResponseBody(responseBody, expectedResponseBody, "", "");
+}
+
+/**
+ * Assert that a response body match the expected
+ * @param {*} actual Actual response body
+ * @param {*} expected Expected response body
+ * @param {*} relativePath Path to the current value from object root
+ * @param {*} currentKey Current object key
+ */
+const assertResponseBody = (actual, expected, relativePath, currentKey) =>
+{
+    const fullPath = relativePath + "/" + currentKey;
+    if(typeof actual === "undefined" || actual == null)
+        assert.fail("Missing response body at " + fullPath);
+    if(currentKey === "token")
     {
-        if(expected.indexOf("select") === 0)
+        try
         {
-            assertQueryClause(actual, expected, "select", "from", ",");
-            assertQueryClause(actual, expected, "from", "where", "innerjoin");
-            const actualEnd = actual.substring(actual.indexOf("where"));
-            const expectedEnd = expected.substring(expected.indexOf("where"));
-            assert.equal(actualEnd, expectedEnd, "End of query string is not as expected");
+            actual = jwt.verify(actual, "samplestring");
         }
-        else
+        catch(e)
         {
-            assert.equal(actual, expected, "Query string does not match the expected");
+            assert.fail("Failed to decode token at " + fullPath + ".");
         }
     }
-
-    /**
-     * Assert that a query clause matches the expected
-     * @param {*} actual actual query string
-     * @param {*} expected expected query string
-     * @param {*} clauseStart start keyword of the query clause
-     * @param {*} clauseEnd start keyword of the query clause
-     * @param {*} separator separator string between each clause value
-     */
-    function assertQueryClause(actual, expected, clauseStart, clauseEnd, separator)
+    if(typeof expected === "object")
     {
-        const actualValues = getQueryClauseValues(actual, clauseStart, clauseEnd, separator);
-        const expectedValues = getQueryClauseValues(expected, clauseStart, clauseEnd, separator);
-        if(actualValues.length !== expectedValues.length)
-            return false;
-        actualValues.forEach(function(actualItem, index)
+        for(const key in expected)
         {
-            if(actualItem !== expectedValues[index])
-            {
-                assert.fail("Query clause is not as expected. Actual: [" + actualValues.join(",") + "]. Expected: [" + expectedValues.join(",") + "].");
-            }
-        });
+            if(!expected.hasOwnProperty(key))
+                continue;
+            const childExpected = expected[key];
+            const childActual = actual[key];
+            if(!actual)
+                assert.fail("Response body with key " + fullPath + "/" + key + " doesn't exist");
+            assertResponseBody(childActual, childExpected, fullPath, key);
+        }
     }
-
-    /**
-     * Get array of values from a query clause
-     * @param {*} query query string
-     * @param {*} clauseStart start keyword of the query clause
-     * @param {*} clauseEnd start keyword of the query clause
-     * @param {*} separator separator string between each clause value
-     * @return array of values
-     */
-    function getQueryClauseValues(query, clauseStart, clauseEnd, separator)
+    else
     {
-        const clauseStartIndex = query.indexOf(clauseStart);
-        if(clauseStartIndex < 0)
-            return "";
-        else if(clauseStartIndex === 0) 
-            clauseStart += " ";
-        else
-            clauseStart = " " + clauseStart + " ";
-        const clauseBegin = query.indexOf(clauseStart) + clauseStart.length;
-        let clause;
-        if(!clauseEnd)
-        {
-            clause = query.substring(clauseBegin);
-        }
-        else
-        {
-            clauseEnd = " " + clauseEnd + " ";
-            clause = query.substring(clauseBegin, query.indexOf(clauseEnd));
-        }
-        const values = clause.split(" ").join("").split(separator);
-        values.sort();
-        return values;
+        assert.equal(actual, expected, "Incorrect response body value at " + fullPath + ". Actual: " + actual + ". Expected: " + expected);
     }
+}
 
-    this.runTest = runTest;
-    this.runFileUploadTest = runFileUploadTest;
-    this.runFileDeleteTest = runFileDeleteTest;
-    this.startServer = startServer;
-    _construct();
-};
+/**
+ * Assert that a query string match the expected
+ * @param {*} actual Actual query string
+ * @param {*} expected Expected query string
+ */
+const assetQueryString = (actual, expected) =>
+{
+    if(expected.indexOf("select") === 0)
+    {
+        assertQueryClause(actual, expected, "select", "from", ",");
+        assertQueryClause(actual, expected, "from", "where", "innerjoin");
+        const actualEnd = actual.substring(actual.indexOf("where"));
+        const expectedEnd = expected.substring(expected.indexOf("where"));
+        assert.equal(actualEnd, expectedEnd, "End of query string is not as expected");
+    }
+    else
+    {
+        assert.equal(actual, expected, "Query string does not match the expected");
+    }
+}
 
-module.exports = Runner;
+/**
+ * Assert that a query clause matches the expected
+ * @param {*} actual actual query string
+ * @param {*} expected expected query string
+ * @param {*} clauseStart start keyword of the query clause
+ * @param {*} clauseEnd start keyword of the query clause
+ * @param {*} separator separator string between each clause value
+ */
+const assertQueryClause = (actual, expected, clauseStart, clauseEnd, separator) =>
+{
+    const actualValues = getQueryClauseValues(actual, clauseStart, clauseEnd, separator);
+    const expectedValues = getQueryClauseValues(expected, clauseStart, clauseEnd, separator);
+    if(actualValues.length !== expectedValues.length)
+        return false;
+    actualValues.forEach((actualItem, index) =>
+    {
+        if(actualItem !== expectedValues[index])
+        {
+            assert.fail("Query clause is not as expected. Actual: [" + actualValues.join(",") + "]. Expected: [" + expectedValues.join(",") + "].");
+        }
+    });
+}
+
+/**
+ * Get array of values from a query clause
+ * @param {*} query query string
+ * @param {*} clauseStart start keyword of the query clause
+ * @param {*} clauseEnd start keyword of the query clause
+ * @param {*} separator separator string between each clause value
+ * @return array of values
+ */
+const getQueryClauseValues = (query, clauseStart, clauseEnd, separator) =>
+{
+    const clauseStartIndex = query.indexOf(clauseStart);
+    if(clauseStartIndex < 0)
+        return "";
+    else if(clauseStartIndex === 0) 
+        clauseStart += " ";
+    else
+        clauseStart = " " + clauseStart + " ";
+    const clauseBegin = query.indexOf(clauseStart) + clauseStart.length;
+    let clause;
+    if(!clauseEnd)
+    {
+        clause = query.substring(clauseBegin);
+    }
+    else
+    {
+        clauseEnd = " " + clauseEnd + " ";
+        clause = query.substring(clauseBegin, query.indexOf(clauseEnd));
+    }
+    const values = clause.split(" ").join("").split(separator);
+    values.sort();
+    return values;
+}
