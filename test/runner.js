@@ -4,28 +4,26 @@
  * @param {*} dbEngine Database engine
  * @param {*} storageProviderName Storage provider name
  */
-var Runner = function(config, dbEngine, storageProviderName)
+const Runner = function(config, dbEngine, storageProviderName)
 {
-    var queries = require("./queries");
-    var Orion = require('../index');
-    var MockConnectionPool = require('./mocks/mockConnectionPool');
-    var MockStorageProvider = require('./mocks/mockStorageProvider');
-    var chai = require('chai');
-    var chaiHttp = require('chai-http');
-    var assert = require('assert');
-    var fs = require('fs');
-    var path = require('path');
-    var jwt = require('jsonwebtoken');
+    const queries = require("./queries");
+    const Orion = require('../index');
+    const MockConnectionPool = require('./mocks/mockConnectionPool');
+    const MockStorageProvider = require('./mocks/mockStorageProvider');
+    const chai = require('chai');
+    const chaiHttp = require('chai-http');
+    const assert = require('assert');
+    const fs = require('fs');
+    const path = require('path');
+    const jwt = require('jsonwebtoken');
     chai.use(chaiHttp);
 
-    var _this = this;
-    var activeLogFunction;
-    var inactiveLogFunction;
-    var orion = null;
-    var pool = null;
-    var storageProvider = null;
+    const _this = this;
+    let orion = null;
+    let pool = null;
+    let storageProvider = null;
 
-    var maxServerStartRetries = 10;
+    const maxServerStartRetries = 10;
 
     _this.isServerStarted = false;
 
@@ -35,9 +33,6 @@ var Runner = function(config, dbEngine, storageProviderName)
 
     function _construct()
     {
-        activeLogFunction = console.log;
-        activeErrFunction = console.error;
-        inactiveLogFunction = function() { };
         inactiveErrFunction = function() { };
     }
 
@@ -62,11 +57,11 @@ var Runner = function(config, dbEngine, storageProviderName)
     {
         it(name, function(done)
         {
-            var actualQueries = [];
+            const actualQueries = [];
             onBeforeRequest(actualQueries, queryResults);
 
-            var requestAwaiter;
-            var request = chai.request(orion);
+            let requestAwaiter;
+            const request = chai.request(orion);
             if(reqMethod === "get")
                 requestAwaiter = request.get(reqUrl);
             else if(reqMethod === "post")
@@ -103,20 +98,19 @@ var Runner = function(config, dbEngine, storageProviderName)
     {
         it(name, function(done)
         {
-            var actualQueries = [];
+            const actualQueries = [];
             onBeforeRequest(actualQueries, queryResults);
-            var inputFile = fs.readFileSync(filePath);
-            var inputFileName = path.basename(filePath);
-            var inputFileSize = fs.statSync(filePath).size;
-            var uploadedFileName = null;
-            var uploadedFileMime = null;
+            const inputFile = fs.readFileSync(filePath);
+            const inputFileName = path.basename(filePath);
+            const uploadedFileName = null;
+            const uploadedFileMime = null;
             storageProvider.onFilePartReceived(function(name, mime)
             {
                 uploadedFileName = name;
                 uploadedFileMime = mime;
             });
 
-            var requestAwaiter = chai.request(orion)
+            const requestAwaiter = chai.request(orion)
                 .post(reqUrl)
                 .attach("file", inputFile, inputFileName);
             if(!!accessToken)
@@ -126,15 +120,14 @@ var Runner = function(config, dbEngine, storageProviderName)
             {
                 try
                 {
-                    var uploadedFilePath = process.env.temp + "\\" + uploadedFileName;
-                    var uploadedFile = fs.readFileSync(uploadedFilePath);
-                    var uploadedFileSize = fs.statSync(uploadedFilePath).size;
+                    const uploadedFilePath = process.env.temp + "\\" + uploadedFileName;
+                    const uploadedFile = fs.readFileSync(uploadedFilePath);
                     if(uploadedFileMime !== null)
                         assert.equal(uploadedFileMime, expectedMimeType, "Uploaded file's MIME type is incorrect");
                     assert(uploadedFile.equals(inputFile), "Uploaded file is not the identical to input file");
 
-                    for(var i=0; i<expectedQueries.length; i++)
-                        for(var j=0; j<expectedQueries[i].params.length; j++)
+                    for(let i=0; i<expectedQueries.length; i++)
+                        for(let j=0; j<expectedQueries[i].params.length; j++)
                             if(expectedQueries[i].params[j] === 'uploadedName')
                                 expectedQueries[i].params[j] = uploadedFileName;
 
@@ -160,16 +153,16 @@ var Runner = function(config, dbEngine, storageProviderName)
     {
         it(name, function(done)
         {
-            var actualQueries = [];
-            var expectedFilename = queryResults[0][0].filename;
+            const actualQueries = [];
+            const expectedFilename = queryResults[0][0].filename;
             onBeforeRequest(actualQueries, queryResults);
-            var actualFilename = null;
+            let actualFilename = null;
             storageProvider.onFileDeleted(function(name)
             {
                 actualFilename = name;
             });
 
-            var requestAwaiter = chai.request(orion)
+            const requestAwaiter = chai.request(orion)
                 .delete(reqUrl);
             if(!!accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
@@ -225,7 +218,7 @@ var Runner = function(config, dbEngine, storageProviderName)
     {
         if(numRetries > maxServerStartRetries)
             throw "Failed to start app. Max retries exceeded.";
-        var port = 1337 + numRetries;
+        const port = 1337 + numRetries;
         orion.start(port, callback).on("error", function()
         {
             startServerInternal(orion, numRetries + 1, callback);
@@ -261,26 +254,26 @@ var Runner = function(config, dbEngine, storageProviderName)
         if(!!expectedQueries)
         {
             assert.equal(actualQueries.length, expectedQueries.length, "Number of received queries is not as expected");
-            for(var i=0; i<expectedQueries.length; i++)
+            for(let i=0; i<expectedQueries.length; i++)
             {
-                var actualString = actualQueries[i].string;
-                var actualParams = actualQueries[i].params;
-                var engine = actualQueries[i].engine;
-                var expected = expectedQueries[i];
-                var expectedString = queries[expected.name][engine];
+                const actualString = actualQueries[i].string;
+                const actualParams = actualQueries[i].params;
+                const engine = actualQueries[i].engine;
+                const expected = expectedQueries[i];
+                const expectedString = queries[expected.name][engine];
                 assetQueryString(actualString.trim().toLowerCase(), expectedString.trim().toLowerCase());
-                for(var j=0; j<expected.params.length; j++)
+                for(let j=0; j<expected.params.length; j++)
                 {
                     if(expected.params[i] === "skip")
                         continue;
-                    var actualValue = engine === "mssql" ? actualParams["value" + j][1] : actualParams[j];
+                    const actualValue = engine === "mssql" ? actualParams["value" + j][1] : actualParams[j];
                     assert.equal(actualValue, expected.params[j], "Incorrect query parameter at index " + j + ". Actual: " + actualValue + ". Expected: " + expected.params[i]);
                 }
             }
         }
 
         assert.equal(actualResponse.status, expectedResponseCode, "Status code " + actualResponse.status + " is not expected");
-        var responseBody = Object.keys(actualResponse.body).length > 0 ? actualResponse.body : actualResponse.text;
+        const responseBody = Object.keys(actualResponse.body).length > 0 ? actualResponse.body : actualResponse.text;
         if(!!expectedResponseBody)
             assertResponseBody(responseBody, expectedResponseBody, "", "");
     }
@@ -294,7 +287,7 @@ var Runner = function(config, dbEngine, storageProviderName)
      */
     function assertResponseBody(actual, expected, relativePath, currentKey)
     {
-        var fullPath = relativePath + "/" + currentKey;
+        const fullPath = relativePath + "/" + currentKey;
         if(typeof actual === "undefined" || actual == null)
             assert.fail("Missing response body at " + fullPath);
         if(currentKey === "token")
@@ -310,12 +303,12 @@ var Runner = function(config, dbEngine, storageProviderName)
         }
         if(typeof expected === "object")
         {
-            for(var key in expected)
+            for(const key in expected)
             {
                 if(!expected.hasOwnProperty(key))
                     continue;
-                var childExpected = expected[key];
-                var childActual = actual[key];
+                const childExpected = expected[key];
+                const childActual = actual[key];
                 if(!actual)
                     assert.fail("Response body with key " + fullPath + "/" + key + " doesn't exist");
                 assertResponseBody(childActual, childExpected, fullPath, key);
@@ -338,8 +331,8 @@ var Runner = function(config, dbEngine, storageProviderName)
         {
             assertQueryClause(actual, expected, "select", "from", ",");
             assertQueryClause(actual, expected, "from", "where", "innerjoin");
-            var actualEnd = actual.substring(actual.indexOf("where"));
-            var expectedEnd = expected.substring(expected.indexOf("where"));
+            const actualEnd = actual.substring(actual.indexOf("where"));
+            const expectedEnd = expected.substring(expected.indexOf("where"));
             assert.equal(actualEnd, expectedEnd, "End of query string is not as expected");
         }
         else
@@ -358,8 +351,8 @@ var Runner = function(config, dbEngine, storageProviderName)
      */
     function assertQueryClause(actual, expected, clauseStart, clauseEnd, separator)
     {
-        var actualValues = getQueryClauseValues(actual, clauseStart, clauseEnd, separator);
-        var expectedValues = getQueryClauseValues(expected, clauseStart, clauseEnd, separator);
+        const actualValues = getQueryClauseValues(actual, clauseStart, clauseEnd, separator);
+        const expectedValues = getQueryClauseValues(expected, clauseStart, clauseEnd, separator);
         if(actualValues.length !== expectedValues.length)
             return false;
         actualValues.forEach(function(actualItem, index)
@@ -381,15 +374,15 @@ var Runner = function(config, dbEngine, storageProviderName)
      */
     function getQueryClauseValues(query, clauseStart, clauseEnd, separator)
     {
-        var clauseStartIndex = query.indexOf(clauseStart);
+        const clauseStartIndex = query.indexOf(clauseStart);
         if(clauseStartIndex < 0)
             return "";
         else if(clauseStartIndex === 0) 
             clauseStart += " ";
         else
             clauseStart = " " + clauseStart + " ";
-        var clauseBegin = query.indexOf(clauseStart) + clauseStart.length;
-        var clause;
+        const clauseBegin = query.indexOf(clauseStart) + clauseStart.length;
+        let clause;
         if(!clauseEnd)
         {
             clause = query.substring(clauseBegin);
@@ -399,7 +392,7 @@ var Runner = function(config, dbEngine, storageProviderName)
             clauseEnd = " " + clauseEnd + " ";
             clause = query.substring(clauseBegin, query.indexOf(clauseEnd));
         }
-        var values = clause.split(" ").join("").split(separator);
+        const values = clause.split(" ").join("").split(separator);
         values.sort();
         return values;
     }

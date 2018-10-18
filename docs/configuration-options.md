@@ -84,14 +84,14 @@ Here are the properties that must/may be included in a field configuration objec
 Here are some default fields and entities that we add automatically to the your configuration at runtime.
 
 ```js
-var defaultFields =
+const defaultFields =
     {
         "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
         "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
         "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
     };
 
-var defaultEntities =
+const defaultEntities =
     {
         "asset":
         {

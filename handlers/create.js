@@ -6,7 +6,7 @@ module.exports =
     dependencies: ["auth", "helper", "db"],
     Instance: function()
     {
-        var _this = this;
+        const _this = this;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -28,17 +28,17 @@ module.exports =
             _this.helper.onBeginWriteRequest(ctx, "create", _this.db, null, requestBody, function(record, requestBody)
             {
                 // get required and optional fields
-                var fields = getConfigFields(ctx);
-                var requiredFields = fields.required;
-                var optionalFields = fields.optional;
+                let fields = getConfigFields(ctx);
+                const requiredFields = fields.required;
+                const optionalFields = fields.optional;
 
                 // validate requirements
                 validateRequirements(ctx, requestBody, requiredFields);
 
                 // prepare field names and values for query
                 fields = prepareFields(ctx, requestBody, requiredFields, optionalFields);
-                var fieldNames = fields.names;
-                var fieldValues = fields.values;
+                const fieldNames = fields.names;
+                const fieldValues = fields.values;
 
                 // execute query
                 if(ctx.entity === "user")
@@ -75,14 +75,14 @@ module.exports =
          */
         function getConfigFields(ctx)
         {
-            var allFields = ctx.config.entities[ctx.entity].fields;
-            var requiredFields = [];
-            var optionalFields = [];
-            for(var fieldName in allFields)
+            const allFields = ctx.config.entities[ctx.entity].fields;
+            const requiredFields = [];
+            const optionalFields = [];
+            for(const fieldName in allFields)
             {
                 if(!allFields.hasOwnProperty(fieldName))
                     continue;
-                var createReq = allFields[fieldName].createReq;
+                const createReq = allFields[fieldName].createReq;
                 if(createReq === 1)
                 {
                     optionalFields.push(fieldName);
@@ -103,9 +103,9 @@ module.exports =
          */
         function validateRequirements(ctx, requestBody, requiredFields)
         {
-            for(i=0; i<requiredFields.length; i++)
+            for(let i=0; i<requiredFields.length; i++)
             {
-                var requiredField = requiredFields[i];
+                const requiredField = requiredFields[i];
                 if(!requestBody.hasOwnProperty(requiredField) || !requestBody[requiredField])
                 {
                     _this.exec.throwError("86c5", 400, "missing required field " + requiredFields[i]);
@@ -134,15 +134,14 @@ module.exports =
          */
         function prepareFields(ctx, requestBody, requiredFields, optionalFields)
         {
-            var i;
-            var fieldNames = [];
-            var fieldValues = [];
-            for(i=0; i<requiredFields.length; i++)
+            const fieldNames = [];
+            const fieldValues = [];
+            for(let i=0; i<requiredFields.length; i++)
             {
                 fieldNames.push(requiredFields[i]);
                 fieldValues.push(requestBody[requiredFields[i]]);
             }
-            for(i=0; i<optionalFields.length; i++)
+            for(let i=0; i<optionalFields.length; i++)
             {
                 fieldNames.push(optionalFields[i]);
                 fieldValues.push(requestBody[optionalFields[i]]);
@@ -170,7 +169,7 @@ module.exports =
          */
         function validateEmail(email) 
         {
-            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if(!re.test(email))
             {
                 _this.exec.throwError("dbaa", 400, "email is not valid: " + email);

@@ -3,9 +3,9 @@
  */
 module.exports = function ()
 {
-    var _this = this;
-    var modules = {};
-    var moduleDefs = {};
+    const _this = this;
+    const modules = {};
+    const moduleDefs = {};
 
     //----------------------------------------------
     // CONSTRUCTOR
@@ -52,24 +52,24 @@ module.exports = function ()
      */
     function get(moduleName)
     {
-        var module = modules[moduleName];
-        if(!module)
+        let moduleObj = modules[moduleName];
+        if(!moduleObj)
         {
-            var moduleDef = moduleDefs[moduleName];
+            const moduleDef = moduleDefs[moduleName];
             if(!moduleDef)
                 throw {tag: "99c0", statusCode: 500, msg: "module not found " + moduleName};
-            module = new moduleDef.Instance();
+                moduleObj = new moduleDef.Instance();
             if(moduleName !== "exec")
-                module.exec = new _this.get("exec");
-            var dependencies = moduleDef.dependencies;
-            for(var i=0; i<dependencies.length; i++) 
+            moduleObj.exec = new _this.get("exec");
+            const dependencies = moduleDef.dependencies;
+            for(let i=0; i<dependencies.length; i++) 
             {
-                var dpName = dependencies[i];
-                module[dpName] = _this.get(dpName);
+                const dpName = dependencies[i];
+                moduleObj[dpName] = _this.get(dpName);
             }
-            modules[moduleName] = module;
+            modules[moduleName] = moduleObj;
         }
-        return module;
+        return moduleObj;
     }
 
     //----------------------------------------------
@@ -84,7 +84,7 @@ module.exports = function ()
     {
         String.prototype.format = function() 
         {
-            var args = arguments;
+            const args = arguments;
             return this.replace(/{(\d+)}/g, function(match, number) 
             {
                 return typeof args[number] != 'undefined' ? args[number] : match;
@@ -100,7 +100,7 @@ module.exports = function ()
         };
         Array.prototype.containsAny = function(array) 
         {
-            for(var i=0; i<array.length; i++)
+            for(let i=0; i<array.length; i++)
             {
                 if(!this.contains(array[i]))
                     continue;

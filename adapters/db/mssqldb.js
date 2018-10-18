@@ -6,8 +6,8 @@ module.exports =
     dependencies: ["helper", "condition", "join"],
     Instance: function()
     {
-        var _this = this;
-        var pool;
+        const _this = this;
+        let pool;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -30,8 +30,8 @@ module.exports =
          */
         function quickFind(ctx, fields, entity, conditionMap, successCb, completeCb)
         {
-            var condition = new _this.condition.CompoundCondition("&", []);
-            for(var key in conditionMap)
+            const condition = new _this.condition.CompoundCondition("&", []);
+            for(const key in conditionMap)
             {
                 if(!conditionMap.hasOwnProperty(key)) continue;
                 condition.children.push(new _this.condition.Condition(entity, key, "=", conditionMap[key]));
@@ -58,22 +58,22 @@ module.exports =
          */
         function select(ctx, fields, entity, condition, orderByField, skip, take, resolveFK, isFullMode, successCb, completeCb)
         {
-            var joins = resolveFK ? getJoins(ctx, fields, entity) : [];
-            var query = new Query();
-            var tableName = entity + "table";
+            const joins = resolveFK ? getJoins(ctx, fields, entity) : [];
+            const query = new Query();
+            const tableName = entity + "table";
             query.append("select ");
-            for(var i=0; i<fields.length; i++)
+            for(let i=0; i<fields.length; i++)
             {
-                var fieldName = fields[i];
+                const fieldName = fields[i];
                 if(!isFullMode && fieldName.contains("richtext")) continue;
                 query.append((i === 0 ? "": ", ") + "[" + entity + "table].[" + fieldName + "]");
             }
-            for(i=0; i<joins.length; i++)
+            for(let i=0; i<joins.length; i++)
             {
                 query.append(", " + getSelectExpression(joins[i]));
             }
             query.append(" from [" + tableName + "]");
-            for(i=0; i<joins.length; i++)
+            for(let i=0; i<joins.length; i++)
             {
                 query.append(" " + getJoinExpression(joins[i]));
             }
@@ -102,11 +102,11 @@ module.exports =
          */
         function findRecordById(ctx, entity, recordId, successCb, completeCb)
         {
-            var fields = _this.helper.getFields(ctx, "read", entity);
-            var condition = new _this.condition.Condition(entity, "id", "=", recordId);
+            const fields = _this.helper.getFields(ctx, "read", entity);
+            const condition = new _this.condition.Condition(entity, "id", "=", recordId);
             _this.select(ctx, fields, entity, condition, "id", 0, 1, true, false, function(responseArr)
             {
-                var record = responseArr[0];
+                const record = responseArr[0];
                 successCb(_this.helper.fixDataKeysAndTypes(ctx, record, entity));
             }, completeCb);
         }
@@ -123,9 +123,9 @@ module.exports =
          */
         function count(ctx, fields, entity, condition, resolveFK, successCb, completeCb)
         {
-            var joins = resolveFK ? getJoins(ctx, fields, entity) : [];
-            var query = new Query();
-            var tableName = entity + "table";
+            const joins = resolveFK ? getJoins(ctx, fields, entity) : [];
+            const query = new Query();
+            const tableName = entity + "table";
             query.append("select count(*) from [" + tableName + "] where ");
             appendWhereClause(query, condition);
             execute(ctx, query, function(dbResponse)
@@ -145,11 +145,11 @@ module.exports =
          */
         function insert(ctx, entity, fieldNames, fieldValues, successCb, completeCb)
         {
-            var query = new Query();
-            var tableName = entity + "table";
-            var fieldNamesStr = "[" + fieldNames.join("],[") + "]";
+            const query = new Query();
+            const tableName = entity + "table";
+            const fieldNamesStr = "[" + fieldNames.join("],[") + "]";
             query.append("insert into [" + tableName + "] (" + fieldNamesStr + ") values (");
-            for(var i=0; i<fieldValues.length; i++)
+            for(let i=0; i<fieldValues.length; i++)
             {
                 query.append((i === 0 ? "" : ",") + "?", fieldValues[i]);
             }
@@ -171,12 +171,12 @@ module.exports =
          */
         function update(ctx, entity, updateFields, condition, successCb, completeCb)
         {
-            var query = new Query();
-            var isFirstSetClause = true;
-            var tableName = entity + "table";
+            const query = new Query();
+            let isFirstSetClause = true;
+            const tableName = entity + "table";
             query.append("update [" + tableName + "] set ");
 
-            for(var fieldName in updateFields)
+            for(const fieldName in updateFields)
             {
                 if(!updateFields.hasOwnProperty(fieldName)) 
                     continue;
@@ -198,9 +198,9 @@ module.exports =
          */
         function deleteRecord(ctx, entity, id, successCb, completeCb)
         {
-            var query = new Query();
-            var tableName = entity + "table";
-            var condition = new _this.condition.Condition(entity, "id", "=", id);
+            const query = new Query();
+            const tableName = entity + "table";
+            const condition = new _this.condition.Condition(entity, "id", "=", id);
             query.append("delete from [" + tableName + "] where ");
             appendWhereClause(query, condition);
             execute(ctx, query, successCb, completeCb);
@@ -228,12 +228,12 @@ module.exports =
          */
         function getJoins(ctx, fields, entity)
         {
-            var joins = [];
-            var ctxFields = ctx.config.entities[entity].fields;
-            for(var f=0; f<fields.length; f++)
+            const joins = [];
+            const ctxFields = ctx.config.entities[entity].fields;
+            for(let f=0; f<fields.length; f++)
             {
-                var fldName = fields[f];
-                var fieldObj = ctxFields[fldName];
+                const fldName = fields[f];
+                const fieldObj = ctxFields[fldName];
                 if(!!fieldObj.foreignKey) 
                 {
                     joins.push(new _this.join.createForForeignKey(ctx, entity, fldName));
@@ -253,20 +253,20 @@ module.exports =
         {
             ensurePoolInitialized(ctx, function()
             {
-                var queryString = query.getQueryString();
-                var queryParams = query.getQueryParams();
+                const queryString = query.getQueryString();
+                const queryParams = query.getQueryParams();
                 console.log("-------------------------------------------------");
                 console.log("Sending query to database:");
                 console.log(queryString);
                 console.log("Query parameters:");
                 console.log(queryParams);
 
-                var request = new pool.sql.Request(pool);
-                for (var key in queryParams)
+                const request = new pool.sql.Request(pool);
+                for (const key in queryParams)
                 {
                     if (!queryParams.hasOwnProperty(key))
                         continue;
-                    var paramValue = queryParams[key];
+                    const paramValue = queryParams[key];
                     if (typeof (paramValue) === "number" && Math.abs(paramValue) > 2147483647)
                     {
                         request.input(key, pool.sql.BigInt, paramValue);
@@ -308,7 +308,7 @@ module.exports =
                 callback();
                 return;
             }
-            var sql = require("mssql");
+            const sql = require("mssql");
             pool = new sql.ConnectionPool(ctx.config.database.connectionString, _this.exec.cb(ctx, function(err)
             {
                 if (err)
@@ -327,24 +327,24 @@ module.exports =
          */
         function Query()
         {
-            var _this = this;
-            var paramsCounter = 0;
-            var queryString = "";
-            var queryParams = {};
+            const _this = this;
+            let paramsCounter = 0;
+            let queryString = "";
+            let queryParams = {};
 
             /**
              * Append the given string and params to the query
              */
             function append()
             {
-                var str = arguments[0];
+                let str = arguments[0];
                 if (!str)
                     return;
                 if (arguments.length > 1)
                 {
-                    var newStr = "";
-                    var currentArgIndex = 1;
-                    for (var i = 0; i < str.length; i++)
+                    let newStr = "";
+                    let currentArgIndex = 1;
+                    for (let i = 0; i < str.length; i++)
                     {
                         if (str[i] !== "?")
                         {
@@ -400,8 +400,8 @@ module.exports =
          */
         function getSelectExpression(joinObj)
         {
-            var str = "";
-            for (var i = 0; i < joinObj.e2SelectFields.length; i++)
+            let str = "";
+            for (let i = 0; i < joinObj.e2SelectFields.length; i++)
             {
                 str += (str === "" ? "" : ", ") + "[" + joinObj.e2Alias + "].[" + joinObj.e2SelectFields[i] + "] AS [" + joinObj.e2Alias + "_" + joinObj.e2SelectFields[i] + "]";
             }
@@ -444,9 +444,9 @@ module.exports =
             else if(condObj.children.length > 0)
             {
                 query.append("(");
-                for (var i = 0; i < condObj.children.length; i++)
+                for (let i = 0; i < condObj.children.length; i++)
                 {
-                    var childCond = condObj.children[i];
+                    const childCond = condObj.children[i];
                     if (i > 0) query.append(condObj.operator === "&" ? " AND " : " OR ");
                     appendWhereClause(query, childCond);
                 }

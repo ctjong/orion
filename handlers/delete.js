@@ -6,7 +6,7 @@ module.exports =
     dependencies: ["auth", "db", "helper"],
     Instance: function()
     {
-        var _this = this;
+        const _this = this;
 
         //----------------------------------------------
         // CONSTRUCTOR

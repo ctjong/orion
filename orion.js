@@ -2,9 +2,9 @@
 
 (function ()
 {
-    var engine;
-    var outputPath;
-    var fs = require('fs');
+    const engine;
+    const outputPath;
+    const fs = require('fs');
 
     /**
      * Entry point of the script.
@@ -18,7 +18,7 @@
             console.log("Available commands: setup");
             return;
         }
-        var cmd = process.argv[2];
+        const cmd = process.argv[2];
         if(cmd !== "setup")
         {
             console.log("Unrecognized command: " + cmd);
@@ -30,14 +30,14 @@
             return;
         }
 
-        var inputPath = process.argv[3];
+        const inputPath = process.argv[3];
         outputPath = process.argv[4];
 
         // get config
-        var contextFactory = new (require('./contextFactory'))();
-        var inputConfig = require(process.cwd() + "/" + inputPath);
+        const contextFactory = new (require('./contextFactory'))();
+        const inputConfig = require(process.cwd() + "/" + inputPath);
         contextFactory.initializeConfig(inputConfig);
-        var config = contextFactory.getConfig();
+        const config = contextFactory.getConfig();
         engine = config.database.engine;
 
         // write the SQL file
@@ -55,25 +55,25 @@
      */
     function processConfig(config)
     {
-        var dropTableStr = drop("errortable");
-        var pkAttr = engine === "mssql" ? "IDENTITY(1,1) PRIMARY KEY" : "AUTO_INCREMENT PRIMARY KEY";
-        var createTableStr = "CREATE TABLE errortable (" + nm("id") + " INT NOT NULL " + pkAttr + ", " + 
+        const dropTableStr = drop("errortable");
+        const pkAttr = engine === "mssql" ? "IDENTITY(1,1) PRIMARY KEY" : "AUTO_INCREMENT PRIMARY KEY";
+        const createTableStr = "CREATE TABLE errortable (" + nm("id") + " INT NOT NULL " + pkAttr + ", " + 
             nm("tag") + " VARCHAR (10) NOT NULL, " + nm("statuscode") + " INT NOT NULL, " + nm("msg") + " VARCHAR (255) NOT NULL," +
             nm("url") + " VARCHAR (255) NOT NULL, " + nm("timestamp") + " BIGINT NOT NULL);\n";
-        for(var entityName in config.entities)
+        for(const entityName in config.entities)
         {
-            var entity = config.entities[entityName];
+            const entity = config.entities[entityName];
             if(!config.entities.hasOwnProperty(entityName))
                 continue;
             dropTableStr += drop(entityName + "table");
             createTableStr += "CREATE TABLE " + entityName + "table (\n";
-            var fieldsStr = "";
-            for(var fieldName in entity.fields)
+            const fieldsStr = "";
+            for(const fieldName in entity.fields)
             {
                 if(fieldsStr !== "")
                     fieldsStr += ",\n";
-                var field = entity.fields[fieldName];
-                var fieldType = field.type;
+                const field = entity.fields[fieldName];
+                const fieldType = field.type;
                 fieldsStr += nm(fieldName) + " ";
                 if(fieldType === "id")
                     fieldsStr += "INT NOT NULL " + pkAttr;
@@ -115,13 +115,13 @@
             }
             else
             {
-                var uniqueStr = "";
-                for(var i=0; i<entity.unique.length; i++)
+                const uniqueStr = "";
+                for(let i=0; i<entity.unique.length; i++)
                     uniqueStr += (uniqueStr === "" ? "" : ",") + nm(entity.unique[i]);
                 createTableStr += ",\nUNIQUE (" + uniqueStr + ")\n);\n";
             }
         }
-        var str = dropTableStr + createTableStr;
+        const str = dropTableStr + createTableStr;
         fs.writeFile(outputPath, str, function(err)
         {
             if(err)
@@ -150,8 +150,8 @@
      */
     function nm(name)
     {
-        var ob = engine === "mssql" ? "[" : "`";
-        var cb = engine === "mssql" ? "]" : "`";
+        const ob = engine === "mssql" ? "[" : "`";
+        const cb = engine === "mssql" ? "]" : "`";
         return ob + name + cb;
     }
 

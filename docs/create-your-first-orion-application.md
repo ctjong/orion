@@ -57,9 +57,9 @@
     ```
 5. Set up **server.js** for the application entry point. Import Orion and the configuration module, and set up the application as follows:
     ```js
-    var orion = require('orion-api');
-    var config = require('./config');
-    var app = new orion(config);
+    const orion = require('orion-api');
+    const config = require('./config');
+    const app = new orion(config);
     app.setupApiEndpoints();
     
     // You can add more endpoints to the app object or do other things here

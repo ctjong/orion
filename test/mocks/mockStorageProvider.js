@@ -1,13 +1,13 @@
 /**
  * A mock storage provider module
  */
-var mock = function(provider)
+const mock = function(provider)
 {
-    var fs = require("fs");
-    var path = require("path");
-    var filePartReceivedHandler = null;
-    var fileDeletedHandler = null;
-    var wstream = null;
+    const fs = require("fs");
+    const path = require("path");
+    let filePartReceivedHandler = null;
+    let fileDeletedHandler = null;
+    let wstream = null;
 
     //----------------------------------------------
     // CONSTRUCTOR
@@ -30,7 +30,7 @@ var mock = function(provider)
      */
     function azureCreateBlockBlobFromStream(containerName, name, stream, size, options, callback)
     {
-        var mime = null;
+        const mime = null;
         if(!!options && !!options.contentSettings && !!options.contentSettings.contentType)
             mime = options.contentSettings.contentType;
         processFilePart(name, mime, stream, null, callback);
@@ -54,9 +54,9 @@ var mock = function(provider)
      */
     function s3Upload(options, callback)
     {
-        var name = options.Key;
-        var stream = options.Body;
-        var mime = options.ContentType;
+        const name = options.Key;
+        const stream = options.Body;
+        const mime = options.ContentType;
         processFilePart(name, mime, stream, null, callback);
     }
 
@@ -78,7 +78,7 @@ var mock = function(provider)
      */
     function localRename(tempPath, finalPath, callback)
     {
-        var filename = path.basename(tempPath);
+        const filename = path.basename(tempPath);
         processFilePart(filename, null, null, tempPath, callback);
     }
 
@@ -89,7 +89,7 @@ var mock = function(provider)
      */
     function localUnlink(fullPath, callback)
     {
-        var filename = path.basename(fullPath);
+        const filename = path.basename(fullPath);
         processFileDelete(filename, callback);
     }
 
@@ -126,7 +126,7 @@ var mock = function(provider)
     function processFilePart(name, mime, stream, tempPath, callback)
     {
         // save the uploaded file to the system temp folder
-        var targetPath = process.env.temp + "\\" + name;
+        const targetPath = process.env.temp + "\\" + name;
         if(!!stream)
         {
             if(!wstream || wstream.path !== targetPath)

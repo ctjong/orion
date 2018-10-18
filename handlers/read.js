@@ -6,7 +6,7 @@ module.exports =
     dependencies: ["helper", "condition", "join", "db", "auth"],
     Instance: function() 
     {
-        var _this = this;
+        const _this = this;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -38,25 +38,25 @@ module.exports =
             _this.helper.validateRoles(ctx, "read");
 
             // get pagination and ordering info
-            var skip = isNaN(parseInt(requestParams.skip)) ? 0 : parseInt(requestParams.skip);
-            var take = isNaN(parseInt(requestParams.take)) ? 10 : parseInt(requestParams.take);
-            var orderByField = !requestParams.orderByField ? "id" : requestParams.orderByField;
+            const skip = isNaN(parseInt(requestParams.skip)) ? 0 : parseInt(requestParams.skip);
+            const take = isNaN(parseInt(requestParams.take)) ? 10 : parseInt(requestParams.take);
+            const orderByField = !requestParams.orderByField ? "id" : requestParams.orderByField;
 
             // get condition
-            var configConditionStr = getConditionStringFromConfig(ctx, requestParams.accessType);
-            var condition = getConditionFromRequest(ctx, requestParams);
+            const configConditionStr = getConditionStringFromConfig(ctx, requestParams.accessType);
+            const condition = getConditionFromRequest(ctx, requestParams);
             if(configConditionStr !== "") 
             {
                 condition.children.push(_this.condition.parse(ctx, configConditionStr));
             }
 
             // execute
-            var fields = _this.helper.getFields(ctx, "read");
+            const fields = _this.helper.getFields(ctx, "read");
             _this.db.count(ctx, fields, ctx.entity, condition, true, function(count)
             {
                 _this.db.select(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode, function(dbResponse)
                 {
-                    for(var i=0; i<dbResponse.length; i++)
+                    for(let i=0; i<dbResponse.length; i++)
                     {
                         dbResponse[i] = _this.helper.fixDataKeysAndTypes(ctx, dbResponse[i]);
                     }
@@ -76,7 +76,7 @@ module.exports =
          */
         function getConditionStringFromConfig(ctx)
         {
-            var entityConfig = ctx.config.entities[ctx.entity];
+            const entityConfig = ctx.config.entities[ctx.entity];
             if (!entityConfig.getReadCondition)
                 return "";
             return entityConfig.getReadCondition(ctx.userRoles, ctx.userId);
@@ -90,11 +90,11 @@ module.exports =
          */
         function getConditionFromRequest(ctx, requestParams)
         {
-            var isPrivate = requestParams.accessType === "private";
-            var condition = new _this.condition.CompoundCondition("&", []);
+            const isPrivate = requestParams.accessType === "private";
+            const condition = new _this.condition.CompoundCondition("&", []);
             if(!!requestParams.condition)
             {
-                var conditionString = decodeURIComponent(requestParams.condition);
+                const conditionString = decodeURIComponent(requestParams.condition);
                 condition.children.push(_this.condition.parse(ctx, conditionString));
             }
             else if(!!requestParams.id)
@@ -103,8 +103,8 @@ module.exports =
             }
             if(isPrivate)
             {
-                var fieldName = ctx.entity === "user" ? "id" : "ownerid";
-                var val = parseInt(condition.getValue(fieldName));
+                const fieldName = ctx.entity === "user" ? "id" : "ownerid";
+                const val = parseInt(condition.getValue(fieldName));
                 if(!isNaN(val) && val !== ctx.userId)
                 {
                     _this.exec.throwError("a19c", 401, "Unauthorized");

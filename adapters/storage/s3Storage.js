@@ -6,8 +6,8 @@ module.exports =
     dependencies: ["multiparty", "guid", "mime", "helper", "db"],
     Instance: function()
     {
-        var _this = this;
-        var provider = null;
+        const _this = this;
+        let provider = null;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -26,7 +26,7 @@ module.exports =
         {
             if(!!provider || !config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
                 return;
-            var AWS = require("aws-sdk");
+            const AWS = require("aws-sdk");
             provider = new AWS.S3(
             { 
                 accessKeyId: config.storage.awsAccessKeyId, 
@@ -42,8 +42,8 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
-            var isFirstPartReceived = false;
-            var form = new (_this.multiparty.Form)(
+            let isFirstPartReceived = false;
+            const form = new (_this.multiparty.Form)(
             {
                 autoFields: true
             });
@@ -52,7 +52,7 @@ module.exports =
                 isFirstPartReceived = true;
                 if (!stream.filename)
                     _this.exec.throwError("8dad", 400, "submitted file is not a valid file");
-                var name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
+                const name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
                 provider.upload(
                 {
                     Bucket: ctx.config.storage.s3Bucket,

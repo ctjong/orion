@@ -2,7 +2,7 @@ module.exports =
 {
     create: function(dbEngine, storageSetting)
     {
-        var config = 
+        const config = 
         {
             database: 
             {

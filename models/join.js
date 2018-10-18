@@ -6,7 +6,7 @@ module.exports =
     dependencies: [],
     Instance: function()
     {
-        var _this = this;
+        const _this = this;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -55,11 +55,11 @@ module.exports =
             {
                 throw "[Join.createForForeignKey] invalid field";
             }
-            var fk = ctx.config.entities[entity].fields[field].foreignKey;
-            var e2 = fk.foreignEntity;
-            var e2SelectFields = [];
-            var e2SelectFieldObjs = ctx.config.entities[e2].fields;
-            for(var key in e2SelectFieldObjs)
+            const fk = ctx.config.entities[entity].fields[field].foreignKey;
+            const e2 = fk.foreignEntity;
+            const e2SelectFields = [];
+            const e2SelectFieldObjs = ctx.config.entities[e2].fields;
+            for(const key in e2SelectFieldObjs)
             {
                 if(!e2SelectFieldObjs.hasOwnProperty(key))
                     continue;

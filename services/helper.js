@@ -6,7 +6,7 @@ module.exports =
     dependencies: [],
     Instance: function()
     {
-        var _this = this;
+        const _this = this;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -29,9 +29,9 @@ module.exports =
         function getFields (ctx, action, entity)
         {
             if(!entity) entity = ctx.entity;
-            var fields = ctx.config.entities[entity].fields;
-            var allowedFields = [];
-            for(var fieldName in fields)
+            const fields = ctx.config.entities[entity].fields;
+            const allowedFields = [];
+            for(const fieldName in fields)
             {
                 if(!fields.hasOwnProperty(fieldName))
                     continue;
@@ -55,16 +55,16 @@ module.exports =
         {
             if(!data)
                 return data;
-            var newData = {};
-            for(var key in data)
+            const newData = {};
+            for(const key in data)
             {
                 if(!data.hasOwnProperty(key))
                     continue;
                 if(key.contains("_"))
                 {
-                    var keyParts = key.split("_");
-                    var outerKey = keyParts[0].toLowerCase();
-                    var innerKey = keyParts[1].toLowerCase();
+                    const keyParts = key.split("_");
+                    const outerKey = keyParts[0].toLowerCase();
+                    const innerKey = keyParts[1].toLowerCase();
                     if(!newData[outerKey]) newData[outerKey] = {};
                     newData[outerKey][innerKey] = data[key];
                 }
@@ -76,7 +76,7 @@ module.exports =
             if(!entity) 
                 entity = ctx.entity;
             fixDataTypes(ctx, entity, newData);
-            for(var newKey in newData)
+            for(const newKey in newData)
             {
                 if(!newData.hasOwnProperty(newKey) || !newData[newKey] || typeof(newData[newKey]) !== "object")
                     continue;
@@ -100,7 +100,7 @@ module.exports =
         function onBeginWriteRequest (ctx, action, db, recordId, requestBody, callback)
         {
             requestBody = _this.fixDataKeysAndTypes(ctx, requestBody);
-            var isWriteAllowedFn = ctx.config.entities[ctx.entity].isWriteAllowed;
+            const isWriteAllowedFn = ctx.config.entities[ctx.entity].isWriteAllowed;
             if(action === "create")
             {
                 validateRoles(ctx, "create");
@@ -155,12 +155,12 @@ module.exports =
          */
         function fixDataTypes(ctx, entity, dataObj)
         {
-            var fields = ctx.config.entities[entity].fields;
-            for(var fieldName in fields)
+            const fields = ctx.config.entities[entity].fields;
+            for(const fieldName in fields)
             {
                 if(!fields.hasOwnProperty(fieldName))
                     continue;
-                var fieldType = fields[fieldName].type;
+                const fieldType = fields[fieldName].type;
                 if(dataObj[fieldName] === null || typeof(dataObj[fieldName]) === "undefined")
                     continue;
                 if(fieldType === "int")
@@ -183,10 +183,9 @@ module.exports =
          */
         function resolveForeignKeys(ctx, requestBody, db, callback)
         {
-            var fieldName;
-            var fields = ctx.config.entities[ctx.entity].fields;
-            var fieldNamesToResolve = [];
-            for(fieldName in fields)
+            const fields = ctx.config.entities[ctx.entity].fields;
+            const fieldNamesToResolve = [];
+            for(const fieldName in fields)
             {
                 if(!fields.hasOwnProperty(fieldName) || !fields[fieldName].foreignKey || !requestBody[fieldName])
                     continue;
@@ -198,10 +197,10 @@ module.exports =
             }
             else
             {
-                var op = { active: fieldNamesToResolve.length, isCallbackCalled: false };
-                for(var i=0; i<fieldNamesToResolve.length; i++)
+                const op = { active: fieldNamesToResolve.length, isCallbackCalled: false };
+                for(let i=0; i<fieldNamesToResolve.length; i++)
                 {
-                    fieldName = fieldNamesToResolve[i];
+                    const fieldName = fieldNamesToResolve[i];
                     resolveForeignKey(ctx, op, requestBody, fieldName, fields[fieldName].foreignKey, db, callback);
                 }
             }

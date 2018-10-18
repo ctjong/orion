@@ -4,10 +4,10 @@
  */
 module.exports = function(config)
 {
-    var express = require("express");
-    var _this = new express();
-    var modules = null;
-    var contextFactory = null;
+    const express = require("express");
+    const _this = new express();
+    let modules = null;
+    let contextFactory = null;
     _this.express = express;
 
     /*===================================================
@@ -121,11 +121,11 @@ module.exports = function(config)
      */
     _this.start = function(port, callback)
     {
-        var finalPort = port || process.env.PORT || 1337;
-        var server = _this.listen(finalPort, function () 
+        const finalPort = port || process.env.PORT || 1337;
+        const server = _this.listen(finalPort, function () 
         {
-            var host = server.address().address;
-            var port = server.address().port;
+            const host = server.address().address;
+            const port = server.address().port;
             console.log("Listening at http://%s:%s", host, port);
             if(!!callback)
                 callback();
@@ -143,7 +143,7 @@ module.exports = function(config)
     _this.findById = function(originalReq, entity, id, callback)
     {
         verifyConfig();
-        var params = { accessType: "public", id: id };
+        const params = { accessType: "public", id: id };
         executeDirectRead(originalReq, entity, params, true, callback);
     };
 
@@ -160,7 +160,7 @@ module.exports = function(config)
     _this.findByCondition = function(originalReq, entity, orderByField, skip, take, condition, callback)
     {
         verifyConfig();
-        var params = { accessType: "public", orderByField: orderByField, skip: skip, take: take, condition: condition };
+        const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take, condition: condition };
         executeDirectRead(originalReq, entity, params, false, callback);
     };
 
@@ -176,7 +176,7 @@ module.exports = function(config)
     _this.findAll = function(originalReq, entity, orderByField, skip, take, callback)
     {
         verifyConfig();
-        var params = { accessType: "public", orderByField: orderByField, skip: skip, take: take };
+        const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take };
         executeDirectRead(originalReq, entity, params, false, callback);
     };
 
@@ -298,12 +298,12 @@ module.exports = function(config)
         _this.use('/api/error', modules.get("body-parser").json());
         _this.post('/api/error', function (req, res)
         {
-            var config = contextFactory.getConfig();
+            const config = contextFactory.getConfig();
             if (!config)
             {
                 throw { "tag": "13bf", "statusCode": 500, "msg": "missing config" };
             }
-            var ctx = { req: req, res: res, config: config };
+            const ctx = { req: req, res: res, config: config };
             modules.get("db").insert(
                 ctx,
                 "error",
@@ -328,7 +328,7 @@ module.exports = function(config)
      */
     function executeDirectRead(originalReq, entity, params, isFullMode, callback)
     {
-        var res = {};
+        const res = {};
         res.status = function (status)
         {
             if (status !== 200)
@@ -344,8 +344,8 @@ module.exports = function(config)
         };
         res.json = res.send;
 
-        var req = { method: "GET", originalUrl: originalReq.originalUrl };
-        var context = new contextFactory.Context(req, res, entity);
+        const req = { method: "GET", originalUrl: originalReq.originalUrl };
+        const context = new contextFactory.Context(req, res, entity);
         req.context = context;
 
         modules.get("read").execute(context, params, isFullMode);

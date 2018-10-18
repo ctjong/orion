@@ -6,7 +6,7 @@ module.exports =
     dependencies: [],
     Instance: function()
     {
-        var _this = this;
+        const _this = this;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -48,9 +48,9 @@ module.exports =
             this.children = children;
             this.getValue = function(conditionKey)
             {
-                for(var i=0; i<children.length; i++)
+                for(let i=0; i<children.length; i++)
                 {
-                    var val = children[i].getValue(conditionKey);
+                    const val = children[i].getValue(conditionKey);
                     if(val !== null) return val;
                 }
                 return null;
@@ -65,21 +65,20 @@ module.exports =
          */
         function parse(ctx, conditionString)
         {
-            var i;
-            var condition = new _this.CompoundCondition("&", []);
+            const condition = new _this.CompoundCondition("&", []);
             if(conditionString === "") 
             {
                 condition.children.push(new _this.Condition(null,"1","=","1"));
             }
             else if(conditionString.contains("&") || conditionString.contains("|"))
             {
-                var andCondStrs = conditionString.split("&");
-                for(i=0; i<andCondStrs.length; i++)
+                const andCondStrs = conditionString.split("&");
+                for(let i=0; i<andCondStrs.length; i++)
                 {
                     if(!andCondStrs[i]) continue;
-                    var orConds = [];
-                    var orCondStrs  = andCondStrs[i].split("|");
-                    for(var j=0; j<orCondStrs.length; j++)
+                    const orConds = [];
+                    const orCondStrs  = andCondStrs[i].split("|");
+                    for(let j=0; j<orCondStrs.length; j++)
                     {
                         if(!orCondStrs[j]) continue;
                         orConds.push(_this.parse(ctx, orCondStrs[j]));
@@ -89,11 +88,11 @@ module.exports =
             }
             else
             {
-                var operands = null;
-                var operator = null;
-                var fieldValue = null;
-                var operators = ["~", "<>", "<=", ">=", "<", ">", "="];
-                for(i=0; i<operators.length; i++)
+                let operands = null;
+                let operator = null;
+                let fieldValue = null;
+                const operators = ["~", "<>", "<=", ">=", "<", ">", "="];
+                for(let i=0; i<operators.length; i++)
                 {
                     if(conditionString.contains(operators[i]))
                     {
@@ -104,13 +103,13 @@ module.exports =
                 }
                 if(!operands || operands.length < 2)
                     return null;
-                var fieldName = operands[0];
-                var fields = ctx.config.entities[ctx.entity].fields;
+                const fieldName = operands[0];
+                const fields = ctx.config.entities[ctx.entity].fields;
                 if(!fields.hasOwnProperty(fieldName))
                 {
                     _this.exec.throwError("9d1b", 400, "unrecognized field " + fieldName + " found in condition");
                 }
-                var fieldType = ctx.config.entities[ctx.entity].fields[fieldName].type;
+                const fieldType = ctx.config.entities[ctx.entity].fields[fieldName].type;
                 if(fieldType === "int") 
                 {
                     fieldValue = parseInt(operands[1]);

@@ -3,17 +3,16 @@
  */
 module.exports = function () 
 {
-    var _this = this;
-    var config = null;
+    let config = null;
 
-    var defaultFields =
+    const defaultFields =
         {
             "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
             "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
             "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
         };
 
-    var defaultEntities =
+    const defaultEntities =
         {
             "asset":
             {
@@ -79,7 +78,7 @@ module.exports = function ()
         this.userName = null;
         this.userRoles = [];
         this.userDomain = null;
-        var errorObj = null;
+        let errorObj = null;
 
         try
         {
@@ -106,7 +105,7 @@ module.exports = function ()
         config = inputConfig;
 
         // merge defaultFields into the config
-        for (var entityName in config.entities)
+        for (const entityName in config.entities)
         {
             if (!config.entities.hasOwnProperty(entityName) || !!defaultEntities[entityName])
                 continue;
@@ -114,15 +113,15 @@ module.exports = function ()
         }
 
         // merge defaultEntities into the config
-        for (var defaultEntityName in defaultEntities)
+        for (const defaultEntityName in defaultEntities)
         {
             if (!defaultEntities.hasOwnProperty(defaultEntityName))
                 continue;
-            var defaultEntity = defaultEntities[defaultEntityName];
+            const defaultEntity = defaultEntities[defaultEntityName];
             if(!!config.entities[defaultEntityName])
             {
                 // the client's config specifies an override for a default entity
-                for(var propName in defaultEntity)
+                for(const propName in defaultEntity)
                 {
                     if (!defaultEntity.hasOwnProperty(propName))
                         continue;
@@ -158,8 +157,8 @@ module.exports = function ()
     {
         if(typeof defaultObj === "function")
             return !overrideObj ? defaultObj : overrideObj;
-        var mergedObj = Object.assign({}, overrideObj);
-        for(var key in defaultObj)
+        const mergedObj = Object.assign({}, overrideObj);
+        for(const key in defaultObj)
         {
             if(!defaultObj.hasOwnProperty(key) || !!mergedObj[key])
                 continue;

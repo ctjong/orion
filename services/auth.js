@@ -6,7 +6,7 @@ module.exports =
     dependencies: ["jwt", "db", "crypto", "condition", "https"],
     Instance: function()
     {
-        var _this = this;
+        const _this = this;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -24,15 +24,15 @@ module.exports =
          */
         function initUserContext(ctx)
         {
-            var authHeader = ctx.req.get("authorization");
+            const authHeader = ctx.req.get("authorization");
             if(!!authHeader && !!ctx.config.auth)
             {
                 try
                 {
-                    var token = authHeader.replace("Bearer ", "");
-                    var decoded = _this.jwt.verify(token, ctx.config.auth.secretKey);
-                    var expiry = parseInt(decoded.expiry);
-                    var now = new Date().getTime();
+                    const token = authHeader.replace("Bearer ", "");
+                    const decoded = _this.jwt.verify(token, ctx.config.auth.secretKey);
+                    const expiry = parseInt(decoded.expiry);
+                    const now = new Date().getTime();
                     if(isNaN(expiry) || expiry >= now)
                     {
                         ctx.userId = parseInt(decoded.id);
@@ -76,7 +76,7 @@ module.exports =
                     if(!user) 
                         _this.exec.throwError("13c2", 400, "user not found with userName " + userName);
                     if(user.domain !== "local") _this.exec.throwError("24a7", 400, "external user login is not supported in this endpoint");
-                    var hashedInput = _this.hashPassword(ctx, password);
+                    const hashedInput = _this.hashPassword(ctx, password);
                     if(hashedInput !== user.password) _this.exec.throwError("003a", 400, "invalid login");
                     // generate token
                     createAndSendToken(ctx, user.id, "local", "", user.roles, user.firstname, user.lastname);
@@ -94,21 +94,21 @@ module.exports =
         function processFbToken(ctx, fbToken) 
         {
             verifyAuthSupported(ctx);
-            var req = _this.https.request(
+            const req = _this.https.request(
                 {
                     host: "graph.facebook.com", 
                     path: "/v2.2/me?fields=id,first_name,last_name,email&access_token=" + fbToken
                 }, 
                 function(response)
                 {
-                    var body = '';
+                    const body = '';
                     response.on('data', _this.exec.cb(ctx, function(d) 
                     {
                         body += d;
                     }));
                     response.on('end', _this.exec.cb(ctx, function() 
                     {
-                        var parsed = JSON.parse(body);
+                        const parsed = JSON.parse(body);
                         if(!parsed.hasOwnProperty("id"))
                             _this.exec.throwError("3f9c", 400, "bad request");
                         _this.db.quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id}, function(readResponse)
@@ -122,7 +122,7 @@ module.exports =
                                     ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name, new Date().getTime()], 
                                     function(createResponse)
                                     {
-                                        var id = createResponse[0].identity.toString();
+                                        const id = createResponse[0].identity.toString();
                                         createAndSendToken(ctx, id, "fb", parsed.id, "member", parsed.first_name, parsed.last_name);
                                     }
                                 );
@@ -146,7 +146,7 @@ module.exports =
         function hashPassword(ctx, plainPassword)
         {
             verifyAuthSupported(ctx);
-            var hash = _this.crypto.createHmac('sha512', ctx.config.auth.salt);
+            const hash = _this.crypto.createHmac('sha512', ctx.config.auth.salt);
             hash.update(plainPassword);
             return hash.digest('hex');
         }
@@ -176,11 +176,11 @@ module.exports =
          */
         function createAndSendToken(ctx, id, domain, domainId, roles, firstName, lastName)
         {
-            var tokenPayload = { id: id, domain: domain, domainId: domainId, roles: roles };
-            var tokenLifetimeInMins = ctx.config.auth.tokenLifetimeInMins;
+            const tokenPayload = { id: id, domain: domain, domainId: domainId, roles: roles };
+            const tokenLifetimeInMins = ctx.config.auth.tokenLifetimeInMins;
             if(!!tokenLifetimeInMins)
                 tokenPayload.expiry = new Date().getTime() + tokenLifetimeInMins * 60000;
-            var token = _this.jwt.sign(tokenPayload, ctx.config.auth.secretKey);
+            const token = _this.jwt.sign(tokenPayload, ctx.config.auth.secretKey);
             ctx.res.json({"token": token, "id": id, "firstname": firstName, "lastname": lastName});
         }
 

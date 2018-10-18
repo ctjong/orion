@@ -3,8 +3,9 @@
  */
 module.exports = {
     dependencies: ["auth", "helper", "condition", "db"],
-    Instance: function(){
-        var _this = this;
+    Instance: function()
+    {
+        const _this = this;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -26,11 +27,11 @@ module.exports = {
         {
             _this.helper.onBeginWriteRequest(ctx, "update", _this.db, recordId, requestBody, function(record, requestBody)
             {
-                var updateData = {};
-                var fields = _this.helper.getFields(ctx, "update");
-                for(var i=0; i<fields.length; i++)
+                const updateData = {};
+                const fields = _this.helper.getFields(ctx, "update");
+                for(let i=0; i<fields.length; i++)
                 {
-                    var fieldName = fields[i];
+                    const fieldName = fields[i];
                     if(!requestBody.hasOwnProperty(fieldName)) continue;
                     updateData[fieldName] = requestBody[fieldName];
                 }
@@ -42,7 +43,7 @@ module.exports = {
                 {
                     _this.exec.throwError("511f", 400, "updating external user info is not supported");
                 }
-                var condition = new _this.condition.Condition(ctx.entity, "id", "=", recordId);
+                const condition = new _this.condition.Condition(ctx.entity, "id", "=", recordId);
                 _this.db.update(ctx, ctx.entity, updateData, condition, function(dbResponse)
                 {
                     ctx.res.send(dbResponse);

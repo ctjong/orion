@@ -6,8 +6,8 @@ module.exports =
     dependencies: ["multiparty", "guid", "mime", "helper", "db"],
     Instance: function()
     {
-        var _this = this;
-        var provider = null;
+        const _this = this;
+        let provider = null;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -26,7 +26,7 @@ module.exports =
         {
             if(!!provider || !config.storage.azureStorageConnectionString)
                 return;
-            var azure = require("azure-storage");
+            const azure = require("azure-storage");
             provider = azure.createBlobService(config.storage.azureStorageConnectionString);
         }
 
@@ -38,15 +38,15 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
-            var isFirstPartReceived = false;
-            var form = new (_this.multiparty.Form)();
+            const isFirstPartReceived = false;
+            const form = new (_this.multiparty.Form)();
             form.on('part', _this.exec.cb(ctx, function (stream) 
             {
                 isFirstPartReceived = true;
                 if (!stream.filename)
                     _this.exec.throwError("ffce", 400, "submitted file is not a valid file");
-                var size = stream.byteCount - stream.byteOffset;
-                var name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
+                const size = stream.byteCount - stream.byteOffset;
+                const name = _this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
                 provider.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
                 {
                     contentSettings: { contentType: _this.mime.lookup(name) }

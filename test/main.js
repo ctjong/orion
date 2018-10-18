@@ -1,13 +1,13 @@
 (function()
 {
-    var Runner = require('./runner');
-    var configFactory = require('./configFactory');
+    const Runner = require('./runner');
+    const configFactory = require('./configFactory');
 
-    var assetTests = require('./tests/tests-asset');
-    var errorTests = require('./tests/tests-error');
-    var itemTests = require('./tests/tests-item');
-    var messageTests = require('./tests/tests-message');
-    var userTests = require('./tests/tests-user');
+    const assetTests = require('./tests/tests-asset');
+    const errorTests = require('./tests/tests-error');
+    const itemTests = require('./tests/tests-item');
+    const messageTests = require('./tests/tests-message');
+    const userTests = require('./tests/tests-user');
 
     /** 
      * Test entry point
@@ -15,10 +15,10 @@
     function main()
     {
         // initialize configs
-        var mssqlAzureConfig = configFactory.create("mssql", { provider: "azure" });
-        var mysqlS3Config = configFactory.create("mysql", { provider: "s3" });
-        var mssqlLocalConfig = configFactory.create("mssql", { provider: "local", uploadPath: "uploads" });
-        var mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
+        const mssqlAzureConfig = configFactory.create("mssql", { provider: "azure" });
+        const mysqlS3Config = configFactory.create("mysql", { provider: "s3" });
+        const mssqlLocalConfig = configFactory.create("mssql", { provider: "local", uploadPath: "uploads" });
+        const mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
 
         // run tests
         startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [errorTests, itemTests, messageTests, userTests, assetTests]);
@@ -37,7 +37,7 @@
      */
     function startTestSession(config, engine, storageProviderName, sessionName, tests)
     {
-        var runner = new Runner(config, engine, storageProviderName);
+        const runner = new Runner(config, engine, storageProviderName);
 
         before(function(done)
         {
@@ -47,7 +47,7 @@
 
         describe(sessionName, function()
         {
-            var params = 
+            const params = 
             {
                 // { id: "1", domain: "local", domainId: null, roles: "member" }
                 user1Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJkb21haW4iOiJsb2NhbCIsImRvbWFpbklkIjpudWxsLCJyb2xlcyI6Im1lbWJlciIsImlhdCI6MTUxOTQ1OTYyOH0.MWjNP36TRnrBTmtDQqLN3tWRn06eASEu7Z4_7ocYrcU",
@@ -59,7 +59,7 @@
                 hashedPassword: "3a6ad575db2b6a2a170f26505dff23a2b0ec337b34c011269ccd4e024e25847eea9e5023e58dd4084c94dea5127ab4e3f7c2122a2ef208c81e6035de37ccfec8"
             };
 
-            for(var i=0; i<tests.length; i++)
+            for(let i=0; i<tests.length; i++)
                 tests[i](runner, params);
         });
     }

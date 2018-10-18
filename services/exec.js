@@ -7,7 +7,7 @@ module.exports =
     dependencies: [],
     Instance: function()
     {
-        var _this = this;
+        const _this = this;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -34,7 +34,7 @@ module.exports =
                 err = parseError(err);
             }
             console.error(err);
-            var config = !!req.context && !!req.context.config ? req.context.config : null;
+            const config = !!req.context && !!req.context.config ? req.context.config : null;
             try
             {
                 if(!!db && !!config)
@@ -43,8 +43,8 @@ module.exports =
                     if(!err.statusCode) err.statusCode = 500;
                     if(!err.msg) err.msg = "";
                     if(!!err.stack) err.msg = err.stack.substring(0,255);
-                    var ctx = {res: res, config: config};
-                    var url = req.method + " " + req.originalUrl;
+                    const ctx = {res: res, config: config};
+                    const url = req.method + " " + req.originalUrl;
                     db.insert(
                         ctx, 
                         "error", 

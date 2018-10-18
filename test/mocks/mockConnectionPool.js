@@ -1,11 +1,10 @@
 /**
  * A mock connection pool module
  */
-var mock = function(engine)
+const mock = function(engine)
 {
-    var queryResults = [];
-    var queryReceivedHandler = null;
-    var inputQueryParams = null;
+    let queryResults = [];
+    let queryReceivedHandler = null;
 
     //----------------------------------------------
     // CONSTRUCTOR
@@ -20,7 +19,7 @@ var mock = function(engine)
     /**
      * MSSQL object containing database connection functions and properties
      */
-    var mssql =
+    const mssql =
     {
         InputQueryParams: null,
         Request: function(connection)
@@ -93,7 +92,7 @@ var mock = function(engine)
             queryReceivedHandler(queryString, queryParams, engine);
         queryString = queryString.toLowerCase();
 
-        var currentQueryResults = queryResults;
+        let currentQueryResults = queryResults;
         queryResults = [];
 
         if(currentQueryResults.length === 0 && queryString.indexOf("insert into") >= 0)

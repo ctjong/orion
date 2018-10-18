@@ -6,9 +6,9 @@ module.exports =
     dependencies: ["multiparty", "guid", "mime", "helper", "db"],
     Instance: function()
     {
-        var _this = this;
-        var path = require("path");
-        var provider = null;
+        const _this = this;
+        const path = require("path");
+        let provider = null;
 
         //----------------------------------------------
         // CONSTRUCTOR
@@ -38,17 +38,17 @@ module.exports =
          */
         function uploadFile(ctx, req, callback)
         {
-            var form = new (_this.multiparty.Form)(
+            const form = new (_this.multiparty.Form)(
             {
                 autoFiles: true,
                 uploadDir: ctx.config.storage.uploadPath
             });
             form.on('file', _this.exec.cb(ctx, function(name, file)
             {
-                var tempPath = file.path;
-                var tempName = path.basename(tempPath);
-                var finalName = _this.guid() + tempName.substring(tempName.lastIndexOf("."));
-                var finalPath = tempPath.replace(tempName, finalName);
+                const tempPath = file.path;
+                const tempName = path.basename(tempPath);
+                const finalName = _this.guid() + tempName.substring(tempName.lastIndexOf("."));
+                const finalPath = tempPath.replace(tempName, finalName);
                 provider.rename(tempPath, finalPath, _this.exec.cb(ctx, function(error)
                 {
                     callback(error, finalName);
@@ -69,7 +69,7 @@ module.exports =
          */
         function deleteFile(ctx, filename, callback)
         {
-            var fullPath = ctx.config.storage.uploadPath + "/" + filename;
+            const fullPath = ctx.config.storage.uploadPath + "/" + filename;
             provider.unlink(fullPath, function (error)
             {
                 callback(error);
