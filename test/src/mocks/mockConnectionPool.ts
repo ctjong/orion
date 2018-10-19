@@ -1,4 +1,4 @@
-import { NameValueMap } from "../../core/types";
+import { NameValueMap } from "../../../src/types";
 
 /**
  * A mock connection pool module

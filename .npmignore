@@ -2,8 +2,8 @@
 /.vs
 /bin
 /obj
-/src
-/build/test
+/core/src
+/test
 *.sln
 *.njsproj
 /docs

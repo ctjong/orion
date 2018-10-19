@@ -9,4 +9,5 @@ package-lock.json
 .vscode
 coverage
 .nyc_output
-build
+test/build
+core/build

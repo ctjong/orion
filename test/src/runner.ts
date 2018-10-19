@@ -1,5 +1,5 @@
-import { Config, NameValueMap } from "../core/types";
-import Orion from "../core";
+import { Config, NameValueMap } from "../../src/types";
+import Orion from "../../src/index";
 import { queries } from "./queries";
 import { MockConnectionPool } from './mocks/mockConnectionPool';
 import { MockStorageProvider } from './mocks/mockStorageProvider';

@@ -1,4 +1,4 @@
-import { Config } from "../core/types";
+import { Config } from "../../src/types";
 import { Runner } from './runner';
 import { configFactory } from './configFactory';
 import { assetTestSuite } from './tests/tests-asset';
