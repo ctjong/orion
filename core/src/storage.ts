@@ -1,4 +1,4 @@
-import { Config, Context } from "../types";
+import { Config, Context } from "./types";
 
 export interface Storage
 {

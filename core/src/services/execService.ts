@@ -1,5 +1,5 @@
 import { Context } from "../types";
-import { Database } from "./database";
+import { Database } from "../database";
 
 /**
  * A module for handling the execution of code outside of the main thread.

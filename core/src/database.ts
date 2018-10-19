@@ -1,4 +1,4 @@
-import { Context, Condition, NameValueMap } from '../types';
+import { Context, Condition, NameValueMap } from './types';
 
 export interface Database
 {

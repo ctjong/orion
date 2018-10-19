@@ -1,5 +1,5 @@
 import { Context, NameValueMap, Condition, Join, CompoundCondition, SingleCondition } from "../../types";
-import { Database } from "../../services/database";
+import { Database } from "../../database";
 import { conditionFactory } from "../../services/conditionFactory";
 import { execService } from "../../services/execService";
 import { helperService } from "../../services/helperService";

@@ -1,6 +1,6 @@
 import { Config } from '../types';
-import { Database } from './database';
-import { Storage } from './storage';
+import { Database } from '../database';
+import { Storage } from '../storage';
 import { MssqlDatabase } from '../adapters/db/mssqlDatabase';
 import { MysqlDatabase } from '../adapters/db/mysqlDatabase';
 import { AzureStorage } from '../adapters/storage/azureStorage';

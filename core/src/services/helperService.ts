@@ -1,5 +1,5 @@
 import { Context, NameValueMap } from "../types";
-import { Database } from "./database";
+import { Database } from "../database";
 import { execService } from "./execService";
 
 /**
