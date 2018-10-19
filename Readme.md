@@ -2,11 +2,11 @@
 
 [![npm](https://img.shields.io/npm/dt/orion-api.svg)](https://www.npmjs.com/package/orion-api) [![npm](https://img.shields.io/npm/v/orion-api.svg)](https://www.npmjs.com/package/orion-api) [![David](https://img.shields.io/david/ctjong/orion.svg)](https://www.npmjs.com/package/orion-api)
 
-Orion is an extension of [Express](https://github.com/expressjs/express) which allows you to build a fully functional REST API in just a few steps! It sets up all the CRUD data endpoints, file uploads, authentication endpoints, and error handling for you. All you need to do is just create a configuration and instantiate the application!
+Orion is a wrapper framework of [Express](https://github.com/expressjs/express) that allows you to build a config-based API server. It reads a configuration file that you provide and based on that it will set up a full-fledged API server, which includes CRUD data endpoints, file management endpoints, authentication endpoints, and error handling endpoints.
 
 ## Supported components
 
-The library allows you to use the following services based on your preferences:
+The framework allows you to use the following services based on your preferences:
 - Database: **SQL Server** / **MySQL**
 - File storage: **Azure Blob Storage** / **Amazon S3** / **Local Server**
 - Authentication: **Facebook token** / **Orion JSON Web Token (JWT)**

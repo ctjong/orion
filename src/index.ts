@@ -14,66 +14,51 @@ import { readHandler } from "./handlers/readHandler";
 import { updateHandler } from "./handlers/updateHandler";
 
 /**
- * Construct an orion app object
- * @param {any} config configuration json
+ * An Orion app object
  */
-export default function(config: Config) : Express.Express
+export default class Orion 
 {
-    const app:any = Express();
-    app.express = Express;
+    app:Express.Express = null;
+    express:any = Express;
 
-    // // register modules
-    // app.modules.add("body-parser", 'body-parser');
-    // app.modules.add("crypto", 'crypto');
-    // app.modules.add("guid", 'uuid/v1');
-    // app.modules.add("multiparty", 'multiparty');
-    // app.modules.add("mime", 'mime-types');
-    // app.modules.add("jwt", 'jsonwebtoken');
-    // app.modules.add("https", 'https');
-    // app.modules.addClass("create", './handlers/create');
-    // app.modules.addClass("createAsset", './handlers/createAsset');
-    // app.modules.addClass("delete", './handlers/delete');
-    // app.modules.addClass("deleteAsset", './handlers/deleteAsset');
-    // app.modules.addClass("read", './handlers/read');
-    // app.modules.addClass("update", './handlers/update');
-    // app.modules.addClass("auth", './services/auth');
-    // app.modules.addClass("exec", './services/exec');
-    // app.modules.addClass("helper", './services/helper');
-    // app.modules.addClass("conditionFactory", './services/conditionFactory');
-    // app.modules.addClass("joinFactory", './services/joinFactory');
-
-    // initialize components
-    contextFactory.initializeConfig(config);
-    dataService.initialize(config);
-
-    // setup monitoring
-    if (config.monitoring)
+    /**
+     * Construct an Orion app
+     * @param config configuration object
+     */
+    constructor(config:Config)
     {
-        if (!!config.monitoring.appInsightsKey)
-            applicationInsights.setup(config.monitoring.appInsightsKey).start();
-    }
+        this.app = Express();
 
-    const ext:AppExtension = new AppExtension(app);
-    app.setupApiEndpoints = ext.setupApiEndpoints;
-    app.start = ext.start;
-    app.findById = ext.findById;
-    app.findAll = ext.findAll;
-    app.findByCondition = ext.findByCondition;
-    app.getDatabaseAdapter = ext.getDatabaseAdapter;
-    app.getStorageAdapter = ext.getStorageAdapter;
-    return app;
-};
+        // // register modules
+        // app.modules.add("body-parser", 'body-parser');
+        // app.modules.add("crypto", 'crypto');
+        // app.modules.add("guid", 'uuid/v1');
+        // app.modules.add("multiparty", 'multiparty');
+        // app.modules.add("mime", 'mime-types');
+        // app.modules.add("jwt", 'jsonwebtoken');
+        // app.modules.add("https", 'https');
+        // app.modules.addClass("create", './handlers/create');
+        // app.modules.addClass("createAsset", './handlers/createAsset');
+        // app.modules.addClass("delete", './handlers/delete');
+        // app.modules.addClass("deleteAsset", './handlers/deleteAsset');
+        // app.modules.addClass("read", './handlers/read');
+        // app.modules.addClass("update", './handlers/update');
+        // app.modules.addClass("auth", './services/auth');
+        // app.modules.addClass("exec", './services/exec');
+        // app.modules.addClass("helper", './services/helper');
+        // app.modules.addClass("conditionFactory", './services/conditionFactory');
+        // app.modules.addClass("joinFactory", './services/joinFactory');
 
-/**
- * Class defining some extension functions to be added to the Orion application object
- */
-class AppExtension
-{
-    app:any;
+        // initialize components
+        contextFactory.initializeConfig(config);
+        dataService.initialize(config);
 
-    constructor(app:any)
-    {
-        this.app = app;
+        // setup monitoring
+        if (config.monitoring)
+        {
+            if (!!config.monitoring.appInsightsKey)
+                applicationInsights.setup(config.monitoring.appInsightsKey).start();
+        }
     }
 
     /**
@@ -125,8 +110,9 @@ class AppExtension
         const finalPort = port || process.env.PORT || 1337;
         const server = this.app.listen(finalPort, () => 
         {
-            const host = server.address().address;
-            const port = server.address().port;
+            const addr:any = server.address();
+            const host = addr.address;
+            const port = addr.port;
             console.log("Listening at http://%s:%s", host, port);
             if(!!callback)
                 callback();
@@ -295,7 +281,7 @@ class AppExtension
         this.app.use('/api/error', bodyParser.json());
         this.app.post('/api/error', (req:any, res:any) =>
         {
-            const config = contextFactory.getConfig();
+            const config = contextFactory.config;
             if (!config)
             {
                 throw { "tag": "13bf", "statusCode": 500, "msg": "missing config" };

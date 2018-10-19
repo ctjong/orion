@@ -12,10 +12,8 @@
 
 ## API Reference
 
-An Orion application object is an extension of an [Express application object](https://expressjs.com/en/4x/api.html#app), meaning all default properties and methods from Express are inherited to the object. Express's static methods (**json()**, **static()**, **Router()**, **urlencoded()**) are exposed through the **app.express** property. 
-
-Here are some additional methods that are accessible from an Orion application object:
-
+- **app** - The underlying [Express application object](https://expressjs.com/en/4x/api.html#app)
+- **express** - Object containing Express's static methods (**json()**, **static()**, **Router()**, **urlencoded()**)
 - **setupApiEndpoints()** - Setup REST API endpoints to do CRUD operations. See [API Endpoints](api-endpoints) for the list of endpoints created from this function call.
 - **start(port, callback)** - Start the server. This function is calling Express's **listen()**.
     - **port** - (Optional) Optional port to start the server at.
