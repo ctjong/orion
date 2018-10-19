@@ -1,8 +1,10 @@
-module.exports = 
+import { Config } from "../core/types";
+
+class ConfigFactory
 {
-    create: (dbEngine, storageSetting) =>
+    create(dbEngine:string, storageSetting:any)
     {
-        const config = 
+        const config:Config = 
         {
             database: 
             {
@@ -67,15 +69,15 @@ module.exports =
                         "update": ["member", "admin"],
                         "delete": ["admin"]
                     },
-                    getReadCondition: (roles, userId) =>
+                    getReadCondition: (roles:string[], userId:string) =>
                     {
-                        if(roles.contains("admin"))
+                        if(roles.indexOf("admin") >= 0)
                             return "";
                         return "ownerid=" + userId + "|recipientid=" + userId;
                     },
-                    isWriteAllowed: (action, roles, userId, dbResource, inputResource) =>
+                    isWriteAllowed: (action:string, roles:string[], userId:string, dbResource:any, inputResource:any) =>
                     {
-                        if(action !== "update" || roles.contains("admin"))
+                        if(action !== "update" || roles.indexOf("admin") >= 0)
                             return true;
                         return userId === dbResource.recipientid;
                     }
@@ -85,3 +87,7 @@ module.exports =
         return config;
     }
 };
+
+
+const configFactory = new ConfigFactory();
+export { configFactory };

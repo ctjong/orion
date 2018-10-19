@@ -1,4 +1,4 @@
-import { Config, Entity, FieldSet, Context } from '../types';
+import { Config, Entity, FieldSet, Context, UserInfo } from '../types';
 
 const defaultFields : FieldSet =
     {
@@ -66,10 +66,7 @@ class ContextFactory
         context.config = this.config;
         context.req = req;
         context.res = res;
-        context.userId = null;
-        context.userName = null;
-        context.userRoles = [];
-        context.userDomain = null;
+        context.user = new UserInfo();
 
         let errorObj:any = null;
         try
@@ -101,7 +98,7 @@ class ContextFactory
         // merge defaultFields into the this.config
         for (const entityName in this.config.entities)
         {
-            if (!this.config.entities.hasOwnProperty(entityName) || !!defaultEntities[entityName])
+            if (!this.config.entities.hasOwnProperty(entityName) || defaultEntities[entityName])
                 continue;
             this.config.entities[entityName].fields = Object.assign({}, defaultFields, this.config.entities[entityName].fields);
         }

@@ -236,7 +236,7 @@
 //         const response = await this.queryAsync(queryString, queryParams);
 //         if (response.error)
 //         {
-//             if (!!completeCb)
+//             if (completeCb)
 //                 completeCb();
 //             console.log(error);
 //             this.exec.sendErrorResponse(ctx, "a07f", 500, "error while sending query to database");
@@ -244,7 +244,7 @@
 //         else
 //         {
 //             successCb(response.results);
-//             if (!!completeCb)
+//             if (completeCb)
 //                 completeCb();
 //         }
 //         console.log("-------------------------------------------------");
@@ -258,7 +258,7 @@
 //     {
 //         return new Promise(resolve =>
 //         {
-//             if(!!this.pool)
+//             if(this.pool)
 //             {
 //                 resolve();
 //                 return;
@@ -319,7 +319,7 @@
 //     {
 //         const fldName = fields[f];
 //         const fieldObj = ctxFields[fldName];
-//         if(!!fieldObj.foreignKey) 
+//         if(fieldObj.foreignKey) 
 //         {
 //             joins.push(joinFactory.createForForeignKey(ctx, entity, fldName));
 //         }

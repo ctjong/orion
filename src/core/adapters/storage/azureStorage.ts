@@ -19,7 +19,7 @@
 //      */
 //     initialize(config)
 //     {
-//         if(!!provider || !config.storage.azureStorageConnectionString)
+//         if(provider || !config.storage.azureStorageConnectionString)
 //             return;
 //         const azure = require("azure-storage");
 //         provider = azure.createBlobService(config.storage.azureStorageConnectionString);

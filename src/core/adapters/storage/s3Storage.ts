@@ -19,7 +19,7 @@
 //      */
 //     initialize(config)
 //     {
-//         if(!!provider || !config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
+//         if(provider || !config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
 //             return;
 //         const AWS = require("aws-sdk");
 //         provider = new AWS.S3(

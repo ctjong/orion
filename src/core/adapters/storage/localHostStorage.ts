@@ -20,7 +20,7 @@
 //      */
 //     initialize(config)
 //     {
-//         if(!!provider)
+//         if(provider)
 //             return;
 //         provider = require("fs");
 //     }

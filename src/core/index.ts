@@ -56,7 +56,7 @@ export default class Orion
         // setup monitoring
         if (config.monitoring)
         {
-            if (!!config.monitoring.appInsightsKey)
+            if (config.monitoring.appInsightsKey)
                 applicationInsights.setup(config.monitoring.appInsightsKey).start();
         }
     }
@@ -114,7 +114,7 @@ export default class Orion
             const host = addr.address;
             const port = addr.port;
             console.log("Listening at http://%s:%s", host, port);
-            if(!!callback)
+            if(callback)
                 callback();
         });
         return server;

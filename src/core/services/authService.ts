@@ -17,7 +17,7 @@ class AuthService
     initUserContext(ctx:Context): void
     {
         const authHeader:string = ctx.req.get("authorization");
-        if(!!authHeader && !!ctx.config.auth)
+        if(authHeader && ctx.config.auth)
         {
             try
             {
@@ -105,31 +105,34 @@ class AuthService
             (response) =>
             {
                 let body = '';
-                response.on('data', execService.cb(ctx, (data:string) => 
+                response.on('data', (data:string) => 
                 {
-                    body += data;
-                }));
-                response.on('end', execService.cb(ctx, async () =>
+                    execService.catchAllErrors(ctx, () => body += data);
+                });
+                response.on('end', async () =>
                 {
-                    const parsed = JSON.parse(body);
-                    if(!parsed.hasOwnProperty("id"))
-                        execService.throwError("3f9c", 400, "bad request");
-
-                    const readResponse = await dataService.db.quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id});
-                    if(readResponse)
+                    execService.catchAllErrors(ctx, async () =>
                     {
-                        this.createAndSendToken(ctx, readResponse.id, "fb", parsed.id, readResponse.roles, parsed.first_name, parsed.last_name);
-                        return;
-                    }
+                        const parsed = JSON.parse(body);
+                        if(!parsed.hasOwnProperty("id"))
+                            execService.throwError("3f9c", 400, "bad request");
 
-                    const createResponse = await dataService.db.insert(
-                        ctx,
-                        "user", 
-                        ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 
-                        ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name, new Date().getTime()]);
-                    const id = createResponse[0].identity.toString();
-                    this.createAndSendToken(ctx, id, "fb", parsed.id, ["member"], parsed.first_name, parsed.last_name);
-                }));
+                        const readResponse = await dataService.db.quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id});
+                        if(readResponse)
+                        {
+                            this.createAndSendToken(ctx, readResponse.id, "fb", parsed.id, readResponse.roles, parsed.first_name, parsed.last_name);
+                            return;
+                        }
+
+                        const createResponse = await dataService.db.insert(
+                            ctx,
+                            "user", 
+                            ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 
+                            ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name, new Date().getTime()]);
+                        const id = createResponse[0].identity.toString();
+                        this.createAndSendToken(ctx, id, "fb", parsed.id, ["member"], parsed.first_name, parsed.last_name);
+                    });
+                });
             }
         );
         req.end();

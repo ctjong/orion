@@ -1,9 +1,16 @@
+import { NameValueMap } from "../../core/types";
+
 /**
  * A mock connection pool module
  */
-module.exports = class MockConnectionPool
+export class MockConnectionPool
 {
-    constructor(engine)
+    engine:string;
+    sql:any;
+    queryResults:any;
+    queryReceivedHandler:any;
+
+    constructor(engine:string)
     {
         this.engine = engine;
         this.sql = new MssqlWrapper(this);
@@ -17,7 +24,7 @@ module.exports = class MockConnectionPool
      * @param {*} queryParams Query params
      * @param {*} callback callback function
      */
-    query (queryString, queryParams, callback)
+    query (queryString:string, queryParams:NameValueMap, callback:any)
     {
         this.processQuery(this.engine, queryString, queryParams, callback);
     }
@@ -26,7 +33,7 @@ module.exports = class MockConnectionPool
      * Set the results for the active query
      * @param {*} nextQueryResultsArg query results
      */
-    setQueryResults(nextQueryResultsArg)
+    setQueryResults(nextQueryResultsArg:any)
     {
         this.queryResults = nextQueryResultsArg;
     }
@@ -35,7 +42,7 @@ module.exports = class MockConnectionPool
      * To be invoked when a query is received to be sent to database
      * @param {*} queryReceivedHandlerArg handler function
      */
-    onQueryReceived(queryReceivedHandlerArg)
+    onQueryReceived(queryReceivedHandlerArg:any)
     {
         this.queryReceivedHandler = queryReceivedHandlerArg;
     }
@@ -55,7 +62,7 @@ module.exports = class MockConnectionPool
      * @param {*} queryParams query parameters
      * @param {*} callback callback function
      */
-    processQuery(engine, queryString, queryParams, callback)
+    processQuery(engine:string, queryString:string, queryParams:NameValueMap, callback:any)
     {
         if(this.queryReceivedHandler)
             this.queryReceivedHandler(queryString, queryParams, engine);
@@ -94,25 +101,27 @@ module.exports = class MockConnectionPool
  */
 class MssqlWrapper
 {
-    constructor(pool)
+    pool:any;
+    inputQueryParams:any = null;
+    BigInt:string = "bigint";
+
+    constructor(pool:any)
     {
         this.pool = pool
-        this.InputQueryParams = null;
-        this.BigInt = "bigint";
     }
 
     Request()
     {
-        this.InputQueryParams = {};
+        this.inputQueryParams = {};
         const obj =
         {
-            input : (arg0, arg1, arg2) =>
+            input : (arg0:any, arg1:any, arg2:any) =>
             {
-                this.InputQueryParams[arg0] = !arg2 ? ["string", arg1] : [arg1, arg2];
+                this.inputQueryParams[arg0] = !arg2 ? ["string", arg1] : [arg1, arg2];
             },
-            query : (queryString, callback) =>
+            query : (queryString:string, callback:any) =>
             {
-                this.pool.processQuery(this.pool.engine, queryString, this.InputQueryParams, callback);
+                this.pool.processQuery(this.pool.engine, queryString, this.inputQueryParams, callback);
             }
         };
         return obj;

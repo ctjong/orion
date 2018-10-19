@@ -1,36 +1,46 @@
-const queries = require("./queries");
-const Orion = require('../target/index');
-const MockConnectionPool = require('./mocks/mockConnectionPool');
-const MockStorageProvider = require('./mocks/mockStorageProvider');
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
-const jwt = require('jsonwebtoken');
-chai.use(chaiHttp);
+import { Config, NameValueMap } from "../core/types";
+import Orion from "../core";
+import { queries } from "./queries";
+import MockConnectionPool from './mocks/mockConnectionPool';
+import MockStorageProvider from './mocks/mockStorageProvider';
+import * as chai from 'chai';
+import * as assert from 'assert';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as jwt from 'jsonwebtoken';
+import { TestQuery } from './testTypes';
 
-let orion = null;
-let pool = null;
-let storageProvider = null;
-let config = null;
-let dbEngine = null;
-let storageProviderName = null;
 const maxServerStartRetries = 10;
 
+
 /**
- * Test runner class
+ * Class for running a set of tests against a specific database/storage type
  * @param {*} config Config module
  * @param {*} dbEngine Database engine
  * @param {*} storageProviderName Storage provider name
  */
-module.exports = class Runner
+export class Runner
 {
-    constructor(configArg, dbEngineArg, storageProviderNameArg)
+    config:Config;
+    dbEngine:string;
+    storageProviderName:string;
+    app:Orion;
+    pool:any;
+    storageProvider:any;
+    isServerStarted:boolean;
+
+    /**
+     * Initialize the runnner
+     * @param config Config object
+     * @param dbEngine Database engine name
+     * @param storageProviderName Storage provider name
+     */
+    constructor(config:Config, dbEngine:string, storageProviderName:string)
     {
-        config = configArg;
-        dbEngine = dbEngineArg;
-        storageProviderName = storageProviderNameArg;
+        chai.use(require("chai-http"));
+        this.config = config;
+        this.dbEngine = dbEngine;
+        this.storageProviderName = storageProviderName;
         this.isServerStarted = false;
     }
 
@@ -46,16 +56,16 @@ module.exports = class Runner
      * @param {*} expectedResponseCode expected response status code
      * @param {*} expectedResponseBody expected response body
      */
-    runTest(name, reqUrl, reqMethod, reqBody, accessToken, 
-        expectedQueries, queryResults, expectedResponseCode, expectedResponseBody)
+    runTest(name:string, reqUrl:string, reqMethod:string, reqBody:any, accessToken:string, 
+        expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any)
     {
         it(name, (done) =>
         {
-            const actualQueries = [];
+            const actualQueries:TestQuery[] = [];
             this.onBeforeRequest(actualQueries, queryResults);
 
             let requestAwaiter;
-            const request = chai.request(orion);
+            const request = chai.request(this.app);
             if(reqMethod === "get")
                 requestAwaiter = request.get(reqUrl);
             else if(reqMethod === "post")
@@ -63,11 +73,11 @@ module.exports = class Runner
             else if(reqMethod === "put")
                 requestAwaiter = request.put(reqUrl).send(reqBody);
             else if(reqMethod === "delete")
-                requestAwaiter = request.delete(reqUrl);
-            if(!!accessToken)
+                requestAwaiter = request.del(reqUrl);
+            if(accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
 
-            requestAwaiter.end((err, res) =>
+            requestAwaiter.end((err:any, res:any) =>
             {
                 this.onAfterRequest(actualQueries, res, expectedQueries, expectedResponseCode, expectedResponseBody);
                 done();
@@ -87,27 +97,27 @@ module.exports = class Runner
      * @param {*} expectedResponseCode expected response status code
      * @param {*} expectedResponseBody expected response body
      */
-    runFileUploadTest(name, reqUrl, filePath, accessToken, expectedMimeType, 
-        expectedQueries, queryResults, expectedResponseCode, expectedResponseBody)
+    runFileUploadTest(name:string, reqUrl:string, filePath:string, accessToken:string, expectedMimeType:string, 
+        expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any)
     {
         it(name, (done) =>
         {
-            const actualQueries = [];
+            const actualQueries:TestQuery[] = [];
             this.onBeforeRequest(actualQueries, queryResults);
             const inputFile = fs.readFileSync(filePath);
             const inputFileName = path.basename(filePath);
-            const uploadedFileName = null;
-            const uploadedFileMime = null;
-            storageProvider.onFilePartReceived((name, mime) =>
+            let uploadedFileName:string = null;
+            let uploadedFileMime:string = null;
+            this.storageProvider.onFilePartReceived((name:string, mime:string) =>
             {
                 uploadedFileName = name;
                 uploadedFileMime = mime;
             });
 
-            const requestAwaiter = chai.request(orion)
+            const requestAwaiter = chai.request(this.app)
                 .post(reqUrl)
                 .attach("file", inputFile, inputFileName);
-            if(!!accessToken)
+            if(accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
 
             requestAwaiter.end((err, res) =>
@@ -142,26 +152,25 @@ module.exports = class Runner
      * @param {*} expectedResponseCode expected response status code
      * @param {*} expectedResponseBody expected response body
      */
-    runFileDeleteTest(name, reqUrl, accessToken, expectedQueries,
-        queryResults, expectedResponseCode, expectedResponseBody)
+    runFileDeleteTest(name:string, reqUrl:string, accessToken:string, expectedQueries:TestQuery[],
+        queryResults:any, expectedResponseCode:number, expectedResponseBody?:any)
     {
         it(name, (done) =>
         {
-            const actualQueries = [];
+            const actualQueries:TestQuery[] = [];
             const expectedFilename = queryResults[0][0].filename;
             this.onBeforeRequest(actualQueries, queryResults);
-            let actualFilename = null;
-            storageProvider.onFileDeleted((name) =>
+            let actualFilename:string = null;
+            this.storageProvider.onFileDeleted((name:string) =>
             {
                 actualFilename = name;
             });
 
-            const requestAwaiter = chai.request(orion)
-                .delete(reqUrl);
-            if(!!accessToken)
+            const requestAwaiter = chai.request(this.app).del(reqUrl);
+            if(accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
 
-            requestAwaiter.end((err, res) =>
+            requestAwaiter.end((err:any, res:any) =>
             {
                 assert.equal(actualFilename, expectedFilename, "Deleted file name is incorrect");
                 this.onAfterRequest(actualQueries, res, expectedQueries, expectedResponseCode, expectedResponseBody);
@@ -172,46 +181,41 @@ module.exports = class Runner
 
     /** 
      * Start an Orion app
-     * @param {*} callback Callback function
      */
-    startServer(callback)
+    async startServer()
     {
         if(this.isServerStarted)
-        {
-            callback();
             return;
-        }
 
-        orion = new Orion(config);
-        orion.setupApiEndpoints();
+        this.app = new Orion(this.config);
+        this.app.setupApiEndpoints();
 
-        pool = new MockConnectionPool(dbEngine);
-        orion.getDatabaseAdapter().setConnectionPool(pool);
+        this.pool = new MockConnectionPool(this.dbEngine);
+        this.app.getDatabaseAdapter().setConnectionPool(this.pool);
 
-        storageProvider = new MockStorageProvider(storageProviderName);
-        orion.getStorageAdapter().setProvider(storageProvider);
+        this.storageProvider = new MockStorageProvider(this.storageProviderName);
+        this.app.getStorageAdapter().setProvider(this.storageProvider);
 
-        this.startServerInternal(orion, 0, () =>
-        {
-            this.isServerStarted = true;
-            callback();
-        });
+        await this.startServerInternal(this.app, 0);
+        this.isServerStarted = true;
     }
 
     /**
      * Start an Orion app
      * @param {*} orion orion app
      * @param {*} numRetries number of retries so far
-     * @param {*} callback callback function
      */
-    startServerInternal(orion, numRetries, callback)
+    startServerInternal(orion: Orion, numRetries: number): Promise<any>
     {
-        if(numRetries > maxServerStartRetries)
-            throw "Failed to start app. Max retries exceeded.";
-        const port = 1337 + numRetries;
-        orion.start(port, callback).on("error", function()
+        return new Promise(resolve =>
         {
-            this.startServerInternal(orion, numRetries + 1, callback);
+            if(numRetries > maxServerStartRetries)
+                throw "Failed to start app. Max retries exceeded.";
+            const port = 1337 + numRetries;
+            orion.start(port, resolve).on("error", function()
+            {
+                this.startServerInternal(orion, numRetries + 1, resolve);
+            });
         });
     }
 
@@ -220,14 +224,14 @@ module.exports = class Runner
      * @param {*} actualQueries Actual queries received by DB adapter
      * @param {*} queryResults List of results to be returned for each incoming query
      */
-    onBeforeRequest(actualQueries, queryResults)
+    onBeforeRequest(actualQueries: TestQuery[], queryResults: any): void
     {
-        pool.reset();
-        pool.onQueryReceived((actualString, actualParams, engine) =>
+        this.pool.reset();
+        this.pool.onQueryReceived((actualString:string, actualParams:NameValueMap, engine:string) =>
         {
             actualQueries.push({ string: actualString, params: actualParams, engine: engine });
-            if(!!queryResults && !!queryResults.length)
-                pool.setQueryResults(queryResults.shift());
+            if(queryResults && queryResults.length)
+            this.pool.setQueryResults(queryResults.shift());
         });
     }
 
@@ -239,9 +243,10 @@ module.exports = class Runner
      * @param {*} expectedResponseCode expected response status code
      * @param {*} expectedResponseBody expected response body
      */
-    onAfterRequest(actualQueries, actualResponse, expectedQueries, expectedResponseCode, expectedResponseBody)
+    onAfterRequest(actualQueries:TestQuery[], actualResponse:any, expectedQueries:TestQuery[], 
+        expectedResponseCode:number, expectedResponseBody:any): void
     {
-        if(!!expectedQueries)
+        if(expectedQueries)
         {
             assert.equal(actualQueries.length, expectedQueries.length, "Number of received queries is not as expected");
             for(let i=0; i<expectedQueries.length; i++)
@@ -264,7 +269,7 @@ module.exports = class Runner
 
         assert.equal(actualResponse.status, expectedResponseCode, "Status code " + actualResponse.status + " is not expected");
         const responseBody = Object.keys(actualResponse.body).length > 0 ? actualResponse.body : actualResponse.text;
-        if(!!expectedResponseBody)
+        if(expectedResponseBody)
             this.assertResponseBody(responseBody, expectedResponseBody, "", "");
     }
 
@@ -275,7 +280,7 @@ module.exports = class Runner
      * @param {*} relativePath Path to the current value from object root
      * @param {*} currentKey Current object key
      */
-    assertResponseBody(actual, expected, relativePath, currentKey)
+    assertResponseBody(actual:any, expected:any, relativePath:string, currentKey:string): void
     {
         const fullPath = relativePath + "/" + currentKey;
         if(typeof actual === "undefined" || actual == null)
@@ -315,7 +320,7 @@ module.exports = class Runner
      * @param {*} actual Actual query string
      * @param {*} expected Expected query string
      */
-    assetQueryString(actual, expected)
+    assetQueryString(actual:string, expected:string): void
     {
         if(expected.indexOf("select") === 0)
         {
@@ -339,13 +344,13 @@ module.exports = class Runner
      * @param {*} clauseEnd start keyword of the query clause
      * @param {*} separator separator string between each clause value
      */
-    assertQueryClause(actual, expected, clauseStart, clauseEnd, separator)
+    assertQueryClause(actual:string, expected:string, clauseStart:string, clauseEnd:string, separator:string): void
     {
         const actualValues = this.getQueryClauseValues(actual, clauseStart, clauseEnd, separator);
         const expectedValues = this.getQueryClauseValues(expected, clauseStart, clauseEnd, separator);
         if(actualValues.length !== expectedValues.length)
-            return false;
-        actualValues.forEach((actualItem, index) =>
+            return;
+        actualValues.forEach((actualItem:string, index:number) =>
         {
             if(actualItem !== expectedValues[index])
             {
@@ -362,11 +367,11 @@ module.exports = class Runner
      * @param {*} separator separator string between each clause value
      * @return array of values
      */
-    getQueryClauseValues(query, clauseStart, clauseEnd, separator)
+    getQueryClauseValues(query:string, clauseStart:string, clauseEnd:string, separator:string): string[]
     {
         const clauseStartIndex = query.indexOf(clauseStart);
         if(clauseStartIndex < 0)
-            return "";
+            return [];
         else if(clauseStartIndex === 0) 
             clauseStart += " ";
         else

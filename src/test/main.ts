@@ -1,18 +1,21 @@
-(() =>
+import { Config } from "../core/types";
+
+import { Runner } from './runner';
+import { configFactory } from './configFactory';
+
+import { assetTestSuite } from './tests/tests-asset';
+import { errorTestSuite } from './tests/tests-error';
+import { itemTestSuite } from './tests/tests-item';
+import { messageTestSuite } from './tests/tests-message';
+import { userTestSuite } from './tests/tests-user';
+
+
+class OrionTest
 {
-    const Runner = require('./runner');
-    const configFactory = require('./configFactory');
-
-    const assetTests = require('./tests/tests-asset');
-    const errorTests = require('./tests/tests-error');
-    const itemTests = require('./tests/tests-item');
-    const messageTests = require('./tests/tests-message');
-    const userTests = require('./tests/tests-user');
-
     /** 
      * Test entry point
      */
-    const main = () =>
+    main()
     {
         // initialize configs
         const mssqlAzureConfig = configFactory.create("mssql", { provider: "azure" });
@@ -21,10 +24,10 @@
         const mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
 
         // run tests
-        startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [errorTests, itemTests, messageTests, userTests, assetTests]);
-        startTestSession(mysqlS3Config, "mysql", "s3", "mysql-s3", [errorTests, itemTests, messageTests, userTests, assetTests]);
-        startTestSession(mssqlLocalConfig, "mssql", "local", "mssql-local", [assetTests]);
-        startTestSession(mysqlLocalConfig, "mysql", "local", "mysql-local", [assetTests]);
+        this.startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
+        this.startTestSession(mysqlS3Config, "mysql", "s3", "mysql-s3", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
+        this.startTestSession(mssqlLocalConfig, "mssql", "local", "mssql-local", [assetTestSuite]);
+        this.startTestSession(mysqlLocalConfig, "mysql", "local", "mysql-local", [assetTestSuite]);
     }
 
     /**
@@ -33,19 +36,22 @@
      * @param {*} engine Database engine
      * @param {*} storageProviderName Storage provider name
      * @param {*} sessionName Session name
-     * @param {*} tests List of tests to run
+     * @param {*} testSuites List of test suites to run
      */
-    const startTestSession = (config, engine, storageProviderName, sessionName, tests) =>
+    startTestSession(config:Config, engine:string, storageProviderName:string, sessionName:string, testSuites:any[])
     {
         const runner = new Runner(config, engine, storageProviderName);
 
-        before((done) =>
+        before(async (done) =>
         {
             if(!runner.isServerStarted)
-                runner.startServer(done);
+            {
+                await runner.startServer();
+                done();
+            }
         });
 
-        describe(sessionName, function()
+        describe(sessionName, () =>
         {
             const params = 
             {
@@ -59,10 +65,13 @@
                 hashedPassword: "3a6ad575db2b6a2a170f26505dff23a2b0ec337b34c011269ccd4e024e25847eea9e5023e58dd4084c94dea5127ab4e3f7c2122a2ef208c81e6035de37ccfec8"
             };
 
-            for(let i=0; i<tests.length; i++)
-                tests[i](runner, params);
+            for(const testSuite of testSuites)
+            {
+                testSuite.run(runner, params);
+            }
         });
     }
+}
 
-    main();
-})();
+const testClass = new OrionTest();
+testClass.main();

@@ -86,12 +86,12 @@
 // {
 //     const isPrivate = requestParams.accessType === "private";
 //     const condition = conditionFactory.createCompound("&", []);
-//     if(!!requestParams.condition)
+//     if(requestParams.condition)
 //     {
 //         const conditionString = decodeURIComponent(requestParams.condition);
 //         condition.children.push(conditionFactory.parse(ctx, conditionString));
 //     }
-//     else if(!!requestParams.id)
+//     else if(requestParams.id)
 //     {
 //         condition.children.push(conditionFactory.createSingle(ctx.entity, "id", "=", requestParams.id));
 //     }

@@ -207,7 +207,7 @@
 // {
 //     this.db.quickFind(ctx, ["username"], "user", {"username": username}, (record) =>
 //     {
-//         if(!!record) throw "username " + username + " already exists";
+//         if(record) throw "username " + username + " already exists";
 //         callback();
 //     });
 // }

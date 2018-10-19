@@ -207,7 +207,7 @@ export class MssqlDatabase implements Database
         {
             const fldName = fields[f];
             const fieldObj = ctxFields[fldName];
-            if(!!fieldObj.foreignKey) 
+            if(fieldObj.foreignKey) 
             {
                 joins.push(joinFactory.createForForeignKey(ctx, entity, fldName));
             }
@@ -282,7 +282,7 @@ export class MssqlDatabase implements Database
     {
         return new Promise(resolve =>
         {
-            if(!!this.pool)
+            if(this.pool)
             {
                 resolve();
                 return;
