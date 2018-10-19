@@ -8,7 +8,7 @@
     "url": "https://github.com/ctjong/orion"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha build/test/main.js"
   },
   "keywords": [
     "orion",
