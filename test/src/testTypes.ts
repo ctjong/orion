@@ -1,4 +1,4 @@
-import { NameValueMap } from "../../src/types";
+import { NameValueMap } from "../../core/src/types";
 import { Runner } from "./runner";
 
 export interface TestQuery

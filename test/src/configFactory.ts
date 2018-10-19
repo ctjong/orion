@@ -1,4 +1,4 @@
-import { Config } from "../../src/types";
+import { Config } from "../../core/src/types";
 
 class ConfigFactory
 {
