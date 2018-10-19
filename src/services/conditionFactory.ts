@@ -3,7 +3,7 @@
 // /**
 //  * A module for handling query conditions
 //  */
-// module.exports = class ConditionFactory extends Module 
+// module.exports = class ConditionFactory 
 // {
 //     /**
 //      * Get a list of dependency names for this module

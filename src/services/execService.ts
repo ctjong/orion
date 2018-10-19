@@ -1,9 +1,10 @@
 // const Module = require("../module");
+
 // /**
 //  * A module for handling the execution of code outside of the main thread.
 //  * This is to make sure exceptions are caught properly, even those coming from child threads.
 //  */
-// module.exports = class ExecService extends Module
+// module.exports = class ExecService
 // {
 //     /**
 //      * Get a list of dependency names for this module
@@ -12,6 +13,7 @@
 //     {
 //         return [];
 //     }
+
 //     /**
 //      * Handle an error.
 //      * This will log an error to the database, and send an error response.
@@ -66,6 +68,7 @@
 //             } catch(err4) {}
 //         }
 //     }
+
 //     /**
 //      * Execute a callback and catch any exception that comes out of it.
 //      * Any callback that is being passed to a library function should be wrapped in this.
@@ -86,6 +89,7 @@
 //             }
 //         }
 //     }
+
 //     /**
 //      * Throw an Error object up the call stack
 //      */
@@ -93,6 +97,7 @@
 //     {
 //         throw new Error(tag, statusCode, msg);
 //     }
+
 //     /**
 //      * Send an error response
 //      */
@@ -101,9 +106,8 @@
 //         this.handleError(new Error(tag, statusCode, msg), ctx.req, ctx.res);
 //     }
 // }
-// //----------------------------------------------
-// // PPRIVATE
-// //----------------------------------------------
+
+
 // /**
 //  * Construct a new Error object. This will contain all details about an error.
 //  */
@@ -116,6 +120,7 @@
 //         this.msg = msg;
 //     }
 // }
+
 // /**
 //  * Parse an error string and construct a new Error object.
 //  */

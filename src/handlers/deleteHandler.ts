@@ -1,8 +1,9 @@
 // const Module = require("../module");
+
 // /**
 //  * A module to handle delete operations
 //  */
-// module.exports = class DeleteHandler extends Module
+// module.exports = class DeleteHandler
 // {
 //     /**
 //      * Get a list of dependency names for this module
@@ -11,6 +12,7 @@
 //     {
 //         return ["auth", "helper", "db"];
 //     }
+
 //     /**
 //      * Handle a delete record request
 //      * @param {any} ctx Request context

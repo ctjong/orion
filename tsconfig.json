@@ -1,10 +1,13 @@
 {
     "compilerOptions": 
     {
-        "outDir": "target",
+        "outDir": "build",
         "module": "commonjs",
         "target": "es6",
         "noImplicitAny": true,
         "skipLibCheck": true,
-    }
+    },
+    "files": [
+        "src/orionApp.d.ts"
+    ]
 }

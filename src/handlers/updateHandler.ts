@@ -3,7 +3,7 @@
 // /**
 //  * A module to handle update operations
 //  */
-// module.exports = class UpdateHandler extends Module
+// module.exports = class UpdateHandler
 // {
 //     /**
 //      * Get a list of dependency names for this module

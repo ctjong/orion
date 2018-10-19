@@ -3,7 +3,7 @@
 // /**
 //  * A module to handle read operations
 //  */
-// module.exports = class ReadHandler extends Module
+// module.exports = class ReadHandler
 // {
 //     /**
 //      * Get a list of dependency names for this module
@@ -60,10 +60,6 @@
 //         });
 //     }
 // }
-
-// //----------------------------------------------
-// // PRIVATE
-// //----------------------------------------------
 
 // /**
 //  * Get condition string from config

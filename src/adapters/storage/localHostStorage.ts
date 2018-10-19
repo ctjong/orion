@@ -1,11 +1,11 @@
-// const Module = require("../../module");
+
 // const path = require("path");
 // let provider = null;
 
 // /**
 //  * A module to handle file upload/delete on local server storage
 //  */
-// module.exports = class LocalHostStorage extends Module
+// module.exports = class LocalHostStorage
 // {
 //     /**
 //      * Get a list of dependency names for this module

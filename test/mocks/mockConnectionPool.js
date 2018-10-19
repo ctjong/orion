@@ -89,11 +89,6 @@ module.exports = class MockConnectionPool
     }
 };
 
-
-//----------------------------------------------
-// PRIVATE
-//----------------------------------------------
-
 /**
  * MSSQL wrapper object containing database connection functions and properties
  */

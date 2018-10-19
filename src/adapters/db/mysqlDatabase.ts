@@ -1,9 +1,9 @@
-// const Module = require("../../module");
+
 
 // /**
 //  * A module for handling interaction with an MSSQL database
 //  */
-// module.exports = class MysqldbAdapter extends Module
+// module.exports = class MysqlDatabase
 // {
 //     constructor()
 //     {
@@ -302,12 +302,6 @@
 //         });
 //     }
 // }
-
-
-
-// //----------------------------------------------
-// // PRIVATE
-// //----------------------------------------------
 
 // /**
 //  * Get Join objects to resolve foreign keys

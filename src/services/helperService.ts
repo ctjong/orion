@@ -3,7 +3,7 @@
 // /**
 //  * A module containing utility/helper functions
 //  */
-// module.exports = class HelperService extends Module
+// module.exports = class HelperService
 // {
 //     /**
 //      * Get a list of dependency names for this module

@@ -3,7 +3,7 @@
 // /**
 //  * A module for representing entity joins
 //  */
-// module.exports = class JoinFactory extends Module 
+// module.exports = class JoinFactory 
 // {
 //     /**
 //      * Get a list of dependency names for this module

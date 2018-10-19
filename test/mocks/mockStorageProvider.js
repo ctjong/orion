@@ -27,7 +27,7 @@ module.exports = class MockStorageProvider
         const mime = null;
         if(!!options && !!options.contentSettings && !!options.contentSettings.contentType)
             mime = options.contentSettings.contentType;
-        processFilePart(name, mime, stream, null, callback);
+        this.processFilePart(name, mime, stream, null, callback);
     }
 
     /**
@@ -38,7 +38,7 @@ module.exports = class MockStorageProvider
      */
     azureDeleteBlob(containerName, filename, callback)
     {
-        processFileDelete(filename, callback);
+        this.processFileDelete(filename, callback);
     }
 
     /**
@@ -51,7 +51,7 @@ module.exports = class MockStorageProvider
         const name = options.Key;
         const stream = options.Body;
         const mime = options.ContentType;
-        processFilePart(name, mime, stream, null, callback);
+        this.processFilePart(name, mime, stream, null, callback);
     }
 
     /**
@@ -61,7 +61,7 @@ module.exports = class MockStorageProvider
      */
     s3DeleteObject(options, callback)
     {
-        processFileDelete(options.Key, callback);
+        this.processFileDelete(options.Key, callback);
     }
 
     /**
@@ -73,7 +73,7 @@ module.exports = class MockStorageProvider
     localRename(tempPath, finalPath, callback)
     {
         const filename = path.basename(tempPath);
-        processFilePart(filename, null, null, tempPath, callback);
+        this.processFilePart(filename, null, null, tempPath, callback);
     }
 
     /**
@@ -84,7 +84,7 @@ module.exports = class MockStorageProvider
     localUnlink(fullPath, callback)
     {
         const filename = path.basename(fullPath);
-        processFileDelete(filename, callback);
+        this.processFileDelete(filename, callback);
     }
 
     /**
@@ -104,51 +104,46 @@ module.exports = class MockStorageProvider
     {
         this.fileDeletedHandler = handler;
     }
-};
 
-
-//----------------------------------------------
-// PRIVATE
-//----------------------------------------------
-
-/**
- * Process an uploaded file part
- * @param {*} name File name
- * @param {*} mime Mime type
- * @param {*} stream File stream
- * @param {*} tempPath Temporary file path
- * @param {*} callback Callback function
- */
-const processFilePart = (name, mime, stream, tempPath, callback) =>
-{
-    // save the uploaded file to the system temp folder
-    const targetPath = process.env.temp + "\\" + name;
-    if(!!stream)
+    /**
+     * Process an uploaded file part
+     * @param {*} name File name
+     * @param {*} mime Mime type
+     * @param {*} stream File stream
+     * @param {*} tempPath Temporary file path
+     * @param {*} callback Callback function
+     */
+    processFilePart(name, mime, stream, tempPath, callback)
     {
-        if(!this.wstream || this.wstream.path !== targetPath)
+        // save the uploaded file to the system temp folder
+        const targetPath = process.env.temp + "\\" + name;
+        if(!!stream)
         {
-            this.wstream = fs.createWriteStream(targetPath);
-            this.wstream.on('finish', callback);
+            if(!this.wstream || this.wstream.path !== targetPath)
+            {
+                this.wstream = fs.createWriteStream(targetPath);
+                this.wstream.on('finish', callback);
+            }
+            stream.pipe(this.wstream);
         }
-        stream.pipe(this.wstream);
+        else if(!!tempPath)
+        {
+            fs.rename(tempPath, targetPath, callback);
+        }
+
+        if(!!this.filePartReceivedHandler)
+            this.filePartReceivedHandler(name, mime);
     }
-    else if(!!tempPath)
+
+    /**
+     * Process a file delete
+     * @param {*} filename File name
+     * @param {*} callback Callback function
+     */
+    processFileDelete(filename, callback)
     {
-        fs.rename(tempPath, targetPath, callback);
+        if(!!this.fileDeletedHandler)
+            this.fileDeletedHandler(filename);
+        callback(null);
     }
-
-    if(!!this.filePartReceivedHandler)
-        this.filePartReceivedHandler(name, mime);
-}
-
-/**
- * Process a file delete
- * @param {*} filename File name
- * @param {*} callback Callback function
- */
-const processFileDelete = (filename, callback) =>
-{
-    if(!!this.fileDeletedHandler)
-        this.fileDeletedHandler(filename);
-    callback(null);
-}
+};

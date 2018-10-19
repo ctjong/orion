@@ -3,7 +3,7 @@
 // /**
 //  * A module to handle file upload operations
 //  */
-// module.exports = class CreateAssetHandler extends Module
+// module.exports = class CreateAssetHandler
 // {
 //     /**
 //      * Get a list of dependency names for this module

@@ -1,4 +1,4 @@
-import { Config, Entity, FieldSet } from './types';
+import { Config, Entity, FieldSet, Context } from '../types';
 
 const defaultFields : FieldSet =
     {
@@ -50,29 +50,12 @@ const defaultEntities : { [key:string] : Entity } =
         },
     };
 
-export class Context
-{
-    config: any;
-    req: any;
-    res: any;
-    entity: string;
-    userId: string;
-    userName: string;
-    userRoles: string[];
-    userDomain: string;
-}
-
 /**
  * A factory for creating Context objects, which will store all details about the current session.
  */
-export class ContextFactory
+class ContextFactory
 {
     config:Config;
-
-    constructor(config:Config)
-    {
-        this.config = config;
-    }
 
     /**
      * Construct a new Context object. This should be done at the beginning of each session.
@@ -141,3 +124,6 @@ export class ContextFactory
         }
     }
 };
+
+const contextFactory:ContextFactory = new ContextFactory();
+export { contextFactory };

@@ -3,7 +3,7 @@
 // /**
 //  * A module to handle file deletion operations
 //  */
-// module.exports = class DeleteAssetHandler extends Module
+// module.exports = class DeleteAssetHandler
 // {
 //     /**
 //      * Get a list of dependency names for this module

@@ -1,10 +1,10 @@
-// const Module = require("../../module");
+
 // let provider = null;
 
 // /**
 //  * A module to handle file upload/delete on Azure Blob Storage
 //  */
-// module.exports = class S3Storage extends Module
+// module.exports = class S3Storage
 // {
 //     /**
 //      * Get a list of dependency names for this module

@@ -3,7 +3,7 @@
 // /**
 //  * A module to handle create operations
 //  */
-// module.exports = class CreateHandler extends Module
+// module.exports = class CreateHandler
 // {
 //     /**
 //      * Get a list of dependency names for this module
