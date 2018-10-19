@@ -1,5 +1,5 @@
 const queries = require("./queries");
-const Orion = require('../index');
+const Orion = require('../target/index');
 const MockConnectionPool = require('./mocks/mockConnectionPool');
 const MockStorageProvider = require('./mocks/mockStorageProvider');
 const chai = require('chai');
