@@ -1,8 +1,8 @@
 import { Config, NameValueMap } from "../core/types";
 import Orion from "../core";
 import { queries } from "./queries";
-import MockConnectionPool from './mocks/mockConnectionPool';
-import MockStorageProvider from './mocks/mockStorageProvider';
+import { MockConnectionPool } from './mocks/mockConnectionPool';
+import { MockStorageProvider } from './mocks/mockStorageProvider';
 import * as chai from 'chai';
 import * as assert from 'assert';
 import * as fs from 'fs';
@@ -193,7 +193,7 @@ export class Runner
         this.pool = new MockConnectionPool(this.dbEngine);
         this.app.getDatabaseAdapter().setConnectionPool(this.pool);
 
-        this.storageProvider = new MockStorageProvider(this.storageProviderName);
+        this.storageProvider = new MockStorageProvider();
         this.app.getStorageAdapter().setProvider(this.storageProvider);
 
         await this.startServerInternal(this.app, 0);

@@ -1,5 +1,5 @@
 import * as Express from "express";
-import { Config, Context } from "../types";
+import { Config, Context } from "./types";
 import { contextFactory } from "./services/contextFactory";
 import * as applicationInsights from "applicationinsights";
 import { dataService } from "./services/dataService";
