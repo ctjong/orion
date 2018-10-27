@@ -1,109 +1,105 @@
-// const Module = require("../module");
+import { Context, NameValueMap } from "../types";
+import { execService } from "../services/execService";
+import { helperService } from "../services/helperService";
+import { conditionFactory } from "../services/conditionFactory";
+import { dataService } from "../services/dataService";
 
-// /**
-//  * A module to handle read operations
-//  */
-// module.exports = class ReadHandler
-// {
-//     /**
-//      * Get a list of dependency names for this module
-//      */
-//     getDependencyNames()
-//     {
-//         return ["helper", "conditionFactory", "joinFactory", "db", "auth", "exec"];
-//     }
+/**
+ * Class that handles read operations
+ */
+class ReadHandler
+{
+    /**
+     * Handle a read request
+     * @param ctx Request context
+     * @param requestParams Request parameters
+     * @param isFullMode Whether to do the read in full mode (full mode = include rich text fields in response)
+     */
+    async execute (ctx:Context, requestParams:NameValueMap, isFullMode:boolean)
+    {
+        // set owner role if the read operation is run in private mode
+        if (requestParams.accessType === "private")
+        {
+            // private read mode. add owner role directly, add ownerid condition later
+            if (!ctx.user.id)
+                execService.throwError("a058", 401, "Unauthorized");
+            ctx.user.roles.push("owner");
+        }
 
-//     /**
-//      * Handle a read request
-//      * @param ctx Request context
-//      * @param requestParams Request parameters
-//      * @param isFullMode Whether to do the read in full mode (full mode = include rich text fields in response)
-//      */
-//     execute (ctx, requestParams, isFullMode)
-//     {
-//         // set owner role if the read operation is run in private mode
-//         if (requestParams.accessType === "private")
-//         {
-//             // private read mode. add owner role directly, add ownerid condition later
-//             if (!ctx.userId) this.exec.throwError("a058", 401, "Unauthorized");
-//             ctx.userRoles.push("owner");
-//         }
+        // verify that current user context is allowed to execute a read
+        helperService.validateRoles(ctx, "read");
 
-//         // verify that current user context is allowed to execute a read
-//         this.helper.validateRoles(ctx, "read");
+        // get pagination and ordering info
+        const skip = isNaN(parseInt(requestParams.skip)) ? 0 : parseInt(requestParams.skip);
+        const take = isNaN(parseInt(requestParams.take)) ? 10 : parseInt(requestParams.take);
+        const orderByField = !requestParams.orderByField ? "id" : requestParams.orderByField;
 
-//         // get pagination and ordering info
-//         const skip = isNaN(parseInt(requestParams.skip)) ? 0 : parseInt(requestParams.skip);
-//         const take = isNaN(parseInt(requestParams.take)) ? 10 : parseInt(requestParams.take);
-//         const orderByField = !requestParams.orderByField ? "id" : requestParams.orderByField;
+        // get condition
+        const configConditionStr = this.getConditionStringFromConfig(ctx);
+        const condition = this.getConditionFromRequest(ctx, requestParams);
+        if(configConditionStr !== "") 
+        {
+            condition.children.push(conditionFactory.parse(ctx, configConditionStr));
+        }
 
-//         // get condition
-//         const configConditionStr = getConditionStringFromConfig(ctx, requestParams.accessType);
-//         const condition = getConditionFromRequest(ctx, requestParams, this.conditionFactory, this.exec);
-//         if(configConditionStr !== "") 
-//         {
-//             condition.children.push(this.conditionFactory.parse(ctx, configConditionStr));
-//         }
+        // execute
+        const fields = helperService.getFields(ctx, "read");
+        const count = await dataService.db.count(ctx, ctx.entity, condition);
+        const dbResponse = await dataService.db.select(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode);
+        for(let i=0; i<dbResponse.length; i++)
+        {
+            dbResponse[i] = helperService.fixDataKeysAndTypes(ctx, dbResponse[i]);
+        }
+        ctx.res.json({"count": count, "items": dbResponse});
+    }
 
-//         // execute
-//         const fields = this.helper.getFields(ctx, "read");
-//         this.db.count(ctx, fields, ctx.entity, condition, true, (count) =>
-//         {
-//             this.db.select(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode, (dbResponse) =>
-//             {
-//                 for(let i=0; i<dbResponse.length; i++)
-//                 {
-//                     dbResponse[i] = this.helper.fixDataKeysAndTypes(ctx, dbResponse[i]);
-//                 }
-//                 ctx.res.json({"count": count, "items": dbResponse});
-//             });
-//         });
-//     }
-// }
+    /**
+     * Get condition string from config
+     * @param ctx Request context
+     * @returns condition string
+     */
+    private getConditionStringFromConfig(ctx:Context)
+    {
+        const entityConfig = ctx.config.entities[ctx.entity];
+        if (!entityConfig.getReadCondition)
+            return "";
+        return entityConfig.getReadCondition(ctx.user.roles, ctx.user.id);
+    }
+    
+    /**
+     * Get Condition object from the request
+     * @param ctx Request context
+     * @param requestParams Request parameters
+     * @param conditionFactory Condition factory
+     * @param exec Exec module
+     * @returns Condition object
+     */
+    private getConditionFromRequest(ctx:Context, requestParams:NameValueMap)
+    {
+        const isPrivate = requestParams.accessType === "private";
+        const condition = conditionFactory.createCompound("&", []);
+        if(requestParams.condition)
+        {
+            const conditionString = decodeURIComponent(requestParams.condition);
+            condition.children.push(conditionFactory.parse(ctx, conditionString));
+        }
+        else if(requestParams.id)
+        {
+            condition.children.push(conditionFactory.createSingle(ctx.entity, "id", "=", requestParams.id));
+        }
+        if(isPrivate)
+        {
+            const fieldName = ctx.entity === "user" ? "id" : "ownerid";
+            const userIdInCondition = condition.findConditionValue(fieldName);
+            if(userIdInCondition !== ctx.user.id)
+            {
+                execService.throwError("a19c", 401, "Unauthorized");
+            }
+            condition.children.push(conditionFactory.createSingle(ctx.entity, fieldName, "=", ctx.user.id));
+        }
+        return condition;
+    }
+}
 
-// /**
-//  * Get condition string from config
-//  * @param ctx Request context
-//  * @returns condition string
-//  */
-// const getConditionStringFromConfig = (ctx) =>
-// {
-//     const entityConfig = ctx.config.entities[ctx.entity];
-//     if (!entityConfig.getReadCondition)
-//         return "";
-//     return entityConfig.getReadCondition(ctx.userRoles, ctx.userId);
-// }
-
-// /**
-//  * Get Condition object from the request
-//  * @param ctx Request context
-//  * @param requestParams Request parameters
-//  * @param conditionFactory Condition factory
-//  * @param exec Exec module
-//  * @returns Condition object
-//  */
-// const getConditionFromRequest = (ctx, requestParams, conditionFactory, exec) =>
-// {
-//     const isPrivate = requestParams.accessType === "private";
-//     const condition = conditionFactory.createCompound("&", []);
-//     if(requestParams.condition)
-//     {
-//         const conditionString = decodeURIComponent(requestParams.condition);
-//         condition.children.push(conditionFactory.parse(ctx, conditionString));
-//     }
-//     else if(requestParams.id)
-//     {
-//         condition.children.push(conditionFactory.createSingle(ctx.entity, "id", "=", requestParams.id));
-//     }
-//     if(isPrivate)
-//     {
-//         const fieldName = ctx.entity === "user" ? "id" : "ownerid";
-//         const val = parseInt(condition.getValue(fieldName));
-//         if(!isNaN(val) && val !== ctx.userId)
-//         {
-//             exec.throwError("a19c", 401, "Unauthorized");
-//         }
-//         condition.children.push(conditionFactory.createSingle(ctx.entity, fieldName, "=", ctx.userId));
-//     }
-//     return condition;
-// }
+const readHandler = new ReadHandler();
+export { readHandler };

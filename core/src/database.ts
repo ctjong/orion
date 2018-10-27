@@ -52,7 +52,7 @@ export interface Database
      * @param entity Requested entity
      * @param fieldNames New record field names
      * @param fieldValues New record field values
-     * @returns query results
+     * @returns inserted ID
      */
     insert(ctx:Context, entity:string, fieldNames:string[], fieldValues:string[]): Promise<any>;
 
@@ -60,11 +60,11 @@ export interface Database
      * Update a record
      * @param ctx Request context
      * @param entity Requested entity
-     * @param updateFields Fields to update
+     * @param updateData Update data
      * @param condition Update condition
      * @returns query results
      */
-    update(ctx:Context, entity:string, updateFields:string[], condition:Condition): Promise<any>;
+    update(ctx:Context, entity:string, updateData:NameValueMap, condition:Condition): Promise<any>;
 
     /**
      * Delete a record from the database

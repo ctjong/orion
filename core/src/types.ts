@@ -12,7 +12,7 @@ export interface Config { entities:EntitySet; database:any; storage:any; monitor
 
 export class UserInfo { tokenExpiry:number; name?:string; roles?:string[]; domain?:string; id?:string; domainId?:string };
 
-export class Context { config:any; req:any; res:any; entity?:string; user?:UserInfo; };
+export class Context { config:Config; req:any; res:any; entity?:string; user?:UserInfo; };
 
 export interface Condition { operator:string; findConditionValue:((key:string)=>string) };
 export class SingleCondition implements Condition { operator:string; fieldName:string; fieldValue:string; entity:string; findConditionValue:((key:string)=>string) };

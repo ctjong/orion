@@ -1,33 +1,27 @@
-// const Module = require("../module");
+import { Context } from "../types";
+import { helperService } from "../services/helperService";
+import { execService } from "../services/execService";
+import { dataService } from "../services/dataService";
 
-// /**
-//  * A module to handle delete operations
-//  */
-// module.exports = class DeleteHandler
-// {
-//     /**
-//      * Get a list of dependency names for this module
-//      */
-//     getDependencyNames()
-//     {
-//         return ["auth", "helper", "db"];
-//     }
+/**
+ * Class that handles delete operations
+ */
+class DeleteHandler
+{
+    /**
+     * Handle a delete record request
+     * @param ctx Request context
+     * @param recordId Record ID to delete
+     */
+    async execute(ctx:Context, recordId:string)
+    {
+        const [record] = await helperService.onBeginWriteRequest(ctx, "delete", dataService.db, recordId, null);
+        if(ctx.entity === "user" && record.domain !== "local")
+            execService.throwError("d789", 400, "updating external user info is not supported");
+        const dbResponse = await dataService.db.deleteRecord(ctx, ctx.entity, recordId);
+        ctx.res.send(dbResponse);
+    }
+};
 
-//     /**
-//      * Handle a delete record request
-//      * @param ctx Request context
-//      * @param recordId Record ID to delete
-//      */
-//     execute(ctx, recordId)
-//     {
-//         this.helper.onBeginWriteRequest(ctx, "delete", this.db, recordId, null, (record, requestBody) =>
-//         {
-//             if(ctx.entity === "user" && record.domain !== "local")
-//                 this.exec.throwError("d789", 400, "updating external user info is not supported");
-//             this.db.deleteRecord(ctx, ctx.entity, recordId, (dbResponse) =>
-//             {
-//                 ctx.res.send(dbResponse);
-//             });
-//         });
-//     }
-// };
+const deleteHandler = new DeleteHandler();
+export { deleteHandler };
