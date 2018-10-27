@@ -27,11 +27,11 @@ const main = () =>
 
 /**
  * Start a new test session
- * @param {*} config Config module
- * @param {*} engine Database engine
- * @param {*} storageProviderName Storage provider name
- * @param {*} sessionName Session name
- * @param {*} testSuites List of test suites to run
+ * @param config Config module
+ * @param engine Database engine
+ * @param storageProviderName Storage provider name
+ * @param sessionName Session name
+ * @param testSuites List of test suites to run
  */
 const startTestSession = (config: Config, engine: string, storageProviderName: string, sessionName: string, testSuites: any[]) =>
 {

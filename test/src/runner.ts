@@ -15,9 +15,6 @@ const maxServerStartRetries = 10;
 
 /**
  * Class for running a set of tests against a specific database/storage type
- * @param {*} config Config module
- * @param {*} dbEngine Database engine
- * @param {*} storageProviderName Storage provider name
  */
 export class Runner
 {
@@ -46,15 +43,15 @@ export class Runner
 
     /**
      * Run a test
-     * @param {*} name test name
-     * @param {*} reqUrl request URL
-     * @param {*} reqMethod request method
-     * @param {*} reqBody request body
-     * @param {*} accessToken access token
-     * @param {*} expectedQueries list of expected query strings and parameters
-     * @param {*} queryResults results to return for each query
-     * @param {*} expectedResponseCode expected response status code
-     * @param {*} expectedResponseBody expected response body
+     * @param name test name
+     * @param reqUrl request URL
+     * @param reqMethod request method
+     * @param reqBody request body
+     * @param accessToken access token
+     * @param expectedQueries list of expected query strings and parameters
+     * @param queryResults results to return for each query
+     * @param expectedResponseCode expected response status code
+     * @param expectedResponseBody expected response body
      */
     runTest(name:string, reqUrl:string, reqMethod:string, reqBody:any, accessToken:string, 
         expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any)
@@ -87,15 +84,15 @@ export class Runner
 
     /**
      * Run a file upload test
-     * @param {*} name test name
-     * @param {*} reqUrl request URL
-     * @param {*} filePath path to the file to upload
-     * @param {*} accessToken access token
-     * @param {*} expectedMimeType expected MIME type of the uploaded file
-     * @param {*} expectedQueries list of expected query strings and parameters
-     * @param {*} queryResults results to return for each query
-     * @param {*} expectedResponseCode expected response status code
-     * @param {*} expectedResponseBody expected response body
+     * @param name test name
+     * @param reqUrl request URL
+     * @param filePath path to the file to upload
+     * @param accessToken access token
+     * @param expectedMimeType expected MIME type of the uploaded file
+     * @param expectedQueries list of expected query strings and parameters
+     * @param queryResults results to return for each query
+     * @param expectedResponseCode expected response status code
+     * @param expectedResponseBody expected response body
      */
     runFileUploadTest(name:string, reqUrl:string, filePath:string, accessToken:string, expectedMimeType:string, 
         expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any)
@@ -144,13 +141,13 @@ export class Runner
 
     /**
      * Run a file delete test
-     * @param {*} name test name
-     * @param {*} reqUrl request URL
-     * @param {*} accessToken access token
-     * @param {*} expectedQueries list of expected query strings and parameters
-     * @param {*} queryResults results to return for each query
-     * @param {*} expectedResponseCode expected response status code
-     * @param {*} expectedResponseBody expected response body
+     * @param name test name
+     * @param reqUrl request URL
+     * @param accessToken access token
+     * @param expectedQueries list of expected query strings and parameters
+     * @param queryResults results to return for each query
+     * @param expectedResponseCode expected response status code
+     * @param expectedResponseBody expected response body
      */
     runFileDeleteTest(name:string, reqUrl:string, accessToken:string, expectedQueries:TestQuery[],
         queryResults:any, expectedResponseCode:number, expectedResponseBody?:any)
@@ -202,8 +199,8 @@ export class Runner
 
     /**
      * Start an Orion app
-     * @param {*} orion orion app
-     * @param {*} numRetries number of retries so far
+     * @param orion orion app
+     * @param numRetries number of retries so far
      */
     startServerInternal(orion: Orion, numRetries: number): Promise<any>
     {
@@ -221,8 +218,8 @@ export class Runner
 
     /** 
      * To be invoked before firing a request
-     * @param {*} actualQueries Actual queries received by DB adapter
-     * @param {*} queryResults List of results to be returned for each incoming query
+     * @param actualQueries Actual queries received by DB adapter
+     * @param queryResults List of results to be returned for each incoming query
      */
     onBeforeRequest(actualQueries: TestQuery[], queryResults: any): void
     {
@@ -237,11 +234,11 @@ export class Runner
 
     /**
      * To be invoked after the response to a request has been received
-     * @param {*} actualQueries actual queries received by DB adapter
-     * @param {*} actualResponse actual response received
-     * @param {*} expectedQueries expected queries to be received
-     * @param {*} expectedResponseCode expected response status code
-     * @param {*} expectedResponseBody expected response body
+     * @param actualQueries actual queries received by DB adapter
+     * @param actualResponse actual response received
+     * @param expectedQueries expected queries to be received
+     * @param expectedResponseCode expected response status code
+     * @param expectedResponseBody expected response body
      */
     onAfterRequest(actualQueries:TestQuery[], actualResponse:any, expectedQueries:TestQuery[], 
         expectedResponseCode:number, expectedResponseBody:any): void
@@ -275,10 +272,10 @@ export class Runner
 
     /**
      * Assert that a response body match the expected
-     * @param {*} actual Actual response body
-     * @param {*} expected Expected response body
-     * @param {*} relativePath Path to the current value from object root
-     * @param {*} currentKey Current object key
+     * @param actual Actual response body
+     * @param expected Expected response body
+     * @param relativePath Path to the current value from object root
+     * @param currentKey Current object key
      */
     assertResponseBody(actual:any, expected:any, relativePath:string, currentKey:string): void
     {
@@ -317,8 +314,8 @@ export class Runner
 
     /**
      * Assert that a query string match the expected
-     * @param {*} actual Actual query string
-     * @param {*} expected Expected query string
+     * @param actual Actual query string
+     * @param expected Expected query string
      */
     assetQueryString(actual:string, expected:string): void
     {
@@ -338,11 +335,11 @@ export class Runner
 
     /**
      * Assert that a query clause matches the expected
-     * @param {*} actual actual query string
-     * @param {*} expected expected query string
-     * @param {*} clauseStart start keyword of the query clause
-     * @param {*} clauseEnd start keyword of the query clause
-     * @param {*} separator separator string between each clause value
+     * @param actual actual query string
+     * @param expected expected query string
+     * @param clauseStart start keyword of the query clause
+     * @param clauseEnd start keyword of the query clause
+     * @param separator separator string between each clause value
      */
     assertQueryClause(actual:string, expected:string, clauseStart:string, clauseEnd:string, separator:string): void
     {
@@ -361,10 +358,10 @@ export class Runner
 
     /**
      * Get array of values from a query clause
-     * @param {*} query query string
-     * @param {*} clauseStart start keyword of the query clause
-     * @param {*} clauseEnd start keyword of the query clause
-     * @param {*} separator separator string between each clause value
+     * @param query query string
+     * @param clauseStart start keyword of the query clause
+     * @param clauseEnd start keyword of the query clause
+     * @param separator separator string between each clause value
      * @return array of values
      */
     getQueryClauseValues(query:string, clauseStart:string, clauseEnd:string, separator:string): string[]

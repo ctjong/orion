@@ -27,9 +27,9 @@
 
 //     /**
 //      * Upload a file to Azure Blob Storage
-//      * @param {any} ctx Request context
-//      * @param {any} req Request object
-//      * @param {any} callback Callback function
+//      * @param ctx Request context
+//      * @param req Request object
+//      * @param callback Callback function
 //      */
 //     uploadFile(ctx, req, callback)
 //     {
@@ -58,9 +58,9 @@
 
 //     /**
 //      * Delete a file from the storage
-//      * @param {*} ctx Request context
-//      * @param {*} filename File name to delete
-//      * @param {*} callback Callback function
+//      * @param ctx Request context
+//      * @param filename File name to delete
+//      * @param callback Callback function
 //      */
 //     deleteFile(ctx, filename, callback)
 //     {
@@ -73,7 +73,7 @@
 
 //     /**
 //      * Set the provider module for this adapter
-//      * @param {any} providerModule provider module
+//      * @param providerModule provider module
 //      */
 //     setProvider(providerModule)
 //     {

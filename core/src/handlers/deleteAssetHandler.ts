@@ -15,8 +15,8 @@
 
 //     /**
 //      * Handle a delete asset (file deletion) request
-//      * @param {any} ctx Request context
-//      * @param {any} recordId Record ID of the asset to delete
+//      * @param ctx Request context
+//      * @param recordId Record ID of the asset to delete
 //      */
 //     execute (ctx, recordId)
 //     {

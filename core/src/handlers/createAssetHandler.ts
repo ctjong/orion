@@ -15,8 +15,8 @@
 
 //     /**
 //      * Handle a create asset (file upload) request
-//      * @param {any} ctx Request context
-//      * @param {any} req Request object
+//      * @param ctx Request context
+//      * @param req Request object
 //      */
 //     execute(ctx, req)
 //     {

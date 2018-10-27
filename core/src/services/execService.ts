@@ -10,10 +10,10 @@ export class ExecService
     /**
      * Handle an error.
      * This will log an error to the database, and send an error response.
-     * @param {any} err Error object
-     * @param {any} req Request object
-     * @param {any} res Response object
-     * @param {any} db Database module
+     * @param err Error object
+     * @param req Request object
+     * @param res Response object
+     * @param db Database module
      */
     async handleError(err: any, req: any, res: any, db?: Database)
     {
@@ -69,8 +69,8 @@ export class ExecService
     /**
      * Execute a callback and catch any exception that comes out of it.
      * Any callback that is being passed to a library function should be wrapped in this.
-     * @param {any} ctx request context
-     * @param {any} fn function to execute
+     * @param ctx request context
+     * @param fn function to execute
      */
     async catchAllErrors(ctx: Context, fn: ((...args: any) => any))
     {
@@ -88,6 +88,9 @@ export class ExecService
 
     /**
      * Throw an Error object up the call stack
+     * @param tag error tag
+     * @param statusCode response status code
+     * @param msg error message
      */
     throwError(tag: string, statusCode: number, msg: string)
     {
@@ -96,6 +99,10 @@ export class ExecService
 
     /**
      * Send an error response
+     * @param ctx request context
+     * @param tag error tag
+     * @param statusCode response status code
+     * @param msg error message
      */
     sendErrorResponse(ctx: Context, tag: string, statusCode: number, msg: string)
     {

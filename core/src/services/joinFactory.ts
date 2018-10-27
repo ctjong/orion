@@ -4,9 +4,9 @@ class JoinFactory
 {
     /**
      * Create a Join object for resolving a foreign key
-     * @param {any} ctx Request context
-     * @param {any} entity Requested entity
-     * @param {any} field Foreign key field
+     * @param ctx Request context
+     * @param entity Requested entity
+     * @param field Foreign key field
      * @returns Join object
      */
     createForForeignKey(ctx: Context, entity: string, field: string)

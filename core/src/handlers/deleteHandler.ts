@@ -15,8 +15,8 @@
 
 //     /**
 //      * Handle a delete record request
-//      * @param {any} ctx Request context
-//      * @param {any} recordId Record ID to delete
+//      * @param ctx Request context
+//      * @param recordId Record ID to delete
 //      */
 //     execute(ctx, recordId)
 //     {

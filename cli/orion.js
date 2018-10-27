@@ -51,7 +51,7 @@
 
     /**
      * Process the given config module and try to output an SQL file to setup the database.
-     * @param {any} config Config module
+     * @param config Config module
      */
     const processConfig = (config) =>
     {

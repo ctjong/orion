@@ -10,9 +10,9 @@ class HelperService
     /**
      * Get a list of fields that are accessible from the given entity for the
      * specified action.
-     * @param {any} ctx Request context
-     * @param {any} action Action name
-     * @param {any} entity Entity name
+     * @param ctx Request context
+     * @param action Action name
+     * @param entity Entity name
      * @returns an array of field names
      */
     getFields (ctx:Context, action:string, entity:string): string[]
@@ -36,9 +36,9 @@ class HelperService
 
     /**
      * Fix the key name and type of each item in the given data object
-     * @param {any} ctx Request context
-     * @param {any} data Data object
-     * @param {any} entity Entity name
+     * @param ctx Request context
+     * @param data Data object
+     * @param entity Entity name
      * @returns fixed data object
      */
     fixDataKeysAndTypes (ctx:Context, data:NameValueMap, entity?:string): NameValueMap
@@ -81,11 +81,11 @@ class HelperService
      * This will check if an action is permitted, given the context and target record.
      * Also resolve any foreign key that exists in the request body.
      * Throws an exception on failure.
-     * @param {any} ctx Request context
-     * @param {any} action Action name
-     * @param {any} db Database module
-     * @param {any} recordId Record ID
-     * @param {any} requestBody Requset body
+     * @param ctx Request context
+     * @param action Action name
+     * @param db Database module
+     * @param recordId Record ID
+     * @param requestBody Requset body
      */
     onBeginWriteRequest (ctx:Context, action:string, db:Database, recordId:string, requestBody:NameValueMap): Promise<any>
     {
@@ -122,8 +122,8 @@ class HelperService
     /**
      * Check if the given action is permitted, given the current user roles context.
      * Throws an exception on failure.
-     * @param {any} ctx Request context
-     * @param {any} action Action name
+     * @param ctx Request context
+     * @param action Action name
      */
     validateRoles(ctx:Context, action:string): void
     {
@@ -133,9 +133,9 @@ class HelperService
 
     /**
      * Fix the type of each item in the given data object
-     * @param {any} ctx Request context
-     * @param {any} entity Entity name
-     * @param {any} dataObj Data object
+     * @param ctx Request context
+     * @param entity Entity name
+     * @param dataObj Data object
      * @returns fixed data object
      */
     fixDataTypes(ctx:Context, entity:string, dataObj:NameValueMap)
@@ -162,9 +162,9 @@ class HelperService
 
     /**
      * Resolve the foreign keys in the given request body
-     * @param {any} ctx Request context
-     * @param {any} requestBody Request body
-     * @param {any} db Database module
+     * @param ctx Request context
+     * @param requestBody Request body
+     * @param db Database module
      */
     resolveForeignKeys(ctx:Context, requestBody:NameValueMap, db:Database): Promise<any>
     {
@@ -186,11 +186,11 @@ class HelperService
 
     /**
      * Resolve a foreign key field in the given request body
-     * @param {any} ctx Request context
-     * @param {any} requestBody Request body
-     * @param {any} fieldName Field name
-     * @param {any} fk Foreign key object
-     * @param {any} db Database module
+     * @param ctx Request context
+     * @param requestBody Request body
+     * @param fieldName Field name
+     * @param fk Foreign key object
+     * @param db Database module
      */
     async resolveForeignKey(ctx:Context, requestBody:NameValueMap, fieldName:string, fk:any, db:Database): Promise<any>
     {

@@ -20,9 +20,9 @@ export class MockConnectionPool
 
     /**
      * Execute a MYSQL query
-     * @param {*} queryString Query string
-     * @param {*} queryParams Query params
-     * @param {*} callback callback function
+     * @param queryString Query string
+     * @param queryParams Query params
+     * @param callback callback function
      */
     query (queryString:string, queryParams:NameValueMap, callback:any)
     {
@@ -31,7 +31,7 @@ export class MockConnectionPool
 
     /**
      * Set the results for the active query
-     * @param {*} nextQueryResultsArg query results
+     * @param nextQueryResultsArg query results
      */
     setQueryResults(nextQueryResultsArg:any)
     {
@@ -40,7 +40,7 @@ export class MockConnectionPool
 
     /**
      * To be invoked when a query is received to be sent to database
-     * @param {*} queryReceivedHandlerArg handler function
+     * @param queryReceivedHandlerArg handler function
      */
     onQueryReceived(queryReceivedHandlerArg:any)
     {
@@ -57,10 +57,10 @@ export class MockConnectionPool
 
     /**
      * Process a query
-     * @param {*} engine engine
-     * @param {*} queryString query string
-     * @param {*} queryParams query parameters
-     * @param {*} callback callback function
+     * @param engine engine
+     * @param queryString query string
+     * @param queryParams query parameters
+     * @param callback callback function
      */
     processQuery(engine:string, queryString:string, queryParams:NameValueMap, callback:any)
     {

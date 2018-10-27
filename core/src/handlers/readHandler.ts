@@ -15,9 +15,9 @@
 
 //     /**
 //      * Handle a read request
-//      * @param {any} ctx Request context
-//      * @param {any} requestParams Request parameters
-//      * @param {any} isFullMode Whether to do the read in full mode (full mode = include rich text fields in response)
+//      * @param ctx Request context
+//      * @param requestParams Request parameters
+//      * @param isFullMode Whether to do the read in full mode (full mode = include rich text fields in response)
 //      */
 //     execute (ctx, requestParams, isFullMode)
 //     {
@@ -63,7 +63,7 @@
 
 // /**
 //  * Get condition string from config
-//  * @param {any} ctx Request context
+//  * @param ctx Request context
 //  * @returns condition string
 //  */
 // const getConditionStringFromConfig = (ctx) =>
@@ -76,10 +76,10 @@
 
 // /**
 //  * Get Condition object from the request
-//  * @param {any} ctx Request context
-//  * @param {any} requestParams Request parameters
-//  * @param {any} conditionFactory Condition factory
-//  * @param {any} exec Exec module
+//  * @param ctx Request context
+//  * @param requestParams Request parameters
+//  * @param conditionFactory Condition factory
+//  * @param exec Exec module
 //  * @returns Condition object
 //  */
 // const getConditionFromRequest = (ctx, requestParams, conditionFactory, exec) =>

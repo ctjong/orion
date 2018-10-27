@@ -5,10 +5,11 @@ class ConditionFactory
 {
     /**
      * Construct a single Condition object
-     * @param {any} entity Entity where this condition applies to
-     * @param {any} fieldName Condition field
-     * @param {any} operator Condition operator
-     * @param {any} fieldValue Condition value
+     * @param entity Entity where this condition applies to
+     * @param fieldName Condition field
+     * @param operator Condition operator
+     * @param fieldValue Condition value
+     * @returns condition object
      */
     createSingle(entity:string, fieldName:string, operator:string, fieldValue:string): SingleCondition
     {
@@ -28,8 +29,9 @@ class ConditionFactory
 
     /**
      * Construct a Condition that consists of other Conditions
-     * @param {any} operator Operator to connect all the child conditions
-     * @param {any} children Array of Conditions
+     * @param operator Operator to connect all the child conditions
+     * @param children Array of Conditions
+     * @returns condition object
      */
     createCompound(operator:string, children:Condition[]): CompoundCondition
     {
@@ -52,8 +54,8 @@ class ConditionFactory
 
     /**
      * Try to parse the given condition string and return a Condition object
-     * @param {any} ctx Requst context
-     * @param {any} conditionString Condition string
+     * @param ctx Requst context
+     * @param conditionString Condition string
      * @returns Condition object, or null on failure
      */
     parse(ctx:Context, conditionString:string): Condition

@@ -59,6 +59,10 @@ class ContextFactory
 
     /**
      * Construct a new Context object. This should be done at the beginning of each session.
+     * @param req request object
+     * @param res response object
+     * @param entity entity name
+     * @returns context object
      */
     create(req:any, res:any, entity:string) : Context
     {
@@ -89,7 +93,7 @@ class ContextFactory
     /**
      * Initialize the config object. This should be done before the server is started.
      * This will also merge defaultEntities and defaultFields into the config object.
-     * @param {any} inputConfig Input config object
+     * @param inputConfig Input config object
      */
     initializeConfig(inputConfig:Config)
     {

@@ -21,12 +21,12 @@
 
 //     /**
 //      * Quick find a record based on the given condition
-//      * @param {any} ctx Request context
-//      * @param {any} fields Requested fields
-//      * @param {any} entity Requested entity
-//      * @param {any} conditionMap Search condition
-//      * @param {any} successCb Success callback
-//      * @param {any} completeCb Complete callback
+//      * @param ctx Request context
+//      * @param fields Requested fields
+//      * @param entity Requested entity
+//      * @param conditionMap Search condition
+//      * @param successCb Success callback
+//      * @param completeCb Complete callback
 //      */
 //     quickFind(ctx, fields, entity, conditionMap, successCb, completeCb)
 //     {
@@ -44,17 +44,17 @@
 
 //     /**
 //      * Find records that match the given condition
-//      * @param {any} ctx Request context
-//      * @param {any} fields Requested fields
-//      * @param {any} entity Requested entity
-//      * @param {any} condition Search condition
-//      * @param {any} orderByField Field to order the results by
-//      * @param {any} skip Number of matches to skip
-//      * @param {any} take Number of matches to take
-//      * @param {any} resolveFK Whether or not foreign keys should be resolved
-//      * @param {any} isFullMode Whether or not result should be returned in full mode
-//      * @param {any} successCb Success callback
-//      * @param {any} completeCb Complete callback
+//      * @param ctx Request context
+//      * @param fields Requested fields
+//      * @param entity Requested entity
+//      * @param condition Search condition
+//      * @param orderByField Field to order the results by
+//      * @param skip Number of matches to skip
+//      * @param take Number of matches to take
+//      * @param resolveFK Whether or not foreign keys should be resolved
+//      * @param isFullMode Whether or not result should be returned in full mode
+//      * @param successCb Success callback
+//      * @param completeCb Complete callback
 //      */
 //     select(ctx, fields, entity, condition, orderByField, skip, take, resolveFK, isFullMode, successCb, completeCb)
 //     {
@@ -94,11 +94,11 @@
 
 //     /**
 //      * Find a record that matches the given id
-//      * @param {any} ctx Request context
-//      * @param {any} entity Requested entity
-//      * @param {any} recordId Id of record to find
-//      * @param {any} successCb Success callback
-//      * @param {any} completeCb Complete callback
+//      * @param ctx Request context
+//      * @param entity Requested entity
+//      * @param recordId Id of record to find
+//      * @param successCb Success callback
+//      * @param completeCb Complete callback
 //      */
 //     findRecordById(ctx, entity, recordId, successCb, completeCb)
 //     {
@@ -113,13 +113,13 @@
 
 //     /**
 //      * Count the number of records that match the given condition
-//      * @param {any} ctx Request context
-//      * @param {any} fields Requested fields
-//      * @param {any} entity Requested entity
-//      * @param {any} condition Condition
-//      * @param {any} resolveFK Whether or not foreign keys should be resolved
-//      * @param {any} successCb Success callback
-//      * @param {any} completeCb Complete callback
+//      * @param ctx Request context
+//      * @param fields Requested fields
+//      * @param entity Requested entity
+//      * @param condition Condition
+//      * @param resolveFK Whether or not foreign keys should be resolved
+//      * @param successCb Success callback
+//      * @param completeCb Complete callback
 //      */
 //     count(ctx, fields, entity, condition, resolveFK, successCb, completeCb)
 //     {
@@ -136,12 +136,12 @@
 
 //     /**
 //      * Insert a new record
-//      * @param {any} ctx Request context
-//      * @param {any} entity Requested entity
-//      * @param {any} fieldNames New record field names
-//      * @param {any} fieldValues New record field values
-//      * @param {any} successCb Success callback
-//      * @param {any} completeCb Complete callback
+//      * @param ctx Request context
+//      * @param entity Requested entity
+//      * @param fieldNames New record field names
+//      * @param fieldValues New record field values
+//      * @param successCb Success callback
+//      * @param completeCb Complete callback
 //      */
 //     insert(ctx, entity, fieldNames, fieldValues, successCb, completeCb)
 //     {
@@ -162,12 +162,12 @@
 
 //     /**
 //      * Update a record
-//      * @param {any} ctx Request context
-//      * @param {any} entity Requested entity
-//      * @param {any} updateFields Fields to update
-//      * @param {any} condition Update condition
-//      * @param {any} successCb Success callback
-//      * @param {any} completeCb Complete callback
+//      * @param ctx Request context
+//      * @param entity Requested entity
+//      * @param updateFields Fields to update
+//      * @param condition Update condition
+//      * @param successCb Success callback
+//      * @param completeCb Complete callback
 //      */
 //     update(ctx, entity, updateFields, condition, successCb, completeCb)
 //     {
@@ -190,11 +190,11 @@
 
 //     /**
 //      * Delete a record from the database
-//      * @param {any} ctx Request context
-//      * @param {any} entity Requested entity
-//      * @param {any} id Id of record to delete
-//      * @param {any} successCb Success callback
-//      * @param {any} completeCb Complete callback
+//      * @param ctx Request context
+//      * @param entity Requested entity
+//      * @param id Id of record to delete
+//      * @param successCb Success callback
+//      * @param completeCb Complete callback
 //      */
 //     deleteRecord(ctx, entity, id, successCb, completeCb)
 //     {
@@ -208,7 +208,7 @@
 
 //     /**
 //      * Set the connection this.pool to be used by this adapter
-//      * @param {any} connectionPool connection this.pool
+//      * @param connectionPool connection this.pool
 //      */
 //     setConnectionPool(connectionPool)
 //     {
@@ -217,10 +217,10 @@
 
 //     /**
 //      * Execute a query
-//      * @param {any} ctx Request context
-//      * @param {any} query Query to execute
-//      * @param {any} successCb Success callback
-//      * @param {any} completeCb Complete callback
+//      * @param ctx Request context
+//      * @param query Query to execute
+//      * @param successCb Success callback
+//      * @param completeCb Complete callback
 //      */
 //     async execute(ctx, query, successCb, completeCb)
 //     {
@@ -252,7 +252,7 @@
 
 //     /**
 //      * Ensure the connection this.pool is initialized
-//      * @param {any} ctx Request context
+//      * @param ctx Request context
 //      */
 //     ensurePoolInitializedAsync(ctx)
 //     {
@@ -305,10 +305,10 @@
 
 // /**
 //  * Get Join objects to resolve foreign keys
-//  * @param {any} ctx Request context
-//  * @param {any} fields Fields in the requested entity
-//  * @param {any} entity Requested entity
-//  * @param {any} joinFactory JoinFactory module
+//  * @param ctx Request context
+//  * @param fields Fields in the requested entity
+//  * @param entity Requested entity
+//  * @param joinFactory JoinFactory module
 //  * @returns an array of Joins
 //  */
 // const getJoins = (ctx, fields, entity, joinFactory) =>
@@ -377,7 +377,7 @@
 
 // /**
 //  * Get a join expression for the given Join object
-//  * @param {any} joinObj Join object
+//  * @param joinObj Join object
 //  * @returns a JOIN clause string
 //  */
 // const getJoinExpression = (joinObj) =>
@@ -387,7 +387,7 @@
 
 // /**
 //  * Get a select expression for the given Join object
-//  * @param {any} joinObj Join object
+//  * @param joinObj Join object
 //  * @returns a SELECT clause string
 //  */
 // const getSelectExpression = (joinObj) =>
@@ -402,8 +402,8 @@
 
 // /**
 //  * Append where clause to the given query based on the specified condition
-//  * @param {any} query Query object
-//  * @param {any} condObj Condition object
+//  * @param query Query object
+//  * @param condObj Condition object
 //  */
 // const appendWhereClause = (query, condObj) =>
 // {

@@ -12,7 +12,7 @@ class AuthService
 {
     /**
      * Initialize the user context for the current request.
-     * @param {any} ctx Request context
+     * @param ctx Request context
      */
     initUserContext(ctx:Context): void
     {
@@ -50,9 +50,9 @@ class AuthService
      * Try to generate an Orion token for the user with the given credential.
      * Throw an exception if credential is invalid or an error occurs.
      * The access token will be sent into the response object in the context.
-     * @param {any} ctx Request context
-     * @param {any} userName Submitted user name
-     * @param {any} password Submitted password
+     * @param ctx Request context
+     * @param userName Submitted user name
+     * @param password Submitted password
      */
     async generateLocalUserToken(ctx:Context, userName:string, password:string): Promise<void>
     {
@@ -91,8 +91,8 @@ class AuthService
      * Try to generate an Orion access token for the user with the given Facebook token.
      * Throw an exception if credential is invalid or an error occurs.
      * The access token will be sent into the response object in the context.
-     * @param {any} ctx Request context
-     * @param {any} fbToken Facebook token
+     * @param ctx Request context
+     * @param fbToken Facebook token
      */
     processFbToken(ctx:Context, fbToken:string): void 
     {
@@ -140,8 +140,9 @@ class AuthService
 
     /**
      * Encrypt the given plan text password
-     * @param {any} ctx Request context
-     * @param {any} plainPassword Plain text password
+     * @param ctx Request context
+     * @param plainPassword Plain text password
+     * @returns hashed password
      */
     hashPassword(ctx:Context, plainPassword:string): string
     {
@@ -153,6 +154,7 @@ class AuthService
 
     /**
      * Verify authentication is supported in config. Throw exception if not.
+     * @param ctx request context
      */
     verifyAuthSupported(ctx:Context): void
     {
@@ -162,13 +164,13 @@ class AuthService
 
     /**
      * Create a token from the given information and send it into the response object.
-     * @param {any} ctx Request context
-     * @param {any} id User's ID
-     * @param {any} domain User's domain
-     * @param {any} domainId User's ID on the domain
-     * @param {any} roles User's roles
-     * @param {any} firstName User's first name
-     * @param {any} lastName User's last name
+     * @param ctx Request context
+     * @param id User's ID
+     * @param domain User's domain
+     * @param domainId User's ID on the domain
+     * @param roles User's roles
+     * @param firstName User's first name
+     * @param lastName User's last name
      */
     private createAndSendToken(ctx:Context, id:string, domain:string, domainId:string, roles:string[], firstName:string, lastName:string): void
     {

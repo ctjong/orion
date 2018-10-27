@@ -15,8 +15,8 @@
 
 //     /**
 //      * Handle a create record request
-//      * @param {any} ctx Request context
-//      * @param {any} requestBody Request body
+//      * @param ctx Request context
+//      * @param requestBody Request body
 //      */
 //     execute (ctx, requestBody)
 //     {
@@ -62,7 +62,7 @@
 
 // /**
 //  * Get a list of fields from the config
-//  * @param {any} ctx Request context
+//  * @param ctx Request context
 //  * @returns an object containing an array of required fields and an array of optional fields
 //  */
 // const getConfigFields = (ctx) =>
@@ -89,9 +89,9 @@
 
 // /**
 //  * Verify that all the requirements for a create operation are met
-//  * @param {any} ctx Request context
-//  * @param {any} requestBody Request body
-//  * @param {any} requiredFields Required fields from config
+//  * @param ctx Request context
+//  * @param requestBody Request body
+//  * @param requiredFields Required fields from config
 //  */
 // const validateRequirements = (ctx, requestBody, requiredFields) =>
 // {
@@ -118,10 +118,10 @@
 
 // /**
 //  * Prepare a list of fields to be included in the create request
-//  * @param {any} ctx Request context
-//  * @param {any} requestBody Request body
-//  * @param {any} requiredFields A list of required fields from config
-//  * @param {any} optionalFields A list of optional fields from config
+//  * @param ctx Request context
+//  * @param requestBody Request body
+//  * @param requiredFields A list of required fields from config
+//  * @param optionalFields A list of optional fields from config
 //  * @returns an object containing an array of field names and an array of field values
 //  */
 // const prepareFields = (ctx, requestBody, requiredFields, optionalFields) =>
@@ -157,7 +157,7 @@
 
 // /**
 //  * Validate the given email
-//  * @param {any} email Email string
+//  * @param email Email string
 //  */
 // const validateEmail = (email) =>
 // {
@@ -170,8 +170,8 @@
 
 // /**
 //  * Verify that the given password meets the requirement
-//  * @param {any} newPassword New password
-//  * @param {any} passwordReqs Password requirements
+//  * @param newPassword New password
+//  * @param passwordReqs Password requirements
 //  */
 // const verifyPwdRequirements = (newPassword, passwordReqs) =>
 // {
@@ -199,9 +199,9 @@
 
 // /**
 //  * Verify the given username doesn't exist in the database yet
-//  * @param {any} ctx Request context
-//  * @param {any} username Input username
-//  * @param {any} callback Callback function
+//  * @param ctx Request context
+//  * @param username Input username
+//  * @param callback Callback function
 //  */
 // const verifyUsernameNotExist = (ctx, username, callback) =>
 // {

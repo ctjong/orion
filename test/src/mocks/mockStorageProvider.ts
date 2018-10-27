@@ -12,12 +12,12 @@ export class MockStorageProvider
 
     /**
      * Upload a file to an Azure blob storage
-     * @param {*} containerName azure container name
-     * @param {*} name  file name
-     * @param {*} stream file stream
-     * @param {*} size file size
-     * @param {*} options upload options
-     * @param {*} callback callback function
+     * @param containerName azure container name
+     * @param name  file name
+     * @param stream file stream
+     * @param size file size
+     * @param options upload options
+     * @param callback callback function
      */
     azureCreateBlockBlobFromStream (containerName:string, name:string, stream:any, size:number, options:any, callback:any)
     {
@@ -29,9 +29,9 @@ export class MockStorageProvider
 
     /**
      * Delete a file from an Azure blob storage
-     * @param {*} containerName azure container name
-     * @param {*} filename file name
-     * @param {*} callback callback function
+     * @param containerName azure container name
+     * @param filename file name
+     * @param callback callback function
      */
     azureDeleteBlob(containerName:string, filename:string, callback:any)
     {
@@ -40,8 +40,8 @@ export class MockStorageProvider
 
     /**
      * Upload a file to an Amazon S3 storage
-     * @param {*} options upload options
-     * @param {*} callback callback function
+     * @param options upload options
+     * @param callback callback function
      */
     s3Upload(options:any, callback:any)
     {
@@ -53,8 +53,8 @@ export class MockStorageProvider
 
     /**
      * Delete a file from an Amazon S3 storage
-     * @param {*} options delete options
-     * @param {*} callback callback function
+     * @param options delete options
+     * @param callback callback function
      */
     s3DeleteObject(options:any, callback:any)
     {
@@ -63,9 +63,9 @@ export class MockStorageProvider
 
     /**
      * Rename an uploaded file
-     * @param {*} tempPath Temporary upload path
-     * @param {*} finalPath Final upload path
-     * @param {*} callback Callback function
+     * @param tempPath Temporary upload path
+     * @param finalPath Final upload path
+     * @param callback Callback function
      */
     localRename(tempPath:string, finalPath:string, callback:any)
     {
@@ -75,8 +75,8 @@ export class MockStorageProvider
 
     /**
      * Remove an uploaded file
-     * @param {*} fullPath Full path of the file to delete
-     * @param {*} callback Callback function
+     * @param fullPath Full path of the file to delete
+     * @param callback Callback function
      */
     localUnlink(fullPath:string, callback:any)
     {
@@ -86,7 +86,7 @@ export class MockStorageProvider
 
     /**
      * Set a handler to be invoked when a file part is received
-     * @param {*} handler handler function
+     * @param handler handler function
      */
     onFilePartReceived(handler:any)
     {
@@ -95,7 +95,7 @@ export class MockStorageProvider
 
     /**
      * Set a handler to be invoked when a file is deleted
-     * @param {*} handler handler function
+     * @param handler handler function
      */
     onFileDeleted(handler:any)
     {
@@ -104,11 +104,11 @@ export class MockStorageProvider
 
     /**
      * Process an uploaded file part
-     * @param {*} name File name
-     * @param {*} mime Mime type
-     * @param {*} stream File stream
-     * @param {*} tempPath Temporary file path
-     * @param {*} callback Callback function
+     * @param name File name
+     * @param mime Mime type
+     * @param stream File stream
+     * @param tempPath Temporary file path
+     * @param callback Callback function
      */
     processFilePart(name:string, mime:string, stream:any, tempPath:string, callback:any)
     {
@@ -134,8 +134,8 @@ export class MockStorageProvider
 
     /**
      * Process a file delete
-     * @param {*} filename File name
-     * @param {*} callback Callback function
+     * @param filename File name
+     * @param callback Callback function
      */
     processFileDelete(filename:string, callback:any)
     {

@@ -63,7 +63,6 @@ export default class Orion
 
     /**
      * Set up API endpoints
-     * @param {any} app server application
      */
     setupApiEndpoints()
     {
@@ -102,8 +101,9 @@ export default class Orion
 
     /**
      * Start the app at the given port
-     * @param {any} port optional port to start the app at
-     * @param {any} callback optional callback function
+     * @param port optional port to start the app at
+     * @param callback optional callback function
+     * @returns server object
      */
     start(port:number, callback:any)
     {
@@ -122,10 +122,11 @@ export default class Orion
 
     /**
      * Find a record by id
-     * @param {any} originalReq original request context where app is called from
-     * @param {any} entity target entity of the read operation
-     * @param {any} id record id
-     * @param {any} callback callback function
+     * @param originalReq original request context where app is called from
+     * @param entity target entity of the read operation
+     * @param id record id
+     * @param callback callback function
+     * @returns query results
      */
     findById(originalReq:any, entity:string, id:string, callback:any)
     {
@@ -136,13 +137,14 @@ export default class Orion
 
     /**
      * Find a record by condition
-     * @param {any} originalReq original request context where app is called from
-     * @param {any} entity target entity of the read operation
-     * @param {any} orderByField field name to order the results by
-     * @param {any} skip number of records to skip (for pagination)
-     * @param {any} take number of records to take (for pagination)
-     * @param {any} condition condition string
-     * @param {any} callback callback function
+     * @param originalReq original request context where app is called from
+     * @param entity target entity of the read operation
+     * @param orderByField field name to order the results by
+     * @param skip number of records to skip (for pagination)
+     * @param take number of records to take (for pagination)
+     * @param condition condition string
+     * @param callback callback function
+     * @returns query results
      */
     findByCondition(originalReq:any, entity:string, orderByField:string, skip:number, take:number, condition:any, callback:any)
     {
@@ -153,12 +155,13 @@ export default class Orion
 
     /**
      * Get all records for the specified entity
-     * @param {any} originalReq original request context where app is called from
-     * @param {any} entity target entity of the read operation
-     * @param {any} orderByField field name to order the results by
-     * @param {any} skip number of records to skip (for pagination)
-     * @param {any} take number of records to take (for pagination)
-     * @param {any} callback callback function
+     * @param originalReq original request context where app is called from
+     * @param entity target entity of the read operation
+     * @param orderByField field name to order the results by
+     * @param skip number of records to skip (for pagination)
+     * @param take number of records to take (for pagination)
+     * @param callback callback function
+     * @returns query results
      */
     findAll(originalReq:any, entity:string, orderByField:string, skip:number, take:number, callback:any)
     {
@@ -298,11 +301,11 @@ export default class Orion
 
     /**
      * Execute a direct read operation, a read operation that is triggered from the server.
-     * @param {any} originalReq origianl request context where the read operation is triggered
-     * @param {any} entity target entity of the read operation
-     * @param {any} params read action parameters
-     * @param {any} isFullMode whether or not the read result should be returned in long form
-     * @param {any} callback callback function
+     * @param originalReq origianl request context where the read operation is triggered
+     * @param entity target entity of the read operation
+     * @param params read action parameters
+     * @param isFullMode whether or not the read result should be returned in long form
+     * @param callback callback function
      */
     executeDirectRead(originalReq:any, entity:string, params:any, isFullMode:boolean, callback:any)
     {

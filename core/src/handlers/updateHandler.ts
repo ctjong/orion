@@ -15,9 +15,9 @@
 
 //     /**
 //      * Handle an update request
-//      * @param {any} ctx Request context
-//      * @param {any} requestBody Request body
-//      * @param {any} recordId Record ID to update
+//      * @param ctx Request context
+//      * @param requestBody Request body
+//      * @param recordId Record ID to update
 //      */
 //     execute (ctx, requestBody, recordId)
 //     {
