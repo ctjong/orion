@@ -1,4 +1,4 @@
-import { Config } from "../../core/src/types";
+import { Config } from "../core/types";
 import { Runner } from './runner';
 import { configFactory } from './configFactory';
 import { assetTestSuite } from './tests/tests-asset';
@@ -67,4 +67,4 @@ const startTestSession = (config: Config, engine: string, storageProviderName: s
     });
 };
 
-main();
+export { main };
