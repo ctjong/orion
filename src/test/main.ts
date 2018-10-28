@@ -10,7 +10,7 @@ import { userTestSuite } from './tests/tests-user';
 /** 
  * Test entry point
  */
-const main = () =>
+export default () =>
 {
     // initialize configs
     const mssqlAzureConfig = configFactory.create("mssql", { provider: "azure" });
@@ -66,5 +66,3 @@ const startTestSession = (config: Config, engine: string, storageProviderName: s
         }
     });
 };
-
-export { main };
