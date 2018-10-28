@@ -3,6 +3,7 @@ import { Context, NameValueMap, Join, Condition, SingleCondition, CompoundCondit
 import { conditionFactory } from "../../services/conditionFactory";
 import { joinFactory } from "../../services/joinFactory";
 import { execService } from "../../services/execService";
+import { helperService } from "../../services/helperService";
 
 /**
  * A module for handling interaction with an MSSQL database
@@ -19,7 +20,7 @@ export class MysqlDatabase
      * @param conditionMap Search condition
      * @returns query results
      */
-    async quickFind(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>
+    quickFind(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>
     {
         const condition = conditionFactory.createCompound("&", []);
         for (const key in conditionMap)
@@ -27,8 +28,11 @@ export class MysqlDatabase
             if (!conditionMap.hasOwnProperty(key)) continue;
             condition.children.push(conditionFactory.createSingle(entity, key, "=", conditionMap[key]));
         }
-        const responseArr = await this.select(ctx, fields, entity, condition, "id", 0, 1, false, false);
-        return responseArr[0];
+        return new Promise(async resolve =>
+        {
+            const responseArr = await this.select(ctx, fields, entity, condition, "id", 0, 1, false, false);
+            resolve(responseArr[0]);
+        });
     }
 
     /**
@@ -44,7 +48,7 @@ export class MysqlDatabase
      * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    async select(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number, 
+    select(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number, 
         resolveFK:boolean, isFullMode:boolean): Promise<any>
     {
         const joins = resolveFK ? this.getJoins(ctx, fields, entity) : [];
@@ -54,20 +58,20 @@ export class MysqlDatabase
         for (let i = 0; i < fields.length; i++)
         {
             const fieldName = fields[i];
-            if (!isFullMode && fieldName.contains("richtext")) continue;
+            if (!isFullMode && fieldName.indexOf("richtext") >= 0) continue;
             query.append((i === 0 ? "" : ", ") + "`" + entity + "table`.`" + fieldName + "`");
         }
         for (let i = 0; i < joins.length; i++)
         {
-            query.append(", " + getSelectExpression(joins[i]));
+            query.append(", " + this.getSelectExpression(joins[i]));
         }
         query.append(" from `" + tableName + "`");
         for (let i = 0; i < joins.length; i++)
         {
-            query.append(" " + getJoinExpression(joins[i]));
+            query.append(" " + this.getJoinExpression(joins[i]));
         }
         query.append(" where ");
-        appendWhereClause(query, condition);
+        this.appendWhereClause(query, condition);
         orderByField = decodeURIComponent(orderByField);
         if (orderByField.indexOf("~") === 0)
         {
@@ -77,8 +81,8 @@ export class MysqlDatabase
         {
             query.append(" order by `" + entity + "table`.`" + orderByField + "` ");
         }
-        query.append(" LIMIT ? OFFSET ?", take, skip);
-        this.execute(ctx, query, successCb, completeCb);
+        query.append(" LIMIT ? OFFSET ?", take.toString(), skip.toString());
+        return this.execute(ctx, query);
     }
 
     /**
@@ -88,35 +92,39 @@ export class MysqlDatabase
      * @param recordId Id of record to find
      * @returns query results
      */
-    async findRecordById(ctx:Context, entity:string, recordId:string): Promise<any>
+    findRecordById(ctx:Context, entity:string, recordId:string): Promise<any>
     {
-        const fields = this.helper.getFields(ctx, "read", entity);
-        const condition = this.conditionFactory.createSingle(entity, "id", "=", recordId);
-        this.select(ctx, fields, entity, condition, "id", 0, 1, true, false, (responseArr) =>
+        const fields = helperService.getFields(ctx, "read", entity);
+        const condition = conditionFactory.createSingle(entity, "id", "=", recordId);
+        return new Promise(async resolve =>
         {
+            const responseArr = await this.select(ctx, fields, entity, condition, "id", 0, 1, true, false);
             const record = responseArr[0];
-            successCb(this.helper.fixDataKeysAndTypes(ctx, record, entity));
-        }, completeCb);
+            resolve(helperService.fixDataKeysAndTypes(ctx, record, entity));
+        });
     }
 
     /**
      * Count the number of records that match the given condition
      * @param ctx Request context
+     * @param fields Requested fields
      * @param entity Requested entity
      * @param condition Condition
+     * @param resolveFK Whether we should resolve foreign keys
      * @returns query results
      */
-    async count(ctx:Context, entity:string, condition:Condition): Promise<any>
+    count(ctx:Context, fields:string[], entity:string, condition:Condition, resolveFK:boolean): Promise<any>
     {
-        const joins = resolveFK ? getJoins(ctx, fields, entity, this.joinFactory) : [];
+        const joins = resolveFK ? this.getJoins(ctx, fields, entity) : [];
         const query = new Query();
         const tableName = entity + "table";
         query.append("select count(*) as count from `" + tableName + "` where ");
-        appendWhereClause(query, condition);
-        this.execute(ctx, query, (dbResponse) =>
+        this.appendWhereClause(query, condition);
+        return new Promise(async resolve =>
         {
-            successCb(dbResponse[0].count);
-        }, completeCb);
+            const dbResponse = await this.execute(ctx, query);
+            resolve(dbResponse[0].count);
+        });
     }
 
     /**
@@ -206,19 +214,19 @@ export class MysqlDatabase
      * @param successCb Success callback
      * @param completeCb Complete callback
      */
-    async execute(ctx:Context, query:Query): Promise<any>
+    execute(ctx:Context, query:Query): Promise<any>
     {
-        await this.ensurePoolInitializedAsync(ctx);
-        const queryString = query.getQueryString();
-        const queryParams = query.getQueryParams();
-        console.log("-------------------------------------------------");
-        console.log("Sending query to database:");
-        console.log(queryString);
-        console.log("Query parameters:");
-        console.log(queryParams);
-
         return new Promise(async resolve =>
         {
+            this.ensurePoolInitializedAsync(ctx);
+            const queryString = query.getQueryString();
+            const queryParams = query.getQueryParams();
+            console.log("-------------------------------------------------");
+            console.log("Sending query to database:");
+            console.log(queryString);
+            console.log("Query parameters:");
+            console.log(queryParams);
+
             const response:NameValueMap = await this.queryAsync(queryString, queryParams);
             let results:any = null;
             if (response.error)
@@ -286,8 +294,6 @@ export class MysqlDatabase
             });
         });
     }
-
-
 
     /**
      * Get Join objects to resolve foreign keys

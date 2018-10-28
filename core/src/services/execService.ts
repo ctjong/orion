@@ -68,11 +68,12 @@ export class ExecService
 
     /**
      * Execute a callback and catch any exception that comes out of it.
-     * Any callback that is being passed to a library function should be wrapped in this.
+     * Any callback that is executed after a library call should be wrapped in this, to make sure
+     * all exceptions that are thrown on a separate thread are caught.
      * @param ctx request context
      * @param fn function to execute
      */
-    async catchAllErrors(ctx: Context, fn: ((...args: any) => any))
+    async catchAllErrors(ctx: Context, fn: (() => any))
     {
         try
         {

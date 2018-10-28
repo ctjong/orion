@@ -1,4 +1,5 @@
-import { Config, Context } from "./types";
+import { Context, UploadFileResponse } from "./types";
+
 
 export interface Storage
 {
@@ -7,7 +8,7 @@ export interface Storage
      * @param ctx Request context
      * @param req Request object
      */
-    uploadFile(ctx:Context, req:any): Promise<any>;
+    uploadFile(ctx:Context, req:any): Promise<UploadFileResponse>;
 
     /**
      * Delete a file from the storage

@@ -19,7 +19,7 @@ class DeleteAssetHandler
             execService.throwError("51be", 500, "file delete is not supported for this site");
         if(!ctx.user.id)
             execService.throwError("2c74", 401, "anonymous asset deletion is not supported");
-        const [record] = await helperService.onBeginWriteRequest(ctx, "delete", dataService.db, recordId, null);
+        const { record } = await helperService.onBeginWriteRequest(ctx, "delete", dataService.db, recordId, null);
         if (!record.filename)
             execService.throwError("cd03", 500, "failed to get file name for the requested record");
         const error = await dataService.storage.deleteFile(ctx, record.filename);

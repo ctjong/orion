@@ -21,3 +21,5 @@ export class CompoundCondition implements Condition { operator:string; children:
 export interface NameValueMap {[key:string]:any};
 
 export class Join { e1:string; e2:string; e2Alias:string; e1JoinField:string; e2JoinField:string; e2SelectFields:string };
+
+export interface UploadFileResponse { error: any, name: string };

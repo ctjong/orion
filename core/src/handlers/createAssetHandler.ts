@@ -20,7 +20,7 @@ class CreateAssetHandler
         if(!ctx.user.id) 
             execService.throwError("4f53", 401, "anonymous upload is not supported");
         await helperService.onBeginWriteRequest(ctx, "create", dataService.db, null, { "ownerid": ctx.user.id });
-        const [error, name] = await dataService.storage.uploadFile(ctx, req);
+        const { error, name } = await dataService.storage.uploadFile(ctx, req);
         if (error)
         {
             execService.sendErrorResponse(ctx, "d2d0", 500, "error while uploading file to storage system");

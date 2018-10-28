@@ -44,7 +44,7 @@ class ReadHandler
 
         // execute
         const fields = helperService.getFields(ctx, "read");
-        const count = await dataService.db.count(ctx, ctx.entity, condition);
+        const count = await dataService.db.count(ctx, fields, ctx.entity, condition, true);
         const dbResponse = await dataService.db.select(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode);
         for(let i=0; i<dbResponse.length; i++)
         {

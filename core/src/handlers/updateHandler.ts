@@ -17,7 +17,7 @@ class UpdateHandler
      */
     async execute (ctx:Context, requestBody:NameValueMap, recordId:string)
     {
-        const [record] = await helperService.onBeginWriteRequest(ctx, "update", dataService.db, recordId, requestBody);
+        const { record } = await helperService.onBeginWriteRequest(ctx, "update", dataService.db, recordId, requestBody);
         const updateData:NameValueMap = {};
         const fields = helperService.getFields(ctx, "update");
         for(let i=0; i<fields.length; i++)

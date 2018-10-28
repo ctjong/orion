@@ -1,88 +1,103 @@
+import { Config, Context, UploadFileResponse } from "../../types";
+import * as azureStorage from "azure-storage";
+import { execService } from "../../services/execService";
+import * as multiparty from "multiparty";
+import * as guid from "uuid";
+import * as mime from "mime-types";
 
-// let provider = null;
+/**
+ * Class that handles file upload/delete on Azure Blob Storage
+ */
+export class AzureStorage
+{
+    provider:any;
 
-// /**
-//  * A module to handle file upload/delete on Azure Blob Storage
-//  */
-// module.exports = class AzureStorage
-// {
-//     /**
-//      * Get a list of dependency names for this module
-//      */
-//     getDependencyNames()
-//     {
-//         return ["multiparty", "guid", "mime", "helper", "db"];
-//     }
+    /**
+     * Initialize the adapter
+     * @param config config object
+     */
+    constructor(config:Config)
+    {
+        if(!config.storage.azureStorageConnectionString)
+            throw "Missing azureStorageConnectionString in the config";
+        this.provider = azureStorage.createBlobService(config.storage.azureStorageConnectionString);
+    }
 
-//     /**
-//      * Initialize the adapter
-//      */
-//     initialize(config)
-//     {
-//         if(provider || !config.storage.azureStorageConnectionString)
-//             return;
-//         const azure = require("azure-storage");
-//         provider = azure.createBlobService(config.storage.azureStorageConnectionString);
-//     }
+    /**
+     * Upload a file to Azure Blob Storage
+     * @param ctx Request context
+     * @param req Request object
+     */
+    uploadFile(ctx:Context, req:any): Promise<UploadFileResponse>
+    {
+        return new Promise(resolve =>
+        {
+            let isFirstPartReceived = false;
+            const form = new (multiparty.Form)();
+            form.on('part', (stream:any) =>
+            {
+                execService.catchAllErrors(ctx, () =>
+                {
+                    isFirstPartReceived = true;
+                    if (!stream.filename)
+                        execService.throwError("ffce", 400, "submitted file is not a valid file");
+                    const size = stream.byteCount - stream.byteOffset;
+                    const name = guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
+                    this.provider.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
+                    {
+                        contentSettings: { contentType: mime.lookup(name) }
+                    },
+                    (error:any) =>
+                    {
+                        execService.catchAllErrors(ctx, () =>
+                        {
+                            resolve({ error: error, name: name });
+                        });
+                    });
+                });
+            });
+            form.on('progress', (bytesReceived, bytesExpected) =>
+            {
+                execService.catchAllErrors(ctx, () =>
+                {
+                    if(!isFirstPartReceived && bytesReceived >= bytesExpected)
+                        execService.sendErrorResponse(ctx, "171d", 400, "error while parsing the first part");
+                });
+            });
+            form.on('error', (err) =>
+            {
+                execService.catchAllErrors(ctx, () =>
+                {
+                    execService.sendErrorResponse(ctx, "ead9", 400, "error while parsing form data");
+                });
+            });
+            form.parse(req);
+        });
+    }
 
-//     /**
-//      * Upload a file to Azure Blob Storage
-//      * @param ctx Request context
-//      * @param req Request object
-//      * @param callback Callback function
-//      */
-//     uploadFile(ctx, req, callback)
-//     {
-//         const isFirstPartReceived = false;
-//         const form = new (this.multiparty.Form)();
-//         form.on('part', this.exec.cb(ctx, (stream) =>
-//         {
-//             isFirstPartReceived = true;
-//             if (!stream.filename)
-//                 this.exec.throwError("ffce", 400, "submitted file is not a valid file");
-//             const size = stream.byteCount - stream.byteOffset;
-//             const name = this.guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
-//             provider.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
-//             {
-//                 contentSettings: { contentType: this.mime.lookup(name) }
-//             },
-//             this.exec.cb(ctx, (error) =>
-//             {
-//                 callback(error, name);
-//             }));
-//         }));
-//         form.on('progress', this.exec.cb(ctx, (bytesReceived, bytesExpected) =>
-//         {
-//             if(!isFirstPartReceived && bytesReceived >= bytesExpected)
-//                 this.exec.sendErrorResponse(ctx, "171d", 400, "error while parsing the first part");
-//         }));
-//         form.on('error', this.exec.cb(ctx, (err) =>
-//         {
-//             this.exec.sendErrorResponse(ctx, "ead9", 400, "error while parsing form data");
-//         }));
-//         form.parse(req);
-//     }
+    /**
+     * Delete a file from the storage
+     * @param ctx Request context 
+     * @param filename File name
+     * @param callback Callback function
+     */
+    deleteFile(ctx:Context, filename:string): Promise<any>
+    {
+        return new Promise(resolve =>
+        {
+            this.provider.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, (error:any, response:any) =>
+            {
+                resolve(error);
+            });
+        });
+    }
 
-//     /**
-//      * Delete a file from the storage
-//      * @param ctx Request context 
-//      * @param filename File name
-//      * @param callback Callback function
-//      */
-//     deleteFile(ctx, filename, callback)
-//     {
-//         provider.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, (error, response) =>
-//         {
-//             callback(error);
-//         });
-//     }
-
-//     /**
-//      * Set the provider module for this adapter
-//      * @param providerModule provider module
-//      */
-//     setProvider(providerModule)
-//     {
-//         provider = providerModule;
-//     }
-// }
+    /**
+     * Set the provider module for this adapter
+     * @param providerModule provider module
+     */
+    setProvider(providerModule:any)
+    {
+        this.provider = providerModule;
+    }
+}
