@@ -1,1 +1,1 @@
-require("./build/test/main")();
+require("../build/test/main")();
