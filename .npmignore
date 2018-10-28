@@ -4,6 +4,8 @@
 /obj
 /core/src
 /test
+/src
+/build/test
 *.sln
 *.njsproj
 /docs
