@@ -41,7 +41,7 @@
     },
     monitoring:
     {
-        azureAppInsightsKey: process.env.SAMPLE_APPINSIGHTS_INSTRUMENTATIONKEY
+        appInsightsKey: process.env.SAMPLE_APPINSIGHTS_INSTRUMENTATIONKEY
     },
     entities:
     {

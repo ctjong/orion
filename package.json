@@ -48,6 +48,6 @@
     "mocha": "^5.0.0"
   },
   "bin": {
-    "orion": "./cli/orion.js"
+    "orion": "./build/cli/orion.js"
   }
 }

@@ -8,7 +8,8 @@ class ConfigFactory
         {
             database: 
             {
-                engine: dbEngine
+                engine: dbEngine,
+                connectionString: "connectionString"
             },
             auth: 
             {
@@ -27,7 +28,7 @@ class ConfigFactory
             storage: storageSetting,
             monitoring:
             {
-                azureAppInsightsKey: "samplestring"
+                appInsightsKey: "samplestring"
             },
             entities:
             {

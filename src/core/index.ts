@@ -29,26 +29,6 @@ export default class Orion
     {
         this.app = Express();
 
-        // // register modules
-        // app.modules.add("body-parser", 'body-parser');
-        // app.modules.add("crypto", 'crypto');
-        // app.modules.add("guid", 'uuid/v1');
-        // app.modules.add("multiparty", 'multiparty');
-        // app.modules.add("mime", 'mime-types');
-        // app.modules.add("jwt", 'jsonwebtoken');
-        // app.modules.add("https", 'https');
-        // app.modules.addClass("create", './handlers/create');
-        // app.modules.addClass("createAsset", './handlers/createAsset');
-        // app.modules.addClass("delete", './handlers/delete');
-        // app.modules.addClass("deleteAsset", './handlers/deleteAsset');
-        // app.modules.addClass("read", './handlers/read');
-        // app.modules.addClass("update", './handlers/update');
-        // app.modules.addClass("auth", './services/auth');
-        // app.modules.addClass("exec", './services/exec');
-        // app.modules.addClass("helper", './services/helper');
-        // app.modules.addClass("conditionFactory", './services/conditionFactory');
-        // app.modules.addClass("joinFactory", './services/joinFactory');
-
         // initialize components
         contextFactory.initializeConfig(config);
         dataService.initialize(config);
