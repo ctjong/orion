@@ -1,4 +1,4 @@
-import { Context, UserInfo, NameValueMap } from '../types';
+import { Context, UserInfo } from '../types';
 import { execService } from './execService';
 import { dataService } from './dataService';
 import * as jwt from "jsonwebtoken";

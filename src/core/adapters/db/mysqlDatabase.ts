@@ -110,15 +110,12 @@ export class MysqlDatabase
     /**
      * Count the number of records that match the given condition
      * @param ctx Request context
-     * @param fields Requested fields
      * @param entity Requested entity
      * @param condition Condition
-     * @param resolveFK Whether we should resolve foreign keys
      * @returns query results
      */
-    count(ctx:Context, fields:string[], entity:string, condition:Condition, resolveFK:boolean): Promise<any>
+    count(ctx:Context, entity:string, condition:Condition): Promise<any>
     {
-        const joins = resolveFK ? this.getJoins(ctx, fields, entity) : [];
         const query = new Query();
         const tableName = entity + "table";
         query.append("select count(*) as count from `" + tableName + "` where ");

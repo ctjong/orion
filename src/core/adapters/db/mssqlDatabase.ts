@@ -103,13 +103,11 @@ export class MssqlDatabase implements Database
     /**
      * Count the number of records that match the given condition
      * @param ctx Request context
-     * @param fields Requested fields
      * @param entity Requested entity
      * @param condition Condition
-     * @param resolveFK Whether we should resolve foreign keys
      * @returns query results
      */
-    count(ctx:Context, fields:string[], entity:string, condition:Condition, resolveFK:boolean): Promise<any>
+    count(ctx:Context, entity:string, condition:Condition): Promise<any>
     {
         const query = new Query();
         const tableName = entity + "table";
