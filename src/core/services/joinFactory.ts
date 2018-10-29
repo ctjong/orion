@@ -9,7 +9,7 @@ class JoinFactory
      * @param field Foreign key field
      * @returns Join object
      */
-    createForForeignKey(ctx: Context, entity: string, field: string)
+    createForForeignKey(ctx: Context, entity: string, field: string): Join
     {
         if (!entity || !field)
             throw "[createForForeignKey] Missing entity/field";

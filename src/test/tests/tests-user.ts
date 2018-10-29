@@ -3,7 +3,7 @@ import { TestSuite } from "../testTypes";
 
 export class UserTestSuite implements TestSuite
 {
-    run(runner: Runner, params: any)
+    run(runner: Runner, params: any): void
     {
         runner.runTest(
             'POST | user-newUserInvalidEmail | 400',

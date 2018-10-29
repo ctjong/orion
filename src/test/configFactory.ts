@@ -2,7 +2,7 @@ import { Config } from "../core/types";
 
 class ConfigFactory
 {
-    create(dbEngine:string, storageSetting:any)
+    create(dbEngine:string, storageSetting:any): Config
     {
         const config:Config = 
         {

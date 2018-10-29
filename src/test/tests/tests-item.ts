@@ -3,7 +3,7 @@ import { TestSuite } from "../testTypes";
 
 export class ItemTestSuite implements TestSuite
 {
-    run(runner:Runner, params:any)
+    run(runner:Runner, params:any): void
     {
         runner.runTest(
             'POST | item-noToken | 401',

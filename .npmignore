@@ -9,3 +9,5 @@
 *.njsproj
 /docs
 _config.yml
+tsconfig.json
+tslint.json

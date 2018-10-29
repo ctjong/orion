@@ -1,4 +1,4 @@
-import { Context, NameValueMap } from "../types";
+import { Context, NameValueMap, CompoundCondition } from "../types";
 import { execService } from "../services/execService";
 import { helperService } from "../services/helperService";
 import { conditionFactory } from "../services/conditionFactory";
@@ -15,7 +15,7 @@ class ReadHandler
      * @param requestParams Request parameters
      * @param isFullMode Whether to do the read in full mode (full mode = include rich text fields in response)
      */
-    async execute (ctx:Context, requestParams:NameValueMap, isFullMode:boolean)
+    async execute (ctx:Context, requestParams:NameValueMap, isFullMode:boolean): Promise<void>
     {
         // set owner role if the read operation is run in private mode
         if (requestParams.accessType === "private")
@@ -58,7 +58,7 @@ class ReadHandler
      * @param ctx Request context
      * @returns condition string
      */
-    private getConditionStringFromConfig(ctx:Context)
+    private getConditionStringFromConfig(ctx:Context): string
     {
         const entityConfig = ctx.config.entities[ctx.entity];
         if (!entityConfig.getReadCondition)
@@ -74,7 +74,7 @@ class ReadHandler
      * @param exec Exec module
      * @returns Condition object
      */
-    private getConditionFromRequest(ctx:Context, requestParams:NameValueMap)
+    private getConditionFromRequest(ctx:Context, requestParams:NameValueMap): CompoundCondition
     {
         const isPrivate = requestParams.accessType === "private";
         const condition = conditionFactory.createCompound("&", []);

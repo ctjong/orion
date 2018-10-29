@@ -96,7 +96,7 @@ export class AzureStorage
      * Set the provider module for this adapter
      * @param providerModule provider module
      */
-    setProvider(providerModule:any)
+    setProvider(providerModule:any): void
     {
         this.provider = providerModule;
     }

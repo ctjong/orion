@@ -14,7 +14,7 @@ class CreateHandler
      * @param ctx Request context
      * @param requestBody Request body
      */
-    async execute (ctx:Context, requestBody:any)
+    async execute (ctx:Context, requestBody:any): Promise<void>
     {
         await helperService.onBeginWriteRequest(ctx, "create", dataService.db, null, requestBody);
 
@@ -54,7 +54,7 @@ class CreateHandler
      * @param ctx Request context
      * @returns an object containing an array of required fields and an array of optional fields
      */
-    private getConfigFields (ctx:Context)
+    private getConfigFields (ctx:Context): any
     {
         const allFields = ctx.config.entities[ctx.entity].fields;
         const requiredFields = [];
@@ -82,7 +82,7 @@ class CreateHandler
      * @param requestBody Request body
      * @param requiredFields Required fields from config
      */
-    validateRequirements(ctx:Context, requestBody:NameValueMap, requiredFields:string[]) 
+    validateRequirements(ctx:Context, requestBody:NameValueMap, requiredFields:string[]): void
     {
         for(let i=0; i<requiredFields.length; i++)
         {
@@ -113,7 +113,7 @@ class CreateHandler
      * @param optionalFields A list of optional fields from config
      * @returns an object containing an array of field names and an array of field values
      */
-    private prepareFields(ctx:Context, requestBody:NameValueMap, requiredFields:string[], optionalFields:string[])
+    private prepareFields(ctx:Context, requestBody:NameValueMap, requiredFields:string[], optionalFields:string[]): {[key:string]:string[]}
     {
         const fieldNames:string[] = [];
         const fieldValues:any[] = [];
@@ -148,7 +148,7 @@ class CreateHandler
      * Validate the given email
      * @param email Email string
      */
-    private validateEmail(email:string)
+    private validateEmail(email:string): void
     {
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if(!re.test(email))
@@ -162,7 +162,7 @@ class CreateHandler
      * @param newPassword New password
      * @param passwordReqs Password requirements
      */
-    private verifyPwdRequirements(newPassword:string, passwordReqs:NameValueMap) 
+    private verifyPwdRequirements(newPassword:string, passwordReqs:NameValueMap): void
     {
         if(newPassword.length < passwordReqs.minLength)
         {
@@ -192,15 +192,11 @@ class CreateHandler
      * @param username Input username
      * @param callback Callback function
      */
-    private verifyUsernameNotExist(ctx:Context, username:string)
+    private async verifyUsernameNotExist(ctx:Context, username:string): Promise<void>
     {
-        return new Promise(async resolve =>
-        {
-            const record = await dataService.db.quickFind(ctx, ["username"], "user", {"username": username});
-            if (record)
-                throw "username " + username + " already exists";
-            resolve();
-        });
+        const record = await dataService.db.quickFind(ctx, ["username"], "user", {"username": username});
+        if (record)
+            throw "username " + username + " already exists";
     }
 }
 

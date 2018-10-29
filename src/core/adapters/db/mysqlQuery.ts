@@ -19,7 +19,7 @@ export class MysqlQuery
     /**
      * Append the given string and params to the query
      */
-    append(...args:string[])
+    append(...args:string[]): void
     {
         const str = args[0];
         if (!str)
@@ -37,8 +37,7 @@ export class MysqlQuery
     /**
      * Get the query string
      */
-    // Get the query string
-    getQueryString()
+    getQueryString(): string
     {
         return this.queryString;
     }
@@ -46,7 +45,7 @@ export class MysqlQuery
     /**
      * Get the query parameters
      */
-    getQueryParams()
+    getQueryParams(): NameValueMap
     {
         return this.queryParams;
     }

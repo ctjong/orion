@@ -95,7 +95,7 @@ class ContextFactory
      * This will also merge defaultEntities and defaultFields into the config object.
      * @param inputConfig Input config object
      */
-    initializeConfig(inputConfig:Config)
+    initializeConfig(inputConfig:Config): void
     {
         this.config = inputConfig;
 

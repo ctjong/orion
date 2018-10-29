@@ -15,7 +15,7 @@ export class ExecService
      * @param res Response object
      * @param db Database module
      */
-    async handleError(err: any, req: any, res: any, db?: Database)
+    async handleError(err: any, req: any, res: any, db?: Database): Promise<void>
     {
         if (typeof (err) === "string")
         {
@@ -73,7 +73,7 @@ export class ExecService
      * @param ctx request context
      * @param fn function to execute
      */
-    async catchAllErrors(ctx: Context, fn: (() => any))
+    async catchAllErrors(ctx: Context, fn: (() => any)): Promise<void>
     {
         try
         {
@@ -93,7 +93,7 @@ export class ExecService
      * @param statusCode response status code
      * @param msg error message
      */
-    throwError(tag: string, statusCode: number, msg: string)
+    throwError(tag: string, statusCode: number, msg: string): never
     {
         throw new Error(tag, statusCode, msg);
     }
@@ -105,7 +105,7 @@ export class ExecService
      * @param statusCode response status code
      * @param msg error message
      */
-    sendErrorResponse(ctx: Context, tag: string, statusCode: number, msg: string)
+    sendErrorResponse(ctx: Context, tag: string, statusCode: number, msg: string): void
     {
         this.handleError(new Error(tag, statusCode, msg), ctx.req, ctx.res);
     }

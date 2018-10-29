@@ -13,7 +13,7 @@ class CreateAssetHandler
      * @param ctx Request context
      * @param req Request object
      */
-    async execute(ctx:Context, req:any)
+    async execute(ctx:Context, req:any): Promise<void>
     {
         if (!ctx.config.storage)
             execService.throwError("e668", 500, "file upload is not supported for this site");

@@ -24,7 +24,7 @@ export class MockConnectionPool
      * @param queryParams Query params
      * @param callback callback function
      */
-    query (queryString:string, queryParams:NameValueMap, callback:any)
+    query (queryString:string, queryParams:NameValueMap, callback:any): void
     {
         this.processQuery(this.engine, queryString, queryParams, callback);
     }
@@ -33,7 +33,7 @@ export class MockConnectionPool
      * Set the results for the active query
      * @param nextQueryResultsArg query results
      */
-    setQueryResults(nextQueryResultsArg:any)
+    setQueryResults(nextQueryResultsArg:any): void
     {
         this.queryResults = nextQueryResultsArg;
     }
@@ -42,7 +42,7 @@ export class MockConnectionPool
      * To be invoked when a query is received to be sent to database
      * @param queryReceivedHandlerArg handler function
      */
-    onQueryReceived(queryReceivedHandlerArg:any)
+    onQueryReceived(queryReceivedHandlerArg:any): void
     {
         this.queryReceivedHandler = queryReceivedHandlerArg;
     }
@@ -50,19 +50,21 @@ export class MockConnectionPool
     /** 
      * Reset the mock connection pool
      */
-    reset()
+    reset(): void
     {
         this.queryReceivedHandler = null;
     }
 
     /**
-     * Process a query
+     * Process a query.
+     * Note that this is using the old callback argument style instead of Promise because the purpose
+     * of this function is to override the the library functions, which are not returning a Promise.
      * @param engine engine
      * @param queryString query string
      * @param queryParams query parameters
      * @param callback callback function
      */
-    processQuery(engine:string, queryString:string, queryParams:NameValueMap, callback:any)
+    processQuery(engine:string, queryString:string, queryParams:NameValueMap, callback:any): void
     {
         if(this.queryReceivedHandler)
             this.queryReceivedHandler(queryString, queryParams, engine);
@@ -110,7 +112,7 @@ class MssqlWrapper
         this.pool = pool
     }
 
-    Request()
+    Request(): any
     {
         this.inputQueryParams = {};
         const obj =

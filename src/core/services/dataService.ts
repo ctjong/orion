@@ -16,7 +16,7 @@ class DataService
      * Initialize the service
      * @param config Config object
      */
-    initialize(config:Config)
+    initialize(config:Config): void
     {
         // database system
         if (!config.database || !config.database.engine)

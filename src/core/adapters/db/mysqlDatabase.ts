@@ -5,6 +5,9 @@ import { joinFactory } from "../../services/joinFactory";
 import { execService } from "../../services/execService";
 import { helperService } from "../../services/helperService";
 
+interface QueryResponse { error:any, results:any };
+
+
 /**
  * A module for handling interaction with an MSSQL database
  */
@@ -213,6 +216,7 @@ export class MysqlDatabase
      * @param query Query to execute
      * @param successCb Success callback
      * @param completeCb Complete callback
+     * @returns query results
      */
     execute(ctx:Context, query:Query): Promise<any>
     {
@@ -247,7 +251,7 @@ export class MysqlDatabase
      * Ensure the connection this.pool is initialized
      * @param ctx Request context
      */
-    ensurePoolInitializedAsync(ctx:Context)
+    ensurePoolInitializedAsync(ctx:Context): Promise<void>
     {
         return new Promise(resolve =>
         {
@@ -284,7 +288,7 @@ export class MysqlDatabase
     /**
      * Run a query
      */
-    queryAsync(queryString:string, queryParams:NameValueMap)
+    queryAsync(queryString:string, queryParams:NameValueMap): Promise<QueryResponse>
     {
         return new Promise(resolve =>
         {
@@ -302,7 +306,7 @@ export class MysqlDatabase
      * @param entity Requested entity
      * @returns an array of Joins
      */
-    private getJoins(ctx:Context, fields:string[], entity:string)
+    private getJoins(ctx:Context, fields:string[], entity:string): Join[]
     {
         const joins:Join[] = [];
         const ctxFields = ctx.config.entities[entity].fields;
@@ -323,7 +327,7 @@ export class MysqlDatabase
      * @param joinObj Join object
      * @returns a JOIN clause string
      */
-    private getJoinExpression(joinObj:Join)
+    private getJoinExpression(joinObj:Join): string
     {
         return "INNER JOIN `" + joinObj.e2 + "table` `" + joinObj.e2Alias + "` ON `" + joinObj.e1 + "table`.`" + joinObj.e1JoinField + "` = `" + joinObj.e2Alias + "`.`" + joinObj.e2JoinField + "`";
     }
@@ -333,7 +337,7 @@ export class MysqlDatabase
      * @param joinObj Join object
      * @returns a SELECT clause string
      */
-    private getSelectExpression(joinObj:Join)
+    private getSelectExpression(joinObj:Join): string
     {
         let str = "";
         for (let i = 0; i < joinObj.e2SelectFields.length; i++)
@@ -348,7 +352,7 @@ export class MysqlDatabase
      * @param query Query object
      * @param condObj Condition object
      */
-    private appendWhereClause(query:Query, condObj:Condition)
+    private appendWhereClause(query:Query, condObj:Condition): void
     {
         if (condObj instanceof SingleCondition)
         {

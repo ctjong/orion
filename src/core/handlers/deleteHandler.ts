@@ -13,7 +13,7 @@ class DeleteHandler
      * @param ctx Request context
      * @param recordId Record ID to delete
      */
-    async execute(ctx:Context, recordId:string)
+    async execute(ctx:Context, recordId:string): Promise<void>
     {
         const { record } = await helperService.onBeginWriteRequest(ctx, "delete", dataService.db, recordId, null);
         if(ctx.entity === "user" && record.domain !== "local")

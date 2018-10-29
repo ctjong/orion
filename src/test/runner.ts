@@ -54,7 +54,7 @@ export class Runner
      * @param expectedResponseBody expected response body
      */
     runTest(name:string, reqUrl:string, reqMethod:string, reqBody:any, accessToken:string, 
-        expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any)
+        expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
     {
         it(name, (done) =>
         {
@@ -95,7 +95,7 @@ export class Runner
      * @param expectedResponseBody expected response body
      */
     runFileUploadTest(name:string, reqUrl:string, filePath:string, accessToken:string, expectedMimeType:string, 
-        expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any)
+        expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
     {
         it(name, (done) =>
         {
@@ -150,7 +150,7 @@ export class Runner
      * @param expectedResponseBody expected response body
      */
     runFileDeleteTest(name:string, reqUrl:string, accessToken:string, expectedQueries:TestQuery[],
-        queryResults:any, expectedResponseCode:number, expectedResponseBody?:any)
+        queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
     {
         it(name, (done) =>
         {
@@ -179,7 +179,7 @@ export class Runner
     /** 
      * Start an Orion app
      */
-    async startServer()
+    async startServer(): Promise<void>
     {
         if(this.isServerStarted)
             return;
@@ -204,14 +204,16 @@ export class Runner
      */
     startServerInternal(orion: Orion, numRetries: number): Promise<any>
     {
-        return new Promise(resolve =>
+        return new Promise(async resolve =>
         {
             if(numRetries > maxServerStartRetries)
                 throw "Failed to start app. Max retries exceeded.";
             const port = 1337 + numRetries;
-            orion.start(port, resolve).on("error", function()
+            const server = await orion.start(port);
+            server.on("error", () =>
             {
-                this.startServerInternal(orion, numRetries + 1, resolve);
+                this.startServerInternal(orion, numRetries + 1);
+                resolve();
             });
         });
     }

@@ -44,7 +44,7 @@ export default class Orion
     /**
      * Set up API endpoints
      */
-    setupApiEndpoints()
+    setupApiEndpoints(): void
     {
         // log request details to console
         this.app.use("", (req:any, res:any, next:any) =>
@@ -82,22 +82,22 @@ export default class Orion
     /**
      * Start the app at the given port
      * @param port optional port to start the app at
-     * @param callback optional callback function
      * @returns server object
      */
-    start(port:number, callback:any)
+    start(port:number): Promise<any>
     {
-        const finalPort = port || process.env.PORT || 1337;
-        const server = this.app.listen(finalPort, () => 
+        return new Promise(resolve =>
         {
-            const addr:any = server.address();
-            const host = addr.address;
-            const port = addr.port;
-            console.log("Listening at http://%s:%s", host, port);
-            if(callback)
-                callback();
+            const finalPort = port || process.env.PORT || 1337;
+            const server = this.app.listen(finalPort, () => 
+            {
+                const addr:any = server.address();
+                const host = addr.address;
+                const port = addr.port;
+                console.log("Listening at http://%s:%s", host, port);
+                resolve(server);
+            });
         });
-        return server;
     }
 
     /**
@@ -105,14 +105,13 @@ export default class Orion
      * @param originalReq original request context where app is called from
      * @param entity target entity of the read operation
      * @param id record id
-     * @param callback callback function
      * @returns query results
      */
-    findById(originalReq:any, entity:string, id:string, callback:any)
+    findById(originalReq:any, entity:string, id:string): Promise<any>
     {
         this.verifyConfig();
         const params = { accessType: "public", id: id };
-        this.executeDirectRead(originalReq, entity, params, true, callback);
+        return this.executeDirectRead(originalReq, entity, params, true);
     }
 
     /**
@@ -123,14 +122,13 @@ export default class Orion
      * @param skip number of records to skip (for pagination)
      * @param take number of records to take (for pagination)
      * @param condition condition string
-     * @param callback callback function
      * @returns query results
      */
-    findByCondition(originalReq:any, entity:string, orderByField:string, skip:number, take:number, condition:any, callback:any)
+    findByCondition(originalReq:any, entity:string, orderByField:string, skip:number, take:number, condition:any): Promise<any>
     {
         this.verifyConfig();
         const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take, condition: condition };
-        this.executeDirectRead(originalReq, entity, params, false, callback);
+        return this.executeDirectRead(originalReq, entity, params, false);
     }
 
     /**
@@ -140,21 +138,20 @@ export default class Orion
      * @param orderByField field name to order the results by
      * @param skip number of records to skip (for pagination)
      * @param take number of records to take (for pagination)
-     * @param callback callback function
      * @returns query results
      */
-    findAll(originalReq:any, entity:string, orderByField:string, skip:number, take:number, callback:any)
+    findAll(originalReq:any, entity:string, orderByField:string, skip:number, take:number): Promise<any>
     {
         this.verifyConfig();
         const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take };
-        this.executeDirectRead(originalReq, entity, params, false, callback);
+        return this.executeDirectRead(originalReq, entity, params, false);
     }
 
     /**
      * Get the database adapter for app application
      * @returns database adapter module
      */
-    getDatabaseAdapter()
+    getDatabaseAdapter(): any
     {
         return dataService.db;
     }
@@ -163,7 +160,7 @@ export default class Orion
      * Get the storage adapter for app application
      * @returns storage adapter module
      */
-    getStorageAdapter() 
+    getStorageAdapter(): any
     {
         return dataService.storage;
     }
@@ -171,7 +168,7 @@ export default class Orion
     /**
      * Verify that config is properly set in context factory
      */
-    verifyConfig()
+    verifyConfig(): void
     {
         if (!contextFactory.config)
             throw "setConfig needs to be called before any other orion functions";
@@ -180,7 +177,7 @@ export default class Orion
     /**
      * Configure CRUD data endpoints for the given app
      */
-    configureDataEndpoints()
+    configureDataEndpoints(): void
     {
         this.app.use('/api/data/:entity', bodyParser.json());
         this.app.use('/api/data/:entity', bodyParser.urlencoded({ extended: true }));
@@ -237,7 +234,7 @@ export default class Orion
     /**
      * Configure authentication endpoints
      */
-    configureAuthEndpoints()
+    configureAuthEndpoints(): void
     {
         this.app.use('/api/auth', bodyParser.json());
         this.app.use('/api/auth', (req:any, res:any, next:any) =>
@@ -258,7 +255,7 @@ export default class Orion
     /**
      * Configure utility endpoints
      */
-    configureUtilityEndpoints()
+    configureUtilityEndpoints(): void
     {
         // error logging
         this.app.use('/api/error', bodyParser.json());
@@ -285,30 +282,32 @@ export default class Orion
      * @param entity target entity of the read operation
      * @param params read action parameters
      * @param isFullMode whether or not the read result should be returned in long form
-     * @param callback callback function
      */
-    executeDirectRead(originalReq:any, entity:string, params:any, isFullMode:boolean, callback:any)
+    executeDirectRead(originalReq:any, entity:string, params:any, isFullMode:boolean): Promise<any>
     {
-        const res:any = {};
-        res.status = (status:number) =>
+        return new Promise(resolve =>
         {
-            if (status !== 200)
-                res.statusCode = status;
-            return res;
-        };
-        res.send = (data:any) =>
-        {
-            if (res.statusCode !== 200)
-                callback({ status: res.statusCode, data: data });
-            else
-                callback(data);
-        };
-        res.json = res.send;
+            const res:any = {};
+            res.status = (status:number) =>
+            {
+                if (status !== 200)
+                    res.statusCode = status;
+                return res;
+            };
+            res.send = (data:any) =>
+            {
+                if (res.statusCode !== 200)
+                    resolve({ status: res.statusCode, data: data });
+                else
+                    resolve(data);
+            };
+            res.json = res.send;
 
-        const req:any = { method: "GET", originalUrl: originalReq.originalUrl };
-        const context = contextFactory.create(req, res, entity);
-        req.context = context;
+            const req:any = { method: "GET", originalUrl: originalReq.originalUrl };
+            const context = contextFactory.create(req, res, entity);
+            req.context = context;
 
-        readHandler.execute(context, params, isFullMode);
+            readHandler.execute(context, params, isFullMode);
+        });
     }
 }

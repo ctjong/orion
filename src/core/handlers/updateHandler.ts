@@ -15,7 +15,7 @@ class UpdateHandler
      * @param requestBody Request body
      * @param recordId Record ID to update
      */
-    async execute (ctx:Context, requestBody:NameValueMap, recordId:string)
+    async execute (ctx:Context, requestBody:NameValueMap, recordId:string): Promise<void>
     {
         const { record } = await helperService.onBeginWriteRequest(ctx, "update", dataService.db, recordId, requestBody);
         const updateData:NameValueMap = {};

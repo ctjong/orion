@@ -138,7 +138,7 @@ class HelperService
      * @param dataObj Data object
      * @returns fixed data object
      */
-    fixDataTypes(ctx: Context, entity: string, dataObj: NameValueMap)
+    fixDataTypes(ctx: Context, entity: string, dataObj: NameValueMap): void
     {
         const fields = ctx.config.entities[entity].fields;
         for (const fieldName in fields)

@@ -19,7 +19,7 @@ export class MssqlQuery
     /**
      * Append the given string and params to the query
      */
-    append(...args:string[])
+    append(...args:string[]): void
     {
         let str = args[0];
         if (!str)
@@ -49,7 +49,7 @@ export class MssqlQuery
      * Get the query string
      */
     // Get the query string
-    getQueryString()
+    getQueryString(): string
     {
         return this.queryString;
     }
@@ -57,7 +57,7 @@ export class MssqlQuery
     /**
      * Get the query parameters
      */
-    getQueryParams()
+    getQueryParams(): NameValueMap
     {
         return this.queryParams;
     }

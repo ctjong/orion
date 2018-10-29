@@ -3,7 +3,7 @@ import { TestSuite } from "../testTypes";
 
 export class AssetTestSuite implements TestSuite
 {
-    run(runner:Runner, params:any)
+    run(runner:Runner, params:any): void
     {
         runner.runFileUploadTest(
             'POST | asset-noToken | 200',

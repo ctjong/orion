@@ -336,7 +336,7 @@ export class MssqlDatabase implements Database
      * @param query Query object
      * @param condObj Condition object
      */
-    private appendWhereClause(query:Query, condObj:Condition)
+    private appendWhereClause(query:Query, condObj:Condition): void
     {
         if (condObj instanceof SingleCondition)
         {

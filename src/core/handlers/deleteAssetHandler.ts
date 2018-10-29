@@ -13,7 +13,7 @@ class DeleteAssetHandler
      * @param ctx Request context
      * @param recordId Record ID of the asset to delete
      */
-    async execute (ctx:Context, recordId:string)
+    async execute (ctx:Context, recordId:string): Promise<void>
     {
         if (!ctx.config.storage)
             execService.throwError("51be", 500, "file delete is not supported for this site");

@@ -1,4 +1,5 @@
-const queries:{[key:string]:{[key:string]:string}} = {
+const queries:{[key:string]:{[key:string]:string}} = 
+{
     "insertError":
     {
         "mssql": "insert into [errortable] ([tag],[statuscode],[msg],[url],[timestamp]) values (@value0 ,@value1 ,@value2 ,@value3 ,@value4 ); select SCOPE_IDENTITY() as [identity];",
