@@ -40,10 +40,10 @@ const main = () =>
     const localHostAdapter = new LocalHostStorage(mssqlLocalConfig, mockProvider);
 
     // run tests
-    startTestSession(mssqlAzureConfig, mssqlAdapter, azureAdapter, "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
-    startTestSession(mysqlS3Config, mysqlAdapter, s3Adapter, "mysql-s3", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
-    startTestSession(mssqlLocalConfig, mssqlAdapter, localHostAdapter, "mssql-local", [assetTestSuite]);
-    startTestSession(mysqlLocalConfig, mysqlAdapter, localHostAdapter, "mysql-local", [assetTestSuite]);
+    startTestSession(mssqlAzureConfig, mssqlAdapter, azureAdapter, mssqlPool, "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
+    startTestSession(mysqlS3Config, mysqlAdapter, s3Adapter, mysqlPool, "mysql-s3", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
+    startTestSession(mssqlLocalConfig, mssqlAdapter, localHostAdapter, mssqlPool, "mssql-local", [assetTestSuite]);
+    startTestSession(mysqlLocalConfig, mysqlAdapter, localHostAdapter, mysqlPool, "mysql-local", [assetTestSuite]);
 };
 
 /**
@@ -51,12 +51,13 @@ const main = () =>
  * @param config Config module
  * @param databaseAdapter Database adapter module
  * @param storageAdapter Storage adapter module
+ * @param pool Mock database connection pool
  * @param sessionName Session name
  * @param testSuites List of test suites to run
  */
-const startTestSession = (config: Config, databaseAdapter:Database, storageAdapter:Storage, sessionName: string, testSuites: any[]) =>
+const startTestSession = (config: Config, databaseAdapter:Database, storageAdapter:Storage, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
 {
-    const runner = new Runner(config, databaseAdapter, storageAdapter);
+    const runner = new Runner(config, databaseAdapter, storageAdapter, pool);
 
     before(done =>
     {

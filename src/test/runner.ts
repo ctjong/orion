@@ -9,6 +9,7 @@ import * as jwt from 'jsonwebtoken';
 import { TestQuery } from './testTypes';
 import { Database } from "../core/database";
 import { Storage } from "../core/storage";
+import { MockConnectionPool } from "./mocks/mockConnectionPool";
 
 
 /**
@@ -19,8 +20,8 @@ export class Runner
     config:Config;
     databaseAdapter:Database;
     storageAdapter:Storage;
-    app:Orion;
-    pool:any;
+    orionApp:Orion;
+    pool:MockConnectionPool;
     storageProvider:any;
     isServerStarted:boolean;
 
@@ -29,13 +30,15 @@ export class Runner
      * @param config Config object
      * @param databaseAdapter Database adapter module
      * @param storageAdapter Storage adapter module
+     * @param pool Mock database connection pool
      */
-    constructor(config:Config, databaseAdapter:Database, storageAdapter:Storage)
+    constructor(config:Config, databaseAdapter:Database, storageAdapter:Storage, pool:MockConnectionPool)
     {
         chai.use(require("chai-http"));
         this.config = config;
         this.databaseAdapter = databaseAdapter;
         this.storageAdapter = storageAdapter;
+        this.pool = pool;
         this.isServerStarted = false;
     }
 
@@ -60,7 +63,7 @@ export class Runner
             this.onBeforeRequest(actualQueries, queryResults);
 
             let requestAwaiter;
-            const request = chai.request(this.app);
+            const request = chai.request(this.orionApp.app);
             if(reqMethod === "get")
                 requestAwaiter = request.get(reqUrl);
             else if(reqMethod === "post")
@@ -109,7 +112,7 @@ export class Runner
                 uploadedFileMime = mime;
             });
 
-            const requestAwaiter = chai.request(this.app)
+            const requestAwaiter = chai.request(this.orionApp.app)
                 .post(reqUrl)
                 .attach("file", inputFile, inputFileName);
             if(accessToken)
@@ -161,7 +164,7 @@ export class Runner
                 actualFilename = name;
             });
 
-            const requestAwaiter = chai.request(this.app).del(reqUrl);
+            const requestAwaiter = chai.request(this.orionApp.app).del(reqUrl);
             if(accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
 
@@ -182,9 +185,9 @@ export class Runner
         if(this.isServerStarted)
             return;
 
-        this.app = new Orion(this.config, this.databaseAdapter, this.storageAdapter);
-        this.app.setupApiEndpoints();
-        await this.app.start(0);
+        this.orionApp = new Orion(this.config, this.databaseAdapter, this.storageAdapter);
+        this.orionApp.setupApiEndpoints();
+        await this.orionApp.start(0);
         this.isServerStarted = true;
     }
 
