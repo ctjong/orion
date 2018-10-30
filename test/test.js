@@ -1,2 +1,1 @@
-const testScript = require("../build/test/main");
-testScript.main();
+require("../build/test/main");

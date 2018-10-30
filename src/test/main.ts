@@ -84,4 +84,4 @@ const startTestSession = (config: Config, databaseAdapter:Database, storageAdapt
     });
 };
 
-export { main };
+main();
