@@ -12,6 +12,8 @@ import { deleteHandler } from "./handlers/deleteHandler";
 import { deleteAssetHandler } from "./handlers/deleteAssetHandler";
 import { readHandler } from "./handlers/readHandler";
 import { updateHandler } from "./handlers/updateHandler";
+import { Database } from "./database";
+import { Storage } from "./storage";
 
 /**
  * An Orion app object
@@ -20,25 +22,30 @@ export default class Orion
 {
     app:Express.Express = null;
     express:any = Express;
+    private config:Config = null;
 
     /**
      * Construct an Orion app
      * @param config configuration object
+     * @param databaseAdapter optional database adapter module. See this link for more details
+     * on what the database adapter's requirements are:
+     * https://github.com/ctjong/orion/blob/master/src/core/database.ts
+     * @param storageAdapter optional storage adapter module. See this link for more details
+     * on what the storage adapter's requirements are:
+     * https://github.com/ctjong/orion/blob/master/src/core/storage.ts
      */
-    constructor(config:Config)
+    constructor(config:Config, databaseAdapter?:Database, storageAdapter?: Storage)
     {
         this.app = Express();
+        this.config = config;
 
         // initialize components
         contextFactory.initializeConfig(config);
-        dataService.initialize(config);
+        dataService.initialize(config, databaseAdapter, storageAdapter);
 
         // setup monitoring
-        if (config.monitoring)
-        {
-            if (config.monitoring.appInsightsKey)
-                applicationInsights.setup(config.monitoring.appInsightsKey).start();
-        }
+        if (config.monitoring && config.monitoring.appInsightsKey)
+            applicationInsights.setup(config.monitoring.appInsightsKey).start();
     }
 
     /**
@@ -65,7 +72,7 @@ export default class Orion
         {
             try
             {
-                execService.handleError(err, req, res, dataService.db);
+                execService.handleError(err, req, res, dataService.getDatabaseAdapter());
             }
             catch (ex)
             {
@@ -88,8 +95,14 @@ export default class Orion
     {
         return new Promise(resolve =>
         {
-            const finalPort = port || process.env.PORT || 1337;
-            const server = this.app.listen(finalPort, () => 
+            // We are not using "!port" for the null check because we want 
+            // to allow the value 0.
+            if(port === null || typeof port === "undefined")
+                port = parseInt(process.env.PORT);
+            if(port === null || typeof port === "undefined")
+                port = 1337
+
+            const server = this.app.listen(port, () => 
             {
                 const addr:any = server.address();
                 const host = addr.address;
@@ -109,7 +122,6 @@ export default class Orion
      */
     findById(originalReq:any, entity:string, id:string): Promise<any>
     {
-        this.verifyConfig();
         const params = { accessType: "public", id: id };
         return this.executeDirectRead(originalReq, entity, params, true);
     }
@@ -126,7 +138,6 @@ export default class Orion
      */
     findByCondition(originalReq:any, entity:string, orderByField:string, skip:number, take:number, condition:any): Promise<any>
     {
-        this.verifyConfig();
         const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take, condition: condition };
         return this.executeDirectRead(originalReq, entity, params, false);
     }
@@ -142,36 +153,8 @@ export default class Orion
      */
     findAll(originalReq:any, entity:string, orderByField:string, skip:number, take:number): Promise<any>
     {
-        this.verifyConfig();
         const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take };
         return this.executeDirectRead(originalReq, entity, params, false);
-    }
-
-    /**
-     * Get the database adapter for app application
-     * @returns database adapter module
-     */
-    getDatabaseAdapter(): any
-    {
-        return dataService.db;
-    }
-
-    /**
-     * Get the storage adapter for app application
-     * @returns storage adapter module
-     */
-    getStorageAdapter(): any
-    {
-        return dataService.storage;
-    }
-
-    /**
-     * Verify that config is properly set in context factory
-     */
-    verifyConfig(): void
-    {
-        if (!contextFactory.config)
-            throw "setConfig needs to be called before any other orion functions";
     }
 
     /**
@@ -261,13 +244,8 @@ export default class Orion
         this.app.use('/api/error', bodyParser.json());
         this.app.post('/api/error', (req:any, res:any) =>
         {
-            const config = contextFactory.config;
-            if (!config)
-            {
-                throw { "tag": "13bf", "statusCode": 500, "msg": "missing config" };
-            }
-            const ctx:Context = { req: req, res: res, config: config };
-            dataService.db.insert(
+            const ctx:Context = { req: req, res: res, config: this.config };
+            dataService.getDatabaseAdapter().insert(
                 ctx,
                 "error",
                 ["tag", "statuscode", "msg", "url", "timestamp"],

@@ -16,7 +16,8 @@ class CreateHandler
      */
     async execute (ctx:Context, requestBody:any): Promise<void>
     {
-        await helperService.onBeginWriteRequest(ctx, "create", dataService.db, null, requestBody);
+        const dbAdapter = dataService.getDatabaseAdapter();
+        await helperService.onBeginWriteRequest(ctx, "create", dbAdapter, null, requestBody);
 
         // get required and optional fields
         let configFields:{[key:string]:string[]} = this.getConfigFields(ctx);
@@ -35,12 +36,12 @@ class CreateHandler
         if(ctx.entity === "user")
         {
             await this.verifyUsernameNotExist(ctx, requestBody.username);
-            const insertedId = await dataService.db.insert(ctx, ctx.entity, fieldNames, fieldValues);
+            const insertedId = await dbAdapter.insert(ctx, ctx.entity, fieldNames, fieldValues);
             ctx.res.send(insertedId.toString());
         }
         else
         {
-            const insertedId = await dataService.db.insert(ctx, ctx.entity, fieldNames, fieldValues);
+            const insertedId = await dbAdapter.insert(ctx, ctx.entity, fieldNames, fieldValues);
             try
             {
                 ctx.res.send(insertedId.toString());
@@ -194,7 +195,7 @@ class CreateHandler
      */
     private async verifyUsernameNotExist(ctx:Context, username:string): Promise<void>
     {
-        const record = await dataService.db.quickFind(ctx, ["username"], "user", {"username": username});
+        const record = await dataService.getDatabaseAdapter().quickFind(ctx, ["username"], "user", {"username": username});
         if (record)
             throw "username " + username + " already exists";
     }

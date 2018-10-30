@@ -10,15 +10,19 @@ import * as guid from "uuid";
  */
 export class LocalHostStorage
 {
-    provider:any;
+    private provider:any;
 
     /**
      * Initialize the adapter
      * @param config config object
+     * @param provider optional provider module
      */
-    constructor(config:Config)
+    constructor(config:Config, provider?:any)
     {
-        this.provider = fs;
+        if(provider)
+            this.provider = provider;
+        else
+            this.provider = fs;
     }
 
     /**
@@ -79,14 +83,5 @@ export class LocalHostStorage
                 resolve(error);
             });
         });
-    }
-
-    /**
-     * Set the provider module for this adapter
-     * @param providerModule provider module
-     */
-    setProvider(providerModule:any): void
-    {
-        this.provider = providerModule;
     }
 };

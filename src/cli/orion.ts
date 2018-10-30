@@ -2,7 +2,6 @@
 
 import * as fs from 'fs';
 import { Config, Entity } from '../core/types';
-import { String } from 'aws-sdk/clients/cloud9';
 
 let engine:string;
 let  outputPath:string;
@@ -149,7 +148,7 @@ const drop = (tableName:string) =>
  * @param nm table/column name
  * @returns formatted name
  */
-const nm = (name:String) =>
+const nm = (name:string) =>
 {
     const ob = engine === "mssql" ? "[" : "`";
     const cb = engine === "mssql" ? "]" : "`";

@@ -43,9 +43,10 @@ class ReadHandler
         }
 
         // execute
+        const dbAdapter = dataService.getDatabaseAdapter();
         const fields = helperService.getFields(ctx, "read");
-        const count = await dataService.db.count(ctx, ctx.entity, condition);
-        const dbResponse = await dataService.db.select(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode);
+        const count = await dbAdapter.count(ctx, ctx.entity, condition);
+        const dbResponse = await dbAdapter.select(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode);
         for(let i=0; i<dbResponse.length; i++)
         {
             dbResponse[i] = helperService.fixDataKeysAndTypes(ctx, dbResponse[i]);

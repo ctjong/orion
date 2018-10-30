@@ -59,7 +59,7 @@ class AuthService
         this.verifyAuthSupported(ctx);
         if(!userName || !password) 
             execService.throwError("003a", 400, "invalid login");
-        const user = await dataService.db.quickFind(
+        const user = await dataService.getDatabaseAdapter().quickFind(
             ctx, 
             ["id", "password", "roles", "domain", "firstname", "lastname"], 
             "user", 
@@ -117,14 +117,14 @@ class AuthService
                         if(!parsed.hasOwnProperty("id"))
                             execService.throwError("3f9c", 400, "bad request");
 
-                        const readResponse = await dataService.db.quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id});
+                        const readResponse = await dataService.getDatabaseAdapter().quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id});
                         if(readResponse)
                         {
                             this.createAndSendToken(ctx, readResponse.id, "fb", parsed.id, readResponse.roles, parsed.first_name, parsed.last_name);
                             return;
                         }
 
-                        const createResponse = await dataService.db.insert(
+                        const createResponse = await dataService.getDatabaseAdapter().insert(
                             ctx,
                             "user", 
                             ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 

@@ -1,14 +1,35 @@
-import { Context, NameValueMap, Condition, Join, CompoundCondition, SingleCondition } from "../../types";
+import { Context, NameValueMap, Condition, Join, CompoundCondition, SingleCondition, Config } from "../../types";
 import { Database } from "../../database";
 import { conditionFactory } from "../../services/conditionFactory";
 import { execService } from "../../services/execService";
 import { helperService } from "../../services/helperService";
 import { joinFactory } from "../../services/joinFactory";
 import { MssqlQuery as Query } from "./mssqlQuery";
+import * as mssql from "mssql";
 
 export class MssqlDatabase implements Database
 {
     private pool:any;
+
+    /**
+     * Construct an MSSQL database adapter
+     * @param config configuration object
+     * @param pool optional connection pool module
+     */
+    constructor(config:Config, pool?:any)
+    {
+        if(pool)
+            this.pool = pool;
+        else
+        {
+            this.pool = new mssql.ConnectionPool(config.database.connectionString, (err:any) =>
+            {
+                if (err)
+                    throw "error while connecting to database";
+                this.pool.sql = mssql;
+            });
+        }
+    }
 
     /**
      * Quick find a record based on the given condition
@@ -97,7 +118,7 @@ export class MssqlDatabase implements Database
             const rawResponseData = await this.select(ctx, fields, entity, condition, "id", 0, 1, true, false);
             const responseData = helperService.fixDataKeysAndTypes(ctx, rawResponseData[0], entity);
             resolve(responseData);
-        }).catch(promiseErr => console.log(promiseErr));
+        });
     }
 
     /**
@@ -181,15 +202,6 @@ export class MssqlDatabase implements Database
     }
 
     /**
-     * Set the connection pool to be used by this adapter
-     * @param connectionPool connection pool
-     */
-    setConnectionPool(connectionPool:any): void
-    {
-        this.pool = connectionPool;
-    }
-
-    /**
      * Get Join objects to resolve foreign keys
      * @param ctx Request context
      * @param fields Fields in the requested entity
@@ -221,7 +233,6 @@ export class MssqlDatabase implements Database
      */
     private async execute(ctx:Context, query:Query, responseHandler?:((raw:any)=>any)): Promise<any>
     {
-        await this.ensurePoolInitialized(ctx);
         const queryString = query.getQueryString();
         const queryParams = query.getQueryParams();
         console.log("-------------------------------------------------");
@@ -269,38 +280,7 @@ export class MssqlDatabase implements Database
                     }
                 });
             });
-        }).catch(promiseErr => console.log(promiseErr));
-    }
-
-    /**
-     * Ensure the connection pool is initialized
-     * @param ctx Request context
-     */
-    private ensurePoolInitialized(ctx:Context): Promise<any>
-    {
-        return new Promise(resolve =>
-        {
-            if(this.pool)
-            {
-                resolve();
-                return;
-            }
-            const sql = require("mssql");
-            this.pool = new sql.ConnectionPool(ctx.config.database.connectionString, (err:any) =>
-            {
-                execService.catchAllErrors(ctx, () =>
-                {
-                    if (err)
-                    {
-                        console.log(err);
-                        execService.sendErrorResponse(ctx, "f8cb", 500, "error while connecting to database");
-                        return;
-                    }
-                    this.pool.sql = sql;
-
-                });
-            });
-        }).catch(promiseErr => console.log(promiseErr));
+        });
     }
 
 

@@ -1,8 +1,8 @@
-import { Config } from "../core/types";
+import { Config, StorageConfig } from "../core/types";
 
 class ConfigFactory
 {
-    create(dbEngine:string, storageSetting:any): Config
+    create(dbEngine:string, storageSetting:StorageConfig): Config
     {
         const config:Config = 
         {
@@ -26,10 +26,6 @@ class ConfigFactory
                 }
             },
             storage: storageSetting,
-            monitoring:
-            {
-                appInsightsKey: "samplestring"
-            },
             entities:
             {
                 "user":

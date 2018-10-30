@@ -6,6 +6,15 @@ import { errorTestSuite } from './tests/tests-error';
 import { itemTestSuite } from './tests/tests-item';
 import { messageTestSuite } from './tests/tests-message';
 import { userTestSuite } from './tests/tests-user';
+import { MockConnectionPool } from "./mocks/mockConnectionPool";
+import { MysqlDatabase } from "../core/adapters/db/mysqlDatabase";
+import { MssqlDatabase } from "../core/adapters/db/mssqlDatabase";
+import { MockStorageProvider } from "./mocks/mockStorageProvider";
+import { AzureStorage } from "../core/adapters/storage/azureStorage";
+import { LocalHostStorage } from "../core/adapters/storage/localHostStorage";
+import { Database } from "../core/database";
+import { Storage } from "../core/storage";
+import { S3Storage } from "../core/adapters/storage/s3Storage";
 
 /** 
  * Test entry point
@@ -13,37 +22,45 @@ import { userTestSuite } from './tests/tests-user';
 const main = () =>
 {
     // initialize configs
-    const mssqlAzureConfig = configFactory.create("mssql", { provider: "azure" });
-    const mysqlS3Config = configFactory.create("mysql", { provider: "s3" });
+    const mssqlAzureConfig = configFactory.create("mssql", { provider: "azure", azureStorageConnectionString: "blah" });
+    const mysqlS3Config = configFactory.create("mysql", { provider: "s3", awsAccessKeyId: "blah", awsSecretAccessKey: "blahh" });
     const mssqlLocalConfig = configFactory.create("mssql", { provider: "local", uploadPath: "uploads" });
     const mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
 
+    // initialize database modules
+    const mssqlPool = new MockConnectionPool("mssql");
+    const mysqlPool = new MockConnectionPool("mysql");
+    const mssqlAdapter = new MssqlDatabase(mssqlAzureConfig, mssqlPool);
+    const mysqlAdapter = new MysqlDatabase(mysqlS3Config, mysqlPool);
+
+    // initialize storage modules
+    const mockProvider = new MockStorageProvider();
+    const azureAdapter = new AzureStorage(mssqlAzureConfig, mockProvider);
+    const s3Adapter = new S3Storage(mysqlS3Config, mockProvider);
+    const localHostAdapter = new LocalHostStorage(mssqlLocalConfig, mockProvider);
+
     // run tests
-    startTestSession(mssqlAzureConfig, "mssql", "azure", "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
-    startTestSession(mysqlS3Config, "mysql", "s3", "mysql-s3", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
-    startTestSession(mssqlLocalConfig, "mssql", "local", "mssql-local", [assetTestSuite]);
-    startTestSession(mysqlLocalConfig, "mysql", "local", "mysql-local", [assetTestSuite]);
+    startTestSession(mssqlAzureConfig, mssqlAdapter, azureAdapter, "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
+    startTestSession(mysqlS3Config, mysqlAdapter, s3Adapter, "mysql-s3", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
+    startTestSession(mssqlLocalConfig, mssqlAdapter, localHostAdapter, "mssql-local", [assetTestSuite]);
+    startTestSession(mysqlLocalConfig, mysqlAdapter, localHostAdapter, "mysql-local", [assetTestSuite]);
 };
 
 /**
  * Start a new test session
  * @param config Config module
- * @param engine Database engine
- * @param storageProviderName Storage provider name
+ * @param databaseAdapter Database adapter module
+ * @param storageAdapter Storage adapter module
  * @param sessionName Session name
  * @param testSuites List of test suites to run
  */
-const startTestSession = (config: Config, engine: string, storageProviderName: string, sessionName: string, testSuites: any[]) =>
+const startTestSession = (config: Config, databaseAdapter:Database, storageAdapter:Storage, sessionName: string, testSuites: any[]) =>
 {
-    const runner = new Runner(config, engine, storageProviderName);
+    const runner = new Runner(config, databaseAdapter, storageAdapter);
 
-    before(async (done) =>
+    before(done =>
     {
-        if (!runner.isServerStarted)
-        {
-            await runner.startServer();
-            done();
-        }
+        runner.startServer().then(done);
     });
 
     describe(sessionName, () =>

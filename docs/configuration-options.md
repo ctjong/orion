@@ -82,59 +82,7 @@ Here are the properties that must/may be included in a field configuration objec
 
 ### Default Fields and Entities
 
-Here are some default fields and entities that we add automatically to the your configuration at runtime.
-
-```js
-const defaultFields =
-    {
-        "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-        "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
-        "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
-    };
-
-const defaultEntities =
-    {
-        "asset":
-        {
-            fields:
-            {
-                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-                "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
-                "filename": { type: "string", isEditable: false, createReq: 2, foreignKey: null }
-            },
-            allowedRoles:
-            {
-                "read": ["owner", "admin"],
-                "create": ["member"],
-                "update": [],
-                "delete": ["owner", "admin"]
-            }
-        },
-        "user":
-        {
-            fields:
-            {
-                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-                "domain": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-                "domainid": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-                "roles": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-                "username": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "password": { type: "secret", isEditable: true, createReq: 2, foreignKey: null },
-                "email": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "firstname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
-                "lastname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
-                "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
-            },
-            allowedRoles:
-            {
-                "read": ["member", "owner", "admin"],
-                "create": ["guest"],
-                "update": ["owner", "admin"],
-                "delete": ["admin"]
-            }
-        },
-    };
-```
+[Here](https://github.com/ctjong/orion/blob/master/src/core/defaultConfig.ts) is a list of default fields and entities that are being automatically added to your configuration at runtime.
 
 The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". The fields specified in **defaultFields** are added to every entity in your config.
 

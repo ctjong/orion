@@ -9,37 +9,67 @@ import { S3Storage } from '../adapters/storage/s3Storage';
 
 class DataService
 {
-    db: Database;
-    storage: Storage;
+    private db: Database;
+    private storage: Storage;
 
     /**
      * Initialize the service
      * @param config Config object
+     * @param databaseAdapter optional database adapter module
+     * @param storageAdapter optional storage adapter module
      */
-    initialize(config:Config): void
+    initialize(config:Config, databaseAdapter?:Database, storageAdapter?: Storage): void
     {
         // database system
-        if (!config.database || !config.database.engine)
-            throw "Missing/incomplete database configuration";
-        if (config.database.engine === "mssql")
-            this.db = new MssqlDatabase();
-        else if (config.database.engine === "mysql")
-            this.db = new MysqlDatabase();
+        if(databaseAdapter)
+            this.db = databaseAdapter;
         else
-            throw "Unsupported database management system " + config.database.engine;
+        {
+            if (!config.database || !config.database.engine)
+                throw "Missing/incomplete database configuration";
+            if (config.database.engine === "mssql")
+                this.db = new MssqlDatabase(config);
+            else if (config.database.engine === "mysql")
+                this.db = new MysqlDatabase(config);
+            else
+                throw "Unsupported database management system " + config.database.engine;
+        }
     
         // storage system
-        if (config.storage)
+        if(storageAdapter)
+            this.storage = storageAdapter;
+        else
         {
-            if (config.storage.provider  === "azure")
-                this.storage = new AzureStorage(config);
-            else if (config.storage.provider  === "s3")
-                this.storage = new S3Storage(config);
-            else if (config.storage.provider  === "local")
-                this.storage = new LocalHostStorage(config);
-            else
-                throw "Missing or unsupported storage system: " + config.storage.provider;
+            if (config.storage)
+            {
+                if (config.storage.provider  === "azure")
+                    this.storage = new AzureStorage(config);
+                else if (config.storage.provider  === "s3")
+                    this.storage = new S3Storage(config);
+                else if (config.storage.provider  === "local")
+                    this.storage = new LocalHostStorage(config);
+                else
+                    throw "Missing or unsupported storage system: " + config.storage.provider;
+            }
         }
+    }
+
+    /**
+     * Get the database adapter module
+     * @returns database adapter module
+     */
+    getDatabaseAdapter(): Database
+    {
+        return this.db;
+    }
+
+    /**
+     * Get the storage adapter module
+     * @returns storage adapter module
+     */
+    getStorageAdapter(): Storage
+    {
+        return this.storage;
     }
 }
 

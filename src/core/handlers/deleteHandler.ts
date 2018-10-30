@@ -15,10 +15,11 @@ class DeleteHandler
      */
     async execute(ctx:Context, recordId:string): Promise<void>
     {
-        const { record } = await helperService.onBeginWriteRequest(ctx, "delete", dataService.db, recordId, null);
+        const dbAdapter = dataService.getDatabaseAdapter();
+        const { record } = await helperService.onBeginWriteRequest(ctx, "delete", dbAdapter, recordId, null);
         if(ctx.entity === "user" && record.domain !== "local")
             execService.throwError("d789", 400, "updating external user info is not supported");
-        const dbResponse = await dataService.db.deleteRecord(ctx, ctx.entity, recordId);
+        const dbResponse = await dbAdapter.deleteRecord(ctx, ctx.entity, recordId);
         ctx.res.send(dbResponse);
     }
 };

@@ -74,10 +74,4 @@ export interface Database
      * @returns query results
      */
     deleteRecord(ctx:Context, entity:string, id:string): Promise<any>;
-
-    /**
-     * Set the connection pool to be used by this adapter
-     * @param connectionPool connection pool
-     */
-    setConnectionPool(connectionPool:any): void
 }

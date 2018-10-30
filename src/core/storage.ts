@@ -16,10 +16,4 @@ export interface Storage
      * @param filename File name
      */
     deleteFile(ctx:Context, filename:string): Promise<any>;
-
-    /**
-     * Set the provider module for this adapter
-     * @param providerModule provider module
-     */
-    setProvider(providerModule:any): void;
 }

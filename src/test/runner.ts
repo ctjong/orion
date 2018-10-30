@@ -1,16 +1,14 @@
 import { Config, NameValueMap } from "../core/types";
 import Orion from "../core/index";
 import { queries } from "./queries";
-import { MockConnectionPool } from './mocks/mockConnectionPool';
-import { MockStorageProvider } from './mocks/mockStorageProvider';
 import * as chai from 'chai';
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
 import { TestQuery } from './testTypes';
-
-const maxServerStartRetries = 10;
+import { Database } from "../core/database";
+import { Storage } from "../core/storage";
 
 
 /**
@@ -19,8 +17,8 @@ const maxServerStartRetries = 10;
 export class Runner
 {
     config:Config;
-    dbEngine:string;
-    storageProviderName:string;
+    databaseAdapter:Database;
+    storageAdapter:Storage;
     app:Orion;
     pool:any;
     storageProvider:any;
@@ -29,15 +27,15 @@ export class Runner
     /**
      * Initialize the runnner
      * @param config Config object
-     * @param dbEngine Database engine name
-     * @param storageProviderName Storage provider name
+     * @param databaseAdapter Database adapter module
+     * @param storageAdapter Storage adapter module
      */
-    constructor(config:Config, dbEngine:string, storageProviderName:string)
+    constructor(config:Config, databaseAdapter:Database, storageAdapter:Storage)
     {
         chai.use(require("chai-http"));
         this.config = config;
-        this.dbEngine = dbEngine;
-        this.storageProviderName = storageProviderName;
+        this.databaseAdapter = databaseAdapter;
+        this.storageAdapter = storageAdapter;
         this.isServerStarted = false;
     }
 
@@ -184,38 +182,10 @@ export class Runner
         if(this.isServerStarted)
             return;
 
-        this.app = new Orion(this.config);
+        this.app = new Orion(this.config, this.databaseAdapter, this.storageAdapter);
         this.app.setupApiEndpoints();
-
-        this.pool = new MockConnectionPool(this.dbEngine);
-        this.app.getDatabaseAdapter().setConnectionPool(this.pool);
-
-        this.storageProvider = new MockStorageProvider();
-        this.app.getStorageAdapter().setProvider(this.storageProvider);
-
-        await this.startServerInternal(this.app, 0);
+        await this.app.start(0);
         this.isServerStarted = true;
-    }
-
-    /**
-     * Start an Orion app
-     * @param orion orion app
-     * @param numRetries number of retries so far
-     */
-    startServerInternal(orion: Orion, numRetries: number): Promise<any>
-    {
-        return new Promise(async resolve =>
-        {
-            if(numRetries > maxServerStartRetries)
-                throw "Failed to start app. Max retries exceeded.";
-            const port = 1337 + numRetries;
-            const server = await orion.start(port);
-            server.on("error", () =>
-            {
-                this.startServerInternal(orion, numRetries + 1);
-                resolve();
-            });
-        });
     }
 
     /** 

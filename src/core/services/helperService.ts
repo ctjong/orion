@@ -83,11 +83,11 @@ class HelperService
      * Throws an exception on failure.
      * @param ctx Request context
      * @param action Action name
-     * @param db Database module
+     * @param dbAdapter Database adapter
      * @param recordId Record ID
      * @param requestBody Requset body
      */
-    onBeginWriteRequest(ctx: Context, action: string, db: Database, recordId: string, requestBody: NameValueMap): Promise<any>
+    onBeginWriteRequest(ctx: Context, action: string, dbAdapter: Database, recordId: string, requestBody: NameValueMap): Promise<any>
     {
         return new Promise(async resolve =>
         {
@@ -96,14 +96,14 @@ class HelperService
             if (action === "create")
             {
                 this.validateRoles(ctx, "create");
-                requestBody = await this.resolveForeignKeys(ctx, requestBody, db);
+                requestBody = await this.resolveForeignKeys(ctx, requestBody, dbAdapter);
                 if (isWriteAllowedFn && !isWriteAllowedFn(action, ctx.user.roles, ctx.user.id, null, requestBody))
                     execService.throwError("c75f", 400, "bad create request. operation not allowed.");
                 resolve({ record: null, requestBody: requestBody });
             }
             else
             {
-                let record = await db.findRecordById(ctx, ctx.entity, recordId);
+                let record = await dbAdapter.findRecordById(ctx, ctx.entity, recordId);
                 if (!record)
                     execService.throwError("7e13", 400, "record not found with id " + recordId);
                 record = this.fixDataKeysAndTypes(ctx, record);
@@ -116,7 +116,7 @@ class HelperService
                     execService.throwError("29c8", 400, "bad " + action + " request. operation not allowed.");
                 resolve({ record: record, requestBody: requestBody });
             }
-        }).catch(promiseErr => console.log(promiseErr));
+        });
     }
 
     /**
@@ -164,9 +164,9 @@ class HelperService
      * Resolve the foreign keys in the given request body
      * @param ctx Request context
      * @param requestBody Request body
-     * @param db Database module
+     * @param dbAdapter Database adapter
      */
-    resolveForeignKeys(ctx: Context, requestBody: NameValueMap, db: Database): Promise<any>
+    resolveForeignKeys(ctx: Context, requestBody: NameValueMap, dbAdapter: Database): Promise<any>
     {
         return new Promise(async resolve =>
         {
@@ -176,12 +176,12 @@ class HelperService
             {
                 if (!fields.hasOwnProperty(fieldName) || !fields[fieldName].foreignKey || !requestBody[fieldName])
                     continue;
-                const promise = this.resolveForeignKey(ctx, requestBody, fieldName, fields[fieldName].foreignKey, db);
+                const promise = this.resolveForeignKey(ctx, requestBody, fieldName, fields[fieldName].foreignKey, dbAdapter);
                 promises.push(promise);
             }
             for (const promise of promises)
                 await promise;
-        }).catch(promiseErr => console.log(promiseErr));
+        });
     }
 
     /**
@@ -190,11 +190,11 @@ class HelperService
      * @param requestBody Request body
      * @param fieldName Field name
      * @param fk Foreign key object
-     * @param db Database module
+     * @param dbAdapter Database adapter
      */
-    async resolveForeignKey(ctx: Context, requestBody: NameValueMap, fieldName: string, fk: any, db: Database): Promise<any>
+    async resolveForeignKey(ctx: Context, requestBody: NameValueMap, fieldName: string, fk: any, dbAdapter: Database): Promise<any>
     {
-        const record = await db.findRecordById(ctx, fk.foreignEntity, requestBody[fieldName]);
+        const record = await dbAdapter.findRecordById(ctx, fk.foreignEntity, requestBody[fieldName]);
         requestBody[fk.resolvedKeyName] = this.fixDataKeysAndTypes(ctx, record);
     }
 

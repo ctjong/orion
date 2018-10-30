@@ -10,17 +10,23 @@ import * as mime from "mime-types";
  */
 export class AzureStorage
 {
-    provider:any;
+    private provider:any;
 
     /**
      * Initialize the adapter
      * @param config config object
+     * @param provider optional provider module
      */
-    constructor(config:Config)
+    constructor(config:Config, provider?:any)
     {
-        if(!config.storage.azureStorageConnectionString)
-            throw "Missing azureStorageConnectionString in the config";
-        this.provider = azureStorage.createBlobService(config.storage.azureStorageConnectionString);
+        if(provider)
+            this.provider = provider;
+        else
+        {
+            if(!config.storage.azureStorageConnectionString)
+                throw "Missing azureStorageConnectionString in the config";
+            this.provider = azureStorage.createBlobService(config.storage.azureStorageConnectionString);
+        }
     }
 
     /**
@@ -90,14 +96,5 @@ export class AzureStorage
                 resolve(error);
             });
         });
-    }
-
-    /**
-     * Set the provider module for this adapter
-     * @param providerModule provider module
-     */
-    setProvider(providerModule:any): void
-    {
-        this.provider = providerModule;
     }
 }

@@ -1,9 +1,10 @@
 import { MysqlQuery as Query } from "./mysqlQuery";
-import { Context, NameValueMap, Join, Condition, SingleCondition, CompoundCondition } from "../../types";
+import { Context, NameValueMap, Join, Condition, SingleCondition, CompoundCondition, Config } from "../../types";
 import { conditionFactory } from "../../services/conditionFactory";
 import { joinFactory } from "../../services/joinFactory";
 import { execService } from "../../services/execService";
 import { helperService } from "../../services/helperService";
+import * as mysql from "mysql";
 
 interface QueryResponse { error:any, results:any };
 
@@ -13,7 +14,40 @@ interface QueryResponse { error:any, results:any };
  */
 export class MysqlDatabase
 {
-    pool:any;
+    private pool:any;
+
+    /**
+     * Construct a MySQL database adapter
+     * @param config configuration object
+     * @param pool optional connection pool module
+     */
+    constructor(config:Config, pool?:any)
+    {
+        if(pool)
+            this.pool = pool;
+        else
+        {
+            // there is an issue with creating mysql connection based on connection string.
+            // so we have to convert the string into a connection properties object.
+            const connString = config.database.connectionString;
+            const connStringParts = connString.split(";");
+            const connProps:NameValueMap = {};
+            for (let i = 0; i < connStringParts.length; i++)
+            {
+                const connPropTokens = connStringParts[i].split('=');
+                connProps[connPropTokens[0]] = connPropTokens[1];
+            }
+            this.pool = mysql.createPool(
+                {
+                    host: connProps.Server,
+                    user: connProps.Uid,
+                    password: connProps.Pwd,
+                    database: connProps.Database,
+                    multipleStatements: true
+                });
+            this.pool.sql = mysql;
+        }
+    }
 
     /**
      * Quick find a record based on the given condition
@@ -199,15 +233,6 @@ export class MysqlDatabase
     }
 
     /**
-     * Set the connection pool to be used by this adapter
-     * @param connectionPool connection pool
-     */
-    setConnectionPool(connectionPool:any): void
-    {
-        this.pool = connectionPool;
-    }
-
-    /**
      * Execute a query
      * @param ctx Request context
      * @param query Query to execute
@@ -219,7 +244,6 @@ export class MysqlDatabase
     {
         return new Promise(async resolve =>
         {
-            this.ensurePoolInitializedAsync(ctx);
             const queryString = query.getQueryString();
             const queryParams = query.getQueryParams();
             console.log("-------------------------------------------------");
@@ -241,44 +265,6 @@ export class MysqlDatabase
             }
             console.log("-------------------------------------------------");
             resolve(results);
-        });
-    }
-
-    /**
-     * Ensure the connection this.pool is initialized
-     * @param ctx Request context
-     */
-    ensurePoolInitializedAsync(ctx:Context): Promise<void>
-    {
-        return new Promise(resolve =>
-        {
-            if (this.pool)
-            {
-                resolve();
-                return;
-            }
-            const sql = require("mysql");
-
-            // there is an issue with creating mysql connection based on connection string.
-            // so we have to convert the string into a connection properties object.
-            const connString = ctx.config.database.connectionString;
-            const connStringParts = connString.split(";");
-            const connProps:NameValueMap = {};
-            for (let i = 0; i < connStringParts.length; i++)
-            {
-                const connPropTokens = connStringParts[i].split('=');
-                connProps[connPropTokens[0]] = connPropTokens[1];
-            }
-            this.pool = sql.createPool(
-                {
-                    host: connProps.Server,
-                    user: connProps.Uid,
-                    password: connProps.Pwd,
-                    database: connProps.Database,
-                    multipleStatements: true
-                });
-            this.pool.sql = sql;
-            resolve();
         });
     }
 

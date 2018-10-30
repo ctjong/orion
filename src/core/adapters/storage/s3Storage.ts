@@ -10,21 +10,27 @@ import * as mime from "mime-types";
  */
 export class S3Storage
 {
-    provider:any;
+    private provider:any;
 
     /**
      * Initialize the adapter
      * @param config config object
+     * @param provider optional provider module
      */
-    constructor(config:Config)
+    constructor(config:Config, provider?:any)
     {
-        if(!config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
+        if(provider)
+            this.provider = provider;
+        else
+        {
+            if(!config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
             throw "Missing awsAccessKeyId or awsSecretAccessKey in the config";
-        this.provider = new awsSdk.S3(
-        { 
-            accessKeyId: config.storage.awsAccessKeyId, 
-            secretAccessKey: config.storage.awsSecretAccessKey
-        });
+            this.provider = new awsSdk.S3(
+            { 
+                accessKeyId: config.storage.awsAccessKeyId, 
+                secretAccessKey: config.storage.awsSecretAccessKey
+            });
+        }
     }
 
     /**
@@ -107,14 +113,5 @@ export class S3Storage
                 resolve(error);
             });
         });
-    }
-
-    /**
-     * Set the provider module for this adapter
-     * @param providerModule provider module
-     */
-    setProvider(providerModule:any): void
-    {
-        this.provider = providerModule;
     }
 }
