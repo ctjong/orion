@@ -31,7 +31,7 @@ export class LocalHostStorage
      * @param req Request object
      * @param callback Callback function
      */
-    uploadFile(ctx:Context, req:any): Promise<UploadFileResponse>
+    uploadFileAsync(ctx:Context, req:any): Promise<UploadFileResponse>
     {
         return new Promise(resolve =>
         {
@@ -42,7 +42,7 @@ export class LocalHostStorage
             });
             form.on('file', (name:string, file:any) =>
             {
-                execService.catchAllErrors(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, () =>
                 {
                     const tempPath = file.path;
                     const tempName = path.basename(tempPath);
@@ -50,7 +50,7 @@ export class LocalHostStorage
                     const finalPath = tempPath.replace(tempName, finalName);
                     this.provider.rename(tempPath, finalPath, (error:any) =>
                     {
-                        execService.catchAllErrors(ctx, () =>
+                        execService.catchAllErrorsAsync(ctx, () =>
                         {
                             resolve({ error: error, name: finalName });
                         });
@@ -59,7 +59,7 @@ export class LocalHostStorage
             });
             form.on('error', (err) =>
             {
-                execService.catchAllErrors(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, () =>
                 {
                     execService.sendErrorResponse(ctx, "8651", 400, "error while parsing form data");
                 });
@@ -73,7 +73,7 @@ export class LocalHostStorage
      * @param ctx Request context
      * @param filename File name to delete
      */
-    deleteFile(ctx:Context, filename:string): Promise<any>
+    deleteFileAsync(ctx:Context, filename:string): Promise<any>
     {
         return new Promise(resolve =>
         {

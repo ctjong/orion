@@ -39,7 +39,7 @@ export class MssqlDatabase implements Database
      * @param conditionMap Search condition
      * @returns query results
      */
-    quickFind(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>
+    quickFindAsync(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>
     {
         const condition = conditionFactory.createCompound("&", []);
         for(const key in conditionMap)
@@ -47,7 +47,7 @@ export class MssqlDatabase implements Database
             if(!conditionMap.hasOwnProperty(key)) continue;
             condition.children.push(conditionFactory.createSingle(entity, key, "=", conditionMap[key]));
         }
-        return this.select(ctx, fields, entity, condition, "id", 0, 1, false, false);
+        return this.selectAsync(ctx, fields, entity, condition, "id", 0, 1, false, false);
     }
 
     /**
@@ -63,7 +63,7 @@ export class MssqlDatabase implements Database
      * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    select(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number,
+    selectAsync(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number,
         resolveFK:boolean, isFullMode:boolean): Promise<any>
     {
         const joins = resolveFK ? this.getJoins(ctx, fields, entity) : [];
@@ -98,7 +98,7 @@ export class MssqlDatabase implements Database
             query.append(" order by [" + entity + "table].[" + orderByField + "] ");
         }
         query.append(" OFFSET (?) ROWS FETCH NEXT (?) ROWS ONLY", skip.toString(), take.toString());
-        return this.execute(ctx, query);
+        return this.executeAsync(ctx, query);
     }
 
     /**
@@ -108,17 +108,14 @@ export class MssqlDatabase implements Database
      * @param recordId Id of record to find
      * @returns query results
      */
-    findRecordById(ctx:Context, entity:string, recordId:string): Promise<any>
+    async findRecordByIdAsync(ctx:Context, entity:string, recordId:string): Promise<any>
     {
         const fields = helperService.getFields(ctx, "read", entity);
         const condition = conditionFactory.createSingle(entity, "id", "=", recordId);
 
-        return new Promise(async resolve =>
-        {
-            const rawResponseData = await this.select(ctx, fields, entity, condition, "id", 0, 1, true, false);
-            const responseData = helperService.fixDataKeysAndTypes(ctx, rawResponseData[0], entity);
-            resolve(responseData);
-        });
+        const rawResponseData = await this.selectAsync(ctx, fields, entity, condition, "id", 0, 1, true, false);
+        const responseData = helperService.fixDataKeysAndTypes(ctx, rawResponseData[0], entity);
+        return responseData;
     }
 
     /**
@@ -128,13 +125,14 @@ export class MssqlDatabase implements Database
      * @param condition Condition
      * @returns query results
      */
-    count(ctx:Context, entity:string, condition:Condition): Promise<any>
+    async countAsync(ctx:Context, entity:string, condition:Condition): Promise<any>
     {
         const query = new Query();
         const tableName = entity + "table";
         query.append("select count(*) from [" + tableName + "] where ");
         this.appendWhereClause(query, condition);
-        return this.execute(ctx, query, raw => raw[0][""]);
+        const response = await this.executeAsync(ctx, query);
+        return response[0][""];
     }
 
     /**
@@ -145,7 +143,7 @@ export class MssqlDatabase implements Database
      * @param fieldValues New record field values
      * @returns inserted ID
      */
-    insert(ctx:Context, entity:string, fieldNames:string[], fieldValues:string[]): Promise<any>
+    async insertAsync(ctx:Context, entity:string, fieldNames:string[], fieldValues:string[]): Promise<any>
     {
         const query = new Query();
         const tableName = entity + "table";
@@ -156,7 +154,8 @@ export class MssqlDatabase implements Database
             query.append((i === 0 ? "" : ",") + "?", fieldValues[i]);
         }
         query.append("); select SCOPE_IDENTITY() as [identity];");
-        return this.execute(ctx, query, raw => raw[0].identity);
+        const response = await this.executeAsync(ctx, query);
+        return response[0].identity;
     }
 
     /**
@@ -167,7 +166,7 @@ export class MssqlDatabase implements Database
      * @param condition Update condition
      * @returns query results
      */
-    update(ctx:Context, entity:string, updateData:NameValueMap, condition:Condition): Promise<any>
+    updateAsync(ctx:Context, entity:string, updateData:NameValueMap, condition:Condition): Promise<any>
     {
         const query = new Query();
         let isFirstSetClause = true;
@@ -181,7 +180,7 @@ export class MssqlDatabase implements Database
         });
         query.append(" where ");
         this.appendWhereClause(query, condition);
-        return this.execute(ctx, query);
+        return this.executeAsync(ctx, query);
     }
 
     /**
@@ -191,14 +190,14 @@ export class MssqlDatabase implements Database
      * @param id Id of record to delete
      * @returns query results
      */
-    deleteRecord(ctx:Context, entity:string, id:string): Promise<any>
+    deleteRecordAsync(ctx:Context, entity:string, id:string): Promise<any>
     {
         const query = new Query();
         const tableName = entity + "table";
         const condition = conditionFactory.createSingle(entity, "id", "=", id);
         query.append("delete from [" + tableName + "] where ");
         this.appendWhereClause(query, condition);
-        return this.execute(ctx, query);
+        return this.executeAsync(ctx, query);
     }
 
     /**
@@ -228,10 +227,9 @@ export class MssqlDatabase implements Database
      * Execute a query
      * @param ctx Request context
      * @param query Query to execute
-     * @param responseHandler Response processor function
      * @returns query results
      */
-    private async execute(ctx:Context, query:Query, responseHandler?:((raw:any)=>any)): Promise<any>
+    private executeAsync(ctx:Context, query:Query): Promise<any>
     {
         const queryString = query.getQueryString();
         const queryParams = query.getQueryParams();
@@ -263,7 +261,7 @@ export class MssqlDatabase implements Database
             let responseData:any = null;
             request.query(queryString, (err:any, dbResponse:any) =>
             {
-                execService.catchAllErrors(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, () =>
                 {
                     if (err)
                     {
@@ -274,8 +272,6 @@ export class MssqlDatabase implements Database
                     else
                     {
                         responseData = dbResponse.recordset;
-                        if(responseHandler)
-                            responseData = responseHandler(responseData);
                         resolve(responseData);
                     }
                 });

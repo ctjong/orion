@@ -10,7 +10,7 @@ export interface Database
      * @param conditionMap Search condition
      * @returns query results
      */
-    quickFind(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>;
+    quickFindAsync(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>;
 
     /**
      * Find records that match the given condition
@@ -25,7 +25,7 @@ export interface Database
      * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    select(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number, 
+    selectAsync(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number, 
         resolveFK:boolean, isFullMode:boolean): Promise<any>;
 
     /**
@@ -35,7 +35,7 @@ export interface Database
      * @param recordId Id of record to find
      * @returns query results
      */
-    findRecordById(ctx:Context, entity:string, recordId:string): Promise<any>;
+    findRecordByIdAsync(ctx:Context, entity:string, recordId:string): Promise<any>;
 
     /**
      * Count the number of records that match the given condition
@@ -44,7 +44,7 @@ export interface Database
      * @param condition Condition
      * @returns query results
      */
-    count(ctx:Context, entity:string, condition:Condition): Promise<any>;
+    countAsync(ctx:Context, entity:string, condition:Condition): Promise<any>;
 
     /**
      * Insert a new record
@@ -54,7 +54,7 @@ export interface Database
      * @param fieldValues New record field values
      * @returns inserted ID
      */
-    insert(ctx:Context, entity:string, fieldNames:string[], fieldValues:string[]): Promise<any>;
+    insertAsync(ctx:Context, entity:string, fieldNames:string[], fieldValues:string[]): Promise<any>;
 
     /**
      * Update a record
@@ -64,7 +64,7 @@ export interface Database
      * @param condition Update condition
      * @returns query results
      */
-    update(ctx:Context, entity:string, updateData:NameValueMap, condition:Condition): Promise<any>;
+    updateAsync(ctx:Context, entity:string, updateData:NameValueMap, condition:Condition): Promise<any>;
 
     /**
      * Delete a record from the database
@@ -73,5 +73,5 @@ export interface Database
      * @param id Id of record to delete
      * @returns query results
      */
-    deleteRecord(ctx:Context, entity:string, id:string): Promise<any>;
+    deleteRecordAsync(ctx:Context, entity:string, id:string): Promise<any>;
 }

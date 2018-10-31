@@ -54,12 +54,12 @@ class AuthService
      * @param userName Submitted user name
      * @param password Submitted password
      */
-    async generateLocalUserToken(ctx:Context, userName:string, password:string): Promise<void>
+    async generateLocalUserTokenAsync(ctx:Context, userName:string, password:string): Promise<void>
     {
         this.verifyAuthSupported(ctx);
         if(!userName || !password) 
             execService.throwError("003a", 400, "invalid login");
-        const user = await dataService.getDatabaseAdapter().quickFind(
+        const user = await dataService.getDatabaseAdapter().quickFindAsync(
             ctx, 
             ["id", "password", "roles", "domain", "firstname", "lastname"], 
             "user", 
@@ -94,48 +94,54 @@ class AuthService
      * @param ctx Request context
      * @param fbToken Facebook token
      */
-    processFbToken(ctx:Context, fbToken:string): void 
+    processFbTokenAsync(ctx:Context, fbToken:string): Promise<void>
     {
-        this.verifyAuthSupported(ctx);
-        const req = https.request(
-            {
-                host: "graph.facebook.com", 
-                path: "/v2.2/me?fields=id,first_name,last_name,email&access_token=" + fbToken
-            }, 
-            (response) =>
-            {
-                let body = '';
-                response.on('data', (data:string) => 
+        return new Promise(resolve =>
+        {
+            this.verifyAuthSupported(ctx);
+            const req = https.request(
                 {
-                    execService.catchAllErrors(ctx, () => body += data);
-                });
-                response.on('end', async () =>
+                    host: "graph.facebook.com", 
+                    path: "/v2.2/me?fields=id,first_name,last_name,email&access_token=" + fbToken
+                }, 
+                (response) =>
                 {
-                    execService.catchAllErrors(ctx, async () =>
+                    let body = '';
+                    response.on('data', (data:string) => 
                     {
-                        const parsed = JSON.parse(body);
-                        if(!parsed.hasOwnProperty("id"))
-                            execService.throwError("3f9c", 400, "bad request");
-
-                        const readResponse = await dataService.getDatabaseAdapter().quickFind(ctx, ["id", "roles"], "user", {"domainid": parsed.id});
-                        if(readResponse)
-                        {
-                            this.createAndSendToken(ctx, readResponse.id, "fb", parsed.id, readResponse.roles, parsed.first_name, parsed.last_name);
-                            return;
-                        }
-
-                        const createResponse = await dataService.getDatabaseAdapter().insert(
-                            ctx,
-                            "user", 
-                            ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 
-                            ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name, new Date().getTime()]);
-                        const id = createResponse[0].identity.toString();
-                        this.createAndSendToken(ctx, id, "fb", parsed.id, ["member"], parsed.first_name, parsed.last_name);
+                        execService.catchAllErrorsAsync(ctx, () => body += data);
                     });
-                });
-            }
-        );
-        req.end();
+                    response.on('end', async () =>
+                    {
+                        execService.catchAllErrorsAsync(ctx, async () =>
+                        {
+                            const parsed = JSON.parse(body);
+                            if(!parsed.hasOwnProperty("id"))
+                                execService.throwError("3f9c", 400, "bad request");
+
+                            const existingUser = await dataService.getDatabaseAdapter().quickFindAsync(ctx, ["id", "roles"], "user", {"domainid": parsed.id});
+                            if(existingUser)
+                            {
+                                this.createAndSendToken(ctx, existingUser.id, "fb", parsed.id, existingUser.roles, parsed.first_name, parsed.last_name);
+                            }
+                            else
+                            {
+                                const createResponse = await dataService.getDatabaseAdapter().insertAsync(
+                                    ctx,
+                                    "user", 
+                                    ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 
+                                    ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name, new Date().getTime()]);
+                                const id = createResponse[0].identity.toString();
+                                this.createAndSendToken(ctx, id, "fb", parsed.id, ["member"], parsed.first_name, parsed.last_name);
+                            }
+
+                            resolve();
+                        });
+                    });
+                }
+            );
+            req.end();
+        });
     }
 
     /**

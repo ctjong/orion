@@ -15,7 +15,7 @@ export class ExecService
      * @param res Response object
      * @param db Database module
      */
-    async handleError(err: any, req: any, res: any, db?: Database): Promise<void>
+    async handleErrorAsync(err: any, req: any, res: any, db?: Database): Promise<void>
     {
         if (typeof (err) === "string")
         {
@@ -38,7 +38,7 @@ export class ExecService
 
                 const ctx: Context = { req: null, res: res, config: config };
                 const url = req.method + " " + req.originalUrl;
-                await db.insert(
+                await db.insertAsync(
                     ctx,
                     "error",
                     ["tag", "statuscode", "msg", "url", "timestamp"],
@@ -73,7 +73,7 @@ export class ExecService
      * @param ctx request context
      * @param fn function to execute
      */
-    async catchAllErrors(ctx: Context, fn: (() => any)): Promise<void>
+    async catchAllErrorsAsync(ctx: Context, fn: (() => any)): Promise<void>
     {
         try
         {
@@ -83,7 +83,7 @@ export class ExecService
         }
         catch (err)
         {
-            this.handleError(err, ctx.req, ctx.res);
+            this.handleErrorAsync(err, ctx.req, ctx.res);
         }
     }
 
@@ -107,7 +107,7 @@ export class ExecService
      */
     sendErrorResponse(ctx: Context, tag: string, statusCode: number, msg: string): void
     {
-        this.handleError(new Error(tag, statusCode, msg), ctx.req, ctx.res);
+        this.handleErrorAsync(new Error(tag, statusCode, msg), ctx.req, ctx.res);
     }
 }
 

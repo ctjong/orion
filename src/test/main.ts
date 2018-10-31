@@ -59,9 +59,9 @@ const startTestSession = (config: Config, databaseAdapter:Database, storageAdapt
 {
     const runner = new Runner(config, databaseAdapter, storageAdapter, pool);
 
-    before(done =>
+    before(() =>
     {
-        runner.startServer().then(done);
+        return runner.startServerAsync();
     });
 
     describe(sessionName, () =>

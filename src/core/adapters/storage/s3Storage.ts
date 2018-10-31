@@ -39,7 +39,7 @@ export class S3Storage
      * @param req Request object
      * @param callback Callback function
      */
-    uploadFile(ctx:Context, req:any): Promise<UploadFileResponse>
+    uploadFileAsync(ctx:Context, req:any): Promise<UploadFileResponse>
     {
         return new Promise(resolve =>
         {
@@ -50,7 +50,7 @@ export class S3Storage
             });
             form.on('part', (stream) => 
             {
-                execService.catchAllErrors(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, () =>
                 {
                     isFirstPartReceived = true;
                     if (!stream.filename)
@@ -67,7 +67,7 @@ export class S3Storage
                     },
                     (s3UploadErr:any, data:any) =>
                     {
-                        execService.catchAllErrors(ctx, () =>
+                        execService.catchAllErrorsAsync(ctx, () =>
                         {
                             resolve({ error: s3UploadErr, name: name });
                         });
@@ -76,7 +76,7 @@ export class S3Storage
             });
             form.on('progress', (bytesReceived:number, bytesExpected:number) =>
             {
-                execService.catchAllErrors(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, () =>
                 {
                     if(!isFirstPartReceived && bytesReceived >= bytesExpected)
                         execService.sendErrorResponse(ctx, "49ef", 400, "error while parsing the first part");
@@ -84,7 +84,7 @@ export class S3Storage
             });
             form.on('error', (err:any) =>
             {
-                execService.catchAllErrors(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, () =>
                 {
                     execService.sendErrorResponse(ctx, "a95a", 400, "error while parsing form data");
                 });
@@ -99,7 +99,7 @@ export class S3Storage
      * @param filename File name to delete
      * @param callback Callback function
      */
-    deleteFile(ctx:Context, filename:string): Promise<any>
+    deleteFileAsync(ctx:Context, filename:string): Promise<any>
     {
         return new Promise(resolve =>
         {

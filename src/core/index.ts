@@ -72,7 +72,7 @@ export default class Orion
         {
             try
             {
-                execService.handleError(err, req, res, dataService.getDatabaseAdapter());
+                execService.handleErrorAsync(err, req, res, dataService.getDatabaseAdapter());
             }
             catch (ex)
             {
@@ -91,7 +91,7 @@ export default class Orion
      * @param port optional port to start the app at
      * @returns server object
      */
-    start(port:number): Promise<any>
+    startAsync(port:number): Promise<any>
     {
         return new Promise(resolve =>
         {
@@ -120,10 +120,10 @@ export default class Orion
      * @param id record id
      * @returns query results
      */
-    findById(originalReq:any, entity:string, id:string): Promise<any>
+    findByIdAsync(originalReq:any, entity:string, id:string): Promise<any>
     {
         const params = { accessType: "public", id: id };
-        return this.executeDirectRead(originalReq, entity, params, true);
+        return this.executeDirectReadAsync(originalReq, entity, params, true);
     }
 
     /**
@@ -136,10 +136,10 @@ export default class Orion
      * @param condition condition string
      * @returns query results
      */
-    findByCondition(originalReq:any, entity:string, orderByField:string, skip:number, take:number, condition:any): Promise<any>
+    findByConditionAsync(originalReq:any, entity:string, orderByField:string, skip:number, take:number, condition:any): Promise<any>
     {
         const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take, condition: condition };
-        return this.executeDirectRead(originalReq, entity, params, false);
+        return this.executeDirectReadAsync(originalReq, entity, params, false);
     }
 
     /**
@@ -151,10 +151,10 @@ export default class Orion
      * @param take number of records to take (for pagination)
      * @returns query results
      */
-    findAll(originalReq:any, entity:string, orderByField:string, skip:number, take:number): Promise<any>
+    findAllAsync(originalReq:any, entity:string, orderByField:string, skip:number, take:number): Promise<any>
     {
         const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take };
-        return this.executeDirectRead(originalReq, entity, params, false);
+        return this.executeDirectReadAsync(originalReq, entity, params, false);
     }
 
     /**
@@ -172,45 +172,45 @@ export default class Orion
         });
 
         // GET Endpoints
-        this.app.get('/api/data/:entity/:accessType/findbyid/:id', (req:any, res:any) => 
+        this.app.get('/api/data/:entity/:accessType/findbyid/:id', async (req:any, res:any) => 
         {
-            readHandler.execute(req.context, req.params, true);
+            await readHandler.executeAsync(req.context, req.params, true);
         });
-        this.app.get('/api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition', (req:any, res:any) => 
+        this.app.get('/api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition', async (req:any, res:any) => 
         {
-            readHandler.execute(req.context, req.params, false);
+            await readHandler.executeAsync(req.context, req.params, false);
         });
-        this.app.get('/api/data/:entity/:accessType/findall/:orderByField/:skip/:take', (req:any, res:any) => 
+        this.app.get('/api/data/:entity/:accessType/findall/:orderByField/:skip/:take', async (req:any, res:any) => 
         {
-            readHandler.execute(req.context, req.params, false);
+            await readHandler.executeAsync(req.context, req.params, false);
         });
 
         // POST Endpoints
-        this.app.post('/api/data/asset', (req:any, res:any) =>
+        this.app.post('/api/data/asset', async (req:any, res:any) =>
         {
-            createAssetHandler.execute(req.context, req);
+            await createAssetHandler.executeAsync(req.context, req);
         });
 
-        this.app.post('/api/data/:entity', (req:any, res:any) =>
+        this.app.post('/api/data/:entity', async (req:any, res:any) =>
         {
-            createHandler.execute(req.context, req.body);
+            await createHandler.executeAsync(req.context, req.body);
         });
 
         // PUT Endpoints
-        this.app.put('/api/data/:entity/:id', (req:any, res:any) =>
+        this.app.put('/api/data/:entity/:id', async (req:any, res:any) =>
         {
-            updateHandler.execute(req.context, req.body, req.params.id);
+            await updateHandler.executeAsync(req.context, req.body, req.params.id);
         });
 
         // DELETE Endpoints
-        this.app.delete('/api/data/asset/:id', (req:any, res:any) =>
+        this.app.delete('/api/data/asset/:id', async (req:any, res:any) =>
         {
-            deleteAssetHandler.execute(req.context, req.params.id);
+            await deleteAssetHandler.executeAsync(req.context, req.params.id);
         });
 
-        this.app.delete('/api/data/:entity/:id', (req:any, res:any) =>
+        this.app.delete('/api/data/:entity/:id', async (req:any, res:any) =>
         {
-            deleteHandler.execute(req.context, req.params.id);
+            await deleteHandler.executeAsync(req.context, req.params.id);
         });
     }
 
@@ -225,13 +225,13 @@ export default class Orion
             req.context = contextFactory.create(req, res, "user");
             next();
         });
-        this.app.post('/api/auth/token', (req:any, res:any) =>
+        this.app.post('/api/auth/token', async (req:any, res:any) =>
         {
-            authService.generateLocalUserToken(req.context, req.body.username, req.body.password);
+            await authService.generateLocalUserTokenAsync(req.context, req.body.username, req.body.password);
         });
-        this.app.post('/api/auth/token/fb', (req:any, res:any) =>
+        this.app.post('/api/auth/token/fb', async (req:any, res:any) =>
         {
-            authService.processFbToken(req.context, req.body.fbtoken);
+            await authService.processFbTokenAsync(req.context, req.body.fbtoken);
         });
     }
 
@@ -242,10 +242,10 @@ export default class Orion
     {
         // error logging
         this.app.use('/api/error', bodyParser.json());
-        this.app.post('/api/error', (req:any, res:any) =>
+        this.app.post('/api/error', async (req:any, res:any) =>
         {
             const ctx:Context = { req: req, res: res, config: this.config };
-            dataService.getDatabaseAdapter().insert(
+            await dataService.getDatabaseAdapter().insertAsync(
                 ctx,
                 "error",
                 ["tag", "statuscode", "msg", "url", "timestamp"],
@@ -261,31 +261,30 @@ export default class Orion
      * @param params read action parameters
      * @param isFullMode whether or not the read result should be returned in long form
      */
-    executeDirectRead(originalReq:any, entity:string, params:any, isFullMode:boolean): Promise<any>
+    async executeDirectReadAsync(originalReq:any, entity:string, params:any, isFullMode:boolean): Promise<any>
     {
-        return new Promise(resolve =>
+        let response:any = null;
+        const res:any = {};
+        res.status = (status:number) =>
         {
-            const res:any = {};
-            res.status = (status:number) =>
-            {
-                if (status !== 200)
-                    res.statusCode = status;
-                return res;
-            };
-            res.send = (data:any) =>
-            {
-                if (res.statusCode !== 200)
-                    resolve({ status: res.statusCode, data: data });
-                else
-                    resolve(data);
-            };
-            res.json = res.send;
+            if (status !== 200)
+                res.statusCode = status;
+            return res;
+        };
+        res.send = (data:any) =>
+        {
+            if (res.statusCode !== 200)
+                response = { status: res.statusCode, data: data };
+            else
+                response = data;
+        };
+        res.json = res.send;
 
-            const req:any = { method: "GET", originalUrl: originalReq.originalUrl };
-            const context = contextFactory.create(req, res, entity);
-            req.context = context;
+        const req:any = { method: "GET", originalUrl: originalReq.originalUrl };
+        const context = contextFactory.create(req, res, entity);
+        req.context = context;
 
-            readHandler.execute(context, params, isFullMode);
-        });
+        await readHandler.executeAsync(context, params, isFullMode);
+        return response;
     }
 }

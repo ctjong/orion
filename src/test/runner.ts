@@ -180,14 +180,14 @@ export class Runner
     /** 
      * Start an Orion app
      */
-    async startServer(): Promise<void>
+    async startServerAsync(): Promise<void>
     {
         if(this.isServerStarted)
             return;
 
         this.orionApp = new Orion(this.config, this.databaseAdapter, this.storageAdapter);
         this.orionApp.setupApiEndpoints();
-        await this.orionApp.start(0);
+        await this.orionApp.startAsync(0);
         this.isServerStarted = true;
     }
 

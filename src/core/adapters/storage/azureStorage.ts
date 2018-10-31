@@ -34,7 +34,7 @@ export class AzureStorage
      * @param ctx Request context
      * @param req Request object
      */
-    uploadFile(ctx:Context, req:any): Promise<UploadFileResponse>
+    uploadFileAsync(ctx:Context, req:any): Promise<UploadFileResponse>
     {
         return new Promise(resolve =>
         {
@@ -42,7 +42,7 @@ export class AzureStorage
             const form = new (multiparty.Form)();
             form.on('part', (stream:any) =>
             {
-                execService.catchAllErrors(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, () =>
                 {
                     isFirstPartReceived = true;
                     if (!stream.filename)
@@ -55,7 +55,7 @@ export class AzureStorage
                     },
                     (error:any) =>
                     {
-                        execService.catchAllErrors(ctx, () =>
+                        execService.catchAllErrorsAsync(ctx, () =>
                         {
                             resolve({ error: error, name: name });
                         });
@@ -64,7 +64,7 @@ export class AzureStorage
             });
             form.on('progress', (bytesReceived, bytesExpected) =>
             {
-                execService.catchAllErrors(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, () =>
                 {
                     if(!isFirstPartReceived && bytesReceived >= bytesExpected)
                         execService.sendErrorResponse(ctx, "171d", 400, "error while parsing the first part");
@@ -72,7 +72,7 @@ export class AzureStorage
             });
             form.on('error', (err) =>
             {
-                execService.catchAllErrors(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, () =>
                 {
                     execService.sendErrorResponse(ctx, "ead9", 400, "error while parsing form data");
                 });
@@ -87,7 +87,7 @@ export class AzureStorage
      * @param filename File name
      * @param callback Callback function
      */
-    deleteFile(ctx:Context, filename:string): Promise<any>
+    deleteFileAsync(ctx:Context, filename:string): Promise<any>
     {
         return new Promise(resolve =>
         {

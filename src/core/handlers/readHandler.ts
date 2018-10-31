@@ -15,7 +15,7 @@ class ReadHandler
      * @param requestParams Request parameters
      * @param isFullMode Whether to do the read in full mode (full mode = include rich text fields in response)
      */
-    async execute (ctx:Context, requestParams:NameValueMap, isFullMode:boolean): Promise<void>
+    async executeAsync(ctx:Context, requestParams:NameValueMap, isFullMode:boolean): Promise<void>
     {
         // set owner role if the read operation is run in private mode
         if (requestParams.accessType === "private")
@@ -45,8 +45,8 @@ class ReadHandler
         // execute
         const dbAdapter = dataService.getDatabaseAdapter();
         const fields = helperService.getFields(ctx, "read");
-        const count = await dbAdapter.count(ctx, ctx.entity, condition);
-        const dbResponse = await dbAdapter.select(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode);
+        const count = await dbAdapter.countAsync(ctx, ctx.entity, condition);
+        const dbResponse = await dbAdapter.selectAsync(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode);
         for(let i=0; i<dbResponse.length; i++)
         {
             dbResponse[i] = helperService.fixDataKeysAndTypes(ctx, dbResponse[i]);

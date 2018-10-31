@@ -57,7 +57,7 @@ export class MysqlDatabase
      * @param conditionMap Search condition
      * @returns query results
      */
-    quickFind(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>
+    async quickFindAsync(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>
     {
         const condition = conditionFactory.createCompound("&", []);
         for (const key in conditionMap)
@@ -65,11 +65,8 @@ export class MysqlDatabase
             if (!conditionMap.hasOwnProperty(key)) continue;
             condition.children.push(conditionFactory.createSingle(entity, key, "=", conditionMap[key]));
         }
-        return new Promise(async resolve =>
-        {
-            const responseArr = await this.select(ctx, fields, entity, condition, "id", 0, 1, false, false);
-            resolve(responseArr[0]);
-        });
+        const responseArr = await this.selectAsync(ctx, fields, entity, condition, "id", 0, 1, false, false);
+        return responseArr[0];
     }
 
     /**
@@ -85,7 +82,7 @@ export class MysqlDatabase
      * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    select(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number, 
+    selectAsync(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number, 
         resolveFK:boolean, isFullMode:boolean): Promise<any>
     {
         const joins = resolveFK ? this.getJoins(ctx, fields, entity) : [];
@@ -119,7 +116,7 @@ export class MysqlDatabase
             query.append(" order by `" + entity + "table`.`" + orderByField + "` ");
         }
         query.append(" LIMIT ? OFFSET ?", take.toString(), skip.toString());
-        return this.execute(ctx, query);
+        return this.executeAsync(ctx, query);
     }
 
     /**
@@ -129,16 +126,13 @@ export class MysqlDatabase
      * @param recordId Id of record to find
      * @returns query results
      */
-    findRecordById(ctx:Context, entity:string, recordId:string): Promise<any>
+    async findRecordByIdAsync(ctx:Context, entity:string, recordId:string): Promise<any>
     {
         const fields = helperService.getFields(ctx, "read", entity);
         const condition = conditionFactory.createSingle(entity, "id", "=", recordId);
-        return new Promise(async resolve =>
-        {
-            const responseArr = await this.select(ctx, fields, entity, condition, "id", 0, 1, true, false);
-            const record = responseArr[0];
-            resolve(helperService.fixDataKeysAndTypes(ctx, record, entity));
-        });
+        const responseArr = await this.selectAsync(ctx, fields, entity, condition, "id", 0, 1, true, false);
+        const record = responseArr[0];
+        return helperService.fixDataKeysAndTypes(ctx, record, entity);
     }
 
     /**
@@ -148,17 +142,14 @@ export class MysqlDatabase
      * @param condition Condition
      * @returns query results
      */
-    count(ctx:Context, entity:string, condition:Condition): Promise<any>
+    async countAsync(ctx:Context, entity:string, condition:Condition): Promise<any>
     {
         const query = new Query();
         const tableName = entity + "table";
         query.append("select count(*) as count from `" + tableName + "` where ");
         this.appendWhereClause(query, condition);
-        return new Promise(async resolve =>
-        {
-            const dbResponse = await this.execute(ctx, query);
-            resolve(dbResponse[0].count);
-        });
+        const dbResponse = await this.executeAsync(ctx, query);
+        return dbResponse[0].count;
     }
 
     /**
@@ -169,7 +160,7 @@ export class MysqlDatabase
      * @param fieldValues New record field values
      * @returns inserted ID
      */
-    insert(ctx:Context, entity:string, fieldNames:string[], fieldValues:string[]): Promise<any>
+    async insertAsync(ctx:Context, entity:string, fieldNames:string[], fieldValues:string[]): Promise<any>
     {
         const query = new Query();
         const tableName = entity + "table";
@@ -181,11 +172,8 @@ export class MysqlDatabase
         }
         query.append(")");
 
-        return new Promise(async resolve =>
-        {
-            const dbResponse = await this.execute(ctx, query);
-            resolve(dbResponse.insertId);
-        });
+        const dbResponse = await this.executeAsync(ctx, query);
+        return dbResponse.insertId;
     }
 
     /**
@@ -196,7 +184,7 @@ export class MysqlDatabase
      * @param condition Update condition
      * @returns query results
      */
-    update(ctx:Context, entity:string, updateData:NameValueMap, condition:Condition): Promise<any>
+    updateAsync(ctx:Context, entity:string, updateData:NameValueMap, condition:Condition): Promise<any>
     {
         const query = new Query();
         let isFirstSetClause = true;
@@ -212,7 +200,7 @@ export class MysqlDatabase
         }
         query.append(" where ");
         this.appendWhereClause(query, condition);
-        return this.execute(ctx, query);
+        return this.executeAsync(ctx, query);
     }
 
     /**
@@ -222,14 +210,14 @@ export class MysqlDatabase
      * @param id Id of record to delete
      * @returns query results
      */
-    deleteRecord(ctx:Context, entity:string, id:string): Promise<any>
+    deleteRecordAsync(ctx:Context, entity:string, id:string): Promise<any>
     {
         const query = new Query();
         const tableName = entity + "table";
         const condition = conditionFactory.createSingle(entity, "id", "=", id);
         query.append("delete from `" + tableName + "` where ");
         this.appendWhereClause(query, condition);
-        return this.execute(ctx, query);
+        return this.executeAsync(ctx, query);
     }
 
     /**
@@ -240,32 +228,29 @@ export class MysqlDatabase
      * @param completeCb Complete callback
      * @returns query results
      */
-    execute(ctx:Context, query:Query): Promise<any>
+    async executeAsync(ctx:Context, query:Query): Promise<any>
     {
-        return new Promise(async resolve =>
-        {
-            const queryString = query.getQueryString();
-            const queryParams = query.getQueryParams();
-            console.log("-------------------------------------------------");
-            console.log("Sending query to database:");
-            console.log(queryString);
-            console.log("Query parameters:");
-            console.log(queryParams);
+        const queryString = query.getQueryString();
+        const queryParams = query.getQueryParams();
+        console.log("-------------------------------------------------");
+        console.log("Sending query to database:");
+        console.log(queryString);
+        console.log("Query parameters:");
+        console.log(queryParams);
 
-            const response:NameValueMap = await this.queryAsync(queryString, queryParams);
-            let results:any = null;
-            if (response.error)
-            {
-                console.log(response.error);
-                execService.sendErrorResponse(ctx, "a07f", 500, "error while sending query to database");
-            }
-            else
-            {
-                results = response.results;
-            }
-            console.log("-------------------------------------------------");
-            resolve(results);
-        });
+        const response:NameValueMap = await this.queryAsync(queryString, queryParams);
+        let results:any = null;
+        if (response.error)
+        {
+            console.log(response.error);
+            execService.sendErrorResponse(ctx, "a07f", 500, "error while sending query to database");
+        }
+        else
+        {
+            results = response.results;
+        }
+        console.log("-------------------------------------------------");
+        return results;
     }
 
     /**
