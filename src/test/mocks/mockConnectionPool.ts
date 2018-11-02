@@ -6,14 +6,18 @@ import { NameValueMap } from "../../core/types";
 export class MockConnectionPool
 {
     engine:string;
-    sql:any;
     queryResults:any;
     queryReceivedHandler:any;
+
+    sql:any = 
+    {
+        BigInt: "bigint",
+        Request: MssqlRequest
+    };
 
     constructor(engine:string)
     {
         this.engine = engine;
-        this.sql = new MssqlWrapper(this);
         this.queryResults = [];
         this.queryReceivedHandler = null;
     }
@@ -99,16 +103,7 @@ export class MockConnectionPool
 };
 
 /**
- * MSSQL wrapper object containing database connection functions and properties
- */
-class MssqlWrapper
-{
-    BigInt:string = "bigint";
-    Request = MssqlRequest;
-};
-
-/**
- * MSSQL request object to be included in the wrapper
+ * MSSQL request object to be included in the mock pool
  */
 class MssqlRequest
 {

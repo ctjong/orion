@@ -1,6 +1,6 @@
 import * as Express from "express";
-import { Config, Context } from "./types";
-import { contextFactory } from "./services/contextFactory";
+import { Config, Error } from "./types";
+import { ContextFactory } from "./services/contextFactory";
 import * as applicationInsights from "applicationinsights";
 import * as bodyParser from "body-parser";
 import { execService } from "./services/execService";
@@ -28,7 +28,7 @@ export default class Orion
     express:any = Express;
     db:Database = null;
     storage:Storage = null;
-    private config:Config = null;
+    contextFactory:ContextFactory = null;
 
     /**
      * Construct an Orion app
@@ -43,8 +43,7 @@ export default class Orion
     constructor(config:Config, databaseAdapter?:Database, storageAdapter?: Storage)
     {
         this.app = Express();
-        this.config = config;
-        contextFactory.initializeConfig(config);
+        this.contextFactory = new ContextFactory(config);
 
         // database system
         if(databaseAdapter)
@@ -202,7 +201,7 @@ export default class Orion
         this.app.use('/api/data/:entity', bodyParser.urlencoded({ extended: true }));
         this.app.use('/api/data/:entity', (req:any, res:any, next:any) =>
         {
-            req.context = contextFactory.create(req, res, req.params.entity, this.db, this.storage);
+            req.context = this.contextFactory.create(req, res, req.params.entity, this.db, this.storage);
             authService.initUserContext(req.context);
             next();
         });
@@ -210,43 +209,43 @@ export default class Orion
         // GET Endpoints
         this.app.get('/api/data/:entity/:accessType/findbyid/:id', async (req:any, res:any) => 
         {
-            await readHandler.executeAsync(req.context, req.params, true);
+            await readHandler.executeAsync(req.context, req.params, true).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
         this.app.get('/api/data/:entity/:accessType/findbycondition/:orderByField/:skip/:take/:condition', async (req:any, res:any) => 
         {
-            await readHandler.executeAsync(req.context, req.params, false);
+            await readHandler.executeAsync(req.context, req.params, false).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
         this.app.get('/api/data/:entity/:accessType/findall/:orderByField/:skip/:take', async (req:any, res:any) => 
         {
-            await readHandler.executeAsync(req.context, req.params, false);
+            await readHandler.executeAsync(req.context, req.params, false).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
 
         // POST Endpoints
         this.app.post('/api/data/asset', async (req:any, res:any) =>
         {
-            await createAssetHandler.executeAsync(req.context, req);
+            await createAssetHandler.executeAsync(req.context, req).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
 
         this.app.post('/api/data/:entity', async (req:any, res:any) =>
         {
-            await createHandler.executeAsync(req.context, req.body);
+            await createHandler.executeAsync(req.context, req.body).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
 
         // PUT Endpoints
         this.app.put('/api/data/:entity/:id', async (req:any, res:any) =>
         {
-            await updateHandler.executeAsync(req.context, req.body, req.params.id);
+            await updateHandler.executeAsync(req.context, req.body, req.params.id).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
 
         // DELETE Endpoints
         this.app.delete('/api/data/asset/:id', async (req:any, res:any) =>
         {
-            await deleteAssetHandler.executeAsync(req.context, req.params.id);
+            await deleteAssetHandler.executeAsync(req.context, req.params.id).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
 
         this.app.delete('/api/data/:entity/:id', async (req:any, res:any) =>
         {
-            await deleteHandler.executeAsync(req.context, req.params.id);
+            await deleteHandler.executeAsync(req.context, req.params.id).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
     }
 
@@ -258,7 +257,7 @@ export default class Orion
         this.app.use('/api/auth', bodyParser.json());
         this.app.use('/api/auth', (req:any, res:any, next:any) =>
         {
-            req.context = contextFactory.create(req, res, "user", this.db, this.storage);
+            req.context = this.contextFactory.create(req, res, "user", this.db, this.storage);
             next();
         });
         this.app.post('/api/auth/token', async (req:any, res:any) =>
@@ -280,14 +279,8 @@ export default class Orion
         this.app.use('/api/error', bodyParser.json());
         this.app.post('/api/error', async (req:any, res:any) =>
         {
-            const ctx:Context = { req: req, res: res, config: this.config, db: this.db, storage: this.storage };
-            await ctx.db.insertAsync(
-                ctx,
-                "error",
-                ["tag", "statuscode", "msg", "url", "timestamp"],
-                ["48a4", "000", req.body.msg, "POST /error", new Date().getTime()]
-            );
-            res.end();
+            const err:Error = { tag: "48a4", statusCode: 0, "msg": req.body.msg };
+            await execService.handleErrorAsync(err, req, res, this.db);
         });
     }
 
@@ -318,10 +311,10 @@ export default class Orion
         res.json = res.send;
 
         const req:any = { method: "GET", originalUrl: originalReq.originalUrl };
-        const context = contextFactory.create(req, res, entity, this.db, this.storage);
+        const context = this.contextFactory.create(req, res, entity, this.db, this.storage);
         req.context = context;
 
-        await readHandler.executeAsync(context, params, isFullMode);
+        await readHandler.executeAsync(context, params, isFullMode).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         return response;
     }
 }

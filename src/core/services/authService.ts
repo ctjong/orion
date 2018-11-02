@@ -39,9 +39,11 @@ class AuthService
                 execService.throwError("5192", 401, "invalid token");
             }
         }
-        if(ctx.user.roles.length === 0)
+        if(!ctx.user || !ctx.user.roles || ctx.user.roles.length === 0)
         {
-            ctx.user.roles.push("guest");
+            ctx.user = new UserInfo();
+            ctx.user.tokenExpiry = Number.MAX_VALUE;
+            ctx.user.roles = ["guest"];
         }
     }
 

@@ -1,4 +1,4 @@
-import { Context } from "../types";
+import { Context, Error } from "../types";
 import { Database } from "../database";
 
 /**
@@ -15,12 +15,9 @@ export class ExecService
      * @param res Response object
      * @param db Database module
      */
-    async handleErrorAsync(err: any, req: any, res: any, db?: Database): Promise<void>
+    async handleErrorAsync(errObj: Error|string, req: any, res: any, db?: Database): Promise<void>
     {
-        if (typeof (err) === "string")
-        {
-            err = Error.parse(err);
-        }
+        let err:Error = typeof errObj === "string" ? this.parseError(errObj) : errObj;
         console.error(err);
         const config = req.context && req.context.config ? req.context.config : null;
         try
@@ -42,7 +39,7 @@ export class ExecService
                     ctx,
                     "error",
                     ["tag", "statuscode", "msg", "url", "timestamp"],
-                    [err.tag, err.statusCode, err.msg, url, new Date().getTime()]);
+                    [err.tag, err.statusCode.toString(), err.msg, url, new Date().getTime().toString()]);
 
                 try
                 {
@@ -95,7 +92,7 @@ export class ExecService
      */
     throwError(tag: string, statusCode: number, msg: string): never
     {
-        throw new Error(tag, statusCode, msg);
+        throw { tag, statusCode, msg };
     }
 
     /**
@@ -107,29 +104,16 @@ export class ExecService
      */
     sendErrorResponse(ctx: Context, tag: string, statusCode: number, msg: string): void
     {
-        this.handleErrorAsync(new Error(tag, statusCode, msg), ctx.req, ctx.res);
-    }
-}
-
-/**
- * Construct a new Error object. This will contain all details about an error.
- */
-export class Error
-{
-    tag: string;
-    statusCode: number;
-    msg: string;
-
-    constructor(tag: string, statusCode: number, msg: string)
-    {
-        this.tag = tag;
-        this.statusCode = statusCode;
-        this.msg = msg;
+        this.handleErrorAsync({ tag, statusCode, msg }, ctx.req, ctx.res);
     }
 
-    static parse(errorStr: string): Error
+    /**
+     * Create an error object from an error string
+     * @param errorStr error string
+     */
+    parseError(errorStr: string): Error
     {
-        return new Error("", 500, errorStr);
+        return { tag:"", statusCode:500, msg:errorStr };
     }
 }
 

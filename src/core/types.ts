@@ -5,14 +5,20 @@ import { Storage } from "./storage";
 
 export interface NameValueMap {[key:string]:any};
 export class Join { e1:string; e2:string; e2Alias:string; e1JoinField:string; e2JoinField:string; e2SelectFields:string };
-export interface UploadFileResponse { error: any, name: string };
+export interface UploadFileResponse { error: any; name: string };
+export class Error { tag:string; statusCode:number; msg:string; stack?:any };
 
 // Entities and fields
 
 export interface Field { type:string; isEditable:boolean; createReq:number; foreignKey:any };
 export interface FieldSet { [key:string]:Field };
-export interface Entity { fields: FieldSet; allowedRoles?: {[key:string]:string[]}, unique?:string[], getReadCondition?: (roles:string[], userId:string)=>string, 
-    isWriteAllowed?: (action:string, roles:string[], userId:string, dbResource:any, inputResource:any) => boolean };
+export interface Entity 
+{ 
+    fields: FieldSet; 
+    allowedRoles?: {[key:string]:string[]}; unique?:string[]; 
+    getReadCondition?: (roles:string[], userId:string)=>string; 
+    isWriteAllowed?: (action:string, roles:string[], userId:string, dbResource:any, inputResource:any) => boolean 
+};
 export interface EntitySet { [key:string]:Entity };
 
 // Contexts
