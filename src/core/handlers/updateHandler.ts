@@ -1,7 +1,6 @@
 import { Context, NameValueMap } from "../types";
 import { helperService } from "../services/helperService";
 import { execService } from "../services/execService";
-import { dataService } from "../services/dataService";
 import { conditionFactory } from "../services/conditionFactory";
 
 /**
@@ -17,7 +16,7 @@ class UpdateHandler
      */
     async executeAsync(ctx:Context, requestBody:NameValueMap, recordId:string): Promise<void>
     {
-        const dbAdapter = dataService.getDatabaseAdapter();
+        const dbAdapter = ctx.db;
         const { record } = await helperService.onBeginWriteRequestAsync(ctx, "update", dbAdapter, recordId, requestBody);
         const updateData:NameValueMap = {};
         const fields = helperService.getFields(ctx, "update");

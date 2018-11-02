@@ -1,3 +1,6 @@
+import { Database } from "./database";
+import { Storage } from "./storage";
+
 // General
 
 export interface NameValueMap {[key:string]:any};
@@ -15,7 +18,7 @@ export interface EntitySet { [key:string]:Entity };
 // Contexts
 
 export class UserInfo { tokenExpiry:number; name?:string; roles?:string[]; domain?:string; id?:string; domainId?:string };
-export class Context { config:Config; req:any; res:any; entity?:string; user?:UserInfo; };
+export class Context { config:Config; req:any; res:any; entity?:string; user?:UserInfo; db:Database; storage?:Storage };
 
 // Conditions
 

@@ -1,6 +1,5 @@
 import { Context } from "../types";
 import { execService } from "../services/execService";
-import { dataService } from "../services/dataService";
 import { helperService } from "../services/helperService";
 
 /**
@@ -15,8 +14,8 @@ class DeleteAssetHandler
      */
     async executeAsync(ctx:Context, recordId:string): Promise<void>
     {
-        const dbAdapter = dataService.getDatabaseAdapter();
-        const storageAdapter = dataService.getStorageAdapter();
+        const dbAdapter = ctx.db;
+        const storageAdapter = ctx.storage;
         if (!ctx.config.storage)
             execService.throwError("51be", 500, "file delete is not supported for this site");
         if(!ctx.user.id)

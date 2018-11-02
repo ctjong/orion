@@ -1,6 +1,5 @@
 import { Context, UserInfo } from '../types';
 import { execService } from './execService';
-import { dataService } from './dataService';
 import * as jwt from "jsonwebtoken";
 import * as crypto from "crypto";
 import * as https from "https";
@@ -59,7 +58,7 @@ class AuthService
         this.verifyAuthSupported(ctx);
         if(!userName || !password) 
             execService.throwError("003a", 400, "invalid login");
-        const user = await dataService.getDatabaseAdapter().quickFindAsync(
+        const user = await ctx.db.quickFindAsync(
             ctx, 
             ["id", "password", "roles", "domain", "firstname", "lastname"], 
             "user", 
@@ -119,14 +118,14 @@ class AuthService
                             if(!parsed.hasOwnProperty("id"))
                                 execService.throwError("3f9c", 400, "bad request");
 
-                            const existingUser = await dataService.getDatabaseAdapter().quickFindAsync(ctx, ["id", "roles"], "user", {"domainid": parsed.id});
+                            const existingUser = await ctx.db.quickFindAsync(ctx, ["id", "roles"], "user", {"domainid": parsed.id});
                             if(existingUser)
                             {
                                 this.createAndSendToken(ctx, existingUser.id, "fb", parsed.id, existingUser.roles, parsed.first_name, parsed.last_name);
                             }
                             else
                             {
-                                const createResponse = await dataService.getDatabaseAdapter().insertAsync(
+                                const createResponse = await ctx.db.insertAsync(
                                     ctx,
                                     "user", 
                                     ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 

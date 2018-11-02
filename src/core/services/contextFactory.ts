@@ -1,5 +1,7 @@
 import { Config, Entity, Context, UserInfo } from '../types';
 import { defaultFields, defaultEntities } from '../defaultConfig';
+import { Database } from '../database';
+import { Storage } from '../storage';
 
 /**
  * A factory for creating Context objects, which will store all details about the current session.
@@ -15,13 +17,15 @@ class ContextFactory
      * @param entity entity name
      * @returns context object
      */
-    create(req:any, res:any, entity:string) : Context
+    create(req:any, res:any, entity:string, db:Database, storage:Storage) : Context
     {
         const context: Context = new Context();
         context.config = this.config;
         context.req = req;
         context.res = res;
         context.user = new UserInfo();
+        context.db = db;
+        context.storage = storage;
 
         let errorObj:any = null;
         try

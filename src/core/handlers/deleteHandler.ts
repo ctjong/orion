@@ -1,7 +1,6 @@
 import { Context } from "../types";
 import { helperService } from "../services/helperService";
 import { execService } from "../services/execService";
-import { dataService } from "../services/dataService";
 
 /**
  * Class that handles delete operations
@@ -15,7 +14,7 @@ class DeleteHandler
      */
     async executeAsync(ctx:Context, recordId:string): Promise<void>
     {
-        const dbAdapter = dataService.getDatabaseAdapter();
+        const dbAdapter = ctx.db;
         const { record } = await helperService.onBeginWriteRequestAsync(ctx, "delete", dbAdapter, recordId, null);
         if(ctx.entity === "user" && record.domain !== "local")
             execService.throwError("d789", 400, "updating external user info is not supported");

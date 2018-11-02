@@ -36,7 +36,7 @@ export class ExecService
                 if (err.stack)
                     err.msg = err.stack.substring(0, 255);
 
-                const ctx: Context = { req: null, res: res, config: config };
+                const ctx:Context = { req: null, res: res, config: config, db:db, storage:null };
                 const url = req.method + " " + req.originalUrl;
                 await db.insertAsync(
                     ctx,

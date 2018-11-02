@@ -1,6 +1,5 @@
 import { execService } from "../services/execService";
 import { helperService } from "../services/helperService";
-import { dataService } from "../services/dataService";
 import { Context } from "../types";
 
 /**
@@ -15,8 +14,8 @@ class CreateAssetHandler
      */
     async executeAsync(ctx:Context, req:any): Promise<void>
     {
-        const dbAdapter = dataService.getDatabaseAdapter();
-        const storageAdapter = dataService.getStorageAdapter();
+        const dbAdapter = ctx.db;
+        const storageAdapter = ctx.storage;
         if (!ctx.config.storage)
             execService.throwError("e668", 500, "file upload is not supported for this site");
         if(!ctx.user.id) 

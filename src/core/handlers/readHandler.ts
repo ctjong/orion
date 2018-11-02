@@ -2,7 +2,6 @@ import { Context, NameValueMap, CompoundCondition } from "../types";
 import { execService } from "../services/execService";
 import { helperService } from "../services/helperService";
 import { conditionFactory } from "../services/conditionFactory";
-import { dataService } from "../services/dataService";
 
 /**
  * Class that handles read operations
@@ -43,7 +42,7 @@ class ReadHandler
         }
 
         // execute
-        const dbAdapter = dataService.getDatabaseAdapter();
+        const dbAdapter = ctx.db;
         const fields = helperService.getFields(ctx, "read");
         const count = await dbAdapter.countAsync(ctx, ctx.entity, condition);
         const dbResponse = await dbAdapter.selectAsync(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode);

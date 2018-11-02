@@ -1,6 +1,5 @@
 import { helperService } from "../services/helperService";
 import { Context, NameValueMap } from "../types";
-import { dataService } from "../services/dataService";
 import { execService } from "../services/execService";
 import { authService } from "../services/authService";
 
@@ -16,7 +15,7 @@ class CreateHandler
      */
     async executeAsync(ctx:Context, requestBody:any): Promise<void>
     {
-        const dbAdapter = dataService.getDatabaseAdapter();
+        const dbAdapter = ctx.db;
         await helperService.onBeginWriteRequestAsync(ctx, "create", dbAdapter, null, requestBody);
 
         // get required and optional fields
@@ -195,7 +194,7 @@ class CreateHandler
      */
     private async verifyUsernameNotExistAsync(ctx:Context, username:string): Promise<void>
     {
-        const record = await dataService.getDatabaseAdapter().quickFindAsync(ctx, ["username"], "user", {"username": username});
+        const record = await ctx.db.quickFindAsync(ctx, ["username"], "user", {"username": username});
         if (record)
             throw "username " + username + " already exists";
     }

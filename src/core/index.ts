@@ -2,7 +2,6 @@ import * as Express from "express";
 import { Config, Context } from "./types";
 import { contextFactory } from "./services/contextFactory";
 import * as applicationInsights from "applicationinsights";
-import { dataService } from "./services/dataService";
 import * as bodyParser from "body-parser";
 import { execService } from "./services/execService";
 import { authService } from "./services/authService";
@@ -14,6 +13,11 @@ import { readHandler } from "./handlers/readHandler";
 import { updateHandler } from "./handlers/updateHandler";
 import { Database } from "./database";
 import { Storage } from "./storage";
+import { AzureStorage } from "./adapters/storage/azureStorage";
+import { S3Storage } from "./adapters/storage/s3Storage";
+import { LocalHostStorage } from "./adapters/storage/localHostStorage";
+import { MssqlDatabase } from "./adapters/db/mssqlDatabase";
+import { MysqlDatabase } from "./adapters/db/mysqlDatabase";
 
 /**
  * An Orion app object
@@ -22,6 +26,8 @@ export default class Orion
 {
     app:Express.Express = null;
     express:any = Express;
+    db:Database = null;
+    storage:Storage = null;
     private config:Config = null;
 
     /**
@@ -38,10 +44,40 @@ export default class Orion
     {
         this.app = Express();
         this.config = config;
-
-        // initialize components
         contextFactory.initializeConfig(config);
-        dataService.initialize(config, databaseAdapter, storageAdapter);
+
+        // database system
+        if(databaseAdapter)
+            this.db = databaseAdapter;
+        else
+        {
+            if (!config.database || !config.database.engine)
+                throw "Missing/incomplete database configuration";
+            if (config.database.engine === "mssql")
+                this.db = new MssqlDatabase(config);
+            else if (config.database.engine === "mysql")
+                this.db = new MysqlDatabase(config);
+            else
+                throw "Unsupported database management system " + config.database.engine;
+        }
+    
+        // storage system
+        if(storageAdapter)
+            this.storage = storageAdapter;
+        else
+        {
+            if (config.storage)
+            {
+                if (config.storage.provider  === "azure")
+                    this.storage = new AzureStorage(config);
+                else if (config.storage.provider  === "s3")
+                    this.storage = new S3Storage(config);
+                else if (config.storage.provider  === "local")
+                    this.storage = new LocalHostStorage(config);
+                else
+                    throw "Missing or unsupported storage system: " + config.storage.provider;
+            }
+        }
 
         // setup monitoring
         if (config.monitoring && config.monitoring.appInsightsKey)
@@ -72,7 +108,7 @@ export default class Orion
         {
             try
             {
-                execService.handleErrorAsync(err, req, res, dataService.getDatabaseAdapter());
+                execService.handleErrorAsync(err, req, res, this.db);
             }
             catch (ex)
             {
@@ -166,7 +202,7 @@ export default class Orion
         this.app.use('/api/data/:entity', bodyParser.urlencoded({ extended: true }));
         this.app.use('/api/data/:entity', (req:any, res:any, next:any) =>
         {
-            req.context = contextFactory.create(req, res, req.params.entity);
+            req.context = contextFactory.create(req, res, req.params.entity, this.db, this.storage);
             authService.initUserContext(req.context);
             next();
         });
@@ -222,7 +258,7 @@ export default class Orion
         this.app.use('/api/auth', bodyParser.json());
         this.app.use('/api/auth', (req:any, res:any, next:any) =>
         {
-            req.context = contextFactory.create(req, res, "user");
+            req.context = contextFactory.create(req, res, "user", this.db, this.storage);
             next();
         });
         this.app.post('/api/auth/token', async (req:any, res:any) =>
@@ -244,8 +280,8 @@ export default class Orion
         this.app.use('/api/error', bodyParser.json());
         this.app.post('/api/error', async (req:any, res:any) =>
         {
-            const ctx:Context = { req: req, res: res, config: this.config };
-            await dataService.getDatabaseAdapter().insertAsync(
+            const ctx:Context = { req: req, res: res, config: this.config, db: this.db, storage: this.storage };
+            await ctx.db.insertAsync(
                 ctx,
                 "error",
                 ["tag", "statuscode", "msg", "url", "timestamp"],
@@ -282,7 +318,7 @@ export default class Orion
         res.json = res.send;
 
         const req:any = { method: "GET", originalUrl: originalReq.originalUrl };
-        const context = contextFactory.create(req, res, entity);
+        const context = contextFactory.create(req, res, entity, this.db, this.storage);
         req.context = context;
 
         await readHandler.executeAsync(context, params, isFullMode);
