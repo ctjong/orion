@@ -103,29 +103,30 @@ export class MockConnectionPool
  */
 class MssqlWrapper
 {
-    pool:any;
-    inputQueryParams:any = null;
     BigInt:string = "bigint";
+    Request = MssqlRequest;
+};
+
+/**
+ * MSSQL request object to be included in the wrapper
+ */
+class MssqlRequest
+{
+    pool:any = null;
+    inputQueryParams:any = {};
 
     constructor(pool:any)
     {
-        this.pool = pool
+        this.pool = pool;
+    }
+    
+    input (arg0:any, arg1:any, arg2:any)
+    {
+        this.inputQueryParams[arg0] = !arg2 ? ["string", arg1] : [arg1, arg2];
     }
 
-    Request(): any
+    query(queryString:string, callback:any)
     {
-        this.inputQueryParams = {};
-        const obj =
-        {
-            input : (arg0:any, arg1:any, arg2:any) =>
-            {
-                this.inputQueryParams[arg0] = !arg2 ? ["string", arg1] : [arg1, arg2];
-            },
-            query : (queryString:string, callback:any) =>
-            {
-                this.pool.processQuery(this.pool.engine, queryString, this.inputQueryParams, callback);
-            }
-        };
-        return obj;
+        this.pool.processQuery(this.pool.engine, queryString, this.inputQueryParams, callback);
     }
-};
+}
