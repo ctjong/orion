@@ -12,7 +12,6 @@ import { MssqlDatabase } from "../core/adapters/db/mssqlDatabase";
 import { MockStorageProvider } from "./mocks/mockStorageProvider";
 import { AzureStorage } from "../core/adapters/storage/azureStorage";
 import { LocalHostStorage } from "../core/adapters/storage/localHostStorage";
-import { Database } from "../core/database";
 import { Storage } from "../core/storage";
 import { S3Storage } from "../core/adapters/storage/s3Storage";
 
@@ -27,36 +26,29 @@ const main = () =>
     const mssqlLocalConfig = configFactory.create("mssql", { provider: "local", uploadPath: "uploads" });
     const mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
 
-    // initialize database modules
-    const mssqlPool = new MockConnectionPool("mssql");
-    const mysqlPool = new MockConnectionPool("mysql");
-    const mssqlAdapter = new MssqlDatabase(mssqlAzureConfig, mssqlPool);
-    const mysqlAdapter = new MysqlDatabase(mysqlS3Config, mysqlPool);
-
     // initialize storage modules
-    const mockProvider = new MockStorageProvider();
-    const azureAdapter = new AzureStorage(mssqlAzureConfig, mockProvider);
-    const s3Adapter = new S3Storage(mysqlS3Config, mockProvider);
-    const localHostAdapter = new LocalHostStorage(mssqlLocalConfig, mockProvider);
+    const azureAdapter = new AzureStorage(mssqlAzureConfig, new MockStorageProvider());
+    const s3Adapter = new S3Storage(mysqlS3Config, new MockStorageProvider());
+    const localHostAdapter = new LocalHostStorage(mssqlLocalConfig, new MockStorageProvider());
 
     // run tests
-    startTestSession(mssqlAzureConfig, mssqlAdapter, azureAdapter, mssqlPool, "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
-    startTestSession(mysqlS3Config, mysqlAdapter, s3Adapter, mysqlPool, "mysql-s3", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
-    startTestSession(mssqlLocalConfig, mssqlAdapter, localHostAdapter, mssqlPool, "mssql-local", [assetTestSuite]);
-    startTestSession(mysqlLocalConfig, mysqlAdapter, localHostAdapter, mysqlPool, "mysql-local", [assetTestSuite]);
+    startTestSession(mssqlAzureConfig, azureAdapter, new MockConnectionPool("mssql"), "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
+    startTestSession(mysqlS3Config, s3Adapter, new MockConnectionPool("mysql"), "mysql-s3", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
+    startTestSession(mssqlLocalConfig, localHostAdapter, new MockConnectionPool("mssql"), "mssql-local", [assetTestSuite]);
+    startTestSession(mysqlLocalConfig, localHostAdapter, new MockConnectionPool("mysql"), "mysql-local", [assetTestSuite]);
 };
 
 /**
  * Start a new test session
  * @param config Config module
- * @param databaseAdapter Database adapter module
  * @param storageAdapter Storage adapter module
  * @param pool Mock database connection pool
  * @param sessionName Session name
  * @param testSuites List of test suites to run
  */
-const startTestSession = (config: Config, databaseAdapter:Database, storageAdapter:Storage, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
+const startTestSession = (config: Config, storageAdapter:Storage, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
 {
+    const databaseAdapter = pool.engine === "mssql" ? new MssqlDatabase(config, pool) : new MysqlDatabase(config, pool);
     const runner = new Runner(config, databaseAdapter, storageAdapter, pool);
 
     before(() =>

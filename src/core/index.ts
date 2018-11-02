@@ -251,6 +251,7 @@ export default class Orion
                 ["tag", "statuscode", "msg", "url", "timestamp"],
                 ["48a4", "000", req.body.msg, "POST /error", new Date().getTime()]
             );
+            res.end();
         });
     }
 
