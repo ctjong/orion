@@ -279,7 +279,8 @@ export default class Orion
         this.app.use('/api/error', bodyParser.json());
         this.app.post('/api/error', async (req:any, res:any) =>
         {
-            const err:Error = { tag: "48a4", statusCode: 0, "msg": req.body.msg };
+            req.context = { req:req, res:res, entity:"error", db:this.db, storage:null };
+            const err:Error = { tag: "48a4", statusCode: 500, "msg": req.body.msg };
             await execService.handleErrorAsync(err, req, res, this.db);
         });
     }
