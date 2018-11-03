@@ -29,8 +29,8 @@ export class Context { config:Config; req:any; res:any; entity?:string; user?:Us
 // Conditions
 
 export interface Condition { isCompound:boolean; operator:string; findConditionValue:((key:string)=>string) };
-export class SingleCondition implements Condition { isCompound = false; operator:string; fieldName:string; fieldValue:string; entity:string; findConditionValue:((key:string)=>string) };
-export class CompoundCondition implements Condition { isCompound = true; operator:string; children:Condition[]; findConditionValue:((key:string)=>string) };
+export class SingleCondition implements Condition { isCompound:boolean = false; operator:string; fieldName:string; fieldValue:string; entity:string; findConditionValue:((key:string)=>string) };
+export class CompoundCondition implements Condition { isCompound:boolean = true; operator:string; children:Condition[]; findConditionValue:((key:string)=>string) };
 
 // Configs
 

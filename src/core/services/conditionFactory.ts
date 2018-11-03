@@ -15,6 +15,7 @@ class ConditionFactory
     {
         const condition:SingleCondition = 
         {
+            isCompound: false,
             entity: entity,
             fieldName: fieldName,
             operator: operator,
@@ -37,6 +38,7 @@ class ConditionFactory
     {
         const condition:CompoundCondition =
         {
+            isCompound: true,
             operator: operator,
             children: children,
             findConditionValue: (conditionKey:string) =>
