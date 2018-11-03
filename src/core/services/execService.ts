@@ -14,12 +14,15 @@ export class ExecService
      * @param req Request object
      * @param res Response object
      * @param db Database module
+     * @param suppressResponse Whether or not this should suppress response
      */
-    async handleErrorAsync(errObj: Error|string, req: any, res: any, db?: Database): Promise<void>
+    async handleErrorAsync(errObj:Error|string, req:any, res:any, db?:Database, suppressResponse?:boolean): Promise<void>
     {
         let err:Error = typeof errObj === "string" ? this.parseError(errObj) : errObj;
         console.error(err);
+
         const config = req.context && req.context.config ? req.context.config : null;
+
         try
         {
             if (db && config)
@@ -40,26 +43,21 @@ export class ExecService
                     "error",
                     ["tag", "statuscode", "msg", "url", "timestamp"],
                     [err.tag, err.statusCode.toString(), err.msg, url, new Date().getTime().toString()]);
-
-                try
-                {
-                    res.status(err.statusCode).send(err.msg);
-                }
-                catch (err2) 
-                {
-                }
-            }
-            else
-            {
-                res.status(err.statusCode).send(err.msg);
             }
         }
-        catch (err3)
+        catch (err)
         {
-            try
-            {
-                res.status(500).send(err.msg);
-            } catch (err4) { }
+            err.statusCode = 500;
+        }
+
+        if (suppressResponse)
+            return;
+        try
+        {
+            res.status(err.statusCode).send(err.msg);
+        }
+        catch (err) 
+        {
         }
     }
 

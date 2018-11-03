@@ -262,11 +262,11 @@ export default class Orion
         });
         this.app.post('/api/auth/token', async (req:any, res:any) =>
         {
-            await authService.generateLocalUserTokenAsync(req.context, req.body.username, req.body.password);
+            await authService.generateLocalUserTokenAsync(req.context, req.body.username, req.body.password).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
         this.app.post('/api/auth/token/fb', async (req:any, res:any) =>
         {
-            await authService.processFbTokenAsync(req.context, req.body.fbtoken);
+            await authService.processFbTokenAsync(req.context, req.body.fbtoken).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         });
     }
 
@@ -279,9 +279,17 @@ export default class Orion
         this.app.use('/api/error', bodyParser.json());
         this.app.post('/api/error', async (req:any, res:any) =>
         {
-            req.context = { req:req, res:res, entity:"error", db:this.db, storage:null };
-            const err:Error = { tag: "48a4", statusCode: 500, "msg": req.body.msg };
-            await execService.handleErrorAsync(err, req, res, this.db);
+            try
+            {
+                req.context = this.contextFactory.create(req, res, "error", this.db, this.storage);
+                const err:Error = { tag: "48a4", statusCode: 500, "msg": req.body.msg };
+                await execService.handleErrorAsync(err, req, res, this.db, true);
+                res.status(200).end();
+            }
+            catch(err)
+            {
+                res.status(500).send("internal error occurred");
+            }
         });
     }
 

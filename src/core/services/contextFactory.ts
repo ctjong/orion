@@ -63,20 +63,8 @@ export class ContextFactory
         context.storage = storage;
         context.entity = entity;
 
-        let errorObj:any = null;
-        try
-        {
-            if (!this.config.entities.hasOwnProperty(entity)) 
-            {
-                throw { "tag": "1a83", "statusCode": 400, "msg": "invalid entity " + entity };
-            }
-        }
-        catch (ex2)
-        {
-            errorObj = ex2;
-        }
-        if (errorObj)
-            throw errorObj;
+        if (entity !== "error" && !this.config.entities[entity])
+            throw { "tag": "1a83", "statusCode": 400, "msg": "invalid entity " + entity };
 
         return context;
     }
