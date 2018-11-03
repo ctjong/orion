@@ -320,10 +320,9 @@ export default class Orion
         res.json = res.send;
 
         const req:any = { method: "GET", originalUrl: originalReq.originalUrl };
-        const context = this.contextFactory.create(req, res, entity, this.db, this.storage);
-        req.context = context;
+        req.context = this.contextFactory.create(req, res, entity, this.db, this.storage);
 
-        await readHandler.executeAsync(context, params, isFullMode).catch(err => execService.handleErrorAsync(err, req, res, this.db));
+        await readHandler.executeAsync(req.context, params, isFullMode).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         return response;
     }
 }
