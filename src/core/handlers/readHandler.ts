@@ -90,11 +90,6 @@ class ReadHandler
         if(isPrivate)
         {
             const fieldName = ctx.entity === "user" ? "id" : "ownerid";
-            const userIdInCondition = condition.findConditionValue(fieldName);
-            if(userIdInCondition !== ctx.user.id)
-            {
-                execService.throwError("a19c", 401, "Unauthorized");
-            }
             condition.children.push(conditionFactory.createSingle(ctx.entity, fieldName, "=", ctx.user.id));
         }
         return condition;
