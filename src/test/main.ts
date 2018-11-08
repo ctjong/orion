@@ -12,8 +12,8 @@ import { MssqlDatabase } from "../core/adapters/db/mssqlDatabase";
 import { MockStorageProvider } from "./mocks/mockStorageProvider";
 import { AzureStorage } from "../core/adapters/storage/azureStorage";
 import { LocalHostStorage } from "../core/adapters/storage/localHostStorage";
-import { Storage } from "../core/storage";
 import { S3Storage } from "../core/adapters/storage/s3Storage";
+import { IStorage } from "../core/istorage";
 
 /** 
  * Test entry point
@@ -46,7 +46,7 @@ const main = () =>
  * @param sessionName Session name
  * @param testSuites List of test suites to run
  */
-const startTestSession = (config: Config, storageAdapter:Storage, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
+const startTestSession = (config: Config, storageAdapter:IStorage, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
 {
     const databaseAdapter = pool.engine === "mssql" ? new MssqlDatabase(config, pool) : new MysqlDatabase(config, pool);
     const runner = new Runner(config, databaseAdapter, storageAdapter, pool);

@@ -7,8 +7,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
 import { TestQuery } from './testTypes';
-import { Database } from "../core/database";
-import { Storage } from "../core/storage";
+import { IDatabase } from "../core/idatabase";
+import { IStorage } from "../core/istorage";
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
 
 
@@ -18,8 +18,8 @@ import { MockConnectionPool } from "./mocks/mockConnectionPool";
 export class Runner
 {
     config:Config;
-    databaseAdapter:Database;
-    storageAdapter:Storage;
+    databaseAdapter:IDatabase;
+    storageAdapter:IStorage;
     orionApp:Orion;
     pool:MockConnectionPool;
     storageProvider:any;
@@ -32,7 +32,7 @@ export class Runner
      * @param storageAdapter Storage adapter module
      * @param pool Mock database connection pool
      */
-    constructor(config:Config, databaseAdapter:Database, storageAdapter:Storage, pool:MockConnectionPool)
+    constructor(config:Config, databaseAdapter:IDatabase, storageAdapter:IStorage, pool:MockConnectionPool)
     {
         chai.use(require("chai-http"));
         this.config = config;

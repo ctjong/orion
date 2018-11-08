@@ -1,7 +1,7 @@
 import { Config, Entity, Context, UserInfo } from '../types';
 import { defaultFields, defaultEntities } from '../defaultConfig';
-import { Database } from '../database';
-import { Storage } from '../storage';
+import { IDatabase } from '../idatabase';
+import { IStorage } from '../istorage';
 
 /**
  * A factory for creating Context objects, which will store all details about the current session.
@@ -52,7 +52,7 @@ export class ContextFactory
      * @param entity entity name
      * @returns context object
      */
-    create(req:any, res:any, entity:string, db:Database, storage:Storage) : Context
+    create(req:any, res:any, entity:string, db:IDatabase, storage:IStorage) : Context
     {
         const context: Context = new Context();
         context.config = this.config;

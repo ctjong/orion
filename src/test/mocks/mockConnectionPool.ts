@@ -5,17 +5,17 @@ import { NameValueMap } from "../../core/types";
  */
 export class MockConnectionPool
 {
-    engine:string;
-    queryResults:any;
-    queryReceivedHandler:any;
+    engine: string;
+    queryResults: any;
+    queryReceivedHandler: any;
 
-    sql:any = 
-    {
-        BigInt: "bigint",
-        Request: MssqlRequest
-    };
+    sql: any =
+        {
+            BigInt: "bigint",
+            Request: MssqlRequest
+        };
 
-    constructor(engine:string)
+    constructor(engine: string)
     {
         this.engine = engine;
         this.queryResults = [];
@@ -28,7 +28,7 @@ export class MockConnectionPool
      * @param queryParams Query params
      * @param callback callback function
      */
-    query (queryString:string, queryParams:NameValueMap, callback:any): void
+    query(queryString: string, queryParams: NameValueMap, callback: any): void
     {
         this.processQuery(this.engine, queryString, queryParams, callback);
     }
@@ -37,7 +37,7 @@ export class MockConnectionPool
      * Set the results for the active query
      * @param nextQueryResultsArg query results
      */
-    setQueryResults(nextQueryResultsArg:any): void
+    setQueryResults(nextQueryResultsArg: any): void
     {
         this.queryResults = nextQueryResultsArg;
     }
@@ -46,7 +46,7 @@ export class MockConnectionPool
      * To be invoked when a query is received to be sent to database
      * @param queryReceivedHandlerArg handler function
      */
-    onQueryReceived(queryReceivedHandlerArg:any): void
+    onQueryReceived(queryReceivedHandlerArg: any): void
     {
         this.queryReceivedHandler = queryReceivedHandlerArg;
     }
@@ -68,35 +68,35 @@ export class MockConnectionPool
      * @param queryParams query parameters
      * @param callback callback function
      */
-    processQuery(engine:string, queryString:string, queryParams:NameValueMap, callback:any): void
+    processQuery(engine: string, queryString: string, queryParams: NameValueMap, callback: any): void
     {
-        if(this.queryReceivedHandler)
+        if (this.queryReceivedHandler)
             this.queryReceivedHandler(queryString, queryParams, engine);
         queryString = queryString.toLowerCase();
 
         let currentQueryResults = this.queryResults;
         this.queryResults = [];
 
-        if(currentQueryResults.length === 0 && queryString.indexOf("insert into") >= 0)
-            currentQueryResults = {"lastinsertedid":"1"};
-        if(typeof currentQueryResults.lastinsertedid !== "undefined")
+        if (currentQueryResults.length === 0 && queryString.indexOf("insert into") >= 0)
+            currentQueryResults = { "lastinsertedid": "1" };
+        if (typeof currentQueryResults.lastinsertedid !== "undefined")
         {
-            if(engine === "mssql")
-                currentQueryResults = [{"identity": currentQueryResults.lastinsertedid}];
+            if (engine === "mssql")
+                currentQueryResults = [{ "identity": currentQueryResults.lastinsertedid }];
             else
-                currentQueryResults = {"insertId": currentQueryResults.lastinsertedid};
+                currentQueryResults = { "insertId": currentQueryResults.lastinsertedid };
         }
 
-        if(typeof currentQueryResults.count !== "undefined")
+        if (typeof currentQueryResults.count !== "undefined")
         {
-            if(engine === "mssql")
-                currentQueryResults = [{"": currentQueryResults.count}];
+            if (engine === "mssql")
+                currentQueryResults = [{ "": currentQueryResults.count }];
             else
-                currentQueryResults = [{"count": currentQueryResults.count}];
+                currentQueryResults = [{ "count": currentQueryResults.count }];
         }
 
-        if(engine === "mssql")
-            callback(null, {recordset: currentQueryResults});
+        if (engine === "mssql")
+            callback(null, { recordset: currentQueryResults });
         else
             callback(null, currentQueryResults, []);
     }
@@ -107,20 +107,20 @@ export class MockConnectionPool
  */
 class MssqlRequest
 {
-    pool:any = null;
-    inputQueryParams:any = {};
+    pool: any = null;
+    inputQueryParams: any = {};
 
-    constructor(pool:any)
+    constructor(pool: any)
     {
         this.pool = pool;
     }
-    
-    input (arg0:any, arg1:any, arg2:any)
+
+    input(arg0: any, arg1: any, arg2: any): void
     {
         this.inputQueryParams[arg0] = !arg2 ? ["string", arg1] : [arg1, arg2];
     }
 
-    query(queryString:string, callback:any)
+    query(queryString: string, callback: any): void
     {
         this.pool.processQuery(this.pool.engine, queryString, this.inputQueryParams, callback);
     }

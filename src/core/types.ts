@@ -1,5 +1,5 @@
-import { Database } from "./database";
-import { Storage } from "./storage";
+import { IDatabase } from "./idatabase";
+import { IStorage } from "./istorage";
 
 // General
 
@@ -24,7 +24,7 @@ export interface EntitySet { [key:string]:Entity };
 // Contexts
 
 export class UserInfo { tokenExpiry:number; name?:string; roles?:string[]; domain?:string; id?:string; domainId?:string };
-export class Context { config:Config; req:any; res:any; entity?:string; user?:UserInfo; db:Database; storage?:Storage };
+export class Context { config:Config; req:any; res:any; entity?:string; user?:UserInfo; db:IDatabase; storage?:IStorage };
 
 // Conditions
 

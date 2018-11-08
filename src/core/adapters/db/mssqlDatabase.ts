@@ -1,5 +1,5 @@
 import { Context, NameValueMap, Condition, Join, CompoundCondition, SingleCondition, Config } from "../../types";
-import { Database } from "../../database";
+import { IDatabase } from "../../idatabase";
 import { conditionFactory } from "../../services/conditionFactory";
 import { execService } from "../../services/execService";
 import { helperService } from "../../services/helperService";
@@ -7,7 +7,7 @@ import { joinFactory } from "../../services/joinFactory";
 import { MssqlQuery as Query } from "./mssqlQuery";
 import * as mssql from "mssql";
 
-export class MssqlDatabase implements Database
+export class MssqlDatabase implements IDatabase
 {
     private pool: any;
 

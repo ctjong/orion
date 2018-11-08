@@ -1,5 +1,6 @@
 import { MysqlQuery as Query } from "./mysqlQuery";
 import { Context, NameValueMap, Join, Condition, SingleCondition, CompoundCondition, Config } from "../../types";
+import { IDatabase } from "../../idatabase";
 import { conditionFactory } from "../../services/conditionFactory";
 import { joinFactory } from "../../services/joinFactory";
 import { execService } from "../../services/execService";
@@ -12,7 +13,7 @@ interface QueryResponse { error:any, results:any };
 /**
  * A module for handling interaction with an MSSQL database
  */
-export class MysqlDatabase
+export class MysqlDatabase implements IDatabase
 {
     private pool:any;
 

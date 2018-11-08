@@ -11,8 +11,8 @@ import { deleteHandler } from "./handlers/deleteHandler";
 import { deleteAssetHandler } from "./handlers/deleteAssetHandler";
 import { readHandler } from "./handlers/readHandler";
 import { updateHandler } from "./handlers/updateHandler";
-import { Database } from "./database";
-import { Storage } from "./storage";
+import { IDatabase } from "./idatabase";
+import { IStorage } from "./istorage";
 import { AzureStorage } from "./adapters/storage/azureStorage";
 import { S3Storage } from "./adapters/storage/s3Storage";
 import { LocalHostStorage } from "./adapters/storage/localHostStorage";
@@ -26,8 +26,8 @@ export default class Orion
 {
     app:Express.Express = null;
     express:any = Express;
-    db:Database = null;
-    storage:Storage = null;
+    db:IDatabase = null;
+    storage:IStorage = null;
     contextFactory:ContextFactory = null;
 
     /**
@@ -40,7 +40,7 @@ export default class Orion
      * on what the storage adapter's requirements are:
      * https://github.com/ctjong/orion/blob/master/src/core/storage.ts
      */
-    constructor(config:Config, databaseAdapter?:Database, storageAdapter?: Storage)
+    constructor(config:Config, databaseAdapter?:IDatabase, storageAdapter?: IStorage)
     {
         this.app = Express();
         this.contextFactory = new ContextFactory(config);

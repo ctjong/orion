@@ -1,5 +1,5 @@
 import { Context, Error } from "../types";
-import { Database } from "../database";
+import { IDatabase } from "../idatabase";
 
 /**
  * A module for handling the execution of code outside of the main thread.
@@ -16,7 +16,7 @@ export class ExecService
      * @param db Database module
      * @param suppressResponse Whether or not this should suppress response
      */
-    async handleErrorAsync(errObj:Error|string, req:any, res:any, db?:Database, suppressResponse?:boolean): Promise<void>
+    async handleErrorAsync(errObj:Error|string, req:any, res:any, db?:IDatabase, suppressResponse?:boolean): Promise<void>
     {
         let err:Error = typeof errObj === "string" ? this.parseError(errObj) : errObj;
         console.error(err);
