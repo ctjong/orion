@@ -1,4 +1,4 @@
-import { NameValueMap } from "../../core/types";
+import { INameValueMap } from "../../core/types";
 
 /**
  * A mock connection pool module
@@ -28,7 +28,7 @@ export class MockConnectionPool
      * @param queryParams Query params
      * @param callback callback function
      */
-    query(queryString: string, queryParams: NameValueMap, callback: any): void
+    query(queryString: string, queryParams: INameValueMap, callback: any): void
     {
         this.processQuery(this.engine, queryString, queryParams, callback);
     }
@@ -68,7 +68,7 @@ export class MockConnectionPool
      * @param queryParams query parameters
      * @param callback callback function
      */
-    processQuery(engine: string, queryString: string, queryParams: NameValueMap, callback: any): void
+    processQuery(engine: string, queryString: string, queryParams: INameValueMap, callback: any): void
     {
         if (this.queryReceivedHandler)
             this.queryReceivedHandler(queryString, queryParams, engine);

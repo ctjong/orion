@@ -1,4 +1,4 @@
-import { Context, NameValueMap, Condition, Join, CompoundCondition, SingleCondition, Config } from "../../types";
+import { Context, INameValueMap, ICondition, Join, CompoundCondition, SingleCondition, IConfig } from "../../types";
 import { IDatabase } from "../../idatabase";
 import { conditionFactory } from "../../services/conditionFactory";
 import { execService } from "../../services/execService";
@@ -16,7 +16,7 @@ export class MssqlDatabase implements IDatabase
      * @param config configuration object
      * @param pool optional connection pool module
      */
-    constructor(config: Config, pool?: any)
+    constructor(config: IConfig, pool?: any)
     {
         if (pool)
             this.pool = pool;
@@ -39,7 +39,7 @@ export class MssqlDatabase implements IDatabase
      * @param conditionMap Search condition
      * @returns query results
      */
-    quickFindAsync(ctx: Context, fields: string[], entity: string, conditionMap: NameValueMap): Promise<any>
+    quickFindAsync(ctx: Context, fields: string[], entity: string, conditionMap: INameValueMap): Promise<any>
     {
         const condition = conditionFactory.createCompound("&", []);
         for (const key in conditionMap)
@@ -63,7 +63,7 @@ export class MssqlDatabase implements IDatabase
      * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    selectAsync(ctx: Context, fields: string[], entity: string, condition: Condition, orderByField: string, skip: number, take: number,
+    selectAsync(ctx: Context, fields: string[], entity: string, condition: ICondition, orderByField: string, skip: number, take: number,
         resolveFK: boolean, isFullMode: boolean): Promise<any>
     {
         if (fields.length === 0)
@@ -120,10 +120,10 @@ export class MssqlDatabase implements IDatabase
      * Count the number of records that match the given condition
      * @param ctx Request context
      * @param entity Requested entity
-     * @param condition Condition
+     * @param condition Condition object
      * @returns query results
      */
-    async countAsync(ctx: Context, entity: string, condition: Condition): Promise<any>
+    async countAsync(ctx: Context, entity: string, condition: ICondition): Promise<any>
     {
         const query = new Query();
         const tableName = `${entity}table`;
@@ -167,7 +167,7 @@ export class MssqlDatabase implements IDatabase
      * @param condition Update condition
      * @returns query results
      */
-    updateAsync(ctx: Context, entity: string, updateData: NameValueMap, condition: Condition): Promise<any>
+    updateAsync(ctx: Context, entity: string, updateData: INameValueMap, condition: ICondition): Promise<any>
     {
         const query = new Query();
         let isFirstSetClause = true;
@@ -310,7 +310,7 @@ export class MssqlDatabase implements IDatabase
      * @param query Query object
      * @param condObj Condition object
      */
-    private appendWhereClause(query: Query, condObj: Condition): void
+    private appendWhereClause(query: Query, condObj: ICondition): void
     {
         if (!condObj.isCompound)
         {

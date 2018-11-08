@@ -1,10 +1,10 @@
-import { Condition, SingleCondition, CompoundCondition, Context } from "../types";
+import { ICondition, SingleCondition, CompoundCondition, Context } from "../types";
 import { execService } from "./execService";
 
 class ConditionFactory 
 {
     /**
-     * Construct a single Condition object
+     * Construct a single condition object
      * @param entity Entity where this condition applies to
      * @param fieldName Condition field
      * @param operator Condition operator
@@ -29,12 +29,12 @@ class ConditionFactory
     }
 
     /**
-     * Construct a Condition that consists of other Conditions
+     * Construct a condition that consists of other Conditions
      * @param operator Operator to connect all the child conditions
      * @param children Array of Conditions
      * @returns condition object
      */
-    createCompound(operator:string, children:Condition[]): CompoundCondition
+    createCompound(operator:string, children:ICondition[]): CompoundCondition
     {
         const condition:CompoundCondition =
         {
@@ -55,12 +55,12 @@ class ConditionFactory
     }
 
     /**
-     * Try to parse the given condition string and return a Condition object
+     * Try to parse the given condition string and return a condition object
      * @param ctx Requst context
-     * @param conditionString Condition string
-     * @returns Condition object, or null on failure
+     * @param conditionString condition string
+     * @returns condition object, or null on failure
      */
-    parse(ctx:Context, conditionString:string): Condition
+    parse(ctx:Context, conditionString:string): ICondition
     {
         const condition = this.createCompound("&", []);
         if(conditionString === "") 

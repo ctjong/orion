@@ -1,4 +1,4 @@
-import { NameValueMap } from "../../types";
+import { INameValueMap } from "../../types";
 
 /**
  * A class representing an MSSQL query object
@@ -7,7 +7,7 @@ export class MssqlQuery
 {
     paramsCounter:number;
     queryString:string;
-    queryParams:NameValueMap;
+    queryParams:INameValueMap;
 
     constructor()
     {
@@ -57,7 +57,7 @@ export class MssqlQuery
     /**
      * Get the query parameters
      */
-    getQueryParams(): NameValueMap
+    getQueryParams(): INameValueMap
     {
         return this.queryParams;
     }

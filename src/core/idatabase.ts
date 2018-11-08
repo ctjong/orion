@@ -1,4 +1,4 @@
-import { Context, Condition, NameValueMap } from './types';
+import { Context, ICondition, INameValueMap } from './types';
 
 export interface IDatabase
 {
@@ -10,7 +10,7 @@ export interface IDatabase
      * @param conditionMap Search condition
      * @returns query results
      */
-    quickFindAsync(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>;
+    quickFindAsync(ctx:Context, fields:string[], entity:string, conditionMap:INameValueMap): Promise<any>;
 
     /**
      * Find records that match the given condition
@@ -25,7 +25,7 @@ export interface IDatabase
      * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    selectAsync(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number, 
+    selectAsync(ctx:Context, fields:string[], entity:string, condition:ICondition, orderByField:string, skip:number, take:number, 
         resolveFK:boolean, isFullMode:boolean): Promise<any>;
 
     /**
@@ -41,10 +41,10 @@ export interface IDatabase
      * Count the number of records that match the given condition
      * @param ctx Request context
      * @param entity Requested entity
-     * @param condition Condition
+     * @param condition Condition object
      * @returns query results
      */
-    countAsync(ctx:Context, entity:string, condition:Condition): Promise<any>;
+    countAsync(ctx:Context, entity:string, condition:ICondition): Promise<any>;
 
     /**
      * Insert a new record
@@ -64,7 +64,7 @@ export interface IDatabase
      * @param condition Update condition
      * @returns query results
      */
-    updateAsync(ctx:Context, entity:string, updateData:NameValueMap, condition:Condition): Promise<any>;
+    updateAsync(ctx:Context, entity:string, updateData:INameValueMap, condition:ICondition): Promise<any>;
 
     /**
      * Delete a record from the database

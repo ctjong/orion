@@ -1,4 +1,4 @@
-import { Config, Context, UploadFileResponse } from "../../types";
+import { IConfig, Context, IUploadFileResponse } from "../../types";
 import * as azureStorage from "azure-storage";
 import { execService } from "../../services/execService";
 import * as multiparty from "multiparty";
@@ -17,7 +17,7 @@ export class AzureStorage
      * @param config config object
      * @param provider optional provider module
      */
-    constructor(config:Config, provider?:any)
+    constructor(config:IConfig, provider?:any)
     {
         if(provider)
             this.provider = provider;
@@ -34,7 +34,7 @@ export class AzureStorage
      * @param ctx Request context
      * @param req Request object
      */
-    uploadFileAsync(ctx:Context, req:any): Promise<UploadFileResponse>
+    uploadFileAsync(ctx:Context, req:any): Promise<IUploadFileResponse>
     {
         return new Promise(resolve =>
         {

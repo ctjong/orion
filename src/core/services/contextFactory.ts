@@ -1,4 +1,4 @@
-import { Config, Entity, Context, UserInfo } from '../types';
+import { IConfig, IEntity, Context, UserInfo } from '../types';
 import { defaultFields, defaultEntities } from '../defaultConfig';
 import { IDatabase } from '../idatabase';
 import { IStorage } from '../istorage';
@@ -8,14 +8,14 @@ import { IStorage } from '../istorage';
  */
 export class ContextFactory
 {
-    private config:Config;
+    private config:IConfig;
 
     /**
      * Initialize the context factory. This should be done before the server is started.
      * This will also merge defaultEntities and defaultFields into the config object.
      * @param inputConfig Input config object
      */
-    constructor(inputConfig:Config)
+    constructor(inputConfig:IConfig)
     {
         this.config = inputConfig;
 
@@ -35,7 +35,7 @@ export class ContextFactory
             const defaultEntity = defaultEntities[defaultEntityName];
             if(this.config.entities[defaultEntityName])
             {
-                const entityClone:Entity = JSON.parse(JSON.stringify(defaultEntity));
+                const entityClone:IEntity = JSON.parse(JSON.stringify(defaultEntity));
                 this.config.entities[defaultEntityName] = entityClone;
             }
             else

@@ -1,4 +1,4 @@
-import { Config } from "../core/types";
+import { IConfig } from "../core/types";
 import { Runner } from './runner';
 import { configFactory } from './configFactory';
 import { assetTestSuite } from './tests/tests-asset';
@@ -46,7 +46,7 @@ const main = () =>
  * @param sessionName Session name
  * @param testSuites List of test suites to run
  */
-const startTestSession = (config: Config, storageAdapter:IStorage, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
+const startTestSession = (config: IConfig, storageAdapter:IStorage, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
 {
     const databaseAdapter = pool.engine === "mssql" ? new MssqlDatabase(config, pool) : new MysqlDatabase(config, pool);
     const runner = new Runner(config, databaseAdapter, storageAdapter, pool);

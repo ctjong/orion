@@ -1,7 +1,7 @@
 import { Runner } from "../runner";
-import { TestSuite } from "../testTypes";
+import { ITestSuite } from "../testTypes";
 
-export class ErrorTestSuite implements TestSuite
+export class ErrorTestSuite implements ITestSuite
 {
     run(runner:Runner, params:any): void
     {

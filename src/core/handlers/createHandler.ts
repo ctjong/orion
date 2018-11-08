@@ -1,5 +1,5 @@
 import { helperService } from "../services/helperService";
-import { Context, NameValueMap } from "../types";
+import { Context, INameValueMap } from "../types";
 import { execService } from "../services/execService";
 import { authService } from "../services/authService";
 
@@ -82,7 +82,7 @@ class CreateHandler
      * @param requestBody Request body
      * @param requiredFields Required fields from config
      */
-    validateRequirements(ctx:Context, requestBody:NameValueMap, requiredFields:string[]): void
+    validateRequirements(ctx:Context, requestBody:INameValueMap, requiredFields:string[]): void
     {
         for(let i=0; i<requiredFields.length; i++)
         {
@@ -113,7 +113,7 @@ class CreateHandler
      * @param optionalFields A list of optional fields from config
      * @returns an object containing an array of field names and an array of field values
      */
-    private prepareFields(ctx:Context, requestBody:NameValueMap, requiredFields:string[], optionalFields:string[]): {[key:string]:string[]}
+    private prepareFields(ctx:Context, requestBody:INameValueMap, requiredFields:string[], optionalFields:string[]): {[key:string]:string[]}
     {
         const fieldNames:string[] = [];
         const fieldValues:any[] = [];
@@ -162,7 +162,7 @@ class CreateHandler
      * @param newPassword New password
      * @param passwordReqs Password requirements
      */
-    private verifyPwdRequirements(newPassword:string, passwordReqs:NameValueMap): void
+    private verifyPwdRequirements(newPassword:string, passwordReqs:INameValueMap): void
     {
         if(newPassword.length < passwordReqs.minLength)
         {

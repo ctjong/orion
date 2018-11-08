@@ -1,5 +1,5 @@
 import * as Express from "express";
-import { Config, Error } from "./types";
+import { IConfig, Error } from "./types";
 import { ContextFactory } from "./services/contextFactory";
 import * as applicationInsights from "applicationinsights";
 import * as bodyParser from "body-parser";
@@ -40,7 +40,7 @@ export default class Orion
      * on what the storage adapter's requirements are:
      * https://github.com/ctjong/orion/blob/master/src/core/storage.ts
      */
-    constructor(config:Config, databaseAdapter?:IDatabase, storageAdapter?: IStorage)
+    constructor(config:IConfig, databaseAdapter?:IDatabase, storageAdapter?: IStorage)
     {
         this.app = Express();
         this.contextFactory = new ContextFactory(config);

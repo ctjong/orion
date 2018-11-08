@@ -1,4 +1,4 @@
-import { NameValueMap } from "../../types";
+import { INameValueMap } from "../../types";
 
 /**
  * A class representing an MYSQL query object
@@ -7,7 +7,7 @@ export class MysqlQuery
 {
     paramsCounter:number;
     queryString:string;
-    queryParams:NameValueMap;
+    queryParams:INameValueMap;
 
     constructor()
     {
@@ -45,7 +45,7 @@ export class MysqlQuery
     /**
      * Get the query parameters
      */
-    getQueryParams(): NameValueMap
+    getQueryParams(): INameValueMap
     {
         return this.queryParams;
     }

@@ -1,4 +1,4 @@
-import { Config, NameValueMap } from "../core/types";
+import { IConfig, INameValueMap } from "../core/types";
 import Orion from "../core/index";
 import { queries } from "./queries";
 import * as chai from 'chai';
@@ -6,7 +6,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
-import { TestQuery } from './testTypes';
+import { ITestQuery } from './testTypes';
 import { IDatabase } from "../core/idatabase";
 import { IStorage } from "../core/istorage";
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
@@ -17,7 +17,7 @@ import { MockConnectionPool } from "./mocks/mockConnectionPool";
  */
 export class Runner
 {
-    config:Config;
+    config:IConfig;
     databaseAdapter:IDatabase;
     storageAdapter:IStorage;
     orionApp:Orion;
@@ -32,7 +32,7 @@ export class Runner
      * @param storageAdapter Storage adapter module
      * @param pool Mock database connection pool
      */
-    constructor(config:Config, databaseAdapter:IDatabase, storageAdapter:IStorage, pool:MockConnectionPool)
+    constructor(config:IConfig, databaseAdapter:IDatabase, storageAdapter:IStorage, pool:MockConnectionPool)
     {
         chai.use(require("chai-http"));
         this.config = config;
@@ -55,11 +55,11 @@ export class Runner
      * @param expectedResponseBody expected response body
      */
     runTest(name:string, reqUrl:string, reqMethod:string, reqBody:any, accessToken:string, 
-        expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
+        expectedQueries:ITestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
     {
         it(name, (done) =>
         {
-            const actualQueries:TestQuery[] = [];
+            const actualQueries:ITestQuery[] = [];
             this.onBeforeRequest(actualQueries, queryResults);
 
             let requestAwaiter;
@@ -96,11 +96,11 @@ export class Runner
      * @param expectedResponseBody expected response body
      */
     runFileUploadTest(name:string, reqUrl:string, filePath:string, accessToken:string, expectedMimeType:string, 
-        expectedQueries:TestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
+        expectedQueries:ITestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
     {
         it(name, (done) =>
         {
-            const actualQueries:TestQuery[] = [];
+            const actualQueries:ITestQuery[] = [];
             this.onBeforeRequest(actualQueries, queryResults);
             const inputFile = fs.readFileSync(filePath);
             const inputFileName = path.basename(filePath);
@@ -150,12 +150,12 @@ export class Runner
      * @param expectedResponseCode expected response status code
      * @param expectedResponseBody expected response body
      */
-    runFileDeleteTest(name:string, reqUrl:string, accessToken:string, expectedQueries:TestQuery[],
+    runFileDeleteTest(name:string, reqUrl:string, accessToken:string, expectedQueries:ITestQuery[],
         queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
     {
         it(name, (done) =>
         {
-            const actualQueries:TestQuery[] = [];
+            const actualQueries:ITestQuery[] = [];
             const expectedFilename = queryResults[0][0].filename;
             this.onBeforeRequest(actualQueries, queryResults);
             let actualFilename:string = null;
@@ -196,10 +196,10 @@ export class Runner
      * @param actualQueries Actual queries received by DB adapter
      * @param queryResults List of results to be returned for each incoming query
      */
-    onBeforeRequest(actualQueries: TestQuery[], queryResults: any): void
+    onBeforeRequest(actualQueries: ITestQuery[], queryResults: any): void
     {
         this.pool.reset();
-        this.pool.onQueryReceived((actualString:string, actualParams:NameValueMap, engine:string) =>
+        this.pool.onQueryReceived((actualString:string, actualParams:INameValueMap, engine:string) =>
         {
             actualQueries.push({ string: actualString, params: actualParams, engine: engine });
             if(queryResults && queryResults.length)
@@ -215,7 +215,7 @@ export class Runner
      * @param expectedResponseCode expected response status code
      * @param expectedResponseBody expected response body
      */
-    onAfterRequest(actualQueries:TestQuery[], actualResponse:any, expectedQueries:TestQuery[], 
+    onAfterRequest(actualQueries:ITestQuery[], actualResponse:any, expectedQueries:ITestQuery[], 
         expectedResponseCode:number, expectedResponseBody:any): void
     {
         if(expectedQueries)

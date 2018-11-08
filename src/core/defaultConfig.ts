@@ -1,13 +1,13 @@
-import { FieldSet, EntitySet } from "./types";
+import { IFieldSet, IEntitySet } from "./types";
 
-const defaultFields : FieldSet =
+const defaultFields : IFieldSet =
 {
     "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
     "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
     "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
 };
 
-const defaultEntities : EntitySet =
+const defaultEntities : IEntitySet =
 {
     "asset":
     {

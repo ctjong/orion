@@ -1,5 +1,5 @@
 import { MysqlQuery as Query } from "./mysqlQuery";
-import { Context, NameValueMap, Join, Condition, SingleCondition, CompoundCondition, Config } from "../../types";
+import { Context, INameValueMap, Join, ICondition, SingleCondition, CompoundCondition, IConfig } from "../../types";
 import { IDatabase } from "../../idatabase";
 import { conditionFactory } from "../../services/conditionFactory";
 import { joinFactory } from "../../services/joinFactory";
@@ -7,7 +7,7 @@ import { execService } from "../../services/execService";
 import { helperService } from "../../services/helperService";
 import * as mysql from "mysql";
 
-interface QueryResponse { error:any, results:any };
+interface IQueryResponse { error:any, results:any };
 
 
 /**
@@ -22,7 +22,7 @@ export class MysqlDatabase implements IDatabase
      * @param config configuration object
      * @param pool optional connection pool module
      */
-    constructor(config:Config, pool?:any)
+    constructor(config:IConfig, pool?:any)
     {
         if(pool)
             this.pool = pool;
@@ -32,7 +32,7 @@ export class MysqlDatabase implements IDatabase
             // so we have to convert the string into a connection properties object.
             const connString = config.database.connectionString;
             const connStringParts = connString.split(";");
-            const connProps:NameValueMap = {};
+            const connProps:INameValueMap = {};
             for (let i = 0; i < connStringParts.length; i++)
             {
                 const connPropTokens = connStringParts[i].split('=');
@@ -58,7 +58,7 @@ export class MysqlDatabase implements IDatabase
      * @param conditionMap Search condition
      * @returns query results
      */
-    async quickFindAsync(ctx:Context, fields:string[], entity:string, conditionMap:NameValueMap): Promise<any>
+    async quickFindAsync(ctx:Context, fields:string[], entity:string, conditionMap:INameValueMap): Promise<any>
     {
         const condition = conditionFactory.createCompound("&", []);
         for (const key in conditionMap)
@@ -83,7 +83,7 @@ export class MysqlDatabase implements IDatabase
      * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    selectAsync(ctx:Context, fields:string[], entity:string, condition:Condition, orderByField:string, skip:number, take:number, 
+    selectAsync(ctx:Context, fields:string[], entity:string, condition:ICondition, orderByField:string, skip:number, take:number, 
         resolveFK:boolean, isFullMode:boolean): Promise<any>
     {
         const joins = resolveFK ? this.getJoins(ctx, fields, entity) : [];
@@ -140,10 +140,10 @@ export class MysqlDatabase implements IDatabase
      * Count the number of records that match the given condition
      * @param ctx Request context
      * @param entity Requested entity
-     * @param condition Condition
+     * @param condition Condition object
      * @returns query results
      */
-    async countAsync(ctx:Context, entity:string, condition:Condition): Promise<any>
+    async countAsync(ctx:Context, entity:string, condition:ICondition): Promise<any>
     {
         const query = new Query();
         const tableName = entity + "table";
@@ -185,7 +185,7 @@ export class MysqlDatabase implements IDatabase
      * @param condition Update condition
      * @returns query results
      */
-    updateAsync(ctx:Context, entity:string, updateData:NameValueMap, condition:Condition): Promise<any>
+    updateAsync(ctx:Context, entity:string, updateData:INameValueMap, condition:ICondition): Promise<any>
     {
         const query = new Query();
         let isFirstSetClause = true;
@@ -239,7 +239,7 @@ export class MysqlDatabase implements IDatabase
         console.log("Query parameters:");
         console.log(queryParams);
 
-        const response:NameValueMap = await this.queryAsync(queryString, queryParams);
+        const response:INameValueMap = await this.queryAsync(queryString, queryParams);
         let results:any = null;
         if (response.error)
         {
@@ -257,7 +257,7 @@ export class MysqlDatabase implements IDatabase
     /**
      * Run a query
      */
-    queryAsync(queryString:string, queryParams:NameValueMap): Promise<QueryResponse>
+    queryAsync(queryString:string, queryParams:INameValueMap): Promise<IQueryResponse>
     {
         return new Promise(resolve =>
         {
@@ -321,7 +321,7 @@ export class MysqlDatabase implements IDatabase
      * @param query Query object
      * @param condObj Condition object
      */
-    private appendWhereClause(query:Query, condObj:Condition): void
+    private appendWhereClause(query:Query, condObj:ICondition): void
     {
         if (condObj instanceof SingleCondition)
         {

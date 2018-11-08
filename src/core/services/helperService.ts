@@ -1,4 +1,4 @@
-import { Context, NameValueMap } from "../types";
+import { Context, INameValueMap } from "../types";
 import { IDatabase } from "../idatabase";
 import { execService } from "./execService";
 
@@ -41,7 +41,7 @@ class HelperService
      * @param entity Entity name
      * @returns fixed data object
      */
-    fixDataKeysAndTypes(ctx: Context, data: NameValueMap, entity?: string): NameValueMap
+    fixDataKeysAndTypes(ctx: Context, data: INameValueMap, entity?: string): INameValueMap
     {
         if (!data)
             return data;
@@ -87,7 +87,7 @@ class HelperService
      * @param recordId Record ID
      * @param requestBody Requset body
      */
-    async onBeginWriteRequestAsync(ctx: Context, action: string, dbAdapter: IDatabase, recordId: string, requestBody: NameValueMap): Promise<any>
+    async onBeginWriteRequestAsync(ctx: Context, action: string, dbAdapter: IDatabase, recordId: string, requestBody: INameValueMap): Promise<any>
     {
         requestBody = this.fixDataKeysAndTypes(ctx, requestBody);
         const isWriteAllowedFn = ctx.config.entities[ctx.entity].isWriteAllowed;
@@ -135,7 +135,7 @@ class HelperService
      * @param dataObj Data object
      * @returns fixed data object
      */
-    fixDataTypes(ctx: Context, entity: string, dataObj: NameValueMap): void
+    fixDataTypes(ctx: Context, entity: string, dataObj: INameValueMap): void
     {
         const fields = ctx.config.entities[entity].fields;
         for (const fieldName in fields)
@@ -163,7 +163,7 @@ class HelperService
      * @param requestBody Request body
      * @param dbAdapter Database adapter
      */
-    async resolveForeignKeysAsync(ctx: Context, requestBody: NameValueMap, dbAdapter: IDatabase): Promise<any>
+    async resolveForeignKeysAsync(ctx: Context, requestBody: INameValueMap, dbAdapter: IDatabase): Promise<any>
     {
         const fields = ctx.config.entities[ctx.entity].fields;
         const promises = [];
@@ -186,7 +186,7 @@ class HelperService
      * @param fk Foreign key object
      * @param dbAdapter Database adapter
      */
-    async resolveForeignKeyAsync(ctx: Context, requestBody: NameValueMap, fieldName: string, fk: any, dbAdapter: IDatabase): Promise<any>
+    async resolveForeignKeyAsync(ctx: Context, requestBody: INameValueMap, fieldName: string, fk: any, dbAdapter: IDatabase): Promise<any>
     {
         const record = await dbAdapter.findRecordByIdAsync(ctx, fk.foreignEntity, requestBody[fieldName]);
         requestBody[fk.resolvedKeyName] = this.fixDataKeysAndTypes(ctx, record);

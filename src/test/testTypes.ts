@@ -1,15 +1,15 @@
-import { NameValueMap } from "../core/types";
+import { INameValueMap } from "../core/types";
 import { Runner } from "./runner";
 
-export interface TestQuery
+export interface ITestQuery
 {
     name?: string,
     string?: string,
-    params?: NameValueMap,
+    params?: INameValueMap,
     engine?: string
 }
 
-export interface TestSuite
+export interface ITestSuite
 {
     run: (runner:Runner, params:any) => void;
 }

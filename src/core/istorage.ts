@@ -1,4 +1,4 @@
-import { Context, UploadFileResponse } from "./types";
+import { Context, IUploadFileResponse } from "./types";
 
 
 export interface IStorage
@@ -8,7 +8,7 @@ export interface IStorage
      * @param ctx Request context
      * @param req Request object
      */
-    uploadFileAsync(ctx:Context, req:any): Promise<UploadFileResponse>;
+    uploadFileAsync(ctx:Context, req:any): Promise<IUploadFileResponse>;
 
     /**
      * Delete a file from the storage

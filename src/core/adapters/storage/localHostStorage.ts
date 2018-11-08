@@ -1,5 +1,5 @@
 import * as path from "path";
-import { Config, Context, UploadFileResponse } from "../../types";
+import { IConfig, Context, IUploadFileResponse } from "../../types";
 import * as fs from "fs";
 import { execService } from "../../services/execService";
 import * as multiparty from "multiparty";
@@ -17,7 +17,7 @@ export class LocalHostStorage
      * @param config config object
      * @param provider optional provider module
      */
-    constructor(config:Config, provider?:any)
+    constructor(config:IConfig, provider?:any)
     {
         if(provider)
             this.provider = provider;
@@ -31,7 +31,7 @@ export class LocalHostStorage
      * @param req Request object
      * @param callback Callback function
      */
-    uploadFileAsync(ctx:Context, req:any): Promise<UploadFileResponse>
+    uploadFileAsync(ctx:Context, req:any): Promise<IUploadFileResponse>
     {
         return new Promise(resolve =>
         {

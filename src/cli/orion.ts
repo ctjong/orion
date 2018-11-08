@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as fs from 'fs';
-import { Config, Entity } from '../core/types';
+import { IConfig, IEntity } from '../core/types';
 
 let engine:string;
 let  outputPath:string;
@@ -53,7 +53,7 @@ const main = () =>
  * Process the given config module and try to output an SQL file to setup the database.
  * @param config Config module
  */
-const processConfig = (config:Config) =>
+const processConfig = (config:IConfig) =>
 {
     let dropTableStr = drop("errortable");
     let pkAttr = engine === "mssql" ? "IDENTITY(1,1) PRIMARY KEY" : "AUTO_INCREMENT PRIMARY KEY";
@@ -62,7 +62,7 @@ const processConfig = (config:Config) =>
         nm("url") + " VARCHAR (255) NOT NULL, " + nm("timestamp") + " BIGINT NOT NULL);\n";
     for(const entityName in config.entities)
     {
-        const entity:Entity = config.entities[entityName];
+        const entity:IEntity = config.entities[entityName];
         if(!config.entities.hasOwnProperty(entityName))
             continue;
         dropTableStr += drop(entityName + "table");

@@ -1,10 +1,10 @@
-import { Config, StorageConfig } from "../core/types";
+import { IConfig, IStorageConfig } from "../core/types";
 
 class ConfigFactory
 {
-    create(dbEngine:string, storageSetting:StorageConfig): Config
+    create(dbEngine:string, storageSetting:IStorageConfig): IConfig
     {
-        const config:Config = 
+        const config:IConfig = 
         {
             database: 
             {

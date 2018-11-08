@@ -1,5 +1,5 @@
 import * as awsSdk from "aws-sdk";
-import { Config, Context, UploadFileResponse } from "../../types";
+import { IConfig, Context, IUploadFileResponse } from "../../types";
 import { execService } from "../../services/execService";
 import * as multiparty from "multiparty";
 import * as guid from "uuid";
@@ -17,7 +17,7 @@ export class S3Storage
      * @param config config object
      * @param provider optional provider module
      */
-    constructor(config:Config, provider?:any)
+    constructor(config:IConfig, provider?:any)
     {
         if(provider)
             this.provider = provider;
@@ -39,7 +39,7 @@ export class S3Storage
      * @param req Request object
      * @param callback Callback function
      */
-    uploadFileAsync(ctx:Context, req:any): Promise<UploadFileResponse>
+    uploadFileAsync(ctx:Context, req:any): Promise<IUploadFileResponse>
     {
         return new Promise(resolve =>
         {
