@@ -29,13 +29,13 @@ const main = () =>
     // initialize storage modules
     const azureAdapter = new AzureStorageAdapter(mssqlAzureConfig, new MockStorageWrapper());
     const s3Adapter = new S3StorageAdapter(mysqlS3Config, new MockStorageWrapper());
-    const localHostAdapter = new LocalStorageAdapter(mssqlLocalConfig, new MockStorageWrapper());
+    const localAdapter = new LocalStorageAdapter(mssqlLocalConfig, new MockStorageWrapper());
 
     // run tests
     startTestSession(mssqlAzureConfig, azureAdapter, new MockConnectionPool("mssql"), "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
     startTestSession(mysqlS3Config, s3Adapter, new MockConnectionPool("mysql"), "mysql-s3", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
-    startTestSession(mssqlLocalConfig, localHostAdapter, new MockConnectionPool("mssql"), "mssql-local", [assetTestSuite]);
-    startTestSession(mysqlLocalConfig, localHostAdapter, new MockConnectionPool("mysql"), "mysql-local", [assetTestSuite]);
+    startTestSession(mssqlLocalConfig, localAdapter, new MockConnectionPool("mssql"), "mssql-local", [assetTestSuite]);
+    startTestSession(mysqlLocalConfig, localAdapter, new MockConnectionPool("mysql"), "mysql-local", [assetTestSuite]);
 };
 
 /**
