@@ -8,21 +8,21 @@ import * as guid from "uuid";
 /**
  * A module to handle file upload/delete on local server storage
  */
-export class LocalHostStorage
+export class LocalStorageAdapter
 {
-    private provider:any;
+    private wrapper:any;
 
     /**
      * Initialize the adapter
      * @param config config object
-     * @param provider optional provider module
+     * @param wrapper optional wrapper module
      */
-    constructor(config:IConfig, provider?:any)
+    constructor(config:IConfig, wrapper?:any)
     {
-        if(provider)
-            this.provider = provider;
+        if(wrapper)
+            this.wrapper = wrapper;
         else
-            this.provider = fs;
+            this.wrapper = fs;
     }
 
     /**
@@ -48,7 +48,7 @@ export class LocalHostStorage
                     const tempName = path.basename(tempPath);
                     const finalName = guid() + tempName.substring(tempName.lastIndexOf("."));
                     const finalPath = tempPath.replace(tempName, finalName);
-                    this.provider.rename(tempPath, finalPath, (error:any) =>
+                    this.wrapper.rename(tempPath, finalPath, (error:any) =>
                     {
                         execService.catchAllErrorsAsync(ctx, () =>
                         {
@@ -78,7 +78,7 @@ export class LocalHostStorage
         return new Promise(resolve =>
         {
             const fullPath = ctx.config.storage.uploadPath + "/" + filename;
-            this.provider.unlink(fullPath, (error:any) =>
+            this.wrapper.unlink(fullPath, (error:any) =>
             {
                 resolve(error);
             });

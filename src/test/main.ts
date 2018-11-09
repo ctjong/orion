@@ -9,11 +9,11 @@ import { userTestSuite } from './tests/tests-user';
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
 import { MysqlDatabase } from "../core/adapters/db/mysqlDatabase";
 import { MssqlDatabase } from "../core/adapters/db/mssqlDatabase";
-import { MockStorageProvider } from "./mocks/mockStorageProvider";
-import { AzureStorage } from "../core/storage/azureStorage";
-import { LocalHostStorage } from "../core/storage/localHostStorage";
-import { S3Storage } from "../core/storage/s3Storage";
-import { IStorage } from "../core/storage/istorage";
+import { MockStorageWrapper } from "./mocks/mockStorageWrapper";
+import { AzureStorageAdapter } from "../core/storage/azureStorageAdapter";
+import { LocalStorageAdapter } from "../core/storage/localStorageAdapter";
+import { S3StorageAdapter } from "../core/storage/s3StorageAdapter";
+import { IStorageAdapter } from "../core/storage/iStorageAdapter";
 
 /** 
  * Test entry point
@@ -27,9 +27,9 @@ const main = () =>
     const mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
 
     // initialize storage modules
-    const azureAdapter = new AzureStorage(mssqlAzureConfig, new MockStorageProvider());
-    const s3Adapter = new S3Storage(mysqlS3Config, new MockStorageProvider());
-    const localHostAdapter = new LocalHostStorage(mssqlLocalConfig, new MockStorageProvider());
+    const azureAdapter = new AzureStorageAdapter(mssqlAzureConfig, new MockStorageWrapper());
+    const s3Adapter = new S3StorageAdapter(mysqlS3Config, new MockStorageWrapper());
+    const localHostAdapter = new LocalStorageAdapter(mssqlLocalConfig, new MockStorageWrapper());
 
     // run tests
     startTestSession(mssqlAzureConfig, azureAdapter, new MockConnectionPool("mssql"), "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);
@@ -46,7 +46,7 @@ const main = () =>
  * @param sessionName Session name
  * @param testSuites List of test suites to run
  */
-const startTestSession = (config: IConfig, storageAdapter:IStorage, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
+const startTestSession = (config: IConfig, storageAdapter:IStorageAdapter, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
 {
     const databaseAdapter = pool.engine === "mssql" ? new MssqlDatabase(config, pool) : new MysqlDatabase(config, pool);
     const runner = new Runner(config, databaseAdapter, storageAdapter, pool);

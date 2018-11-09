@@ -1,7 +1,7 @@
 import { Context, IUploadFileResponse } from "../types";
 
 
-export interface IStorage
+export interface IStorageAdapter
 {
     /**
      * Upload a file to Azure Blob Storage

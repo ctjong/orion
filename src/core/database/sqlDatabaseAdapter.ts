@@ -1,5 +1,5 @@
 import * as Sequelize from "sequelize";
-import { IDatabase } from "./idatabase";
+import { IDatabaseAdapter } from "./iDatabaseAdapter";
 import { INameValueMap, ICondition, Context, IConfig, Join } from "../types";
 import { conditionFactory } from "../services/conditionFactory";
 import { joinFactory } from "../services/joinFactory";
@@ -15,9 +15,9 @@ const typeMap: INameValueMap =
 };
 
 /**
- * Class that handles the interaction with database
+ * Class that handles the interaction with an SQL database
  */
-export class Database implements IDatabase
+export class SqlDatabaseAdapter implements IDatabaseAdapter
 {
     engine: string;
     models: Sequelize.Models;

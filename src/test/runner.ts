@@ -7,8 +7,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
 import { ITestQuery } from './testTypes';
-import { IDatabase } from "../core/database/idatabase";
-import { IStorage } from "../core/storage/istorage";
+import { IDatabaseAdapter } from "../core/database/iDatabaseAdapter";
+import { IStorageAdapter } from "../core/storage/iStorageAdapter";
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
 
 
@@ -18,11 +18,11 @@ import { MockConnectionPool } from "./mocks/mockConnectionPool";
 export class Runner
 {
     config:IConfig;
-    databaseAdapter:IDatabase;
-    storageAdapter:IStorage;
+    databaseAdapter:IDatabaseAdapter;
+    storageAdapter:IStorageAdapter;
     orionApp:Orion;
     pool:MockConnectionPool;
-    storageProvider:any;
+    storageWrapper:any;
     isServerStarted:boolean;
 
     /**
@@ -32,7 +32,7 @@ export class Runner
      * @param storageAdapter Storage adapter module
      * @param pool Mock database connection pool
      */
-    constructor(config:IConfig, databaseAdapter:IDatabase, storageAdapter:IStorage, pool:MockConnectionPool)
+    constructor(config:IConfig, databaseAdapter:IDatabaseAdapter, storageAdapter:IStorageAdapter, pool:MockConnectionPool)
     {
         chai.use(require("chai-http"));
         this.config = config;
@@ -106,7 +106,7 @@ export class Runner
             const inputFileName = path.basename(filePath);
             let uploadedFileName:string = null;
             let uploadedFileMime:string = null;
-            this.storageProvider.onFilePartReceived((name:string, mime:string) =>
+            this.storageWrapper.onFilePartReceived((name:string, mime:string) =>
             {
                 uploadedFileName = name;
                 uploadedFileMime = mime;
@@ -159,7 +159,7 @@ export class Runner
             const expectedFilename = queryResults[0][0].filename;
             this.onBeforeRequest(actualQueries, queryResults);
             let actualFilename:string = null;
-            this.storageProvider.onFileDeleted((name:string) =>
+            this.storageWrapper.onFileDeleted((name:string) =>
             {
                 actualFilename = name;
             });

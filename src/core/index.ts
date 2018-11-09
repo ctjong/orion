@@ -11,11 +11,11 @@ import { deleteHandler } from "./handlers/deleteHandler";
 import { deleteAssetHandler } from "./handlers/deleteAssetHandler";
 import { readHandler } from "./handlers/readHandler";
 import { updateHandler } from "./handlers/updateHandler";
-import { IDatabase } from "./database/idatabase";
-import { IStorage } from "./storage/istorage";
-import { AzureStorage } from "./storage/azureStorage";
-import { S3Storage } from "./storage/s3Storage";
-import { LocalHostStorage } from "./storage/localHostStorage";
+import { IDatabaseAdapter } from "./database/iDatabaseAdapter";
+import { IStorageAdapter } from "./storage/iStorageAdapter";
+import { AzureStorageAdapter } from "./storage/azureStorageAdapter";
+import { S3StorageAdapter } from "./storage/s3StorageAdapter";
+import { LocalStorageAdapter } from "./storage/localStorageAdapter";
 import { MssqlDatabase } from "./adapters/db/mssqlDatabase";
 import { MysqlDatabase } from "./adapters/db/mysqlDatabase";
 
@@ -26,8 +26,8 @@ export default class Orion
 {
     app:Express.Express = null;
     express:any = Express;
-    db:IDatabase = null;
-    storage:IStorage = null;
+    db:IDatabaseAdapter = null;
+    storage:IStorageAdapter = null;
     contextFactory:ContextFactory = null;
 
     /**
@@ -40,7 +40,7 @@ export default class Orion
      * on what the storage adapter's requirements are:
      * https://github.com/ctjong/orion/blob/master/src/core/storage.ts
      */
-    constructor(config:IConfig, databaseAdapter?:IDatabase, storageAdapter?: IStorage)
+    constructor(config:IConfig, databaseAdapter?:IDatabaseAdapter, storageAdapter?: IStorageAdapter)
     {
         this.app = Express();
         this.contextFactory = new ContextFactory(config);
@@ -68,11 +68,11 @@ export default class Orion
             if (config.storage)
             {
                 if (config.storage.provider  === "azure")
-                    this.storage = new AzureStorage(config);
+                    this.storage = new AzureStorageAdapter(config);
                 else if (config.storage.provider  === "s3")
-                    this.storage = new S3Storage(config);
+                    this.storage = new S3StorageAdapter(config);
                 else if (config.storage.provider  === "local")
-                    this.storage = new LocalHostStorage(config);
+                    this.storage = new LocalStorageAdapter(config);
                 else
                     throw "Missing or unsupported storage system: " + config.storage.provider;
             }

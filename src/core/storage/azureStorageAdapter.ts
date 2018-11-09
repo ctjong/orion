@@ -8,24 +8,24 @@ import * as mime from "mime-types";
 /**
  * Class that handles file upload/delete on Azure Blob Storage
  */
-export class AzureStorage
+export class AzureStorageAdapter
 {
-    private provider:any;
+    private wrapper:any;
 
     /**
      * Initialize the adapter
      * @param config config object
-     * @param provider optional provider module
+     * @param wrapper optional wrapper module
      */
-    constructor(config:IConfig, provider?:any)
+    constructor(config:IConfig, wrapper?:any)
     {
-        if(provider)
-            this.provider = provider;
+        if(wrapper)
+            this.wrapper = wrapper;
         else
         {
             if(!config.storage.azureStorageConnectionString)
                 throw "Missing azureStorageConnectionString in the config";
-            this.provider = azureStorage.createBlobService(config.storage.azureStorageConnectionString);
+            this.wrapper = azureStorage.createBlobService(config.storage.azureStorageConnectionString);
         }
     }
 
@@ -49,7 +49,7 @@ export class AzureStorage
                         execService.throwError("ffce", 400, "submitted file is not a valid file");
                     const size = stream.byteCount - stream.byteOffset;
                     const name = guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    this.provider.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
+                    this.wrapper.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
                     {
                         contentSettings: { contentType: mime.lookup(name) }
                     },
@@ -91,7 +91,7 @@ export class AzureStorage
     {
         return new Promise(resolve =>
         {
-            this.provider.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, (error:any, response:any) =>
+            this.wrapper.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, (error:any, response:any) =>
             {
                 resolve(error);
             });

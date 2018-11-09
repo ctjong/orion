@@ -8,24 +8,24 @@ import * as mime from "mime-types";
 /**
  * A module to handle file upload/delete on Azure Blob Storage
  */
-export class S3Storage
+export class S3StorageAdapter
 {
-    private provider:any;
+    private wrapper:any;
 
     /**
      * Initialize the adapter
      * @param config config object
-     * @param provider optional provider module
+     * @param wrapper optional wrapper module
      */
-    constructor(config:IConfig, provider?:any)
+    constructor(config:IConfig, wrapper?:any)
     {
-        if(provider)
-            this.provider = provider;
+        if(wrapper)
+            this.wrapper = wrapper;
         else
         {
             if(!config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
             throw "Missing awsAccessKeyId or awsSecretAccessKey in the config";
-            this.provider = new awsSdk.S3(
+            this.wrapper = new awsSdk.S3(
             { 
                 accessKeyId: config.storage.awsAccessKeyId, 
                 secretAccessKey: config.storage.awsSecretAccessKey
@@ -56,7 +56,7 @@ export class S3Storage
                     if (!stream.filename)
                         execService.throwError("8dad", 400, "submitted file is not a valid file");
                     const name = guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    this.provider.upload(
+                    this.wrapper.upload(
                     {
                         Bucket: ctx.config.storage.s3Bucket,
                         Key: name,
@@ -103,7 +103,7 @@ export class S3Storage
     {
         return new Promise(resolve =>
         {
-            this.provider.deleteObject(
+            this.wrapper.deleteObject(
             {
                 Key: filename,
                 Bucket: ctx.config.storage.s3Bucket

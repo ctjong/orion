@@ -1,6 +1,6 @@
 import { Context, ICondition, INameValueMap } from '../types';
 
-export interface IDatabase
+export interface IDatabaseAdapter
 {
     /**
      * Quick find a record based on the given condition

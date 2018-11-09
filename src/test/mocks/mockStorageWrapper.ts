@@ -2,9 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 
 /**
- * A mock storage provider module
+ * A mock storage wrapper module
  */
-export class MockStorageProvider
+export class MockStorageWrapper
 {
     filePartReceivedHandler:any = null;
     fileDeletedHandler:any = null;

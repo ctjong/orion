@@ -1,5 +1,5 @@
 import { Context, INameValueMap } from "../types";
-import { IDatabase } from "../database/idatabase";
+import { IDatabaseAdapter } from "../database/iDatabaseAdapter";
 import { execService } from "./execService";
 
 /**
@@ -87,7 +87,7 @@ class HelperService
      * @param recordId Record ID
      * @param requestBody Requset body
      */
-    async onBeginWriteRequestAsync(ctx: Context, action: string, dbAdapter: IDatabase, recordId: string, requestBody: INameValueMap): Promise<any>
+    async onBeginWriteRequestAsync(ctx: Context, action: string, dbAdapter: IDatabaseAdapter, recordId: string, requestBody: INameValueMap): Promise<any>
     {
         requestBody = this.fixDataKeysAndTypes(ctx, requestBody);
         const isWriteAllowedFn = ctx.config.entities[ctx.entity].isWriteAllowed;
@@ -163,7 +163,7 @@ class HelperService
      * @param requestBody Request body
      * @param dbAdapter Database adapter
      */
-    async resolveForeignKeysAsync(ctx: Context, requestBody: INameValueMap, dbAdapter: IDatabase): Promise<any>
+    async resolveForeignKeysAsync(ctx: Context, requestBody: INameValueMap, dbAdapter: IDatabaseAdapter): Promise<any>
     {
         const fields = ctx.config.entities[ctx.entity].fields;
         const promises = [];
@@ -186,7 +186,7 @@ class HelperService
      * @param fk Foreign key object
      * @param dbAdapter Database adapter
      */
-    async resolveForeignKeyAsync(ctx: Context, requestBody: INameValueMap, fieldName: string, fk: any, dbAdapter: IDatabase): Promise<any>
+    async resolveForeignKeyAsync(ctx: Context, requestBody: INameValueMap, fieldName: string, fk: any, dbAdapter: IDatabaseAdapter): Promise<any>
     {
         const record = await dbAdapter.findRecordByIdAsync(ctx, fk.foreignEntity, requestBody[fieldName]);
         requestBody[fk.resolvedKeyName] = this.fixDataKeysAndTypes(ctx, record);
