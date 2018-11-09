@@ -25,14 +25,13 @@ export class Database implements IDatabase
 
     /**
      * Initialize the database adapter
-     * @param engine db engine name
      * @param config configuration object
      */
-    constructor(engine: string, config: IConfig)
+    constructor(config: IConfig)
     {
         if (!config.database)
             throw "Missing database configuration";
-        this.engine = engine;
+        this.engine = config.database.engine;
         this.models = {};
         this.sequelize = new Sequelize(config.database.connectionString);
 
