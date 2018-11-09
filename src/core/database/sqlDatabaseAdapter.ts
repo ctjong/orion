@@ -4,6 +4,7 @@ import { INameValueMap, ICondition, Context, IConfig, Join } from "../types";
 import { conditionFactory } from "../services/conditionFactory";
 import { joinFactory } from "../services/joinFactory";
 import { SqlQueryWrapper } from "./sqlQueryWrapper";
+import { ISqlQueryWrapper } from "./iSqlQueryWrapper";
 
 const typeMap: INameValueMap =
 {
@@ -23,14 +24,14 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
     engine: string;
     models: Sequelize.Models;
     sequelize: Sequelize.Sequelize;
-    wrapper: any;
+    wrapper: ISqlQueryWrapper;
 
     /**
      * Initialize the database adapter
      * @param config configuration object
      * @param wrapper optional query wrapper object
      */
-    constructor(config: IConfig, wrapper?: any)
+    constructor(config: IConfig, wrapper?: ISqlQueryWrapper)
     {
         if (!config.database)
             throw "Missing database configuration";
