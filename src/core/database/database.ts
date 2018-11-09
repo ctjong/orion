@@ -1,5 +1,5 @@
 import * as Sequelize from "sequelize";
-import { IDatabase } from "../idatabase";
+import { IDatabase } from "./idatabase";
 import { INameValueMap, ICondition, Context, IConfig, Join } from "../types";
 import { conditionFactory } from "../services/conditionFactory";
 import { joinFactory } from "../services/joinFactory";
@@ -88,6 +88,7 @@ export class Database implements IDatabase
             return null;
 
         const joins = resolveFK ? this.getJoins(ctx, fields, entity) : [];
+        console.log(joins);
         const fieldsToSelect: string[] = [];
         fields.forEach(fieldName =>
         {
@@ -129,7 +130,7 @@ export class Database implements IDatabase
 
         const transaction = await this.sequelize.transaction();
         const model = this.models[entity];
-        const where = {};
+        // const where = {};
 
         return model.findOne({ attributes:fields, transaction });
     }

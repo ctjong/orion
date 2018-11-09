@@ -1,5 +1,5 @@
 import { Context, INameValueMap } from "../types";
-import { IDatabase } from "../idatabase";
+import { IDatabase } from "../database/idatabase";
 import { execService } from "./execService";
 
 /**

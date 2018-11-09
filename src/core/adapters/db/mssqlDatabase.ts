@@ -1,5 +1,5 @@
 import { Context, INameValueMap, ICondition, Join, CompoundCondition, SingleCondition, IConfig } from "../../types";
-import { IDatabase } from "../../idatabase";
+import { IDatabase } from "../../database/idatabase";
 import { conditionFactory } from "../../services/conditionFactory";
 import { execService } from "../../services/execService";
 import { helperService } from "../../services/helperService";

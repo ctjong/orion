@@ -1,7 +1,7 @@
 import * as path from "path";
-import { IConfig, Context, IUploadFileResponse } from "../../types";
+import { IConfig, Context, IUploadFileResponse } from "../types";
 import * as fs from "fs";
-import { execService } from "../../services/execService";
+import { execService } from "../services/execService";
 import * as multiparty from "multiparty";
 import * as guid from "uuid";
 

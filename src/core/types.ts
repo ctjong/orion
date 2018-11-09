@@ -1,5 +1,5 @@
-import { IDatabase } from "./idatabase";
-import { IStorage } from "./istorage";
+import { IDatabase } from "./database/idatabase";
+import { IStorage } from "./storage/istorage";
 
 // General
 

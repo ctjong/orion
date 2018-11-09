@@ -1,5 +1,5 @@
 import { Context, Error } from "../types";
-import { IDatabase } from "../idatabase";
+import { IDatabase } from "../database/idatabase";
 
 /**
  * A module for handling the execution of code outside of the main thread.

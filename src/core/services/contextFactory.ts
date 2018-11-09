@@ -1,7 +1,7 @@
 import { IConfig, IEntity, Context, UserInfo } from '../types';
 import { defaultFields, defaultEntities } from '../defaultConfig';
-import { IDatabase } from '../idatabase';
-import { IStorage } from '../istorage';
+import { IDatabase } from '../database/idatabase';
+import { IStorage } from '../storage/istorage';
 
 /**
  * A factory for creating Context objects, which will store all details about the current session.

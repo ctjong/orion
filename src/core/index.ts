@@ -11,11 +11,11 @@ import { deleteHandler } from "./handlers/deleteHandler";
 import { deleteAssetHandler } from "./handlers/deleteAssetHandler";
 import { readHandler } from "./handlers/readHandler";
 import { updateHandler } from "./handlers/updateHandler";
-import { IDatabase } from "./idatabase";
-import { IStorage } from "./istorage";
-import { AzureStorage } from "./adapters/storage/azureStorage";
-import { S3Storage } from "./adapters/storage/s3Storage";
-import { LocalHostStorage } from "./adapters/storage/localHostStorage";
+import { IDatabase } from "./database/idatabase";
+import { IStorage } from "./storage/istorage";
+import { AzureStorage } from "./storage/azureStorage";
+import { S3Storage } from "./storage/s3Storage";
+import { LocalHostStorage } from "./storage/localHostStorage";
 import { MssqlDatabase } from "./adapters/db/mssqlDatabase";
 import { MysqlDatabase } from "./adapters/db/mysqlDatabase";
 

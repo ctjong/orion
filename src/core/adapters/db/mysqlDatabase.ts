@@ -1,6 +1,6 @@
 import { MysqlQuery as Query } from "./mysqlQuery";
 import { Context, INameValueMap, Join, ICondition, SingleCondition, CompoundCondition, IConfig } from "../../types";
-import { IDatabase } from "../../idatabase";
+import { IDatabase } from "../../database/idatabase";
 import { conditionFactory } from "../../services/conditionFactory";
 import { joinFactory } from "../../services/joinFactory";
 import { execService } from "../../services/execService";

@@ -7,8 +7,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
 import { ITestQuery } from './testTypes';
-import { IDatabase } from "../core/idatabase";
-import { IStorage } from "../core/istorage";
+import { IDatabase } from "../core/database/idatabase";
+import { IStorage } from "../core/storage/istorage";
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
 
 

@@ -1,4 +1,4 @@
-import { Context, IUploadFileResponse } from "./types";
+import { Context, IUploadFileResponse } from "../types";
 
 
 export interface IStorage

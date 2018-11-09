@@ -1,4 +1,4 @@
-import { Context, ICondition, INameValueMap } from './types';
+import { Context, ICondition, INameValueMap } from '../types';
 
 export interface IDatabase
 {

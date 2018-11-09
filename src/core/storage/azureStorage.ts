@@ -1,6 +1,6 @@
-import { IConfig, Context, IUploadFileResponse } from "../../types";
+import { IConfig, Context, IUploadFileResponse } from "../types";
 import * as azureStorage from "azure-storage";
-import { execService } from "../../services/execService";
+import { execService } from "../services/execService";
 import * as multiparty from "multiparty";
 import * as guid from "uuid";
 import * as mime from "mime-types";

@@ -10,10 +10,10 @@ import { MockConnectionPool } from "./mocks/mockConnectionPool";
 import { MysqlDatabase } from "../core/adapters/db/mysqlDatabase";
 import { MssqlDatabase } from "../core/adapters/db/mssqlDatabase";
 import { MockStorageProvider } from "./mocks/mockStorageProvider";
-import { AzureStorage } from "../core/adapters/storage/azureStorage";
-import { LocalHostStorage } from "../core/adapters/storage/localHostStorage";
-import { S3Storage } from "../core/adapters/storage/s3Storage";
-import { IStorage } from "../core/istorage";
+import { AzureStorage } from "../core/storage/azureStorage";
+import { LocalHostStorage } from "../core/storage/localHostStorage";
+import { S3Storage } from "../core/storage/s3Storage";
+import { IStorage } from "../core/storage/istorage";
 
 /** 
  * Test entry point

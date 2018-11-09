@@ -1,6 +1,6 @@
 import * as awsSdk from "aws-sdk";
-import { IConfig, Context, IUploadFileResponse } from "../../types";
-import { execService } from "../../services/execService";
+import { IConfig, Context, IUploadFileResponse } from "../types";
+import { execService } from "../services/execService";
 import * as multiparty from "multiparty";
 import * as guid from "uuid";
 import * as mime from "mime-types";
