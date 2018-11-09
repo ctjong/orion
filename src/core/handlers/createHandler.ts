@@ -15,8 +15,7 @@ class CreateHandler
      */
     async executeAsync(ctx:Context, requestBody:any): Promise<void>
     {
-        const dbAdapter = ctx.db;
-        await helperService.onBeginWriteRequestAsync(ctx, "create", dbAdapter, null, requestBody);
+        await helperService.onBeginWriteRequestAsync(ctx, "create", null, requestBody);
 
         // get required and optional fields
         let configFields:{[key:string]:string[]} = this.getConfigFields(ctx);
@@ -35,12 +34,12 @@ class CreateHandler
         if(ctx.entity === "user")
         {
             await this.verifyUsernameNotExistAsync(ctx, requestBody.username);
-            const insertedId = await dbAdapter.insertAsync(ctx, ctx.entity, fieldNames, fieldValues);
+            const insertedId = await ctx.db.insertAsync(ctx, ctx.entity, fieldNames, fieldValues);
             ctx.res.send(insertedId.toString());
         }
         else
         {
-            const insertedId = await dbAdapter.insertAsync(ctx, ctx.entity, fieldNames, fieldValues);
+            const insertedId = await ctx.db.insertAsync(ctx, ctx.entity, fieldNames, fieldValues);
             try
             {
                 ctx.res.send(insertedId.toString());

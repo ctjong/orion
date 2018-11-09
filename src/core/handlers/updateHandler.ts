@@ -16,8 +16,7 @@ class UpdateHandler
      */
     async executeAsync(ctx:Context, requestBody:INameValueMap, recordId:string): Promise<void>
     {
-        const dbAdapter = ctx.db;
-        const { record } = await helperService.onBeginWriteRequestAsync(ctx, "update", dbAdapter, recordId, requestBody);
+        const { record } = await helperService.onBeginWriteRequestAsync(ctx, "update", recordId, requestBody);
         const updateData:INameValueMap = {};
         const fields = helperService.getFields(ctx, "update");
         for(let i=0; i<fields.length; i++)
@@ -35,7 +34,7 @@ class UpdateHandler
             execService.throwError("511f", 400, "updating external user info is not supported");
         }
         const condition = conditionFactory.createSingle(ctx.entity, "id", "=", recordId);
-        const dbResponse = await dbAdapter.updateAsync(ctx, ctx.entity, updateData, condition);
+        const dbResponse = await ctx.db.updateAsync(ctx, ctx.entity, updateData, condition);
         ctx.res.send(dbResponse);
     }
 }
