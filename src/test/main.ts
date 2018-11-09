@@ -9,7 +9,7 @@ import { userTestSuite } from './tests/tests-user';
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
 import { MysqlDatabase } from "../core/adapters/db/mysqlDatabase";
 import { MssqlDatabase } from "../core/adapters/db/mssqlDatabase";
-import { MockStorageWrapper } from "./mocks/mockStorageWrapper";
+import { MockStorageCommandWrapper } from "./mocks/mockStorageCommandWrapper";
 import { AzureStorageAdapter } from "../core/storage/azureStorageAdapter";
 import { LocalStorageAdapter } from "../core/storage/localStorageAdapter";
 import { S3StorageAdapter } from "../core/storage/s3StorageAdapter";
@@ -27,9 +27,9 @@ const main = () =>
     const mysqlLocalConfig = configFactory.create("mysql", { provider: "local", uploadPath: "uploads" });
 
     // initialize storage modules
-    const azureAdapter = new AzureStorageAdapter(mssqlAzureConfig, new MockStorageWrapper());
-    const s3Adapter = new S3StorageAdapter(mysqlS3Config, new MockStorageWrapper());
-    const localAdapter = new LocalStorageAdapter(mssqlLocalConfig, new MockStorageWrapper());
+    const azureAdapter = new AzureStorageAdapter(mssqlAzureConfig, new MockStorageCommandWrapper());
+    const s3Adapter = new S3StorageAdapter(mysqlS3Config, new MockStorageCommandWrapper());
+    const localAdapter = new LocalStorageAdapter(mssqlLocalConfig, new MockStorageCommandWrapper());
 
     // run tests
     startTestSession(mssqlAzureConfig, azureAdapter, new MockConnectionPool("mssql"), "mssql-azure", [errorTestSuite, itemTestSuite, messageTestSuite, userTestSuite, assetTestSuite]);

@@ -4,20 +4,22 @@ import { execService } from "../services/execService";
 import * as multiparty from "multiparty";
 import * as guid from "uuid";
 import * as mime from "mime-types";
+import { IStorageCommandWrapper } from "./iStorageCommandWrapper";
+import { StorageCommandWrapper } from "./storageCommmandWrapper";
 
 /**
  * A module to handle file upload/delete on Azure Blob Storage
  */
 export class S3StorageAdapter
 {
-    private wrapper:any;
+    private wrapper:IStorageCommandWrapper;
 
     /**
      * Initialize the adapter
      * @param config config object
-     * @param wrapper optional wrapper module
+     * @param wrapper optional commmand wrapper module
      */
-    constructor(config:IConfig, wrapper?:any)
+    constructor(config:IConfig, wrapper?:IStorageCommandWrapper)
     {
         if(wrapper)
             this.wrapper = wrapper;
@@ -25,11 +27,11 @@ export class S3StorageAdapter
         {
             if(!config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
             throw "Missing awsAccessKeyId or awsSecretAccessKey in the config";
-            this.wrapper = new awsSdk.S3(
+            this.wrapper = new StorageCommandWrapper(null, new awsSdk.S3(
             { 
                 accessKeyId: config.storage.awsAccessKeyId, 
                 secretAccessKey: config.storage.awsSecretAccessKey
-            });
+            }));
         }
     }
 
@@ -50,13 +52,13 @@ export class S3StorageAdapter
             });
             form.on('part', (stream) => 
             {
-                execService.catchAllErrorsAsync(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, async () =>
                 {
                     isFirstPartReceived = true;
                     if (!stream.filename)
                         execService.throwError("8dad", 400, "submitted file is not a valid file");
                     const name = guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    this.wrapper.upload(
+                    const error = await this.wrapper.s3UploadAsync(
                     {
                         Bucket: ctx.config.storage.s3Bucket,
                         Key: name,
@@ -64,14 +66,8 @@ export class S3StorageAdapter
                         Body: stream,
                         ContentLength: stream.byteCount,
                         ContentType: mime.lookup(name)
-                    },
-                    (s3UploadErr:any, data:any) =>
-                    {
-                        execService.catchAllErrorsAsync(ctx, () =>
-                        {
-                            resolve({ error: s3UploadErr, name: name });
-                        });
                     });
+                    resolve({ error: error, name: name });
                 });
             });
             form.on('progress', (bytesReceived:number, bytesExpected:number) =>
@@ -101,17 +97,10 @@ export class S3StorageAdapter
      */
     deleteFileAsync(ctx:Context, filename:string): Promise<any>
     {
-        return new Promise(resolve =>
+        return this.wrapper.s3DeleteAsync(
         {
-            this.wrapper.deleteObject(
-            {
-                Key: filename,
-                Bucket: ctx.config.storage.s3Bucket
-            },
-            (error:any, data:any) =>
-            {
-                resolve(error);
-            });
+            Key: filename,
+            Bucket: ctx.config.storage.s3Bucket
         });
     }
 }

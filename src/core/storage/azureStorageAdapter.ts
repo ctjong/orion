@@ -4,20 +4,22 @@ import { execService } from "../services/execService";
 import * as multiparty from "multiparty";
 import * as guid from "uuid";
 import * as mime from "mime-types";
+import { StorageCommandWrapper } from "./storageCommmandWrapper";
+import { IStorageCommandWrapper } from "./iStorageCommandWrapper";
 
 /**
  * Class that handles file upload/delete on Azure Blob Storage
  */
 export class AzureStorageAdapter
 {
-    private wrapper:any;
+    private wrapper:IStorageCommandWrapper;
 
     /**
      * Initialize the adapter
      * @param config config object
-     * @param wrapper optional wrapper module
+     * @param wrapper optional commmand wrapper module
      */
-    constructor(config:IConfig, wrapper?:any)
+    constructor(config:IConfig, wrapper?:IStorageCommandWrapper)
     {
         if(wrapper)
             this.wrapper = wrapper;
@@ -25,7 +27,7 @@ export class AzureStorageAdapter
         {
             if(!config.storage.azureStorageConnectionString)
                 throw "Missing azureStorageConnectionString in the config";
-            this.wrapper = azureStorage.createBlobService(config.storage.azureStorageConnectionString);
+            this.wrapper = new StorageCommandWrapper(azureStorage.createBlobService(config.storage.azureStorageConnectionString), null);
         }
     }
 
@@ -42,24 +44,18 @@ export class AzureStorageAdapter
             const form = new (multiparty.Form)();
             form.on('part', (stream:any) =>
             {
-                execService.catchAllErrorsAsync(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, async () =>
                 {
                     isFirstPartReceived = true;
                     if (!stream.filename)
                         execService.throwError("ffce", 400, "submitted file is not a valid file");
                     const size = stream.byteCount - stream.byteOffset;
                     const name = guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    this.wrapper.createBlockBlobFromStream(ctx.config.storage.azureStorageContainerName, name, stream, size, 
+                    const error = await this.wrapper.azureUploadAsync(ctx.config.storage.azureStorageContainerName, name, stream, size, 
                     {
                         contentSettings: { contentType: mime.lookup(name) }
-                    },
-                    (error:any) =>
-                    {
-                        execService.catchAllErrorsAsync(ctx, () =>
-                        {
-                            resolve({ error: error, name: name });
-                        });
                     });
+                    resolve({ error: error, name: name });
                 });
             });
             form.on('progress', (bytesReceived, bytesExpected) =>
@@ -87,14 +83,8 @@ export class AzureStorageAdapter
      * @param filename File name
      * @param callback Callback function
      */
-    deleteFileAsync(ctx:Context, filename:string): Promise<any>
+    async deleteFileAsync(ctx:Context, filename:string): Promise<any>
     {
-        return new Promise(resolve =>
-        {
-            this.wrapper.deleteBlob(ctx.config.storage.azureStorageContainerName, filename, (error:any, response:any) =>
-            {
-                resolve(error);
-            });
-        });
+        return this.wrapper.azureDeleteAsync(ctx.config.storage.azureStorageContainerName, filename);
     }
 }

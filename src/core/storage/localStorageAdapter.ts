@@ -1,28 +1,29 @@
 import * as path from "path";
 import { IConfig, Context, IUploadFileResponse } from "../types";
-import * as fs from "fs";
 import { execService } from "../services/execService";
 import * as multiparty from "multiparty";
 import * as guid from "uuid";
+import { IStorageCommandWrapper } from "./iStorageCommandWrapper";
+import { StorageCommandWrapper } from "./storageCommmandWrapper";
 
 /**
  * A module to handle file upload/delete on local server storage
  */
 export class LocalStorageAdapter
 {
-    private wrapper:any;
+    private wrapper:IStorageCommandWrapper;
 
     /**
      * Initialize the adapter
      * @param config config object
-     * @param wrapper optional wrapper module
+     * @param wrapper optional commmand wrapper module
      */
-    constructor(config:IConfig, wrapper?:any)
+    constructor(config:IConfig, wrapper?:IStorageCommandWrapper)
     {
         if(wrapper)
             this.wrapper = wrapper;
         else
-            this.wrapper = fs;
+            this.wrapper = new StorageCommandWrapper(null, null);
     }
 
     /**
@@ -42,19 +43,14 @@ export class LocalStorageAdapter
             });
             form.on('file', (name:string, file:any) =>
             {
-                execService.catchAllErrorsAsync(ctx, () =>
+                execService.catchAllErrorsAsync(ctx, async () =>
                 {
                     const tempPath = file.path;
                     const tempName = path.basename(tempPath);
                     const finalName = guid() + tempName.substring(tempName.lastIndexOf("."));
                     const finalPath = tempPath.replace(tempName, finalName);
-                    this.wrapper.rename(tempPath, finalPath, (error:any) =>
-                    {
-                        execService.catchAllErrorsAsync(ctx, () =>
-                        {
-                            resolve({ error: error, name: finalName });
-                        });
-                    });
+                    const error = await this.wrapper.localRenameAsync(tempPath, finalPath);
+                    resolve({ error: error, name: finalName });
                 });
             });
             form.on('error', (err) =>
@@ -75,13 +71,7 @@ export class LocalStorageAdapter
      */
     deleteFileAsync(ctx:Context, filename:string): Promise<any>
     {
-        return new Promise(resolve =>
-        {
-            const fullPath = ctx.config.storage.uploadPath + "/" + filename;
-            this.wrapper.unlink(fullPath, (error:any) =>
-            {
-                resolve(error);
-            });
-        });
+        const fullPath = ctx.config.storage.uploadPath + "/" + filename;
+        return this.wrapper.localUnlinkAsync(fullPath);
     }
 };
