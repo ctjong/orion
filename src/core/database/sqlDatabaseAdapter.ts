@@ -3,6 +3,7 @@ import { IDatabaseAdapter } from "./iDatabaseAdapter";
 import { INameValueMap, ICondition, Context, IConfig, Join } from "../types";
 import { conditionFactory } from "../services/conditionFactory";
 import { joinFactory } from "../services/joinFactory";
+import { SqlQueryWrapper } from "./sqlQueryWrapper";
 
 const typeMap: INameValueMap =
 {
@@ -22,18 +23,21 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
     engine: string;
     models: Sequelize.Models;
     sequelize: Sequelize.Sequelize;
+    wrapper: any;
 
     /**
      * Initialize the database adapter
      * @param config configuration object
+     * @param wrapper optional query wrapper object
      */
-    constructor(config: IConfig)
+    constructor(config: IConfig, wrapper?: any)
     {
         if (!config.database)
             throw "Missing database configuration";
         this.engine = config.database.engine;
         this.models = {};
         this.sequelize = new Sequelize(config.database.connectionString);
+        this.wrapper = wrapper ? wrapper : new SqlQueryWrapper();
 
         Object.keys(config.entities).forEach(entityName =>
         {
