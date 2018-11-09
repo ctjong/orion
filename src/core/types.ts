@@ -10,6 +10,7 @@ export class Error { tag:string; statusCode:number; msg:string; stack?:any };
 
 // Entities and fields
 
+// type can be "string" / "text" / "int" / "float" / "boolean" / "secret"
 export interface IField { type:string; isEditable:boolean; createReq:number; foreignKey:any };
 export interface IFieldSet { [key:string]:IField };
 export interface IEntity 
