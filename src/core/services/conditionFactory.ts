@@ -5,18 +5,18 @@ class ConditionFactory
 {
     /**
      * Construct a single condition object
-     * @param entity Entity where this condition applies to
+     * @param entityName Entity where this condition applies to
      * @param fieldName Condition field
      * @param operator Condition operator
      * @param fieldValue Condition value
      * @returns condition object
      */
-    createSingle(entity:string, fieldName:string, operator:string, fieldValue:string): SingleCondition
+    createSingle(entityName:string, fieldName:string, operator:string, fieldValue:string): SingleCondition
     {
         const condition:SingleCondition = 
         {
             isCompound: false,
-            entity: entity,
+            entityName: entityName,
             fieldName: fieldName,
             operator: operator,
             fieldValue: fieldValue,
@@ -101,12 +101,12 @@ class ConditionFactory
             if(!operands || operands.length < 2)
                 return null;
             const fieldName = operands[0];
-            const fields = ctx.config.entities[ctx.entity].fields;
+            const fields = ctx.config.entities[ctx.entityName].fields;
             if(!fields.hasOwnProperty(fieldName))
             {
                 execService.throwError("9d1b", 400, "unrecognized field " + fieldName + " found in condition");
             }
-            const fieldType = ctx.config.entities[ctx.entity].fields[fieldName].type;
+            const fieldType = ctx.config.entities[ctx.entityName].fields[fieldName].type;
             if(fieldType === "int") 
             {
                 fieldValue = parseInt(operands[1]);
@@ -119,7 +119,7 @@ class ConditionFactory
             {
                 fieldValue = operands[1];
             }
-            condition.children.push(this.createSingle(ctx.entity, fieldName, operator, fieldValue.toString()));
+            condition.children.push(this.createSingle(ctx.entityName, fieldName, operator, fieldValue.toString()));
         }
         return condition;
     }

@@ -11,14 +11,14 @@ class HelperService
      * specified action.
      * @param ctx Request context
      * @param action Action name
-     * @param entity Entity name
+     * @param entityName Entity name
      * @returns an array of field names
      */
-    getFields(ctx: Context, action: string, entity?: string): string[]
+    getFields(ctx: Context, action: string, entityName?: string): string[]
     {
-        if (!entity)
-            entity = ctx.entity;
-        const fields = ctx.config.entities[entity].fields;
+        if (!entityName)
+            entityName = ctx.entityName;
+        const fields = ctx.config.entities[entityName].fields;
         const allowedFields = [];
         for (const fieldName in fields)
         {
@@ -37,10 +37,10 @@ class HelperService
      * Fix the key name and type of each item in the given data object
      * @param ctx Request context
      * @param data Data object
-     * @param entity Entity name
+     * @param entityName Entity name
      * @returns fixed data object
      */
-    fixDataKeysAndTypes(ctx: Context, data: INameValueMap, entity?: string): INameValueMap
+    fixDataKeysAndTypes(ctx: Context, data: INameValueMap, entityName?: string): INameValueMap
     {
         if (!data)
             return data;
@@ -63,14 +63,14 @@ class HelperService
                 newData[key.toLowerCase()] = data[key];
             }
         }
-        if (!entity)
-            entity = ctx.entity;
-        this.fixDataTypes(ctx, entity, newData);
+        if (!entityName)
+            entityName = ctx.entityName;
+        this.fixDataTypes(ctx, entityName, newData);
         for (const newKey in newData)
         {
             if (!newData.hasOwnProperty(newKey) || !newData[newKey] || typeof (newData[newKey]) !== "object")
                 continue;
-            this.fixDataTypes(ctx, entity, newData[newKey]);
+            this.fixDataTypes(ctx, entityName, newData[newKey]);
         }
         return newData;
     }
@@ -88,7 +88,7 @@ class HelperService
     async onBeginWriteRequestAsync(ctx: Context, action: string, recordId: string, requestBody: INameValueMap): Promise<any>
     {
         requestBody = this.fixDataKeysAndTypes(ctx, requestBody);
-        const isWriteAllowedFn = ctx.config.entities[ctx.entity].isWriteAllowed;
+        const isWriteAllowedFn = ctx.config.entities[ctx.entityName].isWriteAllowed;
         if (action === "create")
         {
             this.validateRoles(ctx, "create");
@@ -99,12 +99,12 @@ class HelperService
         }
         else
         {
-            let record = await ctx.db.findRecordByIdAsync(ctx, ctx.entity, recordId);
+            let record = await ctx.db.findRecordByIdAsync(ctx, ctx.entityName, recordId);
             if (!record)
                 execService.throwError("7e13", 400, "record not found with id " + recordId);
             record = this.fixDataKeysAndTypes(ctx, record);
 
-            if ((ctx.entity === "user" && ctx.user.id === record.id) || (ctx.entity !== "user" && ctx.user.id === record.ownerid))
+            if ((ctx.entityName === "user" && ctx.user.id === record.id) || (ctx.entityName !== "user" && ctx.user.id === record.ownerid))
                 ctx.user.roles.push("owner");
             this.validateRoles(ctx, action);
 
@@ -122,20 +122,20 @@ class HelperService
      */
     validateRoles(ctx: Context, action: string): void
     {
-        if (!this.containsAny(ctx.config.entities[ctx.entity].allowedRoles[action], ctx.user.roles))
+        if (!this.containsAny(ctx.config.entities[ctx.entityName].allowedRoles[action], ctx.user.roles))
             execService.throwError("c327", 401, "Unauthorized");
     }
 
     /**
      * Fix the type of each item in the given data object
      * @param ctx Request context
-     * @param entity Entity name
+     * @param entityName Entity name
      * @param dataObj Data object
      * @returns fixed data object
      */
-    fixDataTypes(ctx: Context, entity: string, dataObj: INameValueMap): void
+    fixDataTypes(ctx: Context, entityName: string, dataObj: INameValueMap): void
     {
-        const fields = ctx.config.entities[entity].fields;
+        const fields = ctx.config.entities[entityName].fields;
         for (const fieldName in fields)
         {
             if (!fields.hasOwnProperty(fieldName))
@@ -162,7 +162,7 @@ class HelperService
      */
     async resolveForeignKeysAsync(ctx: Context, requestBody: INameValueMap): Promise<any>
     {
-        const fields = ctx.config.entities[ctx.entity].fields;
+        const fields = ctx.config.entities[ctx.entityName].fields;
         const promises = [];
         for (const fieldName in fields)
         {

@@ -54,7 +54,7 @@ export class MysqlDatabase implements IDatabaseAdapter
      * Quick find a record based on the given condition
      * @param ctx Request context
      * @param fields Requested fields
-     * @param entity Requested entity
+     * @param entityName Requested entity
      * @param conditionMap Search condition
      * @returns query results
      */
@@ -331,22 +331,22 @@ export class MysqlDatabase implements IDatabaseAdapter
             }
             else if (condObj.operator === "~")
             {
-                query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` like ?", "%" + condObj.fieldValue + "%");
+                query.append("`" + condObj.entityName + "table`.`" + condObj.fieldName + "` like ?", "%" + condObj.fieldValue + "%");
             }
             else if (typeof (condObj.fieldValue) === "string" && condObj.fieldValue.toLowerCase() === "null")
             {
                 if (condObj.operator == "=")
                 {
-                    query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` is null");
+                    query.append("`" + condObj.entityName + "table`.`" + condObj.fieldName + "` is null");
                 }
                 else
                 {
-                    query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "` is not null");
+                    query.append("`" + condObj.entityName + "table`.`" + condObj.fieldName + "` is not null");
                 }
             }
             else
             {
-                query.append("`" + condObj.entity + "table`.`" + condObj.fieldName + "`" + condObj.operator + "?", condObj.fieldValue);
+                query.append("`" + condObj.entityName + "table`.`" + condObj.fieldName + "`" + condObj.operator + "?", condObj.fieldValue);
             }
         }
         else if (condObj instanceof CompoundCondition && condObj.children.length > 0)

@@ -9,15 +9,15 @@ class JoinFactory
      * @param field Foreign key field
      * @returns Join object
      */
-    createForForeignKey(ctx: Context, entity: string, field: string): Join
+    createForForeignKey(ctx: Context, entityName: string, field: string): Join
     {
-        if (!entity || !field)
+        if (!entityName || !field)
             throw "[createForForeignKey] Missing entity/field";
-        if (!ctx.config.entities[entity])
+        if (!ctx.config.entities[entityName])
             throw "[createForForeignKey] invalid entity";
-        if (!ctx.config.entities[entity].fields[field])
+        if (!ctx.config.entities[entityName].fields[field])
             throw "[createForForeignKey] invalid field";
-        const fk = ctx.config.entities[entity].fields[field].foreignKey;
+        const fk = ctx.config.entities[entityName].fields[field].foreignKey;
         const e2 = fk.foreignEntity;
         const e2SelectFields = [];
         const e2SelectFieldObjs = ctx.config.entities[e2].fields;
@@ -31,7 +31,7 @@ class JoinFactory
         }
         const join: Join =
         {
-            e1: entity, 
+            e1: entityName, 
             e2: e2, 
             e2Alias: fk.resolvedKeyName, 
             e1JoinField: field,

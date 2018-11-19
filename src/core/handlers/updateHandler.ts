@@ -29,12 +29,12 @@ class UpdateHandler
         {
             execService.throwError("582e", 400, "bad request");
         }
-        if(ctx.entity === "user" && record.domain !== "local") 
+        if(ctx.entityName === "user" && record.domain !== "local") 
         {
             execService.throwError("511f", 400, "updating external user info is not supported");
         }
-        const condition = conditionFactory.createSingle(ctx.entity, "id", "=", recordId);
-        const dbResponse = await ctx.db.updateAsync(ctx, ctx.entity, updateData, condition);
+        const condition = conditionFactory.createSingle(ctx.entityName, "id", "=", recordId);
+        const dbResponse = await ctx.db.updateAsync(ctx, ctx.entityName, updateData, condition);
         ctx.res.send(dbResponse);
     }
 }

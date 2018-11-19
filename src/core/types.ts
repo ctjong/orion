@@ -11,26 +11,27 @@ export class Error { tag:string; statusCode:number; msg:string; stack?:any };
 // Entities and fields
 
 // type can be "string" / "text" / "int" / "float" / "boolean" / "secret"
-export interface IField { type:string; isEditable:boolean; createReq:number; foreignKey:any };
-export interface IFieldSet { [key:string]:IField };
-export interface IEntity 
+export interface IFieldConfig { type:string; isEditable:boolean; createReq:number; foreignKey:IForeignKeyConfig };
+export interface IFieldSetConfig { [key:string]:IFieldConfig };
+export interface IEntityConfig 
 { 
-    fields: IFieldSet; 
+    fields: IFieldSetConfig; 
     allowedRoles?: {[key:string]:string[]}; unique?:string[]; 
     getReadCondition?: (roles:string[], userId:string)=>string; 
     isWriteAllowed?: (action:string, roles:string[], userId:string, dbResource:any, inputResource:any) => boolean 
 };
-export interface IEntitySet { [key:string]:IEntity };
+export interface IEntitySetConfig { [key:string]:IEntityConfig };
+export interface IForeignKeyConfig { foreignEntity:string; resolvedKeyName:string };
 
 // Contexts
 
 export class UserInfo { tokenExpiry:number; name?:string; roles?:string[]; domain?:string; id?:string; domainId?:string };
-export class Context { config:IConfig; req:any; res:any; entity?:string; user?:UserInfo; db:IDatabaseAdapter; storage?:IStorageAdapter };
+export class Context { config:IConfig; req:any; res:any; entityName?:string; user?:UserInfo; db:IDatabaseAdapter; storage?:IStorageAdapter };
 
 // Conditions
 
 export interface ICondition { isCompound:boolean; operator:string; findConditionValue:((key:string)=>string) };
-export class SingleCondition implements ICondition { isCompound:boolean = false; operator:string; fieldName:string; fieldValue:string; entity:string; findConditionValue:((key:string)=>string) };
+export class SingleCondition implements ICondition { isCompound:boolean = false; operator:string; fieldName:string; fieldValue:string; entityName:string; findConditionValue:((key:string)=>string) };
 export class CompoundCondition implements ICondition { isCompound:boolean = true; operator:string; children:ICondition[]; findConditionValue:((key:string)=>string) };
 
 // Configs
@@ -41,4 +42,4 @@ export interface IStorageConfig { provider:string; azureStorageConnectionString?
 export interface IPasswordConfig { minLength:number; uppercaseChar:boolean; lowercaseChar:boolean; digitChar:boolean; specialChar:boolean; };
 export interface IAuthConfig { secretKey:string; salt?:string; tokenLifetimeInMins?:number; passwordReqs?:IPasswordConfig; };
 export interface IMonitoringConfig { appInsightsKey:string; };
-export interface IConfig { database:IDatabaseConfig; storage?:IStorageConfig; auth?:IAuthConfig; monitoring?:IMonitoringConfig; entities:IEntitySet; };
+export interface IConfig { database:IDatabaseConfig; storage?:IStorageConfig; auth?:IAuthConfig; monitoring?:IMonitoringConfig; entities:IEntitySetConfig; };

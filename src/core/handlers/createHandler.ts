@@ -31,15 +31,15 @@ class CreateHandler
         const fieldValues:string[] = requestFields.values;
 
         // execute query
-        if(ctx.entity === "user")
+        if(ctx.entityName === "user")
         {
             await this.verifyUsernameNotExistAsync(ctx, requestBody.username);
-            const insertedId = await ctx.db.insertAsync(ctx, ctx.entity, fieldNames, fieldValues);
+            const insertedId = await ctx.db.insertAsync(ctx, ctx.entityName, fieldNames, fieldValues);
             ctx.res.send(insertedId.toString());
         }
         else
         {
-            const insertedId = await ctx.db.insertAsync(ctx, ctx.entity, fieldNames, fieldValues);
+            const insertedId = await ctx.db.insertAsync(ctx, ctx.entityName, fieldNames, fieldValues);
             try
             {
                 ctx.res.send(insertedId.toString());
@@ -55,7 +55,7 @@ class CreateHandler
      */
     private getConfigFields (ctx:Context): any
     {
-        const allFields = ctx.config.entities[ctx.entity].fields;
+        const allFields = ctx.config.entities[ctx.entityName].fields;
         const requiredFields = [];
         const optionalFields = [];
         for(const fieldName in allFields)
@@ -91,7 +91,7 @@ class CreateHandler
                 execService.throwError("86c5", 400, "missing required field " + requiredFields[i]);
             }
         }
-        if(ctx.entity === "user") 
+        if(ctx.entityName === "user") 
         {
             authService.verifyAuthSupported(ctx);
             if(requestBody.password !== requestBody.confirmpassword)
@@ -126,7 +126,7 @@ class CreateHandler
             fieldNames.push(optionalFields[i]);
             fieldValues.push(requestBody[optionalFields[i]]);
         }
-        if(ctx.entity === "user")
+        if(ctx.entityName === "user")
         {
             fieldNames.push("roles");
             fieldValues.push("member");

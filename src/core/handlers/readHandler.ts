@@ -43,8 +43,8 @@ class ReadHandler
 
         // execute
         const fields = helperService.getFields(ctx, "read");
-        const count = await ctx.db.countAsync(ctx, ctx.entity, condition);
-        const dbResponse = await ctx.db.selectAsync(ctx, fields, ctx.entity, condition, orderByField, skip, take, true, isFullMode);
+        const count = await ctx.db.countAsync(ctx, ctx.entityName, condition);
+        const dbResponse = await ctx.db.selectAsync(ctx, fields, ctx.entityName, condition, orderByField, skip, take, true, isFullMode);
         for(let i=0; i<dbResponse.length; i++)
         {
             dbResponse[i] = helperService.fixDataKeysAndTypes(ctx, dbResponse[i]);
@@ -59,7 +59,7 @@ class ReadHandler
      */
     private getConditionStringFromConfig(ctx:Context): string
     {
-        const entityConfig = ctx.config.entities[ctx.entity];
+        const entityConfig = ctx.config.entities[ctx.entityName];
         if (!entityConfig.getReadCondition)
             return "";
         return entityConfig.getReadCondition(ctx.user.roles, ctx.user.id);
@@ -84,12 +84,12 @@ class ReadHandler
         }
         else if(requestParams.id)
         {
-            condition.children.push(conditionFactory.createSingle(ctx.entity, "id", "=", requestParams.id));
+            condition.children.push(conditionFactory.createSingle(ctx.entityName, "id", "=", requestParams.id));
         }
         if(isPrivate)
         {
-            const fieldName = ctx.entity === "user" ? "id" : "ownerid";
-            condition.children.push(conditionFactory.createSingle(ctx.entity, fieldName, "=", ctx.user.id));
+            const fieldName = ctx.entityName === "user" ? "id" : "ownerid";
+            condition.children.push(conditionFactory.createSingle(ctx.entityName, fieldName, "=", ctx.user.id));
         }
         return condition;
     }

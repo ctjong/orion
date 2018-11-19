@@ -1,5 +1,5 @@
-import { IConfig, IEntity, Context, UserInfo } from '../types';
-import { defaultFields, defaultEntities } from '../defaultConfig';
+import { IConfig, IEntityConfig, Context, UserInfo } from '../types';
+import { defaultFieldsConfig, defaultEntitiesConfig } from '../defaultConfig';
 import { IDatabaseAdapter } from '../database/iDatabaseAdapter';
 import { IStorageAdapter } from '../storage/iStorageAdapter';
 
@@ -22,25 +22,25 @@ export class ContextFactory
         // merge defaultFields into the this.config
         for (const entityName in this.config.entities)
         {
-            if (!this.config.entities.hasOwnProperty(entityName) || defaultEntities[entityName])
+            if (!this.config.entities.hasOwnProperty(entityName) || defaultFieldsConfig[entityName])
                 continue;
-            this.config.entities[entityName].fields = Object.assign({}, defaultFields, this.config.entities[entityName].fields);
+            this.config.entities[entityName].fields = Object.assign({}, defaultFieldsConfig, this.config.entities[entityName].fields);
         }
 
         // merge defaultEntities into the this.config
-        for (const defaultEntityName in defaultEntities)
+        for (const defaultEntityName in defaultFieldsConfig)
         {
-            if (!defaultEntities.hasOwnProperty(defaultEntityName))
+            if (!defaultFieldsConfig.hasOwnProperty(defaultEntityName))
                 continue;
-            const defaultEntity = defaultEntities[defaultEntityName];
+            const defaultEntityConfig = defaultEntitiesConfig[defaultEntityName];
             if(this.config.entities[defaultEntityName])
             {
-                const entityClone:IEntity = JSON.parse(JSON.stringify(defaultEntity));
-                this.config.entities[defaultEntityName] = entityClone;
+                const entityConfigClone:IEntityConfig = JSON.parse(JSON.stringify(defaultEntityConfig));
+                this.config.entities[defaultEntityName] = entityConfigClone;
             }
             else
             {
-                this.config.entities[defaultEntityName] = defaultEntity;
+                this.config.entities[defaultEntityName] = defaultEntityConfig;
             }
         }
     }
@@ -49,10 +49,10 @@ export class ContextFactory
      * Construct a new Context object. This should be done at the beginning of each session.
      * @param req request object
      * @param res response object
-     * @param entity entity name
+     * @param entityName entity name
      * @returns context object
      */
-    create(req:any, res:any, entity:string, db:IDatabaseAdapter, storage:IStorageAdapter) : Context
+    create(req:any, res:any, entityName:string, db:IDatabaseAdapter, storage:IStorageAdapter) : Context
     {
         const context: Context = new Context();
         context.config = this.config;
@@ -61,10 +61,10 @@ export class ContextFactory
         context.user = new UserInfo();
         context.db = db;
         context.storage = storage;
-        context.entity = entity;
+        context.entityName = entityName;
 
-        if (entity !== "error" && !this.config.entities[entity])
-            throw { "tag": "1a83", "statusCode": 400, "msg": "invalid entity " + entity };
+        if (entityName !== "error" && !this.config.entities[entityName])
+            throw { "tag": "1a83", "statusCode": 400, "msg": "invalid entity " + entityName };
 
         return context;
     }

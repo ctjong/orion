@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as fs from 'fs';
-import { IConfig, IEntity } from '../core/types';
+import { IConfig, IEntityConfig } from '../core/types';
 
 let engine:string;
 let  outputPath:string;
@@ -62,17 +62,17 @@ const processConfig = (config:IConfig) =>
         nm("url") + " VARCHAR (255) NOT NULL, " + nm("timestamp") + " BIGINT NOT NULL);\n";
     for(const entityName in config.entities)
     {
-        const entity:IEntity = config.entities[entityName];
+        const entityConfig:IEntityConfig = config.entities[entityName];
         if(!config.entities.hasOwnProperty(entityName))
             continue;
         dropTableStr += drop(entityName + "table");
         createTableStr += "CREATE TABLE " + entityName + "table (\n";
         let fieldsStr = "";
-        for(const fieldName in entity.fields)
+        for(const fieldName in entityConfig.fields)
         {
             if(fieldsStr !== "")
                 fieldsStr += ",\n";
-            const field = entity.fields[fieldName];
+            const field = entityConfig.fields[fieldName];
             const fieldType = field.type;
             fieldsStr += nm(fieldName) + " ";
             if(fieldType === "id")
@@ -109,15 +109,15 @@ const processConfig = (config:IConfig) =>
             }
         }
         createTableStr += fieldsStr;
-        if(!entity.unique)
+        if(!entityConfig.unique)
         {
             createTableStr += "\n);\n";
         }
         else
         {
             let uniqueStr = "";
-            for(let i=0; i<entity.unique.length; i++)
-                uniqueStr += (uniqueStr === "" ? "" : ",") + nm(entity.unique[i]);
+            for(let i=0; i<entityConfig.unique.length; i++)
+                uniqueStr += (uniqueStr === "" ? "" : ",") + nm(entityConfig.unique[i]);
             createTableStr += ",\nUNIQUE (" + uniqueStr + ")\n);\n";
         }
     }

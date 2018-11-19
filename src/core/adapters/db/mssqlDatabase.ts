@@ -321,22 +321,22 @@ export class MssqlDatabase implements IDatabaseAdapter
             }
             else if (singleCond.operator === "~")
             {
-                query.append("[" + singleCond.entity + "table].[" + singleCond.fieldName + "] like ?", "%" + singleCond.fieldValue + "%");
+                query.append("[" + singleCond.entityName + "table].[" + singleCond.fieldName + "] like ?", "%" + singleCond.fieldValue + "%");
             }
             else if (typeof (singleCond.fieldValue) === "string" && singleCond.fieldValue.toLowerCase() === "null")
             {
                 if (singleCond.operator == "=")
                 {
-                    query.append("[" + singleCond.entity + "table].[" + singleCond.fieldName + "] is null");
+                    query.append("[" + singleCond.entityName + "table].[" + singleCond.fieldName + "] is null");
                 }
                 else
                 {
-                    query.append("[" + singleCond.entity + "table].[" + singleCond.fieldName + "] is not null");
+                    query.append("[" + singleCond.entityName + "table].[" + singleCond.fieldName + "] is not null");
                 }
             }
             else
             {
-                query.append("[" + singleCond.entity + "table].[" + singleCond.fieldName + "]" + singleCond.operator + "?", singleCond.fieldValue);
+                query.append("[" + singleCond.entityName + "table].[" + singleCond.fieldName + "]" + singleCond.operator + "?", singleCond.fieldValue);
             }
         }
         else if (condObj.isCompound)

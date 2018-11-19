@@ -42,11 +42,11 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
 
         Object.keys(config.entities).forEach(entityName =>
         {
-            const entity = config.entities[entityName];
+            const entityConfig = config.entities[entityName];
             const modelDef: INameValueMap = {};
-            Object.keys(entity.fields).forEach(fieldName =>
+            Object.keys(entityConfig.fields).forEach(fieldName =>
             {
-                const field = entity.fields[fieldName];
+                const field = entityConfig.fields[fieldName];
                 modelDef[fieldName] = { type: typeMap[field.type] };
             });
             this.models[entityName] = this.sequelize.define(entityName, modelDef);
@@ -58,26 +58,26 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      * Quick find a record based on the given condition
      * @param ctx Request context
      * @param fields Requested fields
-     * @param entity Requested entity
+     * @param entityName Requested entity
      * @param conditionMap Search condition
      * @returns query results
      */
-    async quickFindAsync(ctx: Context, fields: string[], entity: string, conditionMap: INameValueMap): Promise<any>
+    async quickFindAsync(ctx: Context, fields: string[], entityName: string, conditionMap: INameValueMap): Promise<any>
     {
         const condition = conditionFactory.createCompound("&", []);
         for (const key in conditionMap)
         {
             if (!conditionMap.hasOwnProperty(key)) continue;
-            condition.children.push(conditionFactory.createSingle(entity, key, "=", conditionMap[key]));
+            condition.children.push(conditionFactory.createSingle(entityName, key, "=", conditionMap[key]));
         }
-        return this.selectAsync(ctx, fields, entity, condition, "id", 0, 1, false, false);
+        return this.selectAsync(ctx, fields, entityName, condition, "id", 0, 1, false, false);
     }
 
     /**
      * Find records that match the given condition
      * @param ctx Request context
      * @param fields Requested fields
-     * @param entity Requested entity
+     * @param entityName Requested entity
      * @param condition Search condition
      * @param orderByField Field to order the results by
      * @param skip Number of matches to skip
@@ -86,12 +86,12 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    async selectAsync(ctx: Context, fields: string[], entity: string, condition: ICondition, orderByField: string, skip: number, take: number, resolveFK: boolean, isFullMode: boolean): Promise<any>
+    async selectAsync(ctx: Context, fields: string[], entityName: string, condition: ICondition, orderByField: string, skip: number, take: number, resolveFK: boolean, isFullMode: boolean): Promise<any>
     {
         if (fields.length === 0)
             return null;
 
-        const joins = resolveFK ? this.getJoins(ctx, fields, entity) : [];
+        const joins = resolveFK ? this.getJoins(ctx, fields, entityName) : [];
         console.log(joins);
         const fieldsToSelect: string[] = [];
         fields.forEach(fieldName =>
@@ -101,9 +101,9 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         });
 
         /*
-        const joins = resolveFK ? this.getJoins(ctx, fields, entity) : [];
+        const joins = resolveFK ? this.getJoins(ctx, fields, entityName) : [];
         const query = new Query();
-        const tableName = entity + "table";
+        const tableName = entityName + "table";
 
         const fieldsToSelect: string[] = [];
         fields.forEach(fieldName =>
@@ -112,9 +112,9 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
                 fieldsToSelect.push(fieldName);
         });
 
-        query.append(`select [${entity}table].[${fieldsToSelect[0]}]`);
+        query.append(`select [${entityName}table].[${fieldsToSelect[0]}]`);
         for (let i = 1; i < fieldsToSelect.length; i++)
-            query.append(`, [${entity}table].[${fieldsToSelect[i]}]`);
+            query.append(`, [${entityName}table].[${fieldsToSelect[i]}]`);
         for (let i = 0; i < joins.length; i++)
             query.append(`, ${this.getSelectExpression(joins[i])}`);
         query.append(` from [${tableName}]`);
@@ -124,42 +124,42 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         this.appendWhereClause(query, condition);
         orderByField = decodeURIComponent(orderByField);
         if (orderByField.indexOf("~") === 0)
-            query.append(` order by [${entity}table].[${orderByField.substring(1)}] desc `);
+            query.append(` order by [${entityName}table].[${orderByField.substring(1)}] desc `);
         else
-            query.append(` order by [${entity}table].[${orderByField}] `);
+            query.append(` order by [${entityName}table].[${orderByField}] `);
         query.append(" OFFSET (?) ROWS FETCH NEXT (?) ROWS ONLY", skip.toString(), take.toString());
 
         return this.executeAsync(ctx, query);
         */
 
         const transaction = await this.sequelize.transaction();
-        const model = this.models[entity];
+        const model = this.models[entityName];
         // const where = {};
 
         return model.findOne({ attributes:fields, transaction });
     }
 
-    findRecordByIdAsync(ctx: Context, entity: string, recordId: string): Promise<any>
+    findRecordByIdAsync(ctx: Context, entityName: string, recordId: string): Promise<any>
     {
         throw new Error("Method not implemented.");
     }
 
-    countAsync(ctx: Context, entity: string, condition: ICondition): Promise<any>
+    countAsync(ctx: Context, entityName: string, condition: ICondition): Promise<any>
     {
         throw new Error("Method not implemented.");
     }
 
-    insertAsync(ctx: Context, entity: string, fieldNames: string[], fieldValues: string[]): Promise<any>
+    insertAsync(ctx: Context, entityName: string, fieldNames: string[], fieldValues: string[]): Promise<any>
     {
         throw new Error("Method not implemented.");
     }
 
-    updateAsync(ctx: Context, entity: string, updateData: INameValueMap, condition: ICondition): Promise<any>
+    updateAsync(ctx: Context, entityName: string, updateData: INameValueMap, condition: ICondition): Promise<any>
     {
         throw new Error("Method not implemented.");
     }
 
-    deleteRecordAsync(ctx: Context, entity: string, id: string): Promise<any>
+    deleteRecordAsync(ctx: Context, entityName: string, id: string): Promise<any>
     {
         throw new Error("Method not implemented.");
     }
@@ -168,20 +168,20 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      * Get Join objects to resolve foreign keys
      * @param ctx Request context
      * @param fields Fields in the requested entity
-     * @param entity Requested entity
+     * @param entityName Requested entity
      * @returns an array of Joins
      */
-    private getJoins(ctx: Context, fields: string[], entity: string): Join[]
+    private getJoins(ctx: Context, fields: string[], entityName: string): Join[]
     {
         const joins = [];
-        const ctxFields = ctx.config.entities[entity].fields;
+        const ctxFields = ctx.config.entities[entityName].fields;
         for (let f = 0; f < fields.length; f++)
         {
             const fldName = fields[f];
             const fieldObj = ctxFields[fldName];
             if (fieldObj.foreignKey) 
             {
-                joins.push(joinFactory.createForForeignKey(ctx, entity, fldName));
+                joins.push(joinFactory.createForForeignKey(ctx, entityName, fldName));
             }
         }
         return joins;

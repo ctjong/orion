@@ -151,45 +151,45 @@ export default class Orion
     /**
      * Find a record by id
      * @param originalReq original request context where app is called from
-     * @param entity target entity of the read operation
+     * @param entityName target entity of the read operation
      * @param id record id
      * @returns query results
      */
-    findByIdAsync(originalReq:any, entity:string, id:string): Promise<any>
+    findByIdAsync(originalReq:any, entityName:string, id:string): Promise<any>
     {
         const params = { accessType: "public", id: id };
-        return this.executeDirectReadAsync(originalReq, entity, params, true);
+        return this.executeDirectReadAsync(originalReq, entityName, params, true);
     }
 
     /**
      * Find a record by condition
      * @param originalReq original request context where app is called from
-     * @param entity target entity of the read operation
+     * @param entityName target entity of the read operation
      * @param orderByField field name to order the results by
      * @param skip number of records to skip (for pagination)
      * @param take number of records to take (for pagination)
      * @param condition condition string
      * @returns query results
      */
-    findByConditionAsync(originalReq:any, entity:string, orderByField:string, skip:number, take:number, condition:any): Promise<any>
+    findByConditionAsync(originalReq:any, entityName:string, orderByField:string, skip:number, take:number, condition:any): Promise<any>
     {
         const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take, condition: condition };
-        return this.executeDirectReadAsync(originalReq, entity, params, false);
+        return this.executeDirectReadAsync(originalReq, entityName, params, false);
     }
 
     /**
      * Get all records for the specified entity
      * @param originalReq original request context where app is called from
-     * @param entity target entity of the read operation
+     * @param entityName target entity of the read operation
      * @param orderByField field name to order the results by
      * @param skip number of records to skip (for pagination)
      * @param take number of records to take (for pagination)
      * @returns query results
      */
-    findAllAsync(originalReq:any, entity:string, orderByField:string, skip:number, take:number): Promise<any>
+    findAllAsync(originalReq:any, entityName:string, orderByField:string, skip:number, take:number): Promise<any>
     {
         const params = { accessType: "public", orderByField: orderByField, skip: skip, take: take };
-        return this.executeDirectReadAsync(originalReq, entity, params, false);
+        return this.executeDirectReadAsync(originalReq, entityName, params, false);
     }
 
     /**
@@ -296,11 +296,11 @@ export default class Orion
     /**
      * Execute a direct read operation, a read operation that is triggered from the server.
      * @param originalReq origianl request context where the read operation is triggered
-     * @param entity target entity of the read operation
+     * @param entityName target entity of the read operation
      * @param params read action parameters
      * @param isFullMode whether or not the read result should be returned in long form
      */
-    async executeDirectReadAsync(originalReq:any, entity:string, params:any, isFullMode:boolean): Promise<any>
+    async executeDirectReadAsync(originalReq:any, entityName:string, params:any, isFullMode:boolean): Promise<any>
     {
         let response:any = null;
         const res:any = {};
@@ -320,7 +320,7 @@ export default class Orion
         res.json = res.send;
 
         const req:any = { method: "GET", originalUrl: originalReq.originalUrl };
-        req.context = this.contextFactory.create(req, res, entity, this.db, this.storage);
+        req.context = this.contextFactory.create(req, res, entityName, this.db, this.storage);
 
         await readHandler.executeAsync(req.context, params, isFullMode).catch(err => execService.handleErrorAsync(err, req, res, this.db));
         return response;
