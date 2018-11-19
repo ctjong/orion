@@ -1,13 +1,13 @@
-import { IFieldSetConfig, IEntitySetConfig } from "./types";
+import { IFieldConfigSet, IEntityConfigSet } from "./types";
 
-const defaultFieldsConfig : IFieldSetConfig =
+const defaultFieldConfigSet : IFieldConfigSet =
 {
     "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
     "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
     "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
 };
 
-const defaultEntitiesConfig : IEntitySetConfig =
+const defaultEntityConfigSet : IEntityConfigSet =
 {
     "asset":
     {
@@ -50,4 +50,4 @@ const defaultEntitiesConfig : IEntitySetConfig =
     },
 };
 
-export { defaultFieldsConfig, defaultEntitiesConfig };
+export { defaultFieldConfigSet, defaultEntityConfigSet };

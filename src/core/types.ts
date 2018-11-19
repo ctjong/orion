@@ -12,15 +12,15 @@ export class Error { tag:string; statusCode:number; msg:string; stack?:any };
 
 // type can be "string" / "text" / "int" / "float" / "boolean" / "secret"
 export interface IFieldConfig { type:string; isEditable:boolean; createReq:number; foreignKey:IForeignKeyConfig };
-export interface IFieldSetConfig { [key:string]:IFieldConfig };
+export interface IFieldConfigSet { [key:string]:IFieldConfig };
 export interface IEntityConfig 
 { 
-    fields: IFieldSetConfig; 
+    fields: IFieldConfigSet; 
     allowedRoles?: {[key:string]:string[]}; unique?:string[]; 
     getReadCondition?: (roles:string[], userId:string)=>string; 
     isWriteAllowed?: (action:string, roles:string[], userId:string, dbResource:any, inputResource:any) => boolean 
 };
-export interface IEntitySetConfig { [key:string]:IEntityConfig };
+export interface IEntityConfigSet { [key:string]:IEntityConfig };
 export interface IForeignKeyConfig { foreignEntity:string; resolvedKeyName:string };
 
 // Contexts
@@ -42,4 +42,4 @@ export interface IStorageConfig { provider:string; azureStorageConnectionString?
 export interface IPasswordConfig { minLength:number; uppercaseChar:boolean; lowercaseChar:boolean; digitChar:boolean; specialChar:boolean; };
 export interface IAuthConfig { secretKey:string; salt?:string; tokenLifetimeInMins?:number; passwordReqs?:IPasswordConfig; };
 export interface IMonitoringConfig { appInsightsKey:string; };
-export interface IConfig { database:IDatabaseConfig; storage?:IStorageConfig; auth?:IAuthConfig; monitoring?:IMonitoringConfig; entities:IEntitySetConfig; };
+export interface IConfig { database:IDatabaseConfig; storage?:IStorageConfig; auth?:IAuthConfig; monitoring?:IMonitoringConfig; entities:IEntityConfigSet; };

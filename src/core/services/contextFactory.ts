@@ -1,5 +1,5 @@
 import { IConfig, IEntityConfig, Context, UserInfo } from '../types';
-import { defaultFieldsConfig, defaultEntitiesConfig } from '../defaultConfig';
+import { defaultFieldConfigSet, defaultEntityConfigSet } from '../defaultConfig';
 import { IDatabaseAdapter } from '../database/iDatabaseAdapter';
 import { IStorageAdapter } from '../storage/iStorageAdapter';
 
@@ -22,17 +22,17 @@ export class ContextFactory
         // merge defaultFields into the this.config
         for (const entityName in this.config.entities)
         {
-            if (!this.config.entities.hasOwnProperty(entityName) || defaultFieldsConfig[entityName])
+            if (!this.config.entities.hasOwnProperty(entityName) || defaultEntityConfigSet[entityName])
                 continue;
-            this.config.entities[entityName].fields = Object.assign({}, defaultFieldsConfig, this.config.entities[entityName].fields);
+            this.config.entities[entityName].fields = Object.assign({}, defaultFieldConfigSet, this.config.entities[entityName].fields);
         }
 
         // merge defaultEntities into the this.config
-        for (const defaultEntityName in defaultFieldsConfig)
+        for (const defaultEntityName in defaultEntityConfigSet)
         {
-            if (!defaultFieldsConfig.hasOwnProperty(defaultEntityName))
+            if (!defaultEntityConfigSet.hasOwnProperty(defaultEntityName))
                 continue;
-            const defaultEntityConfig = defaultEntitiesConfig[defaultEntityName];
+            const defaultEntityConfig = defaultEntityConfigSet[defaultEntityName];
             if(this.config.entities[defaultEntityName])
             {
                 const entityConfigClone:IEntityConfig = JSON.parse(JSON.stringify(defaultEntityConfig));
