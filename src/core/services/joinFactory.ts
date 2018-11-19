@@ -18,7 +18,7 @@ class JoinFactory
         if (!ctx.config.entities[entityName].fields[field])
             throw "[createForForeignKey] invalid field";
         const fk = ctx.config.entities[entityName].fields[field].foreignKey;
-        const e2 = fk.foreignEntity;
+        const e2 = fk.targetEntityName;
         const e2SelectFields = [];
         const e2SelectFieldObjs = ctx.config.entities[e2].fields;
         for (const key in e2SelectFieldObjs)

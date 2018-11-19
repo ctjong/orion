@@ -184,7 +184,7 @@ class HelperService
      */
     async resolveForeignKeyAsync(ctx: Context, requestBody: INameValueMap, fieldName: string, fk: any): Promise<any>
     {
-        const record = await ctx.db.findRecordByIdAsync(ctx, fk.foreignEntity, requestBody[fieldName]);
+        const record = await ctx.db.findRecordByIdAsync(ctx, fk.targetEntityName, requestBody[fieldName]);
         requestBody[fk.resolvedKeyName] = this.fixDataKeysAndTypes(ctx, record);
     }
 

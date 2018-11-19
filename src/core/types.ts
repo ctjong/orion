@@ -21,7 +21,7 @@ export interface IEntityConfig
     isWriteAllowed?: (action:string, roles:string[], userId:string, dbResource:any, inputResource:any) => boolean 
 };
 export interface IEntityConfigSet { [key:string]:IEntityConfig };
-export interface IForeignKeyConfig { foreignEntity:string; resolvedKeyName:string };
+export interface IForeignKeyConfig { targetEntityName:string; resolvedKeyName:string; isManyToMany:boolean; };
 
 // Contexts
 

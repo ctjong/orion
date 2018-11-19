@@ -40,18 +40,8 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         this.sequelize = new Sequelize(config.database.connectionString);
         this.wrapper = wrapper ? wrapper : new SqlQueryWrapper();
 
-        Object.keys(config.entities).forEach(entityName =>
-        {
-            const entityConfig = config.entities[entityName];
-            const modelDef: INameValueMap = {};
-            Object.keys(entityConfig.fields).forEach(fieldName =>
-            {
-                const field = entityConfig.fields[fieldName];
-                modelDef[fieldName] = { type: typeMap[field.type] };
-            });
-            this.models[entityName] = this.sequelize.define(entityName, modelDef);
-            this.models[entityName].sync();
-        });
+        this.initializeModels(config);
+        this.initializeForeignKeys(config);
     }
 
     /**
@@ -136,7 +126,7 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         const model = this.models[entityName];
         // const where = {};
 
-        return model.findOne({ attributes:fields, transaction });
+        return model.findOne({ attributes: fields, transaction });
     }
 
     findRecordByIdAsync(ctx: Context, entityName: string, recordId: string): Promise<any>
@@ -162,6 +152,53 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
     deleteRecordAsync(ctx: Context, entityName: string, id: string): Promise<any>
     {
         throw new Error("Method not implemented.");
+    }
+
+    /**
+     * Initialize the data models
+     * @param config configuration object
+     */
+    private initializeModels(config: IConfig)
+    {
+        Object.keys(config.entities).forEach(entityName =>
+        {
+            const entityConfig = config.entities[entityName];
+            const modelDef: INameValueMap = {};
+            Object.keys(entityConfig.fields).forEach(fieldName =>
+            {
+                const fieldConfig = entityConfig.fields[fieldName];
+                modelDef[fieldName] = { type: typeMap[fieldConfig.type] };
+            });
+            this.models[entityName] = this.sequelize.define(entityName, modelDef);
+            this.models[entityName].sync();
+        });
+    }
+
+    /**
+     * Initialize the foreign key relationships in the data models
+     * @param config configuration object
+     */
+    private initializeForeignKeys(config: IConfig)
+    {
+        Object.keys(config.entities).forEach(entityName =>
+        {
+            const entityConfig = config.entities[entityName];
+            Object.keys(entityConfig.fields).forEach(fieldName =>
+            {
+                const fieldConfig = entityConfig.fields[fieldName];
+                if (!fieldConfig.foreignKey)
+                    return;
+
+                const targetName = fieldConfig.foreignKey.targetEntityName;
+                if (!fieldConfig.foreignKey.isManyToMany)
+                    this.models[entityName].belongsTo(this.models[targetName], { foreignKey: fieldName });
+                else
+                {
+                    const mapTableName = targetName < entityName ? `${targetName}_${entityName}` : `${entityName}_${targetName}`;
+                    this.models[entityName].belongsToMany(this.models[targetName], { through: mapTableName });
+                }
+            });
+        })
     }
 
     /**
