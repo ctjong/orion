@@ -27,8 +27,11 @@ module.exports =
 {
     database:
     {
-        engine: "mssql",
-        connectionString: _DATABASE_CONNECTION_STRING_
+        dialect: "mssql",
+        host: _DATABASE_HOST_,
+        name: _DATABASE_NAME_,
+        userName: _DATABASE_USERNAME_,
+        password: _DATABASE_PASSWORD_
     },
     entities:
     {

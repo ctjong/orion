@@ -16,8 +16,11 @@ A configuration module is required to give the application the necessary informa
 
 Below is the list of settings to be included in a configuration module:
 - **database** - (Required) Database configuration
-    - **engine** - (Required) Database engine to use (mssql/mysql).
-    - **connectionString** - (Required) Connection string to connect with database
+    - **dialect** - (Required) Database dialect to use (mssql/mysql).
+    - **host** - (Required) Database host.
+    - **name** - (Required) Database name.
+    - **userName** - (Required) Username to connect to the database.
+    - **password** - (Required) Password to connect to the database.
 - **auth** - (Optional) Authentication configuration. Required if you want to enable authentication.
     - **secretKey** - (Required) Secret key for token encryption.
     - **salt** - (Optional) Salt string for password encryption. Required if you want to support Orion JWT authentication.

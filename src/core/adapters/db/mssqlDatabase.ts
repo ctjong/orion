@@ -4,7 +4,7 @@ import { execService } from "../../services/execService";
 import { helperService } from "../../services/helperService";
 import { joinFactory } from "../../services/joinFactory";
 import { MssqlQuery as Query } from "./mssqlQuery";
-import * as mssql from "mssql";
+// import * as mssql from "mssql";
 
 export class MssqlDatabase 
 {
@@ -19,15 +19,15 @@ export class MssqlDatabase
     {
         if (pool)
             this.pool = pool;
-        else
-        {
-            this.pool = new mssql.ConnectionPool(config.database.connectionString, (err: any) =>
-            {
-                if (err)
-                    throw "error while connecting to database";
-                this.pool.sql = mssql;
-            });
-        }
+        // else
+        // {
+        //     this.pool = new mssql.ConnectionPool(config.database.connectionString, (err: any) =>
+        //     {
+        //         if (err)
+        //             throw "error while connecting to database";
+        //         this.pool.sql = mssql;
+        //     });
+        // }
     }
 
     /**

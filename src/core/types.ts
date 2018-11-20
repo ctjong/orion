@@ -36,7 +36,7 @@ export class CompoundCondition implements ICondition { isCompound:boolean = true
 
 // Configs
 
-export interface IDatabaseConfig { engine:string; connectionString:string; };
+export interface IDatabaseConfig { dialect:string; host:string; name:string; userName:string; password:string; };
 export interface IStorageConfig { provider:string; azureStorageConnectionString?:string; azureStorageContainerName?:string; awsAccessKeyId?:string; 
     awsSecretAccessKey?:string; s3Bucket?:string; uploadPath?:string; };
 export interface IPasswordConfig { minLength:number; uppercaseChar:boolean; lowercaseChar:boolean; digitChar:boolean; specialChar:boolean; };

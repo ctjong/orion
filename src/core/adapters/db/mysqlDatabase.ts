@@ -4,7 +4,7 @@ import { conditionFactory } from "../../services/conditionFactory";
 import { joinFactory } from "../../services/joinFactory";
 import { execService } from "../../services/execService";
 import { helperService } from "../../services/helperService";
-import * as mysql from "mysql";
+// import * as mysql from "mysql";
 
 interface IQueryResponse { error:any, results:any };
 
@@ -25,28 +25,28 @@ export class MysqlDatabase
     {
         if(pool)
             this.pool = pool;
-        else
-        {
-            // there is an issue with creating mysql connection based on connection string.
-            // so we have to convert the string into a connection properties object.
-            const connString = config.database.connectionString;
-            const connStringParts = connString.split(";");
-            const connProps:INameValueMap = {};
-            for (let i = 0; i < connStringParts.length; i++)
-            {
-                const connPropTokens = connStringParts[i].split('=');
-                connProps[connPropTokens[0]] = connPropTokens[1];
-            }
-            this.pool = mysql.createPool(
-                {
-                    host: connProps.Server,
-                    user: connProps.Uid,
-                    password: connProps.Pwd,
-                    database: connProps.Database,
-                    multipleStatements: true
-                });
-            this.pool.sql = mysql;
-        }
+        // else
+        // {
+        //     // there is an issue with creating mysql connection based on connection string.
+        //     // so we have to convert the string into a connection properties object.
+        //     const connString = config.database.connectionString;
+        //     const connStringParts = connString.split(";");
+        //     const connProps:INameValueMap = {};
+        //     for (let i = 0; i < connStringParts.length; i++)
+        //     {
+        //         const connPropTokens = connStringParts[i].split('=');
+        //         connProps[connPropTokens[0]] = connPropTokens[1];
+        //     }
+        //     this.pool = mysql.createPool(
+        //         {
+        //             host: connProps.Server,
+        //             user: connProps.Uid,
+        //             password: connProps.Pwd,
+        //             database: connProps.Database,
+        //             multipleStatements: true
+        //         });
+        //     this.pool.sql = mysql;
+        // }
     }
 
     /**

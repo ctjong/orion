@@ -5,7 +5,7 @@ import { INameValueMap } from "../../core/types";
  */
 export class MockConnectionPool
 {
-    engine: string;
+    dialect: string;
     queryResults: any;
     queryReceivedHandler: any;
 
@@ -15,9 +15,9 @@ export class MockConnectionPool
             Request: MssqlRequest
         };
 
-    constructor(engine: string)
+    constructor(dialect: string)
     {
-        this.engine = engine;
+        this.dialect = dialect;
         this.queryResults = [];
         this.queryReceivedHandler = null;
     }
@@ -30,7 +30,7 @@ export class MockConnectionPool
      */
     query(queryString: string, queryParams: INameValueMap, callback: any): void
     {
-        this.processQuery(this.engine, queryString, queryParams, callback);
+        this.processQuery(this.dialect, queryString, queryParams, callback);
     }
 
     /**
@@ -63,15 +63,15 @@ export class MockConnectionPool
      * Process a query.
      * Note that this is using the old callback argument style instead of Promise because the purpose
      * of this function is to override the the library functions, which are not returning a Promise.
-     * @param engine engine
+     * @param dialect dialect
      * @param queryString query string
      * @param queryParams query parameters
      * @param callback callback function
      */
-    processQuery(engine: string, queryString: string, queryParams: INameValueMap, callback: any): void
+    processQuery(dialect: string, queryString: string, queryParams: INameValueMap, callback: any): void
     {
         if (this.queryReceivedHandler)
-            this.queryReceivedHandler(queryString, queryParams, engine);
+            this.queryReceivedHandler(queryString, queryParams, dialect);
         queryString = queryString.toLowerCase();
 
         let currentQueryResults = this.queryResults;
@@ -81,7 +81,7 @@ export class MockConnectionPool
             currentQueryResults = { "lastinsertedid": "1" };
         if (typeof currentQueryResults.lastinsertedid !== "undefined")
         {
-            if (engine === "mssql")
+            if (dialect === "mssql")
                 currentQueryResults = [{ "identity": currentQueryResults.lastinsertedid }];
             else
                 currentQueryResults = { "insertId": currentQueryResults.lastinsertedid };
@@ -89,13 +89,13 @@ export class MockConnectionPool
 
         if (typeof currentQueryResults.count !== "undefined")
         {
-            if (engine === "mssql")
+            if (dialect === "mssql")
                 currentQueryResults = [{ "": currentQueryResults.count }];
             else
                 currentQueryResults = [{ "count": currentQueryResults.count }];
         }
 
-        if (engine === "mssql")
+        if (dialect === "mssql")
             callback(null, { recordset: currentQueryResults });
         else
             callback(null, currentQueryResults, []);
@@ -122,6 +122,6 @@ class MssqlRequest
 
     query(queryString: string, callback: any): void
     {
-        this.pool.processQuery(this.pool.engine, queryString, this.inputQueryParams, callback);
+        this.pool.processQuery(this.pool.dialect, queryString, this.inputQueryParams, callback);
     }
 }

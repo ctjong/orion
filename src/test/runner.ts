@@ -199,9 +199,9 @@ export class Runner
     onBeforeRequest(actualQueries: ITestQuery[], queryResults: any): void
     {
         this.pool.reset();
-        this.pool.onQueryReceived((actualString:string, actualParams:INameValueMap, engine:string) =>
+        this.pool.onQueryReceived((actualString:string, actualParams:INameValueMap, dialect:string) =>
         {
-            actualQueries.push({ string: actualString, params: actualParams, engine: engine });
+            actualQueries.push({ string: actualString, params: actualParams, dialect: dialect });
             if(queryResults && queryResults.length)
             this.pool.setQueryResults(queryResults.shift());
         });
@@ -225,15 +225,15 @@ export class Runner
             {
                 const actualString = actualQueries[i].string;
                 const actualParams = actualQueries[i].params;
-                const engine = actualQueries[i].engine;
+                const dialect = actualQueries[i].dialect;
                 const expected = expectedQueries[i];
-                const expectedString = queries[expected.name][engine];
+                const expectedString = queries[expected.name][dialect];
                 this.assetQueryString(actualString.trim().toLowerCase(), expectedString.trim().toLowerCase());
                 for(let j=0; j<expected.params.length; j++)
                 {
                     if(expected.params[i] === "skip")
                         continue;
-                    const actualValue = engine === "mssql" ? actualParams["value" + j][1] : actualParams[j];
+                    const actualValue = dialect === "mssql" ? actualParams["value" + j][1] : actualParams[j];
                     assert.equal(actualValue, expected.params[j], "Incorrect query parameter at index " + j + ". Actual: " + actualValue + ". Expected: " + expected.params[i]);
                 }
             }

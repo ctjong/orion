@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import { IConfig, IEntityConfig } from '../core/types';
 
-let engine:string;
+let dialect:string;
 let  outputPath:string;
 
 /**
@@ -38,7 +38,7 @@ const main = () =>
     const inputConfig = require(process.cwd() + "/" + inputPath);
     contextFactory.initializeConfig(inputConfig);
     const config = contextFactory.getConfig();
-    engine = config.database.engine;
+    dialect = config.database.dialect;
 
     // write the SQL file
     fs.writeFile(outputPath, "", (err) =>
@@ -56,7 +56,7 @@ const main = () =>
 const processConfig = (config:IConfig) =>
 {
     let dropTableStr = drop("errortable");
-    let pkAttr = engine === "mssql" ? "IDENTITY(1,1) PRIMARY KEY" : "AUTO_INCREMENT PRIMARY KEY";
+    let pkAttr = dialect === "mssql" ? "IDENTITY(1,1) PRIMARY KEY" : "AUTO_INCREMENT PRIMARY KEY";
     let createTableStr = "CREATE TABLE errortable (" + nm("id") + " INT NOT NULL " + pkAttr + ", " + 
         nm("tag") + " VARCHAR (10) NOT NULL, " + nm("statuscode") + " INT NOT NULL, " + nm("msg") + " VARCHAR (255) NOT NULL," +
         nm("url") + " VARCHAR (255) NOT NULL, " + nm("timestamp") + " BIGINT NOT NULL);\n";
@@ -102,7 +102,7 @@ const processConfig = (config:IConfig) =>
             }
             else if (fieldType === "boolean")
             {
-                if(engine === "mssql")
+                if(dialect === "mssql")
                     fieldsStr += "BIT DEFAULT 0";
                 else
                     fieldsStr += "TINYINT(1) DEFAULT 0";
@@ -137,7 +137,7 @@ const processConfig = (config:IConfig) =>
  */
 const drop = (tableName:string) =>
 {
-    if(engine === "mssql")
+    if(dialect === "mssql")
         return "IF exists (select * from sys.objects where name = '" + tableName + "') DROP TABLE " + tableName + ";\n";
     else
         return "DROP TABLE IF EXISTS " + tableName + ";\n";
@@ -150,8 +150,8 @@ const drop = (tableName:string) =>
  */
 const nm = (name:string) =>
 {
-    const ob = engine === "mssql" ? "[" : "`";
-    const cb = engine === "mssql" ? "]" : "`";
+    const ob = dialect === "mssql" ? "[" : "`";
+    const cb = dialect === "mssql" ? "]" : "`";
     return ob + name + cb;
 }
 

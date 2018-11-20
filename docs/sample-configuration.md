@@ -16,8 +16,11 @@
 {
     database:
     {
-        engine: "mssql",
-        connectionString: process.env.SAMPLE_DB_CONNECTION_STRING
+        dialect: "mssql",
+        host: _DATABASE_HOST_,
+        name: _DATABASE_NAME_,
+        userName: _DATABASE_USERNAME_,
+        password: _DATABASE_PASSWORD_
     },
     auth: 
     {

@@ -2,14 +2,17 @@ import { IConfig, IStorageConfig } from "../core/types";
 
 class ConfigFactory
 {
-    create(dbEngine:string, storageSetting:IStorageConfig): IConfig
+    create(dbDialect:string, storageSetting:IStorageConfig): IConfig
     {
         const config:IConfig = 
         {
             database: 
             {
-                engine: dbEngine,
-                connectionString: "connectionString"
+                dialect: dbDialect,
+                host: "host",
+                name: "name",
+                userName: "userName",
+                password: "password"
             },
             auth: 
             {

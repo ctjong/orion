@@ -9,12 +9,14 @@ import { helperService } from "../services/helperService";
 
 const typeMap: INameValueMap =
 {
+    "id": Sequelize.INTEGER,
     "string": Sequelize.STRING,
     "text": Sequelize.TEXT,
     "int": Sequelize.INTEGER,
     "float": Sequelize.DOUBLE,
     "boolean": Sequelize.BOOLEAN,
-    "secret": Sequelize.STRING
+    "secret": Sequelize.STRING,
+    "timestamp": Sequelize.INTEGER
 };
 
 /**
@@ -22,7 +24,7 @@ const typeMap: INameValueMap =
  */
 export class SqlDatabaseAdapter implements IDatabaseAdapter
 {
-    engine: string;
+    dialect: string;
     models: Sequelize.Models;
     sequelize: Sequelize.Sequelize;
     wrapper: ISqlQueryWrapper;
@@ -34,11 +36,18 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      */
     constructor(config: IConfig, wrapper?: ISqlQueryWrapper)
     {
-        if (!config.database || !config.database.engine)
+        if (!config.database || !config.database.dialect)
             throw "Missing/incomplete database configuration";
-        this.engine = config.database.engine;
+        this.dialect = config.database.dialect;
         this.models = {};
-        this.sequelize = new Sequelize(config.database.connectionString, { dialect: config.database.engine });
+        this.sequelize = new Sequelize(
+            config.database.name,
+            config.database.userName,
+            config.database.password,
+            {
+                host: config.database.host,
+                dialect: config.database.dialect
+            });
         this.wrapper = wrapper ? wrapper : new SqlQueryWrapper();
 
         this.initializeModels(config);
@@ -82,7 +91,7 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         if (fields.length === 0)
             return null;
 
-        const query:Sequelize.FindOptions<any> = {};
+        const query: Sequelize.FindOptions<any> = {};
         query.attributes = fields;
         query.where = this.getWhereClause(condition);
         query.offset = skip;
@@ -109,7 +118,7 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
 
     async countAsync(ctx: Context, entityName: string, condition: ICondition): Promise<any>
     {
-        const query:Sequelize.FindOptions<any> = {};
+        const query: Sequelize.FindOptions<any> = {};
         query.attributes = [[Sequelize.fn("COUNT", Sequelize.col("*")), "count"]];
         query.where = this.getWhereClause(condition);
         query.transaction = await this.sequelize.transaction();
@@ -147,7 +156,8 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
             Object.keys(entityConfig.fields).forEach(fieldName =>
             {
                 const fieldConfig = entityConfig.fields[fieldName];
-                modelDef[fieldName] = { type: typeMap[fieldConfig.type] };
+                const fieldType = fieldConfig.type;
+                modelDef[fieldName] = { type: typeMap[fieldType], primaryKey: fieldType === "id" };
             });
             this.models[entityName] = this.sequelize.define(entityName, modelDef);
         });
