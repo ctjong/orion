@@ -1,6 +1,9 @@
 import { ICondition, SingleCondition, CompoundCondition, Context } from "../types";
 import { execService } from "./execService";
 
+const operators = ["~", "<>", "<=", ">=", "<", ">", "="];
+
+
 class ConditionFactory 
 {
     /**
@@ -88,7 +91,6 @@ class ConditionFactory
             let operands = null;
             let operator = null;
             let fieldValue = null;
-            const operators = ["~", "<>", "<=", ">=", "<", ">", "="];
             for(let i=0; i<operators.length; i++)
             {
                 if(conditionString.indexOf(operators[i]) >= 0)

@@ -16,8 +16,8 @@ import { IStorageAdapter } from "./storage/iStorageAdapter";
 import { AzureStorageAdapter } from "./storage/azureStorageAdapter";
 import { S3StorageAdapter } from "./storage/s3StorageAdapter";
 import { LocalStorageAdapter } from "./storage/localStorageAdapter";
-import { MssqlDatabase } from "./adapters/db/mssqlDatabase";
-import { MysqlDatabase } from "./adapters/db/mysqlDatabase";
+import { SqlDatabaseAdapter } from "./database/sqlDatabaseAdapter";
+import { SqlQueryWrapper } from "./database/sqlQueryWrapper";
 
 /**
  * An Orion app object
@@ -49,16 +49,7 @@ export default class Orion
         if(databaseAdapter)
             this.db = databaseAdapter;
         else
-        {
-            if (!config.database || !config.database.engine)
-                throw "Missing/incomplete database configuration";
-            if (config.database.engine === "mssql")
-                this.db = new MssqlDatabase(config);
-            else if (config.database.engine === "mysql")
-                this.db = new MysqlDatabase(config);
-            else
-                throw "Unsupported database management system " + config.database.engine;
-        }
+            this.db = new SqlDatabaseAdapter(config, new SqlQueryWrapper());
     
         // storage system
         if(storageAdapter)

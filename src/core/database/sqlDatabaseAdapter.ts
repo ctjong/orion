@@ -1,10 +1,11 @@
 import * as Sequelize from "sequelize";
 import { IDatabaseAdapter } from "./iDatabaseAdapter";
-import { INameValueMap, ICondition, Context, IConfig, Join } from "../types";
+import { INameValueMap, ICondition, Context, IConfig, CompoundCondition, SingleCondition } from "../types";
 import { conditionFactory } from "../services/conditionFactory";
-import { joinFactory } from "../services/joinFactory";
 import { SqlQueryWrapper } from "./sqlQueryWrapper";
 import { ISqlQueryWrapper } from "./iSqlQueryWrapper";
+import { Op } from "sequelize";
+import { helperService } from "../services/helperService";
 
 const typeMap: INameValueMap =
 {
@@ -33,8 +34,8 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      */
     constructor(config: IConfig, wrapper?: ISqlQueryWrapper)
     {
-        if (!config.database)
-            throw "Missing database configuration";
+        if (!config.database || !config.database.engine)
+            throw "Missing/incomplete database configuration";
         this.engine = config.database.engine;
         this.models = {};
         this.sequelize = new Sequelize(config.database.connectionString);
@@ -42,6 +43,7 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
 
         this.initializeModels(config);
         this.initializeForeignKeys(config);
+        this.ensureTablesExist(config);
     }
 
     /**
@@ -60,7 +62,8 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
             if (!conditionMap.hasOwnProperty(key)) continue;
             condition.children.push(conditionFactory.createSingle(entityName, key, "=", conditionMap[key]));
         }
-        return this.selectAsync(ctx, fields, entityName, condition, "id", 0, 1, false, false);
+        const response = await this.selectAsync(ctx, fields, entityName, condition, "id", 0, 1);
+        return response[0];
     }
 
     /**
@@ -72,71 +75,48 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      * @param orderByField Field to order the results by
      * @param skip Number of matches to skip
      * @param take Number of matches to take
-     * @param resolveFK Whether or not foreign keys should be resolved
-     * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    async selectAsync(ctx: Context, fields: string[], entityName: string, condition: ICondition, orderByField: string, skip: number, take: number, resolveFK: boolean, isFullMode: boolean): Promise<any>
+    async selectAsync(ctx: Context, fields: string[], entityName: string, condition: ICondition, orderByField: string, skip: number, take: number): Promise<any>
     {
         if (fields.length === 0)
             return null;
 
-        const joins = resolveFK ? this.getJoins(ctx, fields, entityName) : [];
-        console.log(joins);
-        const fieldsToSelect: string[] = [];
-        fields.forEach(fieldName =>
-        {
-            if (isFullMode || fieldName.indexOf("richtext") === 0)
-                fieldsToSelect.push(fieldName);
-        });
+        const query:Sequelize.FindOptions<any> = {};
+        query.attributes = fields;
+        query.where = this.getWhereClause(condition);
+        query.offset = skip;
+        query.limit = take;
+        query.transaction = await this.sequelize.transaction();
 
-        /*
-        const joins = resolveFK ? this.getJoins(ctx, fields, entityName) : [];
-        const query = new Query();
-        const tableName = entityName + "table";
-
-        const fieldsToSelect: string[] = [];
-        fields.forEach(fieldName =>
-        {
-            if (isFullMode || fieldName.indexOf("richtext") === 0)
-                fieldsToSelect.push(fieldName);
-        });
-
-        query.append(`select [${entityName}table].[${fieldsToSelect[0]}]`);
-        for (let i = 1; i < fieldsToSelect.length; i++)
-            query.append(`, [${entityName}table].[${fieldsToSelect[i]}]`);
-        for (let i = 0; i < joins.length; i++)
-            query.append(`, ${this.getSelectExpression(joins[i])}`);
-        query.append(` from [${tableName}]`);
-        for (let i = 0; i < joins.length; i++)
-            query.append(` ${this.getJoinExpression(joins[i])}`);
-        query.append(" where ");
-        this.appendWhereClause(query, condition);
-        orderByField = decodeURIComponent(orderByField);
+        const orderByVal = [];
         if (orderByField.indexOf("~") === 0)
-            query.append(` order by [${entityName}table].[${orderByField.substring(1)}] desc `);
+            orderByVal.push([orderByField.substring(1), "DESC"]);
         else
-            query.append(` order by [${entityName}table].[${orderByField}] `);
-        query.append(" OFFSET (?) ROWS FETCH NEXT (?) ROWS ONLY", skip.toString(), take.toString());
+            orderByVal.push(orderByField);
+        query.order = orderByVal;
 
-        return this.executeAsync(ctx, query);
-        */
-
-        const transaction = await this.sequelize.transaction();
         const model = this.models[entityName];
-        // const where = {};
-
-        return model.findOne({ attributes: fields, transaction });
+        return model.findAll(query);
     }
 
     findRecordByIdAsync(ctx: Context, entityName: string, recordId: string): Promise<any>
     {
-        throw new Error("Method not implemented.");
+        const fields = helperService.getFields(ctx, "read", entityName);
+        const condition = conditionFactory.createSingle(entityName, "id", "=", recordId);
+        return this.selectAsync(ctx, fields, entityName, condition, "id", 0, 1);
     }
 
-    countAsync(ctx: Context, entityName: string, condition: ICondition): Promise<any>
+    async countAsync(ctx: Context, entityName: string, condition: ICondition): Promise<any>
     {
-        throw new Error("Method not implemented.");
+        const query:Sequelize.FindOptions<any> = {};
+        query.attributes = [[Sequelize.fn("COUNT", Sequelize.col("*")), "count"]];
+        query.where = this.getWhereClause(condition);
+        query.transaction = await this.sequelize.transaction();
+
+        const model = this.models[entityName];
+        const response = await model.findAll(query);
+        return response[0]["count"];
     }
 
     insertAsync(ctx: Context, entityName: string, fieldNames: string[], fieldValues: string[]): Promise<any>
@@ -170,7 +150,6 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
                 modelDef[fieldName] = { type: typeMap[fieldConfig.type] };
             });
             this.models[entityName] = this.sequelize.define(entityName, modelDef);
-            this.models[entityName].sync();
         });
     }
 
@@ -202,25 +181,54 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
     }
 
     /**
-     * Get Join objects to resolve foreign keys
-     * @param ctx Request context
-     * @param fields Fields in the requested entity
-     * @param entityName Requested entity
-     * @returns an array of Joins
+     * Ensure all required tables exist in the database
      */
-    private getJoins(ctx: Context, fields: string[], entityName: string): Join[]
+    private ensureTablesExist(config: IConfig)
     {
-        const joins = [];
-        const ctxFields = ctx.config.entities[entityName].fields;
-        for (let f = 0; f < fields.length; f++)
+        Object.keys(config.entities).forEach(entityName =>
         {
-            const fldName = fields[f];
-            const fieldObj = ctxFields[fldName];
-            if (fieldObj.foreignKey) 
-            {
-                joins.push(joinFactory.createForForeignKey(ctx, entityName, fldName));
-            }
+            this.models[entityName].sync();
+        });
+    }
+
+    /**
+     * Create a query's where clause from a condition object
+     * @param condition condition object
+     * @returns where clause
+     */
+    private getWhereClause(condition: ICondition): any
+    {
+        const whereObj: any = {};
+        if (condition.isCompound)
+        {
+            const compoundCond = condition as CompoundCondition;
+            const childWhereObjs: any[] = [];
+            compoundCond.children.forEach(child => childWhereObjs.push(this.getWhereClause(child)));
+            if (compoundCond.operator === "&")
+                whereObj[Op.and] = childWhereObjs;
+            else
+                whereObj[Op.or] = childWhereObjs;
         }
-        return joins;
+        else
+        {
+            const singleCond = condition as SingleCondition;
+            let whereObjVal: any = {};
+            if (singleCond.operator === "=")
+                whereObjVal = singleCond.fieldValue;
+            else if (singleCond.operator === "<>")
+                whereObjVal[Op.ne] = singleCond.fieldValue;
+            else if (singleCond.operator === "<")
+                whereObjVal[Op.lt] = singleCond.fieldValue;
+            else if (singleCond.operator === "<=")
+                whereObjVal[Op.lte] = singleCond.fieldValue;
+            else if (singleCond.operator === ">")
+                whereObjVal[Op.gt] = singleCond.fieldValue;
+            else if (singleCond.operator === ">=")
+                whereObjVal[Op.gte] = singleCond.fieldValue;
+            else if (singleCond.operator === "~")
+                whereObjVal[Op.like] = `%${singleCond.fieldValue}%`;
+            whereObj[singleCond.fieldName] = whereObjVal;
+        }
+        return whereObj;
     }
 }

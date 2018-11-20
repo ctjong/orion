@@ -21,12 +21,9 @@ export interface IDatabaseAdapter
      * @param orderByField Field to order the results by
      * @param skip Number of matches to skip
      * @param take Number of matches to take
-     * @param resolveFK Whether or not foreign keys should be resolved
-     * @param isFullMode Whether or not result should be returned in full mode
      * @returns query results
      */
-    selectAsync(ctx:Context, fields:string[], entityName:string, condition:ICondition, orderByField:string, skip:number, take:number, 
-        resolveFK:boolean, isFullMode:boolean): Promise<any>;
+    selectAsync(ctx:Context, fields:string[], entityName:string, condition:ICondition, orderByField:string, skip:number, take:number): Promise<any>;
 
     /**
      * Find a record that matches the given id

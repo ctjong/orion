@@ -7,13 +7,13 @@ import { itemTestSuite } from './tests/tests-item';
 import { messageTestSuite } from './tests/tests-message';
 import { userTestSuite } from './tests/tests-user';
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
-import { MysqlDatabase } from "../core/adapters/db/mysqlDatabase";
-import { MssqlDatabase } from "../core/adapters/db/mssqlDatabase";
 import { MockStorageCommandWrapper } from "./mocks/mockStorageCommandWrapper";
 import { AzureStorageAdapter } from "../core/storage/azureStorageAdapter";
 import { LocalStorageAdapter } from "../core/storage/localStorageAdapter";
 import { S3StorageAdapter } from "../core/storage/s3StorageAdapter";
 import { IStorageAdapter } from "../core/storage/iStorageAdapter";
+import { MockSqlQueryWrapper } from "./mocks/mockSqlQueryWrapper";
+import { SqlDatabaseAdapter } from "../core/database/sqlDatabaseAdapter";
 
 /** 
  * Test entry point
@@ -48,7 +48,7 @@ const main = () =>
  */
 const startTestSession = (config: IConfig, storageAdapter:IStorageAdapter, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
 {
-    const databaseAdapter = pool.engine === "mssql" ? new MssqlDatabase(config, pool) : new MysqlDatabase(config, pool);
+    const databaseAdapter = new SqlDatabaseAdapter(config, new MockSqlQueryWrapper());
     const runner = new Runner(config, databaseAdapter, storageAdapter, pool);
 
     before(() =>
