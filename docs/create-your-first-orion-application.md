@@ -50,7 +50,7 @@
     }
     ```
     Save the above file as **config.js**. Please see the [Configuration Options](configuration-options) page for more configuration options.
-5. Set up **server.js** for the application entry point. Import Orion and the configuration module, and set up the application as follows:
+4. Set up **server.js** for the application entry point. Import Orion and the configuration module, and set up the application as follows:
     ```js
     const orion = require('orion-api');
     const config = require('./config');
@@ -61,7 +61,7 @@
     
     orionApp.start();
     ```
-6. You're all set! You can now run server.js to see your app in action. Unless you specify a port in the start() call, you will see your app running at port 1337.
+5. You're all set! You can now run server.js to see your app in action. Unless you specify a port in the start() call, you will see your app running at port 1337.
     ```bash
     $ node server.js
     ```
