@@ -2,7 +2,7 @@
   "name": "orion-api",
   "version": "1.2.14",
   "description": "REST API server application",
-  "main": "core/build/index.js",
+  "main": "build/core/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ctjong/orion"
