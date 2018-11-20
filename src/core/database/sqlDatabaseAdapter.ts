@@ -38,7 +38,7 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
             throw "Missing/incomplete database configuration";
         this.engine = config.database.engine;
         this.models = {};
-        this.sequelize = new Sequelize(config.database.connectionString);
+        this.sequelize = new Sequelize(config.database.connectionString, { dialect: config.database.engine });
         this.wrapper = wrapper ? wrapper : new SqlQueryWrapper();
 
         this.initializeModels(config);

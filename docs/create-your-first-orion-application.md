@@ -47,24 +47,16 @@
     }
     ```
     Save the above file as **config.js**. Please see the [Configuration Options](configuration-options) page for more configuration options.
-4. Set up database tables based on the configuration you created, by running the following command.
-    ```bash
-    $ npx orion setup ./config.js ./setup.sql
-    ```
-    The above command will create an SQL query file named setup.sql that you can run on the database server to set up the tables. If you don't have **npx** installed, you need to install it first by running:
-    ```bash
-    $ npm install -g npx
-    ```
 5. Set up **server.js** for the application entry point. Import Orion and the configuration module, and set up the application as follows:
     ```js
     const orion = require('orion-api');
     const config = require('./config');
-    const app = new orion(config);
-    app.setupApiEndpoints();
+    const orionApp = new orion.Orion(config);
+    orionApp.setupApiEndpoints();
     
-    // You can add more endpoints to the app object or do other things here
+    // You can add more endpoints to the orionApp.app object or do other things here
     
-    app.start();
+    orionApp.start();
     ```
 6. You're all set! You can now run server.js to see your app in action. Unless you specify a port in the start() call, you will see your app running at port 1337.
     ```bash

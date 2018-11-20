@@ -1,5 +1,5 @@
 import { IConfig, INameValueMap } from "../core/types";
-import Orion from "../core/index";
+import { Orion } from "../core/index";
 import { queries } from "./queries";
 import * as chai from 'chai';
 import * as assert from 'assert';
