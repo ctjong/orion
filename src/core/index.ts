@@ -113,7 +113,7 @@ export default class Orion
      * @param port optional port to start the app at
      * @returns server object
      */
-    startAsync(port:number): Promise<any>
+    startAsync(port?:number): Promise<any>
     {
         return new Promise(resolve =>
         {
