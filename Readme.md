@@ -57,9 +57,9 @@ module.exports =
 **server.js**
 
 ```js
-const orion = require('orion-api');
+const Orion = require('orion-api');
 const config = require('./config');
-const orionApp = new orion.Orion(config);
+const orionApp = new Orion(config);
 orionApp.setupApiEndpoints();
 orionApp.start();
 ```

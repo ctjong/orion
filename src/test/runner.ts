@@ -1,5 +1,4 @@
 import { IConfig, INameValueMap } from "../core/types";
-import { Orion } from "../core/index";
 import { queries } from "./queries";
 import * as chai from 'chai';
 import * as assert from 'assert';
@@ -11,6 +10,8 @@ import { IDatabaseAdapter } from "../core/database/iDatabaseAdapter";
 import { IStorageAdapter } from "../core/storage/iStorageAdapter";
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
 
+const Orion = require("../core/index");
+
 
 /**
  * Class for running a set of tests against a specific database/storage type
@@ -20,7 +21,7 @@ export class Runner
     config:IConfig;
     databaseAdapter:IDatabaseAdapter;
     storageAdapter:IStorageAdapter;
-    orionApp:Orion;
+    orionApp:any;
     pool:MockConnectionPool;
     storageWrapper:any;
     isServerStarted:boolean;

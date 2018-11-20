@@ -22,7 +22,7 @@ import { SqlQueryWrapper } from "./database/sqlQueryWrapper";
 /**
  * An Orion app object
  */
-export class Orion 
+module.exports = class Orion
 {
     app:Express.Express = null;
     express:any = Express;
