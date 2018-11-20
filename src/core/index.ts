@@ -33,12 +33,8 @@ export default class Orion
     /**
      * Construct an Orion app
      * @param config configuration object
-     * @param databaseAdapter optional database adapter module. See this link for more details
-     * on what the database adapter's requirements are:
-     * https://github.com/ctjong/orion/blob/master/src/core/database.ts
-     * @param storageAdapter optional storage adapter module. See this link for more details
-     * on what the storage adapter's requirements are:
-     * https://github.com/ctjong/orion/blob/master/src/core/storage.ts
+     * @param databaseAdapter optional database adapter module. See iDatabaseAdapter.ts for more details.
+     * @param storageAdapter optional storage adapter module. See iStorageAdapter.ts for more details.
      */
     constructor(config:IConfig, databaseAdapter?:IDatabaseAdapter, storageAdapter?: IStorageAdapter)
     {
