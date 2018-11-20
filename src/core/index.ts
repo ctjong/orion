@@ -18,17 +18,18 @@ import { S3StorageAdapter } from "./storage/s3StorageAdapter";
 import { LocalStorageAdapter } from "./storage/localStorageAdapter";
 import { SqlDatabaseAdapter } from "./database/sqlDatabaseAdapter";
 import { SqlQueryWrapper } from "./database/sqlQueryWrapper";
+import { IOrionApp } from "./iOrionApp";
 
 /**
  * An Orion app object
  */
-module.exports = class Orion
+module.exports = class Orion implements IOrionApp
 {
     app:Express.Express = null;
     express:any = Express;
-    db:IDatabaseAdapter = null;
-    storage:IStorageAdapter = null;
-    contextFactory:ContextFactory = null;
+    private db:IDatabaseAdapter = null;
+    private storage:IStorageAdapter = null;
+    private contextFactory:ContextFactory = null;
 
     /**
      * Construct an Orion app
@@ -182,7 +183,7 @@ module.exports = class Orion
     /**
      * Configure CRUD data endpoints for the given app
      */
-    configureDataEndpoints(): void
+    private configureDataEndpoints(): void
     {
         this.app.use('/api/data/:entity', bodyParser.json());
         this.app.use('/api/data/:entity', bodyParser.urlencoded({ extended: true }));
@@ -239,7 +240,7 @@ module.exports = class Orion
     /**
      * Configure authentication endpoints
      */
-    configureAuthEndpoints(): void
+    private configureAuthEndpoints(): void
     {
         this.app.use('/api/auth', bodyParser.json());
         this.app.use('/api/auth', (req:any, res:any, next:any) =>
@@ -260,7 +261,7 @@ module.exports = class Orion
     /**
      * Configure utility endpoints
      */
-    configureUtilityEndpoints(): void
+    private configureUtilityEndpoints(): void
     {
         // error logging
         this.app.use('/api/error', bodyParser.json());
@@ -287,7 +288,7 @@ module.exports = class Orion
      * @param params read action parameters
      * @param isFullMode whether or not the read result should be returned in long form
      */
-    async executeDirectReadAsync(originalReq:any, entityName:string, params:any, isFullMode:boolean): Promise<any>
+    private async executeDirectReadAsync(originalReq:any, entityName:string, params:any, isFullMode:boolean): Promise<any>
     {
         let response:any = null;
         const res:any = {};

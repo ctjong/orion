@@ -9,6 +9,7 @@ import { ITestQuery } from './testTypes';
 import { IDatabaseAdapter } from "../core/database/iDatabaseAdapter";
 import { IStorageAdapter } from "../core/storage/iStorageAdapter";
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
+import { IOrionApp } from "../core/iOrionApp";
 
 const Orion = require("../core/index");
 
@@ -21,7 +22,7 @@ export class Runner
     config:IConfig;
     databaseAdapter:IDatabaseAdapter;
     storageAdapter:IStorageAdapter;
-    orionApp:any;
+    orionApp:IOrionApp;
     pool:MockConnectionPool;
     storageWrapper:any;
     isServerStarted:boolean;
