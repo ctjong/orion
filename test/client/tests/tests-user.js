@@ -1,4 +1,4 @@
-export class UserTestSuite 
+class UserTestSuite 
 {
     run(runner, params)
     {
@@ -211,4 +211,4 @@ export class UserTestSuite
 }
 
 const userTestSuite = new UserTestSuite();
-export { userTestSuite };
+module.exports = { userTestSuite };

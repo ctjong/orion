@@ -162,4 +162,4 @@ const queries =
     }
 };
 
-export { queries };
+module.exports = { queries };

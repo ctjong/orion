@@ -1,17 +1,17 @@
-import { Runner } from './runner';
-import { configFactory } from './configFactory';
-import { assetTestSuite } from './tests/tests-asset';
-import { errorTestSuite } from './tests/tests-error';
-import { itemTestSuite } from './tests/tests-item';
-import { messageTestSuite } from './tests/tests-message';
-import { userTestSuite } from './tests/tests-user';
-import { MockConnectionPool } from "./mocks/mockConnectionPool";
-import { MockStorageCommandWrapper } from "../server/mockStorageCommandWrapper";
-import { AzureStorageAdapter } from "../../src/storage/azureStorageAdapter";
-import { LocalStorageAdapter } from "../../src/storage/localStorageAdapter";
-import { S3StorageAdapter } from "../../src/storage/s3StorageAdapter";
-import { MockSqlQueryWrapper } from "./mocks/mockSqlQueryWrapper";
-import { SqlDatabaseAdapter } from "../../src/database/sqlDatabaseAdapter";
+const Runner = require('./runner');
+const configFactory = require('./configFactory');
+const assetTestSuite = require('./tests/tests-asset');
+const errorTestSuite = require('./tests/tests-error');
+const itemTestSuite = require('./tests/tests-item');
+const messageTestSuite = require('./tests/tests-message');
+const userTestSuite = require('./tests/tests-user');
+const MockConnectionPool = require("./mocks/mockConnectionPool");
+const MockStorageCommandWrapper = require("../server/mockStorageCommandWrapper");
+const AzureStorageAdapter = require("../../src/storage/azureStorageAdapter");
+const LocalStorageAdapter = require("../../src/storage/localStorageAdapter");
+const S3StorageAdapter = require("../../src/storage/s3StorageAdapter");
+const MockSqlQueryWrapper = require("./mocks/mockSqlQueryWrapper");
+const SqlDatabaseAdapter = require("../../src/database/sqlDatabaseAdapter");
 
 /** 
  * Test entry point

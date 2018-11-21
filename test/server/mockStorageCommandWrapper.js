@@ -1,10 +1,10 @@
-import * as fs from "fs";
-import * as path from "path";
+const fs = require("fs");
+const path = require("path");
 
 /**
  * A mock storage command wrapper module
  */
-export class MockStorageCommandWrapper
+module.exports = class MockStorageCommandWrapper
 {
     filePartReceivedHandler = null;
     fileDeletedHandler = null;

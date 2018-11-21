@@ -1,9 +1,9 @@
-import { queries } from "./queries";
-import * as chai from 'chai';
-import * as assert from 'assert';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as jwt from 'jsonwebtoken';
+const queries = require("./queries");
+const chai = require('chai');
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const jwt = require('jsonwebtoken');
 
 const Orion = require("../../src/index");
 
@@ -11,7 +11,7 @@ const Orion = require("../../src/index");
 /**
  * Class for running a set of tests against a specific database/storage type
  */
-export class Runner
+module.exports = class Runner
 {
     config;
     databaseAdapter;

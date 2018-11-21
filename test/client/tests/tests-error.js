@@ -1,4 +1,4 @@
-export class ErrorTestSuite
+class ErrorTestSuite
 {
     run(runner, params)
     {
@@ -27,4 +27,4 @@ export class ErrorTestSuite
 }
 
 const errorTestSuite = new ErrorTestSuite();
-export { errorTestSuite };
+module.exports = { errorTestSuite };

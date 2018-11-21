@@ -1,4 +1,4 @@
-export class MessageTestSuite 
+class MessageTestSuite 
 {
     run(runner, params)
     {
@@ -119,4 +119,4 @@ export class MessageTestSuite
 }
 
 const messageTestSuite = new MessageTestSuite();
-export { messageTestSuite };
+module.exports = { messageTestSuite };

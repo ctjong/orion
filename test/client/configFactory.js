@@ -88,4 +88,4 @@ class ConfigFactory
 
 
 const configFactory = new ConfigFactory();
-export { configFactory };
+module.exports = { configFactory };
