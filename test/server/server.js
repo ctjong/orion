@@ -1,6 +1,6 @@
 const mssql = require("mssql");
 const mysql = require("mysql");
-const Orion = require('orion-api');
+const Orion = require("../../build/index");
 
 const DB_RETRY_INTERVAL = 3;
 
