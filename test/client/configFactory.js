@@ -67,13 +67,13 @@ class ConfigFactory
                         "update": ["member", "admin"],
                         "delete": ["admin"]
                     },
-                    getReadCondition: (roles[], userId) =>
+                    getReadCondition: (roles, userId) =>
                     {
                         if(roles.indexOf("admin") >= 0)
                             return "";
                         return "ownerid=" + userId + "|recipientid=" + userId;
                     },
-                    isWriteAllowed: (action, roles[], userId, dbResource, inputResource) =>
+                    isWriteAllowed: (action, roles, userId, dbResource, inputResource) =>
                     {
                         if(action !== "update" || roles.indexOf("admin") >= 0)
                             return true;
