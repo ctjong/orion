@@ -1,9 +1,6 @@
-import { Runner } from "../runner";
-import { ITestSuite } from "../testTypes";
-
-export class ErrorTestSuite implements ITestSuite
+export class ErrorTestSuite
 {
-    run(runner:Runner, params:any): void
+    run(runner, params)
     {
         runner.runTest(
             'POST | error-valid | 200',

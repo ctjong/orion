@@ -1,9 +1,6 @@
-import { Runner } from "../runner";
-import { ITestSuite } from "../testTypes";
-
-export class MessageTestSuite implements ITestSuite
+export class MessageTestSuite 
 {
-    run(runner: Runner, params: any): void
+    run(runner, params)
     {
         runner.runTest(
             'POST | message-noToken | 401',

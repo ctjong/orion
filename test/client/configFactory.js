@@ -1,10 +1,8 @@
-import { IConfig, IStorageConfig } from "../../src/types";
-
 class ConfigFactory
 {
-    create(dbDialect:string, storageSetting:IStorageConfig): IConfig
+    create(dbDialect, storageSetting)
     {
-        const config:IConfig = 
+        const config = 
         {
             database: 
             {
@@ -69,13 +67,13 @@ class ConfigFactory
                         "update": ["member", "admin"],
                         "delete": ["admin"]
                     },
-                    getReadCondition: (roles:string[], userId:string) =>
+                    getReadCondition: (roles[], userId) =>
                     {
                         if(roles.indexOf("admin") >= 0)
                             return "";
                         return "ownerid=" + userId + "|recipientid=" + userId;
                     },
-                    isWriteAllowed: (action:string, roles:string[], userId:string, dbResource:any, inputResource:any) =>
+                    isWriteAllowed: (action, roles[], userId, dbResource, inputResource) =>
                     {
                         if(action !== "update" || roles.indexOf("admin") >= 0)
                             return true;

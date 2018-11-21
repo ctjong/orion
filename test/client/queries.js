@@ -1,4 +1,4 @@
-const queries:{[key:string]:{[key:string]:string}} = 
+const queries = 
 {
     "insertError":
     {

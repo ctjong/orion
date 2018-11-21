@@ -1,15 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
-import { IStorageCommandWrapper } from "../../../src/storage/iStorageCommandWrapper";
 
 /**
  * A mock storage command wrapper module
  */
-export class MockStorageCommandWrapper implements IStorageCommandWrapper
+export class MockStorageCommandWrapper
 {
-    filePartReceivedHandler:any = null;
-    fileDeletedHandler:any = null;
-    wstream:any = null;
+    filePartReceivedHandler = null;
+    fileDeletedHandler = null;
+    wstream = null;
 
     /**
      * Upload a file to an Azure blob storage.
@@ -20,7 +19,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * @param options upload options
      * @returns error object
      */
-    azureUploadAsync (containerName:string, name:string, stream:any, size:number, options:any): Promise<any>
+    azureUploadAsync (containerName, name, stream, size, options)
     {
         let mime = null;
         if(options && options.contentSettings && options.contentSettings.contentType)
@@ -34,7 +33,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * @param filename file name
      * @returns error object
      */
-    azureDeleteAsync(containerName:string, filename:string): Promise<any>
+    azureDeleteAsync(containerName, filename)
     {
         return this.processFileDeleteAsync(filename);
     }
@@ -44,7 +43,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * @param options upload options
      * @returns error object
      */
-    s3UploadAsync(options:any): Promise<any>
+    s3UploadAsync(options)
     {
         const name = options.Key;
         const stream = options.Body;
@@ -57,7 +56,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * @param options delete options
      * @returns error object
      */
-    s3DeleteAsync(options:any): Promise<any>
+    s3DeleteAsync(options)
     {
         return this.processFileDeleteAsync(options.Key);
     }
@@ -68,7 +67,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * @param finalPath Final upload path
      * @returns error object
      */
-    localRenameAsync(tempPath:string, finalPath:string): Promise<any>
+    localRenameAsync(tempPath, finalPath)
     {
         const filename = path.basename(tempPath);
         return this.processFilePartAsync(filename, null, null, tempPath);
@@ -79,7 +78,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * @param fullPath Full path of the file to delete
      * @returns error object
      */
-    localUnlinkAsync(fullPath:string): Promise<any>
+    localUnlinkAsync(fullPath)
     {
         const filename = path.basename(fullPath);
         return this.processFileDeleteAsync(filename);
@@ -89,7 +88,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * Set a handler to be invoked when a file part is received
      * @param handler handler function
      */
-    onFilePartReceived(handler:any): void
+    onFilePartReceived(handler)
     {
         this.filePartReceivedHandler = handler;
     }
@@ -98,7 +97,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * Set a handler to be invoked when a file is deleted
      * @param handler handler function
      */
-    onFileDeleted(handler:any): void
+    onFileDeleted(handler)
     {
         this.fileDeletedHandler = handler;
     }
@@ -113,7 +112,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * @param tempPath Temporary file path
      * @returns error object
      */
-    processFilePartAsync(name:string, mime:string, stream:any, tempPath:string): Promise<any>
+    processFilePartAsync(name, mime, stream, tempPath)
     {
         return new Promise(resolve =>
         {
@@ -124,13 +123,13 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
                 if(!this.wstream || this.wstream.path !== targetPath)
                 {
                     this.wstream = fs.createWriteStream(targetPath);
-                    this.wstream.on('finish', (error:any) => resolve(error));
+                    this.wstream.on('finish', (error) => resolve(error));
                 }
                 stream.pipe(this.wstream);
             }
             else if(tempPath)
             {
-                fs.rename(tempPath, targetPath, (error:any) => resolve(error));
+                fs.rename(tempPath, targetPath, (error) => resolve(error));
             }
 
             if(this.filePartReceivedHandler)
@@ -142,7 +141,7 @@ export class MockStorageCommandWrapper implements IStorageCommandWrapper
      * Process a file delete.
      * @param filename File name
      */
-    processFileDeleteAsync(filename:string): Promise<any>
+    processFileDeleteAsync(filename)
     {
         return new Promise(resolve =>
         {

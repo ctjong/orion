@@ -1,21 +1,19 @@
-import { INameValueMap } from "../../../src/types";
-
 /**
  * A mock connection pool module
  */
 export class MockConnectionPool
 {
-    dialect: string;
-    queryResults: any;
-    queryReceivedHandler: any;
+    dialect;
+    queryResults;
+    queryReceivedHandler;
 
-    sql: any =
+    sql =
         {
             BigInt: "bigint",
             Request: MssqlRequest
         };
 
-    constructor(dialect: string)
+    constructor(dialect)
     {
         this.dialect = dialect;
         this.queryResults = [];
@@ -28,7 +26,7 @@ export class MockConnectionPool
      * @param queryParams Query params
      * @param callback callback function
      */
-    query(queryString: string, queryParams: INameValueMap, callback: any): void
+    query(queryString, queryParams, callback)
     {
         this.processQuery(this.dialect, queryString, queryParams, callback);
     }
@@ -37,7 +35,7 @@ export class MockConnectionPool
      * Set the results for the active query
      * @param nextQueryResultsArg query results
      */
-    setQueryResults(nextQueryResultsArg: any): void
+    setQueryResults(nextQueryResultsArg)
     {
         this.queryResults = nextQueryResultsArg;
     }
@@ -46,7 +44,7 @@ export class MockConnectionPool
      * To be invoked when a query is received to be sent to database
      * @param queryReceivedHandlerArg handler function
      */
-    onQueryReceived(queryReceivedHandlerArg: any): void
+    onQueryReceived(queryReceivedHandlerArg)
     {
         this.queryReceivedHandler = queryReceivedHandlerArg;
     }
@@ -54,7 +52,7 @@ export class MockConnectionPool
     /** 
      * Reset the mock connection pool
      */
-    reset(): void
+    reset()
     {
         this.queryReceivedHandler = null;
     }
@@ -68,7 +66,7 @@ export class MockConnectionPool
      * @param queryParams query parameters
      * @param callback callback function
      */
-    processQuery(dialect: string, queryString: string, queryParams: INameValueMap, callback: any): void
+    processQuery(dialect, queryString, queryParams, callback)
     {
         if (this.queryReceivedHandler)
             this.queryReceivedHandler(queryString, queryParams, dialect);
@@ -107,20 +105,20 @@ export class MockConnectionPool
  */
 class MssqlRequest
 {
-    pool: any = null;
-    inputQueryParams: any = {};
+    pool = null;
+    inputQueryParams = {};
 
-    constructor(pool: any)
+    constructor(pool)
     {
         this.pool = pool;
     }
 
-    input(arg0: any, arg1: any, arg2: any): void
+    input(arg0, arg1, arg2)
     {
         this.inputQueryParams[arg0] = !arg2 ? ["string", arg1] : [arg1, arg2];
     }
 
-    query(queryString: string, callback: any): void
+    query(queryString, callback)
     {
         this.pool.processQuery(this.pool.dialect, queryString, this.inputQueryParams, callback);
     }

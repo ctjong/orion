@@ -1,15 +1,9 @@
-import { IConfig, INameValueMap } from "../../src/types";
 import { queries } from "./queries";
 import * as chai from 'chai';
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as jwt from 'jsonwebtoken';
-import { ITestQuery } from './testTypes';
-import { IDatabaseAdapter } from "../../src/database/iDatabaseAdapter";
-import { IStorageAdapter } from "../../src/storage/iStorageAdapter";
-import { MockConnectionPool } from "./mocks/mockConnectionPool";
-import { IOrionApp } from "../../src/iOrionApp";
 
 const Orion = require("../../src/index");
 
@@ -19,13 +13,13 @@ const Orion = require("../../src/index");
  */
 export class Runner
 {
-    config:IConfig;
-    databaseAdapter:IDatabaseAdapter;
-    storageAdapter:IStorageAdapter;
-    orionApp:IOrionApp;
-    pool:MockConnectionPool;
-    storageWrapper:any;
-    isServerStarted:boolean;
+    config;
+    databaseAdapter;
+    storageAdapter;
+    orionApp;
+    pool;
+    storageWrapper;
+    isServerStarted;
 
     /**
      * Initialize the runnner
@@ -34,7 +28,7 @@ export class Runner
      * @param storageAdapter Storage adapter module
      * @param pool Mock database connection pool
      */
-    constructor(config:IConfig, databaseAdapter:IDatabaseAdapter, storageAdapter:IStorageAdapter, pool:MockConnectionPool)
+    constructor(config, databaseAdapter, storageAdapter, pool)
     {
         chai.use(require("chai-http"));
         this.config = config;
@@ -56,12 +50,12 @@ export class Runner
      * @param expectedResponseCode expected response status code
      * @param expectedResponseBody expected response body
      */
-    runTest(name:string, reqUrl:string, reqMethod:string, reqBody:any, accessToken:string, 
-        expectedQueries:ITestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
+    runTest(name, reqUrl, reqMethod, reqBody, accessToken, 
+        expectedQueries, queryResults, expectedResponseCode, expectedResponseBody)
     {
         it(name, (done) =>
         {
-            const actualQueries:ITestQuery[] = [];
+            const actualQueries = [];
             this.onBeforeRequest(actualQueries, queryResults);
 
             let requestAwaiter;
@@ -77,7 +71,7 @@ export class Runner
             if(accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
 
-            requestAwaiter.end((err:any, res:any) =>
+            requestAwaiter.end((err, res) =>
             {
                 this.onAfterRequest(actualQueries, res, expectedQueries, expectedResponseCode, expectedResponseBody);
                 done();
@@ -97,18 +91,18 @@ export class Runner
      * @param expectedResponseCode expected response status code
      * @param expectedResponseBody expected response body
      */
-    runFileUploadTest(name:string, reqUrl:string, filePath:string, accessToken:string, expectedMimeType:string, 
-        expectedQueries:ITestQuery[], queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
+    runFileUploadTest(name, reqUrl, filePath, accessToken, expectedMimeType, 
+        expectedQueries, queryResults, expectedResponseCode, expectedResponseBody)
     {
         it(name, (done) =>
         {
-            const actualQueries:ITestQuery[] = [];
+            const actualQueries = [];
             this.onBeforeRequest(actualQueries, queryResults);
             const inputFile = fs.readFileSync(filePath);
             const inputFileName = path.basename(filePath);
-            let uploadedFileName:string = null;
-            let uploadedFileMime:string = null;
-            this.storageWrapper.onFilePartReceived((name:string, mime:string) =>
+            let uploadedFileName = null;
+            let uploadedFileMime = null;
+            this.storageWrapper.onFilePartReceived((name, mime) =>
             {
                 uploadedFileName = name;
                 uploadedFileMime = mime;
@@ -152,16 +146,16 @@ export class Runner
      * @param expectedResponseCode expected response status code
      * @param expectedResponseBody expected response body
      */
-    runFileDeleteTest(name:string, reqUrl:string, accessToken:string, expectedQueries:ITestQuery[],
-        queryResults:any, expectedResponseCode:number, expectedResponseBody?:any): void
+    runFileDeleteTest(name, reqUrl, accessToken, expectedQueries,
+        queryResults, expectedResponseCode, expectedResponseBody)
     {
         it(name, (done) =>
         {
-            const actualQueries:ITestQuery[] = [];
+            const actualQueries = [];
             const expectedFilename = queryResults[0][0].filename;
             this.onBeforeRequest(actualQueries, queryResults);
-            let actualFilename:string = null;
-            this.storageWrapper.onFileDeleted((name:string) =>
+            let actualFilename = null;
+            this.storageWrapper.onFileDeleted((name) =>
             {
                 actualFilename = name;
             });
@@ -170,7 +164,7 @@ export class Runner
             if(accessToken)
                 requestAwaiter.set("Authorization", "Bearer " + accessToken);
 
-            requestAwaiter.end((err:any, res:any) =>
+            requestAwaiter.end((err, res) =>
             {
                 assert.equal(actualFilename, expectedFilename, "Deleted file name is incorrect");
                 this.onAfterRequest(actualQueries, res, expectedQueries, expectedResponseCode, expectedResponseBody);
@@ -182,7 +176,7 @@ export class Runner
     /** 
      * Start an Orion app
      */
-    async startServerAsync(): Promise<void>
+    async startServerAsync()
     {
         if(this.isServerStarted)
             return;
@@ -198,10 +192,10 @@ export class Runner
      * @param actualQueries Actual queries received by DB adapter
      * @param queryResults List of results to be returned for each incoming query
      */
-    onBeforeRequest(actualQueries: ITestQuery[], queryResults: any): void
+    onBeforeRequest(actualQueries, queryResults)
     {
         this.pool.reset();
-        this.pool.onQueryReceived((actualString:string, actualParams:INameValueMap, dialect:string) =>
+        this.pool.onQueryReceived((actualString, actualParams, dialect) =>
         {
             actualQueries.push({ string: actualString, params: actualParams, dialect: dialect });
             if(queryResults && queryResults.length)
@@ -217,8 +211,8 @@ export class Runner
      * @param expectedResponseCode expected response status code
      * @param expectedResponseBody expected response body
      */
-    onAfterRequest(actualQueries:ITestQuery[], actualResponse:any, expectedQueries:ITestQuery[], 
-        expectedResponseCode:number, expectedResponseBody:any): void
+    onAfterRequest(actualQueries, actualResponse, expectedQueries, 
+        expectedResponseCode, expectedResponseBody)
     {
         if(expectedQueries)
         {
@@ -254,7 +248,7 @@ export class Runner
      * @param relativePath Path to the current value from object root
      * @param currentKey Current object key
      */
-    assertResponseBody(actual:any, expected:any, relativePath:string, currentKey:string): void
+    assertResponseBody(actual, expected, relativePath, currentKey)
     {
         const fullPath = relativePath + "/" + currentKey;
         if(typeof actual === "undefined" || actual == null)
@@ -294,7 +288,7 @@ export class Runner
      * @param actual Actual query string
      * @param expected Expected query string
      */
-    assetQueryString(actual:string, expected:string): void
+    assetQueryString(actual, expected)
     {
         if(expected.indexOf("select") === 0)
         {
@@ -318,13 +312,13 @@ export class Runner
      * @param clauseEnd start keyword of the query clause
      * @param separator separator string between each clause value
      */
-    assertQueryClause(actual:string, expected:string, clauseStart:string, clauseEnd:string, separator:string): void
+    assertQueryClause(actual, expected, clauseStart, clauseEnd, separator)
     {
         const actualValues = this.getQueryClauseValues(actual, clauseStart, clauseEnd, separator);
         const expectedValues = this.getQueryClauseValues(expected, clauseStart, clauseEnd, separator);
         if(actualValues.length !== expectedValues.length)
             return;
-        actualValues.forEach((actualItem:string, index:number) =>
+        actualValues.forEach((actualItem, index) =>
         {
             if(actualItem !== expectedValues[index])
             {
@@ -341,7 +335,7 @@ export class Runner
      * @param separator separator string between each clause value
      * @return array of values
      */
-    getQueryClauseValues(query:string, clauseStart:string, clauseEnd:string, separator:string): string[]
+    getQueryClauseValues(query, clauseStart, clauseEnd, separator)
     {
         const clauseStartIndex = query.indexOf(clauseStart);
         if(clauseStartIndex < 0)

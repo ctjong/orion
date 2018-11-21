@@ -1,4 +1,3 @@
-import { IConfig } from "../../src/types";
 import { Runner } from './runner';
 import { configFactory } from './configFactory';
 import { assetTestSuite } from './tests/tests-asset';
@@ -11,7 +10,6 @@ import { MockStorageCommandWrapper } from "./mocks/mockStorageCommandWrapper";
 import { AzureStorageAdapter } from "../../src/storage/azureStorageAdapter";
 import { LocalStorageAdapter } from "../../src/storage/localStorageAdapter";
 import { S3StorageAdapter } from "../../src/storage/s3StorageAdapter";
-import { IStorageAdapter } from "../../src/storage/iStorageAdapter";
 import { MockSqlQueryWrapper } from "./mocks/mockSqlQueryWrapper";
 import { SqlDatabaseAdapter } from "../../src/database/sqlDatabaseAdapter";
 
@@ -46,7 +44,7 @@ const main = () =>
  * @param sessionName Session name
  * @param testSuites List of test suites to run
  */
-const startTestSession = (config: IConfig, storageAdapter:IStorageAdapter, pool:MockConnectionPool, sessionName: string, testSuites: any[]) =>
+const startTestSession = (config, storageAdapter, pool, sessionName, testSuites) =>
 {
     const databaseAdapter = new SqlDatabaseAdapter(config, new MockSqlQueryWrapper());
     const runner = new Runner(config, databaseAdapter, storageAdapter, pool);

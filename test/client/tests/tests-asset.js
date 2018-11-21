@@ -1,9 +1,6 @@
-import { Runner } from "../runner";
-import { ITestSuite } from "../testTypes";
-
-export class AssetTestSuite implements ITestSuite
+export class AssetTestSuite
 {
-    run(runner:Runner, params:any): void
+    run(runner, params)
     {
         runner.runFileUploadTest(
             'POST | asset-noToken | 200',
