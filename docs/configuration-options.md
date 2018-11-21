@@ -86,7 +86,7 @@ Here are the properties that must/may be included in a field configuration objec
 
 ### Default Fields and Entities
 
-[Here](https://github.com/ctjong/orion/blob/master/src/core/defaultConfig.ts) is a list of default fields and entities that are being automatically added to your configuration at runtime.
+[Here](https://github.com/ctjong/orion/blob/master/src/defaultConfig.ts) is a list of default fields and entities that are being automatically added to your configuration at runtime.
 
 The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". The fields specified in **defaultFields** are added to every entity in your config.
 
