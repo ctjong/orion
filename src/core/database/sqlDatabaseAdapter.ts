@@ -109,6 +109,13 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         return model.findAll(query);
     }
 
+    /**
+     * Find a record that matches the given id
+     * @param ctx Request context
+     * @param entityName Requested entity name
+     * @param recordId Id of record to find
+     * @returns query results
+     */
     findRecordByIdAsync(ctx: Context, entityName: string, recordId: string): Promise<any>
     {
         const fields = helperService.getFields(ctx, "read", entityName);
@@ -116,6 +123,13 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         return this.selectAsync(ctx, fields, entityName, condition, "id", 0, 1);
     }
 
+    /**
+     * Count the number of records that match the given condition
+     * @param ctx Request context
+     * @param entityName Requested entity name
+     * @param condition Condition object
+     * @returns query results
+     */
     async countAsync(ctx: Context, entityName: string, condition: ICondition): Promise<any>
     {
         const query: Sequelize.FindOptions<any> = {};
@@ -128,18 +142,71 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         return response[0]["count"];
     }
 
-    insertAsync(ctx: Context, entityName: string, fieldNames: string[], fieldValues: string[]): Promise<any>
+    /**
+     * Insert a new record
+     * @param ctx Request context
+     * @param entityName Requested entity name
+     * @param fieldNames New record field names
+     * @param fieldValues New record field values
+     * @returns inserted ID
+     */
+    async insertAsync(ctx: Context, entityName: string, fieldNames: string[], fieldValues: string[]): Promise<any>
     {
-        throw new Error("Method not implemented.");
+        if (fieldValues.length === 0)
+            return null;
+
+        const transaction = await this.sequelize.transaction();
+        const model = this.models[entityName];
+        const values:INameValueMap = {};
+        fieldNames.forEach((fieldName, index) => { values[fieldName] = fieldValues[index] });
+        const newData = await model.create(values, { transaction });
+        return newData.id;
     }
 
+    /**
+     * Update a record
+     * @param ctx Request context
+     * @param entityName Requested entity name
+     * @param updateData Update data
+     * @param condition Update condition
+     * @returns query results
+     */
     updateAsync(ctx: Context, entityName: string, updateData: INameValueMap, condition: ICondition): Promise<any>
     {
+        /*
+        const query = new Query();
+        let isFirstSetClause = true;
+        const tableName = `${entity}table`;
+        query.append(`update [${tableName}] set `);
+        Object.keys(updateData).forEach(fieldName =>
+        {
+            query.append(`${isFirstSetClause ? "" : ","}${fieldName}=?`, updateData[fieldName]);
+            isFirstSetClause = false;
+        });
+        query.append(" where ");
+        this.appendWhereClause(query, condition);
+        return this.executeAsync(ctx, query);
+        */
         throw new Error("Method not implemented.");
     }
 
+    /**
+     * Delete a record from the database
+     * @param ctx Request context
+     * @param entityName Requested entity name
+     * @param id Id of record to delete
+     * @returns query results
+     */
     deleteRecordAsync(ctx: Context, entityName: string, id: string): Promise<any>
     {
+        /*
+        const query = new Query();
+        const tableName = `${entity}table`;
+        const condition = conditionFactory.createSingle(entity, "id", "=", id);
+        query.append("delete from [" + tableName + "] where ");
+        this.appendWhereClause(query, condition);
+        return this.executeAsync(ctx, query);
+        */
         throw new Error("Method not implemented.");
     }
 
