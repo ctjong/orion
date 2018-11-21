@@ -1,8 +1,13 @@
 const mssql = require("mssql");
 const mysql = require("mysql");
 const Orion = require("../../build/index");
+const AzureStorageAdapter = require("../../src/storage/azureStorageAdapter");
+const LocalStorageAdapter = require("../../src/storage/localStorageAdapter");
+const S3StorageAdapter = require("../../src/storage/s3StorageAdapter");
+const MockStorageCommandWrapper = require("./mockStorageCommandWrapper");
 
 const DB_RETRY_INTERVAL = 3;
+const ASSET_BASE_PATH = `${process.env.temp}/oriontest`;
 
 /**
  * Entry point
@@ -10,28 +15,24 @@ const DB_RETRY_INTERVAL = 3;
 async function main()
 {
     const config = getConfigObject();
-    if (config.database.dialect === "mssql")
-        await verifyMssqlConnectionAsync(config);
-    if (config.database.dialect === "mysql")
-        await verifyMysqlConnectionAsync(config);
-    startServer(config);
+    await verifyDatabaseConnectionAsync(config);
+
+    const storageAdapter = createStorageAdapter(config);
+    startServer(config, storageAdapter);
 }
 
 /**
  * Start the server
  * @param config config object
+ * @param storageAdapter storage adapter object
  */
-function startServer(config)
+function startServer(config, storageAdapter)
 {
     console.log("Starting server");
-    const orionApp = new Orion(config);
+    const orionApp = new Orion(config, null, storageAdapter);
     orionApp.setupApiEndpoints();
-
-    orionApp.app.get("/healthcheck", function (req, res) 
-    {
-        res.status(200).end();
-    });
-
+    orionApp.app.get("/healthcheck", (req, res) => res.status(200).end());
+    orionApp.app.get("/files/:fileName", (req, res) => res.sendFile(`${ASSET_BASE_PATH}/${req.params.fileName}`));
     orionApp.startAsync();
 }
 
@@ -56,28 +57,42 @@ function getConfigObject()
 }
 
 /**
- * Verify a MSSQL database connnection. Because of the way Docker starts the containers,
- * sometimes it is possible that this application is started before the database is set up.
+ * Create storage adapter based on the specified configuration
  * @param config config object
  */
-async function verifyMssqlConnectionAsync(config)
+function createStorageAdapter(config)
 {
-    console.log("Checking DB connection (MSSQL)");
-    let success = false;
-    while (!success)
+    if (!config.storage)
+        return null;
+
+    const provider = config.storage.provider;
+    if (provider === "azure")
+        return new AzureStorageAdapter(config, new MockStorageCommandWrapper());
+    else if (provider === "s3")
+        return new S3StorageAdapter(config, new MockStorageCommandWrapper());
+    else if (provider === "local")
+        return new LocalStorageAdapter(config, new MockStorageCommandWrapper());
+    return null
+}
+
+/**
+ * Verify the database connnection. Because of the way Docker starts the containers,
+ * sometimes it is possible that this application is started before the database is set up.
+ * See this link for more details: https://docs.docker.com/compose/startup-order/
+ * @param config config object
+ */
+async function verifyDatabaseConnectionAsync(config)
+{
+    console.log("Checking DB connection");
+    while (true)
     {
         try
         {
-            const mssqlConfig = 
-            {
-                server: config.database.host,
-                user: config.database.userName,
-                password: config.database.password
-            };
-            const dbName = config.database.name;
-            const pool = await new mssql.ConnectionPool(mssqlConfig).connect();
-            await pool.request().query(`if not exists(select * from sys.databases where name = '${dbName}') create database ${dbName}`);
-            success = true;
+            if (config.database.dialect === "mssql")
+                await verifyMssqlConnectionAsync(config);
+            if (config.database.dialect === "mysql")
+                await verifyMysqlConnectionAsync(config);
+            break;
         }
         catch (e)
         {
@@ -90,44 +105,47 @@ async function verifyMssqlConnectionAsync(config)
 }
 
 /**
- * Verify a MYSQL database connnection. Because of the way Docker starts the containers,
- * sometimes it is possible that this application is started before the database is set up.
+ * Verify a MSSQL database connnection. This should throw an exception if connection is bad.
+ * @param config config object
+ */
+async function verifyMssqlConnectionAsync(config)
+{
+    const mssqlConfig =
+    {
+        server: config.database.host,
+        user: config.database.userName,
+        password: config.database.password
+    };
+    const dbName = config.database.name;
+    const pool = await new mssql.ConnectionPool(mssqlConfig).connect();
+    await pool.request().query(`if not exists(select * from sys.databases where name = '${dbName}') create database ${dbName}`);
+}
+
+/**
+ * Verify a MYSQL database connnection. This should throw an exception if connection is bad.
  * @param config config object
  */
 async function verifyMysqlConnectionAsync(config)
 {
-    console.log("Checking DB connection (MYSQL)");
-    let success = false;
-    while (!success)
+    const dbName = config.database.name;
+    const conn = mysql.createConnection(
+        {
+            host: config.database.host,
+            user: config.database.userName,
+            password: config.database.password
+        });
+    const success = await new Promise(resolve =>
     {
-        try
+        conn.connect(err => 
         {
-            const dbName = config.database.name;
-            const conn = mysql.createConnection(
-                {
-                    host: config.database.host,
-                    user: config.database.userName,
-                    password: config.database.password
-                });
-            success = await new Promise(resolve =>
-            {
-                conn.connect(err => 
-                {
-                    if (err)
-                        resolve(false);
-                    conn.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`);
-                    resolve(true);
-                });
-            });
-        }
-        catch (e)
-        {
-            console.log(`DB connection is bad. Retrying in ${DB_RETRY_INTERVAL} seconds. Here is the details:`);
-            console.log(e);
-            await sleepAsync(DB_RETRY_INTERVAL);
-        }
-    }
-    console.log("DB connection is good");
+            if (err)
+                resolve(false);
+            conn.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`);
+            resolve(true);
+        });
+    });
+    if (!success)
+        throw "Bad mysql connection";
 }
 
 /**

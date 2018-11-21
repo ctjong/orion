@@ -6,7 +6,7 @@ import { itemTestSuite } from './tests/tests-item';
 import { messageTestSuite } from './tests/tests-message';
 import { userTestSuite } from './tests/tests-user';
 import { MockConnectionPool } from "./mocks/mockConnectionPool";
-import { MockStorageCommandWrapper } from "./mocks/mockStorageCommandWrapper";
+import { MockStorageCommandWrapper } from "../server/mockStorageCommandWrapper";
 import { AzureStorageAdapter } from "../../src/storage/azureStorageAdapter";
 import { LocalStorageAdapter } from "../../src/storage/localStorageAdapter";
 import { S3StorageAdapter } from "../../src/storage/s3StorageAdapter";

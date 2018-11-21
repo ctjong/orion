@@ -117,7 +117,7 @@ export class MockStorageCommandWrapper
         return new Promise(resolve =>
         {
             // save the uploaded file to the system temp folder
-            const targetPath = process.env.temp + "\\" + name;
+            const targetPath = `${ASSET_BASE_PATH}/${name}`;
             if(stream)
             {
                 if(!this.wstream || this.wstream.path !== targetPath)
