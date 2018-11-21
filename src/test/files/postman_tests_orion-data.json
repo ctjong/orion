@@ -1,0 +1,2012 @@
+{
+	"variables": [],
+	"info": {
+		"name": "orion-data",
+		"_postman_id": "1399ce37-3c8a-6405-9708-a71c83d46723",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST | error-valid | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/error",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"msg\": \"test error\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | null-wrongEntity | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item2/public/findbyid/10",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | user-newUserInvalidEmail | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"invalidemail\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | user-newUserPwdMismatch | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | user-newUserPwdNotMeetReqs | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"test\",\n\t\"confirmPassword\": \"test\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | user-newUserGoodReqUser1 | 200/500",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200 || responseCode.code === 500;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user1\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"gavin\",\n\t\"lastName\": \"belson\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | user-newUserUser1Duplicate | 500",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 500;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user1\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"gavin\",\n\t\"lastName\": \"belson\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | user-newUserGoodReqUser2 | 200/500",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200 || responseCode.code === 500;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user2\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"peter\",\n\t\"lastName\": \"gregory\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | user-newUserGoodReqUser3 | 200/500",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200 || responseCode.code === 500;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user3\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"brian\",\n\t\"lastName\": \"griffin\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | token-wrongPassword | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/auth/token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user1\",\n\t\"password\": \"testpassword123\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | token-wrongUserName | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/auth/token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"invaliduser\",\n\t\"password\": \"testpassword\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | token-goodReqUser1 | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    if(responseCode.code === 200){",
+							"        postman.setGlobalVariable(\"authtoken\", json.token);",
+							"    }",
+							"    tests[\"tokenReturned\"] = !!json.token;",
+							"    tests[\"idReturned\"] = !!json.id;",
+							"    postman.setGlobalVariable(\"user1id\", json.id);",
+							"}catch(e){",
+							"    tests[\"tokenreturned\"] = false;",
+							"    tests[\"idReturned\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/auth/token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user1\",\n\t\"password\": \"testpassword\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | token-goodReqUser2 | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    if(responseCode.code === 200){",
+							"        postman.setGlobalVariable(\"authtoken2\", json.token);",
+							"    }",
+							"    tests[\"tokenReturned\"] = !!json.token;",
+							"    tests[\"idReturned\"] = !!json.id;",
+							"    postman.setGlobalVariable(\"user2id\", json.id);",
+							"}catch(e){",
+							"    tests[\"tokenreturned\"] = false;",
+							"    tests[\"idReturned\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/auth/token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user2\",\n\t\"password\": \"testpassword\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | token-goodReqUser3 | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    if(responseCode.code === 200){",
+							"        postman.setGlobalVariable(\"authtoken3\", json.token);",
+							"    }",
+							"    tests[\"tokenReturned\"] = !!json.token;",
+							"    tests[\"idReturned\"] = !!json.id;",
+							"    postman.setGlobalVariable(\"user3id\", json.id);",
+							"}catch(e){",
+							"    tests[\"tokenreturned\"] = false;",
+							"    tests[\"idReturned\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/auth/token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user3\",\n\t\"password\": \"testpassword\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | user-findAllPrivateUser1 | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"responseId\"] = json.items[0].id.toString() === postman.getGlobalVariable(\"user1id\");",
+							"    tests[\"responseBody\"] = json.items[0].username.toString() === \"user1\";",
+							"}catch(e){",
+							"    tests[\"responseId\"] = false;",
+							"    tests[\"responseBody\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user/private/findall/id/0/1",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | user-findByIdPrivateUser1 | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"responseId\"] = json.items[0].id.toString() === postman.getGlobalVariable(\"user1id\");",
+							"    tests[\"responseBody\"] = json.items[0].username.toString() === \"user1\";",
+							"}catch(e){",
+							"    tests[\"responseId\"] = false;",
+							"    tests[\"responseBody\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user/private/findbyid/{{user1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | user-findByIdPrivateUser2 | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user/private/findbyid/2",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "PUT | user-user1EditUser2Data | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user/{{user2id}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstName\": \"eddard\",\n\t\"lastName\": \"stark\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "PUT | user-user1EditUser1Data | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user/{{user1id}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstName\": \"catelyn\",\n\t\"lastName\": \"tully\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | user-verifyUser1Update | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"responseId\"] = json.items[0].id.toString() === postman.getGlobalVariable(\"user1id\");",
+							"    tests[\"responseBody\"] = json.items[0].firstname.toString() === \"catelyn\";",
+							"}catch(e){",
+							"    tests[\"responseId\"] = false;",
+							"    tests[\"responseBody\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user/private/findbyid/{{user1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEL | user-user1DelUser1 | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/user/{{user1id}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | item-noToken | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"item123\",\n\t\"date\": \"20171234\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | item-missingField | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"item123\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | item-goodReqItem1 | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"if(responseCode.code === 200){",
+							"    postman.setGlobalVariable(\"item1id\", responseBody);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"item1\",\n\t\"date\": \"20170101\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | item-goodReqItem2 | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"if(responseCode.code === 200){",
+							"    postman.setGlobalVariable(\"item2id\", responseBody);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"item2\",\n\t\"date\": \"20170202\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findByIdPublic | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/public/findbyid/{{item1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findByIdPrivateNoToken | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findByIdPrivateWrongToken | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"responseLength\"] = json.count === 0;",
+							"}catch(e){",
+							"    tests[\"responseLength\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken2}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findByIdPrivateInvalidToken | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer wrongtokenwrongtokenwrongtokenwrongtokenwrongtoken",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findByIdPrivateGoodToken | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"responseBody1\"] = json.items[0].id.toString() === postman.getGlobalVariable(\"item1id\");",
+							"    tests[\"responseBody2\"] = json.items[0].owner.id.toString() === postman.getGlobalVariable(\"user1id\");",
+							"}catch(e){",
+							"    tests[\"responseBody1\"] = false;",
+							"    tests[\"responseBody2\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findByConditionPrivateNoToken | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbycondition/id/0/2/date%3E20170000",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findByConditionPrivateGoodTokenByDate | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"totalItems\"] = json.count >= 2;",
+							"    tests[\"responseBody1\"] = json.items[0].owner.id.toString() === postman.getGlobalVariable(\"user1id\");",
+							"    tests[\"responseBody2\"] = json.items[1].owner.id.toString() === postman.getGlobalVariable(\"user1id\");",
+							"}catch(e){",
+							"    tests[\"totalItems\"] = false;",
+							"    tests[\"responseBody1\"] = false;",
+							"    tests[\"responseBody2\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbycondition/id/0/2/date%3E20170000",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findByConditionPrivateGoodTokenByName | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"totalItems\"] = json.count >= 1;",
+							"    tests[\"responseBody1\"] = json.items[0].name.indexOf(\"item1\") >= 0;",
+							"    tests[\"responseBody2\"] = json.items[0].owner.id.toString() === postman.getGlobalVariable(\"user1id\");",
+							"}catch(e){",
+							"    tests[\"totalItems\"] = false;",
+							"    tests[\"responseBody1\"] = false;",
+							"    tests[\"responseBody2\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbycondition/id/0/2/name~item1",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findAllPrivateNotoken | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findall/id/0/2",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-findAllPrivateGoodToken | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"totalItems\"] = json.count >= 2;",
+							"    tests[\"item1owner\"] = json.items[0].owner.id.toString() === postman.getGlobalVariable(\"user1id\");",
+							"    tests[\"item2owner\"] = json.items[1].owner.id.toString() === postman.getGlobalVariable(\"user1id\");",
+							"}catch(e){",
+							"    tests[\"success\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findall/createdtime/0/2",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "PUT | item-wrongToken | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/{{item1id}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken2}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"item123\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "PUT | item-goodToken | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/{{item1id}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"item123\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-verifyUpdate | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    var insertedId = postman.getGlobalVariable(\"insertedId\");",
+							"    tests[\"responseId\"] = json.items[0].name === \"item123\";",
+							"}catch(e){",
+							"    tests[\"responseId\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "PUT | item-mixedValidFields | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/{{item1id}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"new item\",\n\t\"name123\": \"new invalid item\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-verifyUpdate2 | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    var insertedId = postman.getGlobalVariable(\"insertedId\");",
+							"    tests[\"responseId\"] = json.items[0].name === \"new item\";",
+							"}catch(e){",
+							"    tests[\"responseId\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEL | item-wrongToken | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/{{item1id}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken2}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEL | item-item1GoodToken | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/{{item1id}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEL | item-item2GoodToken | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/{{item2id}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEL | item-item2DoubleDel | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/{{item2id}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | item-item1VerifyDelete | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"totalItems\"] = json.count == 0;",
+							"}catch(e){",
+							"    tests[\"totalItems\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | message-noToken | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2Id}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | message-missingField | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"recipientid\": \"{{user2id}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST | message-user1ToUser2Good | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"postman.setGlobalVariable(\"messageId\", responseBody);",
+							"tests[\"messageId\"] = !!responseBody;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2id}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | message-user1GetMsg | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"responseBody\"] = json.items[0].text === \"test message\";",
+							"}catch(e){",
+							"    tests[\"responseBody\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message/public/findbycondition/id/0/1/ownerid={{user1id}}&recipientid={{user2id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2Id}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | message-user2GetMsg | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"responseBody\"] = json.items[0].text === \"test message\";",
+							"}catch(e){",
+							"    tests[\"responseBody\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message/public/findbycondition/id/0/1/ownerid={{user1id}}&recipientid={{user2id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken2}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2Id}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "GET | message-user3GetMsgForbidden | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"responseBody\"] = json.count === 0;",
+							"}catch(e){",
+							"    tests[\"responseBody\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message/public/findbycondition/id/0/1/ownerid={{user1id}}&recipientid={{user2id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken3}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2Id}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "PUT | message-user2Flag | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message/{{messageId}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken2}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"flagged\": \"1\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "PUT | message-user1Unflag | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message/{{messageId}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"flagged\": \"0\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "PUT | message-user1EditMsg | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message/{{messageId}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"text\": \"test message edited\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "PUT | message-user2EditMsg | 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message/{{messageId}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken2}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"text\": \"test message edited\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEL | message-user1DelMsg | 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 401;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/api/data/message/{{messageId}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

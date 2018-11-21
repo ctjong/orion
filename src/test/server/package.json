@@ -1,0 +1,11 @@
+{
+  "name": "oriontest",
+  "version": "0.0.0",
+  "description": "oriontest",
+  "main": "server.js",
+  "dependencies": {
+    "mssql": "^4.2.3",
+    "mysql": "^2.16.0",
+    "orion-api": "file:orion-api-2.0.0.tgz"
+  }
+}

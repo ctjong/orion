@@ -9,3 +9,6 @@ package-lock.json
 coverage
 .nyc_output
 build
+uploads
+*.env
+.nyc_output
