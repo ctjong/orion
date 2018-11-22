@@ -18,12 +18,11 @@ import { S3StorageAdapter } from "./storage/s3StorageAdapter";
 import { LocalStorageAdapter } from "./storage/localStorageAdapter";
 import { SqlDatabaseAdapter } from "./database/sqlDatabaseAdapter";
 import { SqlQueryWrapper } from "./database/sqlQueryWrapper";
-import { IOrionApp } from "./iOrionApp";
 
 /**
  * An Orion app object
  */
-module.exports = class Orion implements IOrionApp
+module.exports = class Orion
 {
     app:Express.Express = null;
     express:any = Express;
