@@ -5,11 +5,12 @@ import * as multiparty from "multiparty";
 import * as guid from "uuid";
 import { IStorageCommandWrapper } from "./iStorageCommandWrapper";
 import { StorageCommandWrapper } from "./storageCommmandWrapper";
+import { IStorageAdapter } from "./iStorageAdapter";
 
 /**
  * A module to handle file upload/delete on local server storage
  */
-export class LocalStorageAdapter
+export class LocalStorageAdapter implements IStorageAdapter
 {
     private wrapper:IStorageCommandWrapper;
 

@@ -6,11 +6,12 @@ import * as guid from "uuid";
 import * as mime from "mime-types";
 import { StorageCommandWrapper } from "./storageCommmandWrapper";
 import { IStorageCommandWrapper } from "./iStorageCommandWrapper";
+import { IStorageAdapter } from "./iStorageAdapter";
 
 /**
  * Class that handles file upload/delete on Azure Blob Storage
  */
-export class AzureStorageAdapter
+export class AzureStorageAdapter implements IStorageAdapter
 {
     private wrapper:IStorageCommandWrapper;
 
