@@ -2,8 +2,6 @@ import * as Sequelize from "sequelize";
 import { IDatabaseAdapter } from "./iDatabaseAdapter";
 import { INameValueMap, ICondition, Context, IConfig, CompoundCondition, SingleCondition } from "../types";
 import { conditionFactory } from "../services/conditionFactory";
-import { SqlQueryWrapper } from "./sqlQueryWrapper";
-import { ISqlQueryWrapper } from "./iSqlQueryWrapper";
 import { Op } from "sequelize";
 import { helperService } from "../services/helperService";
 
@@ -27,14 +25,12 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
     dialect: string;
     models: Sequelize.Models;
     sequelize: Sequelize.Sequelize;
-    wrapper: ISqlQueryWrapper;
 
     /**
      * Initialize the database adapter
      * @param config configuration object
-     * @param wrapper optional query wrapper object
      */
-    constructor(config: IConfig, wrapper?: ISqlQueryWrapper)
+    constructor(config: IConfig)
     {
         if (!config.database || !config.database.dialect)
             throw "Missing/incomplete database configuration";
@@ -48,7 +44,6 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
                 host: config.database.host,
                 dialect: config.database.dialect
             });
-        this.wrapper = wrapper ? wrapper : new SqlQueryWrapper();
 
         this.initializeModels(config);
         this.initializeForeignKeys(config);

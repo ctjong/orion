@@ -17,7 +17,6 @@ import { AzureStorageAdapter } from "./storage/azureStorageAdapter";
 import { S3StorageAdapter } from "./storage/s3StorageAdapter";
 import { LocalStorageAdapter } from "./storage/localStorageAdapter";
 import { SqlDatabaseAdapter } from "./database/sqlDatabaseAdapter";
-import { SqlQueryWrapper } from "./database/sqlQueryWrapper";
 
 /**
  * An Orion app object
@@ -45,7 +44,7 @@ module.exports = class Orion
         if(databaseAdapter)
             this.db = databaseAdapter;
         else
-            this.db = new SqlDatabaseAdapter(config, new SqlQueryWrapper());
+            this.db = new SqlDatabaseAdapter(config);
     
         // storage system
         if(storageAdapter)
