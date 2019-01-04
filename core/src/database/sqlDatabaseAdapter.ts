@@ -152,7 +152,7 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
 
         const transaction = await this.sequelize.transaction();
         const model = this.models[entityName];
-        const values:INameValueMap = {};
+        const values: INameValueMap = {};
         fieldNames.forEach((fieldName, index) => { values[fieldName] = fieldValues[index] });
         const newData = await model.create(values, { transaction });
         return newData.id;
@@ -164,25 +164,19 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      * @param entityName Requested entity name
      * @param updateData Update data
      * @param condition Update condition
-     * @returns query results
      */
-    updateAsync(ctx: Context, entityName: string, updateData: INameValueMap, condition: ICondition): Promise<any>
+    async updateAsync(ctx: Context, entityName: string, updateData: INameValueMap, condition: ICondition): Promise<any>
     {
-        /*
-        const query = new Query();
-        let isFirstSetClause = true;
-        const tableName = `${entity}table`;
-        query.append(`update [${tableName}] set `);
-        Object.keys(updateData).forEach(fieldName =>
-        {
-            query.append(`${isFirstSetClause ? "" : ","}${fieldName}=?`, updateData[fieldName]);
-            isFirstSetClause = false;
-        });
-        query.append(" where ");
-        this.appendWhereClause(query, condition);
-        return this.executeAsync(ctx, query);
-        */
-        throw new Error("Method not implemented.");
+        const transaction = await this.sequelize.transaction();
+        const model = this.models[entityName];
+        const results = await model.update(
+            updateData,
+            {
+                where: this.getWhereClause(condition),
+                transaction
+            }
+        );
+        return results[1];
     }
 
     /**
@@ -190,19 +184,18 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      * @param ctx Request context
      * @param entityName Requested entity name
      * @param id Id of record to delete
-     * @returns query results
      */
-    deleteRecordAsync(ctx: Context, entityName: string, id: string): Promise<any>
+    async deleteRecordAsync(ctx: Context, entityName: string, id: string): Promise<any>
     {
-        /*
-        const query = new Query();
-        const tableName = `${entity}table`;
-        const condition = conditionFactory.createSingle(entity, "id", "=", id);
-        query.append("delete from [" + tableName + "] where ");
-        this.appendWhereClause(query, condition);
-        return this.executeAsync(ctx, query);
-        */
-        throw new Error("Method not implemented.");
+        const transaction = await this.sequelize.transaction();
+        const condition = conditionFactory.createSingle(entityName, "id", "=", id);
+        const model = this.models[entityName];
+        await model.destroy(
+            {
+                where: this.getWhereClause(condition),
+                transaction
+            }
+        );
     }
 
     /**
