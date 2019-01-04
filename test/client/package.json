@@ -1,0 +1,7 @@
+{
+    "name": "orion-test-client",
+    "version": "0.0.0",
+    "scripts": {
+        "test": "mocha --require source-map-support/register main.js"
+    }
+}
