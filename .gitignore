@@ -12,3 +12,4 @@ build
 uploads
 *.env
 .nyc_output
+*.tgz

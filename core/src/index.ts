@@ -21,7 +21,7 @@ import { SqlDatabaseAdapter } from "./database/sqlDatabaseAdapter";
 /**
  * An Orion app object
  */
-module.exports = class Orion
+class OrionApp
 {
     app:Express.Express = null;
     express:any = Express;
@@ -312,3 +312,14 @@ module.exports = class Orion
         return response;
     }
 }
+
+/**
+ * Expose public objects
+ */
+module.exports = 
+{
+    App: OrionApp,
+    AzureStorageAdapter: AzureStorageAdapter,
+    S3StorageAdapter: S3StorageAdapter,
+    LocalStorageAdapter: LocalStorageAdapter
+};

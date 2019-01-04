@@ -7,9 +7,6 @@
     "type": "git",
     "url": "https://github.com/ctjong/orion"
   },
-  "scripts": {
-    "test": "mocha --require source-map-support/register build/test/main.js"
-  },
   "keywords": [
     "orion",
     "rest",

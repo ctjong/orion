@@ -6,10 +6,6 @@ const path = require("path");
  */
 module.exports = class MockStorageCommandWrapper
 {
-    filePartReceivedHandler = null;
-    fileDeletedHandler = null;
-    wstream = null;
-
     /**
      * Upload a file to an Azure blob storage.
      * @param containerName azure container name
