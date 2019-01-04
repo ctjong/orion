@@ -61,6 +61,10 @@ const Orion = require('orion-api');
 const config = require('./config');
 const orionApp = new Orion.App(config);
 orionApp.setupApiEndpoints();
+
+// to add more endpoints, use orionApp.app like regular Express app:
+// orionApp.app.get("/additionalroute", (req, res) => ...);
+
 orionApp.start();
 ```
 
