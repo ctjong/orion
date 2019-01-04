@@ -2,7 +2,7 @@
     "name": "orion-scripts",
     "version": "0.0.0",
     "scripts": {
-        "buildall": "node scripts/buildAll.js",
+        "build": "node scripts/build.js",
         "test": "mocha --require source-map-support/register test/client/main.js"
     }
 }
