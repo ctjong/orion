@@ -91,7 +91,6 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         query.where = this.getWhereClause(condition);
         query.offset = skip;
         query.limit = take;
-        query.transaction = await this.sequelize.transaction();
 
         const orderByVal = [];
         if (orderByField.indexOf("~") === 0)
@@ -130,7 +129,6 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         const query: Sequelize.FindOptions<any> = {};
         query.attributes = [[Sequelize.fn("COUNT", Sequelize.col("*")), "count"]];
         query.where = this.getWhereClause(condition);
-        query.transaction = await this.sequelize.transaction();
 
         const model = this.models[entityName];
         const response = await model.findAll(query);
@@ -150,11 +148,10 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         if (fieldValues.length === 0)
             return null;
 
-        const transaction = await this.sequelize.transaction();
         const model = this.models[entityName];
         const values: INameValueMap = {};
         fieldNames.forEach((fieldName, index) => { values[fieldName] = fieldValues[index] });
-        const newData = await model.create(values, { transaction });
+        const newData = await model.create(values);
         return newData.id;
     }
 
@@ -167,15 +164,8 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      */
     async updateAsync(ctx: Context, entityName: string, updateData: INameValueMap, condition: ICondition): Promise<any>
     {
-        const transaction = await this.sequelize.transaction();
         const model = this.models[entityName];
-        const results = await model.update(
-            updateData,
-            {
-                where: this.getWhereClause(condition),
-                transaction
-            }
-        );
+        const results = await model.update(updateData, { where: this.getWhereClause(condition) });
         return results[1];
     }
 
@@ -187,15 +177,9 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      */
     async deleteRecordAsync(ctx: Context, entityName: string, id: string): Promise<any>
     {
-        const transaction = await this.sequelize.transaction();
         const condition = conditionFactory.createSingle(entityName, "id", "=", id);
         const model = this.models[entityName];
-        await model.destroy(
-            {
-                where: this.getWhereClause(condition),
-                transaction
-            }
-        );
+        await model.destroy({ where: this.getWhereClause(condition) });
     }
 
     /**
