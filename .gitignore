@@ -12,3 +12,4 @@ uploads
 *.env
 .nyc_output
 *.tgz
+test/server/package-lock.json
