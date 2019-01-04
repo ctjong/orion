@@ -1,0 +1,7 @@
+{
+    "name": "orion-scripts",
+    "version": "1.0.0",
+    "scripts": {
+        "buildall": "node scripts/buildAll.js"
+    }
+}
