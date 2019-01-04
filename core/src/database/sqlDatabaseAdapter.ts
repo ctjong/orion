@@ -211,8 +211,9 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
             Object.keys(entityConfig.fields).forEach(fieldName =>
             {
                 const fieldConfig = entityConfig.fields[fieldName];
-                const fieldType = fieldConfig.type;
-                modelDef[fieldName] = { type: typeMap[fieldType], primaryKey: fieldType === "id" };
+                const fieldType = typeMap[fieldConfig.type];
+                const isIdField = fieldConfig.type === "id";
+                modelDef[fieldName] = { type: fieldType, primaryKey: isIdField, autoIncrement: isIdField };
             });
             this.models[entityName] = this.sequelize.define(entityName, modelDef);
         });

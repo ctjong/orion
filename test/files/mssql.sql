@@ -13,23 +13,20 @@ CREATE TABLE usertable (
 [roles] VARCHAR (255) NULL,
 [username] VARCHAR (255) NULL,
 [password] VARCHAR (255) NULL,
-[email] VARCHAR (255) NULL,
-[createdtime] BIGINT NOT NULL
+[email] VARCHAR (255) NULL
 );
 CREATE TABLE itemtable (
 [name] VARCHAR (255) NULL,
 [date] INT DEFAULT 0,
 [id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
-[ownerid] INT NOT NULL,
-[createdtime] BIGINT NOT NULL
+[ownerid] INT NOT NULL
 );
 CREATE TABLE messagetable (
 [recipientid] INT NOT NULL,
 [text] VARCHAR (255) NULL,
 [flagged] BIT DEFAULT 0,
 [id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
-[ownerid] INT NOT NULL,
-[createdtime] BIGINT NOT NULL
+[ownerid] INT NOT NULL
 );
 CREATE TABLE assettable (
 [id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY,

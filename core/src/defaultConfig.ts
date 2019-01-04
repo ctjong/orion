@@ -3,8 +3,7 @@ import { IFieldConfigSet, IEntityConfigSet } from "./types";
 const defaultFieldConfigSet : IFieldConfigSet =
 {
     "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-    "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { targetEntityName: "user", resolvedKeyName: "owner", isManyToMany: false } },
-    "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
+    "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { targetEntityName: "user", resolvedKeyName: "owner", isManyToMany: false } }
 };
 
 const defaultEntityConfigSet : IEntityConfigSet =
@@ -37,8 +36,7 @@ const defaultEntityConfigSet : IEntityConfigSet =
             "password": { type: "secret", isEditable: true, createReq: 2, foreignKey: null },
             "email": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
             "firstname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
-            "lastname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
-            "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
+            "lastname": { type: "string", isEditable: true, createReq: 1, foreignKey: null }
         },
         allowedRoles:
         {

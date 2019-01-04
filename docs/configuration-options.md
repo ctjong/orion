@@ -88,6 +88,6 @@ Here are the properties that must/may be included in a field configuration objec
 
 [Here](https://github.com/ctjong/orion/blob/master/src/defaultConfig.ts) is a list of default fields and entities that are being automatically added to your configuration at runtime.
 
-The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". The fields specified in **defaultFields** are added to every entity in your config.
+The data types "id" are special types reserved only for fields "id". The fields specified in **defaultFields** are added to every entity in your config.
 
 All values in the **defaultEntities** and **defaultFields** are overridable in your config. If an override is specified, the config values will be merged using Object.assign();

@@ -43,7 +43,7 @@ class CreateHandler
             try
             {
                 ctx.res.send(insertedId.toString());
-            } 
+            }
             catch(ex) {}
         }
     }
@@ -94,7 +94,7 @@ class CreateHandler
         if(ctx.entityName === "user") 
         {
             authService.verifyAuthSupported(ctx);
-            if(requestBody.password !== requestBody.confirmpassword)
+            if(requestBody.password !== requestBody.confirmPassword)
             {
                 execService.throwError("1b9e", 400, "password doesn't match the confirmation");
             }
@@ -138,8 +138,6 @@ class CreateHandler
             fieldNames.push("ownerid");
             fieldValues.push(ctx.user.id);
         }
-        fieldNames.push("createdtime");
-        fieldValues.push(new Date().getTime());
         return { names: fieldNames, values: fieldValues };
     }
 

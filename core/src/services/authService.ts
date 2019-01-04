@@ -130,8 +130,8 @@ class AuthService
                                 const createResponse = await ctx.db.insertAsync(
                                     ctx,
                                     "user", 
-                                    ["domain", "domainid", "roles", "email", "firstname", "lastname", "createdtime"], 
-                                    ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name, new Date().getTime()]);
+                                    ["domain", "domainid", "roles", "email", "firstname", "lastname"], 
+                                    ["fb", parsed.id, "member", parsed.email, parsed.first_name, parsed.last_name]);
                                 const id = createResponse[0].identity.toString();
                                 this.createAndSendToken(ctx, id, "fb", parsed.id, ["member"], parsed.first_name, parsed.last_name);
                             }

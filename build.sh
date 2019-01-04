@@ -14,3 +14,8 @@ cd ${basepath}/test/server
 npm install
 npm pack ../../core
 npm install --save orion*.tgz
+
+if [ "$1" == "-test" ]; then
+    cd ${basepath}/test
+    docker-compose up
+fi

@@ -153,7 +153,7 @@ class ItemTestSuite
 
         runner.runTest(
             'GET | item-findAllPrivateGoodToken | 200',
-            '/api/data/item/private/findall/createdtime/0/2',
+            '/api/data/item/private/findall/createdat/0/2',
             'get',
             null,
             params.user1Token,
