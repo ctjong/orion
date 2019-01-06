@@ -45,10 +45,6 @@ class ReadHandler
         const fields = helperService.getFields(ctx, "read");
         const count = await ctx.db.countAsync(ctx, ctx.entityName, condition);
         const dbResponse = await ctx.db.selectAsync(ctx, fields, ctx.entityName, condition, orderByField, skip, take);
-        for (let i = 0; i < dbResponse.length; i++)
-        {
-            dbResponse[i] = helperService.fixDataKeysAndTypes(ctx, dbResponse[i]);
-        }
         ctx.res.json({ "count": count, "items": dbResponse });
     }
 

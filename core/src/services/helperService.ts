@@ -36,48 +36,6 @@ class HelperService
     }
 
     /**
-     * Fix the key name and type of each item in the given data object
-     * @param ctx Request context
-     * @param data Data object
-     * @param entityName Entity name
-     * @returns fixed data object
-     */
-    fixDataKeysAndTypes(ctx: Context, data: INameValueMap, entityName?: string): INameValueMap
-    {
-        if (!data)
-            return data;
-        const newData: any = {};
-        for (const key in data)
-        {
-            if (!data.hasOwnProperty(key))
-                continue;
-            if (key.indexOf("_") >= 0)
-            {
-                const keyParts = key.split("_");
-                const outerKey = keyParts[0].toLowerCase();
-                const innerKey = keyParts[1].toLowerCase();
-                if (!newData[outerKey])
-                    newData[outerKey] = {};
-                newData[outerKey][innerKey] = data[key];
-            }
-            else
-            {
-                newData[key.toLowerCase()] = data[key];
-            }
-        }
-        if (!entityName)
-            entityName = ctx.entityName;
-        this.fixDataTypes(ctx, entityName, newData);
-        for (const newKey in newData)
-        {
-            if (!newData.hasOwnProperty(newKey) || !newData[newKey] || typeof (newData[newKey]) !== "object")
-                continue;
-            this.fixDataTypes(ctx, entityName, newData[newKey]);
-        }
-        return newData;
-    }
-
-    /**
      * To be invoked at the beginning of a write request (create/update/delete).
      * This will check if an action is permitted, given the context and target record.
      * Also resolve any foreign key that exists in the request body.
@@ -89,7 +47,6 @@ class HelperService
      */
     async onBeginWriteRequestAsync(ctx: Context, action: string, recordId: string, requestBody: INameValueMap): Promise<any>
     {
-        requestBody = this.fixDataKeysAndTypes(ctx, requestBody);
         const isWriteAllowedFn = ctx.config.entities[ctx.entityName].isWriteAllowed;
         if (action === "create")
         {
@@ -104,7 +61,6 @@ class HelperService
             let record = await ctx.db.findRecordByIdAsync(ctx, ctx.entityName, recordId);
             if (!record)
                 execService.throwError("7e13", 400, "record not found with id " + recordId);
-            record = this.fixDataKeysAndTypes(ctx, record);
 
             if ((ctx.entityName === "user" && ctx.user.id === record.id) || (ctx.entityName !== "user" && ctx.user.id === record.ownerid))
                 ctx.user.roles.push("owner");
@@ -129,35 +85,6 @@ class HelperService
     }
 
     /**
-     * Fix the type of each item in the given data object
-     * @param ctx Request context
-     * @param entityName Entity name
-     * @param dataObj Data object
-     * @returns fixed data object
-     */
-    fixDataTypes(ctx: Context, entityName: string, dataObj: INameValueMap): void
-    {
-        const fields = ctx.config.entities[entityName].fields;
-        for (const fieldName in fields)
-        {
-            if (!fields.hasOwnProperty(fieldName))
-                continue;
-            const fieldType = fields[fieldName].type;
-            if (dataObj[fieldName] === null || typeof (dataObj[fieldName]) === "undefined")
-                continue;
-            if (fieldType === "int")
-            {
-                dataObj[fieldName] = parseInt(dataObj[fieldName]);
-            }
-            else if (fieldType === "float")
-            {
-                dataObj[fieldName] = parseFloat(dataObj[fieldName]);
-            }
-        }
-    }
-
-
-    /**
      * Resolve the foreign keys in the given request body
      * @param ctx Request context
      * @param requestBody Request body
@@ -170,24 +97,17 @@ class HelperService
         {
             if (!fields.hasOwnProperty(fieldName) || !fields[fieldName].foreignKey || !requestBody[fieldName])
                 continue;
-            const promise = this.resolveForeignKeyAsync(ctx, requestBody, fieldName, fields[fieldName].foreignKey);
+
+            const promise = new Promise(async resolve =>
+            {
+                const fk = fields[fieldName].foreignKey;
+                requestBody[fk.resolvedEntityName] = await ctx.db.findRecordByIdAsync(ctx, fk.targetEntityName, requestBody[fieldName]);
+                resolve();
+            });
             promises.push(promise);
         }
         for (const promise of promises)
             await promise;
-    }
-
-    /**
-     * Resolve a foreign key field in the given request body
-     * @param ctx Request context
-     * @param requestBody Request body
-     * @param fieldName Field name
-     * @param fk Foreign key object
-     */
-    async resolveForeignKeyAsync(ctx: Context, requestBody: INameValueMap, fieldName: string, fk: any): Promise<any>
-    {
-        const record = await ctx.db.findRecordByIdAsync(ctx, fk.targetEntityName, requestBody[fieldName]);
-        requestBody[fk.resolvedEntityName] = this.fixDataKeysAndTypes(ctx, record);
     }
 
     /**
