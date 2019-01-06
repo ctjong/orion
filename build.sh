@@ -17,5 +17,6 @@ npm install --save orion*.tgz
 
 if [ "$1" == "-test" ]; then
     cd ${basepath}/test
+    docker-compose stop
     docker-compose up
 fi

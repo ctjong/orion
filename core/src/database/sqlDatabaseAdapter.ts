@@ -100,7 +100,15 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         query.order = orderByVal;
 
         const model = this.models[entityName];
-        return model.findAll(query);
+        const response = await model.findAll(query);
+
+        const responseData: any[] = [];
+        response.forEach(item =>
+        {
+            if (item.dataValues)
+                responseData.push(item.dataValues);
+        });
+        return responseData;
     }
 
     /**
@@ -132,7 +140,7 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
 
         const model = this.models[entityName];
         const response = await model.findAll(query);
-        return response[0]["count"];
+        return response[0].dataValues.count;
     }
 
     /**

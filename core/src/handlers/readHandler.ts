@@ -14,7 +14,7 @@ class ReadHandler
      * @param requestParams Request parameters
      * @param isFullMode Whether to do the read in full mode (full mode = include rich text fields in response)
      */
-    async executeAsync(ctx:Context, requestParams:INameValueMap, isFullMode:boolean): Promise<void>
+    async executeAsync(ctx: Context, requestParams: INameValueMap, isFullMode: boolean): Promise<void>
     {
         // set owner role if the read operation is run in private mode
         if (requestParams.accessType === "private")
@@ -36,7 +36,7 @@ class ReadHandler
         // get condition
         const configConditionStr = this.getConditionStringFromConfig(ctx);
         const condition = this.getConditionFromRequest(ctx, requestParams);
-        if(configConditionStr !== "") 
+        if (configConditionStr !== "") 
         {
             condition.children.push(conditionFactory.parse(ctx, configConditionStr));
         }
@@ -45,11 +45,11 @@ class ReadHandler
         const fields = helperService.getFields(ctx, "read");
         const count = await ctx.db.countAsync(ctx, ctx.entityName, condition);
         const dbResponse = await ctx.db.selectAsync(ctx, fields, ctx.entityName, condition, orderByField, skip, take);
-        for(let i=0; i<dbResponse.length; i++)
+        for (let i = 0; i < dbResponse.length; i++)
         {
             dbResponse[i] = helperService.fixDataKeysAndTypes(ctx, dbResponse[i]);
         }
-        ctx.res.json({"count": count, "items": dbResponse});
+        ctx.res.json({ "count": count, "items": dbResponse });
     }
 
     /**
@@ -57,14 +57,14 @@ class ReadHandler
      * @param ctx Request context
      * @returns condition string
      */
-    private getConditionStringFromConfig(ctx:Context): string
+    private getConditionStringFromConfig(ctx: Context): string
     {
         const entityConfig = ctx.config.entities[ctx.entityName];
         if (!entityConfig.getReadCondition)
             return "";
         return entityConfig.getReadCondition(ctx.user.roles, ctx.user.id);
     }
-    
+
     /**
      * Get condition object from the request
      * @param ctx Request context
@@ -73,20 +73,20 @@ class ReadHandler
      * @param exec Exec module
      * @returns Condition object
      */
-    private getConditionFromRequest(ctx:Context, requestParams:INameValueMap): CompoundCondition
+    private getConditionFromRequest(ctx: Context, requestParams: INameValueMap): CompoundCondition
     {
         const isPrivate = requestParams.accessType === "private";
         const condition = conditionFactory.createCompound("&", []);
-        if(requestParams.condition)
+        if (requestParams.condition)
         {
             const conditionString = decodeURIComponent(requestParams.condition);
             condition.children.push(conditionFactory.parse(ctx, conditionString));
         }
-        else if(requestParams.id)
+        else if (requestParams.id)
         {
             condition.children.push(conditionFactory.createSingle(ctx.entityName, "id", "=", requestParams.id));
         }
-        if(isPrivate)
+        if (isPrivate)
         {
             const fieldName = ctx.entityName === "user" ? "id" : "ownerid";
             condition.children.push(conditionFactory.createSingle(ctx.entityName, fieldName, "=", ctx.user.id));
