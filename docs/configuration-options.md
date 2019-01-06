@@ -16,7 +16,7 @@ A configuration module is required to give the application the necessary informa
 
 Below is the list of settings to be included in a configuration module:
 - **database** - (Required) Database configuration
-    - **dialect** - (Required) Database dialect to use (mssql/mysql).
+    - **dialect** - (Required) Database dialect to use (mssql/mysql/sqlite).
     - **host** - (Required) Database host.
     - **name** - (Required) Database name.
     - **userName** - (Required) Username to connect to the database.
@@ -86,7 +86,5 @@ Here are the properties that must/may be included in a field configuration objec
 ### Default Fields and Entities
 
 [Here](https://github.com/ctjong/orion/blob/master/src/defaultConfig.ts) is a list of default fields and entities that are being automatically added to your configuration at runtime.
-
-The data types "id" are special types reserved only for fields "id". The fields specified in **defaultFields** are added to every entity in your config.
 
 All values in the **defaultEntities** and **defaultFields** are overridable in your config. If an override is specified, the config values will be merged using Object.assign();
