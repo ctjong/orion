@@ -9,9 +9,17 @@
 
 Please go to [Issues](https://github.com/ctjong/orion/issues) to see the list of all open issues. Thank you!
 
+
+## Dev requirements
+
+- [Typescript](https://www.typescriptlang.org/#download-links)
+- [Docker](https://docs.docker.com/get-started/) 
+- [Postman](https://www.getpostman.com/)
+
+
 ## Testing
 
-We are using Postman and Docker to run the tests against our code. These tools are both very useful for testing API servers. If you don't have them already, please follow the set up instructions on the [Postman website](https://www.getpostman.com/) and [Docker website](https://docs.docker.com/get-started/)
+We are using Postman and Docker to run the tests against our code. These tools are both very useful for testing API servers. If you don't have them already, please follow the set up instructions specified on the tool's websites. See [Dev requirements](#dev-requirements) section above for more details about the tools.
 
 To run our tests, please follow these steps.
 1. Launch Postman
