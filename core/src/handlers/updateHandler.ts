@@ -19,7 +19,7 @@ class UpdateHandler
         const { record } = await helperService.onBeginWriteRequestAsync(ctx, "update", recordId, requestBody);
 
         // Match the submitted data fields with those specified in the config, to make sure
-        // the submitted field name is editable. We also need to make sure that the matching
+        // the submitted field names are editable. We also need to make sure that the matching
         // is case-insensitive.
         const updateData: INameValueMap = {};
         const fields = helperService.getFields(ctx, "update");
