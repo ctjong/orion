@@ -7,9 +7,6 @@ cd ${basepath}/core
 npm install
 tsc --build tsconfig.json
 
-cd ${basepath}/test/client
-npm install
-
 cd ${basepath}/test/server
 npm install
 npm pack ../../core
