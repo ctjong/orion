@@ -37,8 +37,8 @@ To see what the framework can do, let us try creating a simple API server. Here 
             {
                 "fields":
                 {
-                    "title": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                    "content": { type: "richtext", isEditable: true, createReq: 2, foreignKey: null }
+                    "title": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+                    "content": { type: "richtext", isEditable: true, isRequired: true, foreignKey: null }
                 },
                 "permissions":
                 {

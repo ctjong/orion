@@ -39,8 +39,8 @@ module.exports =
         {
             "fields":
             {
-                "title": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "content": { type: "richtext", isEditable: true, createReq: 2, foreignKey: null }
+                "title": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+                "content": { type: "richtext", isEditable: true, isRequired: true, foreignKey: null }
             },
             "permissions":
             {

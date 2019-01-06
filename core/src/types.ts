@@ -11,7 +11,7 @@ export class Error { tag:string; statusCode:number; msg:string; stack?:any };
 // Entities and fields
 
 // type can be "string" / "text" / "int" / "float" / "boolean" / "secret"
-export interface IFieldConfig { type:string; isEditable:boolean; createReq:number; foreignKey:IForeignKeyConfig };
+export interface IFieldConfig { type:string; isEditable:boolean; isRequired?:boolean; isIgnoredOnCreate?:boolean; foreignKey?:IForeignKeyConfig };
 export interface IFieldConfigSet { [key:string]:IFieldConfig };
 export interface IEntityConfig 
 { 

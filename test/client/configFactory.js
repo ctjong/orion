@@ -33,16 +33,16 @@ class ConfigFactory
                 {
                     fields:
                     {
-                        "firstname": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                        "lastname": { type: "string", isEditable: true, createReq: 2, foreignKey: null }
+                        "firstname": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+                        "lastname": { type: "string", isEditable: true, isRequired: true, foreignKey: null }
                     }
                 },
                 "item":
                 {
                     fields:
                     {
-                        "name": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                        "date": { type: "int", isEditable: true, createReq: 2, foreignKey: null }
+                        "name": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+                        "date": { type: "int", isEditable: true, isRequired: true, foreignKey: null }
                     },
                     permissions: 
                     {
@@ -56,9 +56,9 @@ class ConfigFactory
                 {
                     fields:
                     {
-                        "recipientid": { type: "int", isEditable: false, createReq: 2, foreignKey: { targetEntityName: "user", resolvedEntityName: "recipient", isManyToMany: false }},
-                        "text": { type: "string", isEditable: false, createReq: 2, foreignKey: null },
-                        "flagged": { type: "boolean", isEditable: true, createReq: 0, foreignKey: null }
+                        "recipientid": { type: "int", isEditable: false, isRequired: true, foreignKey: { targetEntityName: "user", resolvedEntityName: "recipient", isManyToMany: false }},
+                        "text": { type: "string", isEditable: false, isRequired: true, foreignKey: null },
+                        "flagged": { type: "boolean", isEditable: true, isIgnoredOnCreate: true, foreignKey: null }
                     },
                     permissions: 
                     {

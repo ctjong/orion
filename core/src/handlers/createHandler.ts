@@ -62,12 +62,12 @@ class CreateHandler
         {
             if(!allFields.hasOwnProperty(fieldName))
                 continue;
-            const createReq = allFields[fieldName].createReq;
-            if(createReq === 1)
+            const field = allFields[fieldName];
+            if(!field.isRequired && !field.isIgnoredOnCreate)
             {
                 optionalFields.push(fieldName);
             }
-            else if(createReq === 2)
+            else if(field.isRequired)
             {
                 requiredFields.push(fieldName);
             }

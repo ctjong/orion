@@ -53,8 +53,8 @@
         {
             fields:
             {
-                "dateofbirth": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "cityofbirth": { type: "string", isEditable: true, createReq: 2, foreignKey: null }
+                "dateofbirth": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+                "cityofbirth": { type: "string", isEditable: true, isRequired: true, foreignKey: null }
             }
         },
 
@@ -63,8 +63,8 @@
         {
             fields:
             {
-                "name": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "date": { type: "int", isEditable: true, createReq: 2, foreignKey: null }
+                "name": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+                "date": { type: "int", isEditable: true, isRequired: true, foreignKey: null }
             },
             permissions: 
             {
@@ -82,9 +82,9 @@
             // if it contains inappropariate content
             fields:
             {
-                "recipientid": { type: "int", isEditable: false, createReq: 2, foreignKey: { targetEntityName: "user", resolvedEntityName: "recipient" }},
-                "text": { type: "string", isEditable: false, createReq: 2, foreignKey: null },
-                "flagged": { type: "boolean", isEditable: true, createReq: 0, foreignKey: null }
+                "recipientid": { type: "int", isEditable: false, isRequired: true, foreignKey: { targetEntityName: "user", resolvedEntityName: "recipient" }},
+                "text": { type: "string", isEditable: false, isRequired: true, foreignKey: null },
+                "flagged": { type: "boolean", isEditable: true, isIgnoredOnCreate: true, foreignKey: null }
             },
 
             // allow members to read, create, update, but not delete. 

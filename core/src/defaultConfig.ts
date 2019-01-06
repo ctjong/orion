@@ -2,8 +2,8 @@ import { IFieldConfigSet, IEntityConfigSet } from "./types";
 
 const defaultFieldConfigSet : IFieldConfigSet =
 {
-    "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-    "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { targetEntityName: "user", resolvedEntityName: "owner", isManyToMany: false } }
+    "id": { type: "id", isEditable: false, isIgnoredOnCreate: true, foreignKey: null },
+    "ownerid": { type: "int", isEditable: false, isIgnoredOnCreate: true, foreignKey: { targetEntityName: "user", resolvedEntityName: "owner", isManyToMany: false } }
 };
 
 const defaultEntityConfigSet : IEntityConfigSet =
@@ -12,9 +12,9 @@ const defaultEntityConfigSet : IEntityConfigSet =
     {
         fields:
         {
-            "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-            "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { targetEntityName: "user", resolvedEntityName: "owner", isManyToMany: false } },
-            "filename": { type: "string", isEditable: false, createReq: 2, foreignKey: null }
+            "id": { type: "id", isEditable: false, isIgnoredOnCreate: true, foreignKey: null },
+            "ownerid": { type: "int", isEditable: false, isIgnoredOnCreate: true, foreignKey: { targetEntityName: "user", resolvedEntityName: "owner", isManyToMany: false } },
+            "filename": { type: "string", isEditable: false, isRequired: true, foreignKey: null }
         },
         permissions:
         {
@@ -28,15 +28,15 @@ const defaultEntityConfigSet : IEntityConfigSet =
     {
         fields:
         {
-            "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-            "domain": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-            "domainid": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-            "roles": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-            "username": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-            "password": { type: "secret", isEditable: true, createReq: 2, foreignKey: null },
-            "email": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-            "firstname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
-            "lastname": { type: "string", isEditable: true, createReq: 1, foreignKey: null }
+            "id": { type: "id", isEditable: false, isIgnoredOnCreate: true, foreignKey: null },
+            "domain": { type: "string", isEditable: false, isIgnoredOnCreate: true, foreignKey: null },
+            "domainid": { type: "string", isEditable: false, isIgnoredOnCreate: true, foreignKey: null },
+            "roles": { type: "string", isEditable: false, isIgnoredOnCreate: true, foreignKey: null },
+            "username": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+            "password": { type: "secret", isEditable: true, isRequired: true, foreignKey: null },
+            "email": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+            "firstname": { type: "string", isEditable: true, isRequired: false, foreignKey: null },
+            "lastname": { type: "string", isEditable: true, isRequired: false, foreignKey: null }
         },
         permissions:
         {

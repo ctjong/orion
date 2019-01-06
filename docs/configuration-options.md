@@ -62,10 +62,8 @@ Here are the properties that must/may be included in a field configuration objec
     - **boolean** : boolean type (0/1), default to 0.
     - **secret** : password type, max 255 characters. This type of field will be hidden from GET requests.
 - **isEditable** : (Required) Whether or not this field is editable by PUT requests (true/false).
-- **createReq** : (Required) Whether or not this field must be included in a POST body. The possible values are:
-    - **0** : The field will be ignored when a POST request is processed.
-    - **1** : The field is optional, it will be processed if it is included in a POST body.
-    - **2** : The field is required, it must be included in a POST body. If not a 400 response code will be returned.
+- **isRequired** : (Optional) Whether or not this field's value must be provided by the user during item creation (POST request).
+- **isIgnoredOnCreate** : (Optional) Whether or not this field's value will be ignored if provided during item creation (POST request). This property will always be false if **isRequired** is set to true.
 - **foreignKey** : (Optional) Foreign key configuration, required if the field is a foreign key to another entity. The configuration includes the following properties:
     - **targetEntityName** - (Required) the entity name that the field is linked to. The value of the field will be matched with the "id" field of the target entity.
     - **resolvedEntityName** - (Required) The library resolves one level of foreign key relationship for a GET request. The resolved object will be appended to the response object, with the value of this **resolvedEntityName** as key. For instance, if entity "blogpost" has field "authorId" that is a foreign key to entity "user" and has **resolvedEntityName** value "author", then an item in a GET response will look something like:
