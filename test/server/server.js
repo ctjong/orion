@@ -6,7 +6,7 @@ const MockStorageCommandWrapper = require("./mockStorageCommandWrapper");
 const DB_RETRY_INTERVAL = 3;
 const ASSET_BASE_PATH = `${process.env.temp}/oriontest`;
 
-// TODO: include env variables in the repo, set up storage tests
+// TODO: include env variables in the repo, set up storage tests, pass ASSET_BASE_PATH to mock storage wrapper
 
 /**
  * Entry point
