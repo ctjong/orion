@@ -573,7 +573,13 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"statusCode\"] = responseCode.code === 401;"
+							"tests[\"statusCode\"] = responseCode.code === 200;",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"responseCount\"] = json.count === 0;",
+							"}catch(e){",
+							"    tests[\"responseCount\"] = false;",
+							"}"
 						]
 					}
 				}
