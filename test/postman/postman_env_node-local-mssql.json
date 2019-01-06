@@ -1,0 +1,16 @@
+{
+  "id": "922d5ace-1757-a73a-cbda-f6710b599cec",
+  "name": "node-local-mssql",
+  "values": [
+    {
+      "enabled": true,
+      "key": "host",
+      "value": "localhost:1337",
+      "type": "text"
+    }
+  ],
+  "timestamp": 1524876220033,
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2018-04-28T00:44:04.585Z",
+  "_postman_exported_using": "Postman/5.5.2"
+}

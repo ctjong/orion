@@ -1,32 +1,18 @@
-# Orion Documentation
-
-- [Home](../)
-- [Sample Blog App](sample-blog-app)
-- [API Endpoints](api-endpoints)
-- [Configuration Options](configuration-options)
-- [Sample Configuration](sample-configuration)
-- [Authentication](authentication)
-- [User Roles](user-roles)
-- [Condition Syntax](condition-syntax)
-- [API Reference](api-reference)
-
-## Sample Configuration
-
-```js
+module.exports = 
 {
     database:
     {
         dialect: "mssql",
-        host: _DATABASE_HOST_,
-        name: _DATABASE_NAME_,
-        userName: _DATABASE_USERNAME_,
-        password: _DATABASE_PASSWORD_
+        host: process.env.DB_HOST,
+        name: "oriontest",
+        userName: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD
     },
     auth: 
     {
         tokenLifetimeInMins: 5,
-        secretKey: process.env.SAMPLE_SECRET_KEY,
-        salt: process.env.SAMPLE_SALT,
+        secretKey: "samplestring",
+        salt: "samplestring",
         passwordReqs:
         {
             minLength: 8,
@@ -39,26 +25,23 @@
     storage: 
     {
         provider: "azure",
-        azureStorageConnectionString: process.env.SAMPLE_STORAGE_CONNECTION_STRING,
+        azureStorageConnectionString: process.env.AZURE_BS_CONNSTRING,
         azureStorageContainerName: "oriontest"
     },
     monitoring:
     {
-        appInsightsKey: process.env.SAMPLE_APPINSIGHTS_INSTRUMENTATIONKEY
+        azureAppInsightsKey: "samplestring"
     },
     entities:
     {
-        // Extend the default user entity by adding new fields "dateofbirth" and "cityofbirth"
         "user":
         {
             fields:
             {
-                "dateofbirth": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
-                "cityofbirth": { type: "string", isEditable: true, isRequired: true, foreignKey: null }
+                "firstname": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+                "lastname": { type: "string", isEditable: true, isRequired: true, foreignKey: null }
             }
         },
-
-        // An item entity, only readable and modifiable by owner
         "item":
         {
             fields:
@@ -74,21 +57,14 @@
                 "delete": ["owner", "admin"]
             }
         },
-
-        // An entity representing a chat message
         "message":
         {
-            // only the 'flagged' is editable, to allow the message recipient to flag it 
-            // if it contains inappropariate content
             fields:
             {
                 "recipientid": { type: "int", isEditable: false, isRequired: true, foreignKey: { targetEntityName: "user", resolvedEntityName: "recipient" }},
                 "text": { type: "string", isEditable: false, isRequired: true, foreignKey: null },
                 "flagged": { type: "boolean", isEditable: true, isIgnoredOnCreate: true, foreignKey: null }
             },
-
-            // allow members to read, create, update, but not delete. 
-            // more granular permission check for read and update is applied in the readValidator and writeValidator.
             permissions: 
             {
                 "read": ["member", "admin"],
@@ -96,23 +72,18 @@
                 "update": ["member", "admin"],
                 "delete": ["admin"]
             },
-
-            // we only allow read access to the sender (owner) and the recipient, and the site admin.
-            readValidator: (roles, userId) =>
+            readValidator: function(roles, userId)
             {
                 if(roles.indexOf("admin") >= 0)
                     return "";
                 return "ownerid=" + userId + "|recipientid=" + userId;
             },
-
-            // we only allow update access to the recipient (to flag the message) and the site admin.
-            writeValidator: (action, roles, userId, dbRecord, inputRecord) =>
+            writeValidator: function(action, roles, userId, dbResource, inputResource)
             {
                 if(action !== "update" || roles.indexOf("admin") >= 0)
                     return true;
-                return userId === dbRecord.recipientid;
+                return userId === dbResource.recipientid;
             }
         }
     },
 };
-```

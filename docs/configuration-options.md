@@ -1,7 +1,7 @@
 # Orion Documentation
 
 - [Home](../)
-- [Create Your First Orion Application](create-your-first-orion-application)
+- [Sample Blog App](sample-blog-app)
 - [API Endpoints](api-endpoints)
 - [Configuration Options](configuration-options)
 - [Sample Configuration](sample-configuration)
@@ -16,8 +16,11 @@ A configuration module is required to give the application the necessary informa
 
 Below is the list of settings to be included in a configuration module:
 - **database** - (Required) Database configuration
-    - **engine** - (Required) Database engine to use (mssql/mysql).
-    - **connectionString** - (Required) Connection string to connect with database
+    - **dialect** - (Required) Database dialect to use (mssql/mysql/sqlite).
+    - **host** - (Required) Database host.
+    - **name** - (Required) Database name.
+    - **userName** - (Required) Username to connect to the database.
+    - **password** - (Required) Password to connect to the database.
 - **auth** - (Optional) Authentication configuration. Required if you want to enable authentication.
     - **secretKey** - (Required) Secret key for token encryption.
     - **salt** - (Optional) Salt string for password encryption. Required if you want to support Orion JWT authentication.
@@ -44,9 +47,9 @@ Below is the list of settings to be included in a configuration module:
 
 Here are the properties that must/may be included in an entity configuration object:
 - **fields** - (Required) An object that contains a list of fields in the entity. Each entry in the object should be a mapping from a field name to a [field configuration](field-configuration) object. Similar to entity name, the field name should also contain no space, and preferably be all lowercase to make it consistent with the names in the database system.
-- **allowedRoles** - (Required) An object that specify which user roles are allowed to do a certain operation. Each entry in the object should be a mapping from an operation name (create/read/update/delete) to an array of user roles. See [User Roles](user-roles) for more info on what the user roles can be.
-- **getReadCondition** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function passes in as parameters the user roles and user ID, and should return a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **allowedRoles** list above. For examnple, if you want to allow read access only to members who are more than 20 years old, you can put the role "member" in the **allowedRoles** and add a **getReadCondition** function that returns condition "age>20". See [Condition Syntax](condition-syntax) for more details on how to write the condition.
-- **isWriteAllowed** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function passes in as parameters the action name, user roles, user ID, record object from DB, and record object from user, and it should return a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **allowedRoles**. For example, if you want to allow update access only to members who live in Seattle, you can put "member" in the **allowedRoles** and add an **isWriteAllowed** function that returns true only if city == "Seattle".
+- **permissions** - (Required) An object that specify which user roles are allowed to do a certain operation. Each entry in the object should be a mapping from an operation name (create/read/update/delete) to an array of user roles. See [User Roles](user-roles) for more info on what the user roles can be.
+- **readValidator** - (Optional) A function to be invoked at the beginning of each read (GET) operation. This function passes in as parameters the user roles and user ID, and should return a condition string to be added to the database read query. This is useful if you need a more granular permission rule in addition to the **permissions** list above. For examnple, if you want to allow read access only to members who are more than 20 years old, you can put the role "member" in the **permissions** and add a **readValidator** function that returns condition "age>20". See [Condition Syntax](condition-syntax) for more details on how to write the condition.
+- **writeValidator** - (Optional) A function to be invoked at the beginning of each write (POST/PUT/DELETE) request. This function passes in as parameters the action name, user roles, user ID, record object from DB, and record object from user, and it should return a boolean, whether or not to allow the request. This is useful if you need a more granular permission check in addition to the **permissions**. For example, if you want to allow update access only to members who live in Seattle, you can put "member" in the **permissions** and add an **writeValidator** function that returns true only if city == "Seattle".
 
 ### Field Configuration
 
@@ -59,13 +62,11 @@ Here are the properties that must/may be included in a field configuration objec
     - **boolean** : boolean type (0/1), default to 0.
     - **secret** : password type, max 255 characters. This type of field will be hidden from GET requests.
 - **isEditable** : (Required) Whether or not this field is editable by PUT requests (true/false).
-- **createReq** : (Required) Whether or not this field must be included in a POST body. The possible values are:
-    - **0** : The field will be ignored when a POST request is processed.
-    - **1** : The field is optional, it will be processed if it is included in a POST body.
-    - **2** : The field is required, it must be included in a POST body. If not a 400 response code will be returned.
+- **isRequired** : (Optional) Whether or not this field's value must be provided by the user during item creation (POST request).
+- **isIgnoredOnCreate** : (Optional) Whether or not this field's value will be ignored if provided during item creation (POST request). This property will always be false if **isRequired** is set to true.
 - **foreignKey** : (Optional) Foreign key configuration, required if the field is a foreign key to another entity. The configuration includes the following properties:
-    - **foreginEntity** - (Required) the entity name that the field is linked to. The value of the field will be matched with the "id" field of the target entity.
-    - **resolvedKeyName** - (Required) The library resolves one level of foreign key relationship for a GET request. The resolved object will be appended to the response object, with the value of this **resolvedKeyName** as key. For instance, if entity "blogpost" has field "authorId" that is a foreign key to entity "user" and has **resolvedKeyName** value "author", then an item in a GET response will look something like:
+    - **targetEntityName** - (Required) the entity name that the field is linked to. The value of the field will be matched with the "id" field of the target entity.
+    - **resolvedEntityName** - (Required) The library resolves one level of foreign key relationship for a GET request. The resolved object will be appended to the response object, with the value of this **resolvedEntityName** as key. For instance, if entity "blogpost" has field "authorId" that is a foreign key to entity "user" and has **resolvedEntityName** value "author", then an item in a GET response will look something like:
         ```
         {
             id: 123
@@ -78,63 +79,10 @@ Here are the properties that must/may be included in a field configuration objec
             }
         }
         ```
+    - **isManyToMany** - (Required) Defines whether or not this entity is in many-to-many relationship with the target entity.
 
 ### Default Fields and Entities
 
-Here are some default fields and entities that we add automatically to the your configuration at runtime.
-
-```js
-var defaultFields =
-    {
-        "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-        "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
-        "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
-    };
-
-var defaultEntities =
-    {
-        "asset":
-        {
-            fields:
-            {
-                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-                "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { foreignEntity: "user", resolvedKeyName: "owner" } },
-                "filename": { type: "string", isEditable: false, createReq: 2, foreignKey: null }
-            },
-            allowedRoles:
-            {
-                "read": ["owner", "admin"],
-                "create": ["member"],
-                "update": [],
-                "delete": ["owner", "admin"]
-            }
-        },
-        "user":
-        {
-            fields:
-            {
-                "id": { type: "id", isEditable: false, createReq: 0, foreignKey: null },
-                "domain": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-                "domainid": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-                "roles": { type: "string", isEditable: false, createReq: 0, foreignKey: null },
-                "username": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "password": { type: "secret", isEditable: true, createReq: 2, foreignKey: null },
-                "email": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "firstname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
-                "lastname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
-                "createdtime": { type: "timestamp", isEditable: false, createReq: 0, foreignKey: null }
-            },
-            allowedRoles:
-            {
-                "read": ["member", "owner", "admin"],
-                "create": ["guest"],
-                "update": ["owner", "admin"],
-                "delete": ["admin"]
-            }
-        },
-    };
-```
-
-The data types "id" and "timestamp" are special types reserved only for fields "id" and "createdtime". The fields specified in **defaultFields** are added to every entity in your config.
+[Here](https://github.com/ctjong/orion/blob/master/src/defaultConfig.ts) is a list of default fields and entities that are being automatically added to your configuration at runtime.
 
 All values in the **defaultEntities** and **defaultFields** are overridable in your config. If an override is specified, the config values will be merged using Object.assign();

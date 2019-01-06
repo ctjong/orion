@@ -1,7 +1,7 @@
 # Orion Documentation
 
 - [Home](../)
-- [Create Your First Orion Application](create-your-first-orion-application)
+- [Sample blog app](sample-blog-app)
 - [API Endpoints](api-endpoints)
 - [Configuration Options](configuration-options)
 - [Sample Configuration](sample-configuration)

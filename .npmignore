@@ -1,9 +1,0 @@
-.vscode/
-/.vs
-/bin
-/obj
-/test
-*.sln
-*.njsproj
-/docs
-_config.yml

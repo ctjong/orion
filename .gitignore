@@ -4,6 +4,12 @@ node_modules
 npm-debug.log
 .vs
 UpgradeLog.htm
-package-lock.json
 *.user
-.vscode
+coverage
+.nyc_output
+build
+uploads
+*.env
+.nyc_output
+*.tgz
+test/server/package-lock.json

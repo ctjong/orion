@@ -1,0 +1,13 @@
+.vscode/
+/.vs
+/bin
+/obj
+/test
+/src
+/build/test
+*.sln
+*.njsproj
+/docs
+_config.yml
+tsconfig.json
+tslint.json

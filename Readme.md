@@ -2,12 +2,12 @@
 
 [![npm](https://img.shields.io/npm/dt/orion-api.svg)](https://www.npmjs.com/package/orion-api) [![npm](https://img.shields.io/npm/v/orion-api.svg)](https://www.npmjs.com/package/orion-api) [![David](https://img.shields.io/david/ctjong/orion.svg)](https://www.npmjs.com/package/orion-api)
 
-Orion is an extension of [Express](https://github.com/expressjs/express) which allows you to build a fully functional REST API in just a few steps! It sets up all the CRUD data endpoints, file uploads, authentication endpoints, and error handling for you. All you need to do is just create a configuration and instantiate the application!
+Orion is a framework for creating a config-based REST API server, meaning the client can create a full-fledged API server by only defining a single configuration file. The framework is built on top of [Express](https://github.com/expressjs/express). The server application that the framework creates will support CRUD, file upload, authentication, and error handling.
 
 ## Supported components
 
-The library allows you to use the following services based on your preferences:
-- Database: **SQL Server** / **MySQL**
+The framework allows you to use the following services based on your preferences:
+- Database: **SQL Server** / **MySQL** / **sqlite**
 - File storage: **Azure Blob Storage** / **Amazon S3** / **Local Server**
 - Authentication: **Facebook token** / **Orion JSON Web Token (JWT)**
 - Monitoring: **Azure Application Insights**
@@ -27,8 +27,11 @@ module.exports =
 {
     database:
     {
-        engine: "mssql",
-        connectionString: _DATABASE_CONNECTION_STRING_
+        dialect: "mssql",
+        host: _DATABASE_HOST_,
+        name: _DATABASE_NAME_,
+        userName: _DATABASE_USERNAME_,
+        password: _DATABASE_PASSWORD_
     },
     entities:
     {
@@ -36,10 +39,10 @@ module.exports =
         {
             "fields":
             {
-                "title": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
-                "content": { type: "richtext", isEditable: true, createReq: 2, foreignKey: null }
+                "title": { type: "string", isEditable: true, isRequired: true, foreignKey: null },
+                "content": { type: "richtext", isEditable: true, isRequired: true, foreignKey: null }
             },
-            "allowedRoles":
+            "permissions":
             {
                 "read": ["guest"],
                 "create": ["guest"],
@@ -54,17 +57,21 @@ module.exports =
 **server.js**
 
 ```js
-var orion = require('orion-api');
-var config = require('./config');
-var app = new orion(config);
-app.setupApiEndpoints();
-app.start();
+const Orion = require('orion-api');
+const config = require('./config');
+const orionApp = new Orion.App(config);
+orionApp.setupApiEndpoints();
+
+// to add more endpoints, use orionApp.app like regular Express app:
+// orionApp.app.get("/additionalroute", (req, res) => ...);
+
+orionApp.startAsync();
 ```
 
 ## Documentation
 
 - [Home](https://ctjong.github.io/orion)
-- [Create Your First Orion Application](https://ctjong.github.io/orion/docs/create-your-first-orion-application)
+- [Sample Blog App](https://ctjong.github.io/orion/docs/sample-blog-app)
 - [API Endpoints](https://ctjong.github.io/orion/docs/api-endpoints)
 - [Configuration Options](https://ctjong.github.io/orion/docs/configuration-options)
 - [Sample Configuration](https://ctjong.github.io/orion/docs/sample-configuration)
