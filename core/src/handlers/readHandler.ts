@@ -56,9 +56,9 @@ class ReadHandler
     private getConditionStringFromConfig(ctx: Context): string
     {
         const entityConfig = ctx.config.entities[ctx.entityName];
-        if (!entityConfig.getReadCondition)
+        if (!entityConfig.readValidator)
             return "";
-        return entityConfig.getReadCondition(ctx.user.roles, ctx.user.id);
+        return entityConfig.readValidator(ctx.user.roles, ctx.user.id);
     }
 
     /**

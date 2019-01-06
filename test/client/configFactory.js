@@ -44,7 +44,7 @@ class ConfigFactory
                         "name": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
                         "date": { type: "int", isEditable: true, createReq: 2, foreignKey: null }
                     },
-                    allowedRoles: 
+                    permissions: 
                     {
                         "read": ["owner", "admin"],
                         "create": ["member"],
@@ -60,20 +60,20 @@ class ConfigFactory
                         "text": { type: "string", isEditable: false, createReq: 2, foreignKey: null },
                         "flagged": { type: "boolean", isEditable: true, createReq: 0, foreignKey: null }
                     },
-                    allowedRoles: 
+                    permissions: 
                     {
                         "read": ["member", "admin"],
                         "create": ["member", "admin"],
                         "update": ["member", "admin"],
                         "delete": ["admin"]
                     },
-                    getReadCondition: (roles, userId) =>
+                    readValidator: (roles, userId) =>
                     {
                         if(roles.indexOf("admin") >= 0)
                             return "";
                         return "ownerid=" + userId + "|recipientid=" + userId;
                     },
-                    isWriteAllowed: (action, roles, userId, dbResource, inputResource) =>
+                    writeValidator: (action, roles, userId, dbResource, inputResource) =>
                     {
                         if(action !== "update" || roles.indexOf("admin") >= 0)
                             return true;

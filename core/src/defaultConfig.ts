@@ -16,7 +16,7 @@ const defaultEntityConfigSet : IEntityConfigSet =
             "ownerid": { type: "int", isEditable: false, createReq: 0, foreignKey: { targetEntityName: "user", resolvedEntityName: "owner", isManyToMany: false } },
             "filename": { type: "string", isEditable: false, createReq: 2, foreignKey: null }
         },
-        allowedRoles:
+        permissions:
         {
             "read": ["owner", "admin"],
             "create": ["member"],
@@ -38,7 +38,7 @@ const defaultEntityConfigSet : IEntityConfigSet =
             "firstname": { type: "string", isEditable: true, createReq: 1, foreignKey: null },
             "lastname": { type: "string", isEditable: true, createReq: 1, foreignKey: null }
         },
-        allowedRoles:
+        permissions:
         {
             "read": ["member", "owner", "admin"],
             "create": ["guest"],

@@ -1,7 +1,7 @@
 # Orion Documentation
 
 - [Home](../)
-- [Create Your First Orion Application](create-your-first-orion-application)
+- [Sample Blog App](sample-blog-app)
 - [API Endpoints](api-endpoints)
 - [Configuration Options](configuration-options)
 - [Sample Configuration](sample-configuration)
@@ -10,14 +10,16 @@
 - [Condition Syntax](condition-syntax)
 - [API Reference](api-reference)
 
-## Create Your First Orion Application
+## Sample blog app
+
+To see what the framework can do, let us try creating a simple API server. Here are the steps to create a simple API server that stores blog post data.
 
 1. Set up a folder for your server application.
 2. Install Orion to your application.
     ```bash
     $ npm install --save orion-api
     ```
-3. Create a configuration module. This should contain all the settings for your application, and what entities/tables you want to have in the database. For instance, if you only want to have one table for storing blog posts, you can have the following configuration:
+3. Create a configuration module. This should contain all the settings for your application, and what entities/tables you want to have in the database.
     ```js
     module.exports =
     {
@@ -38,7 +40,7 @@
                     "title": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
                     "content": { type: "richtext", isEditable: true, createReq: 2, foreignKey: null }
                 },
-                "allowedRoles":
+                "permissions":
                 {
                     "read": ["guest"],
                     "create": ["guest"],
@@ -64,9 +66,7 @@
 5. You're all set! You can now run server.js to see your app in action. Unless you specify a port in the start() call, you will see your app running at port 1337.
     ```bash
     $ node server.js
-    ```
-    For the blog post example above, you can test it by running a POST to add a blog post entry and GET to retrieve it.
-    ```bash
+    $
     $ # insert a new blog post entry
     $ curl -d '{"title":"I like trains", "content":"Trains are cool!"}' -H "Content-Type: application/json" -X POST http://localhost:1337/api/data/blogpost
     $

@@ -16,9 +16,9 @@ export interface IFieldConfigSet { [key:string]:IFieldConfig };
 export interface IEntityConfig 
 { 
     fields: IFieldConfigSet; 
-    allowedRoles?: {[key:string]:string[]}; unique?:string[]; 
-    getReadCondition?: (roles:string[], userId:string)=>string; 
-    isWriteAllowed?: (action:string, roles:string[], userId:string, dbResource:any, inputResource:any) => boolean 
+    permissions?: {[key:string]:string[]};
+    readValidator?: (roles:string[], userId:string)=>string; 
+    writeValidator?: (action:string, roles:string[], userId:string, dbResource:any, inputResource:any) => boolean 
 };
 export interface IEntityConfigSet { [key:string]:IEntityConfig };
 export interface IForeignKeyConfig { targetEntityName:string; resolvedEntityName:string; isManyToMany:boolean; };

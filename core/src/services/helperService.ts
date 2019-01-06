@@ -47,12 +47,12 @@ class HelperService
      */
     async onBeginWriteRequestAsync(ctx: Context, action: string, recordId: string, requestBody: INameValueMap): Promise<any>
     {
-        const isWriteAllowedFn = ctx.config.entities[ctx.entityName].isWriteAllowed;
+        const writeValidatorFn = ctx.config.entities[ctx.entityName].writeValidator;
         if (action === "create")
         {
             this.validateRoles(ctx, "create");
             requestBody = await this.resolveForeignKeysAsync(ctx, requestBody);
-            if (isWriteAllowedFn && !isWriteAllowedFn(action, ctx.user.roles, ctx.user.id, null, requestBody))
+            if (writeValidatorFn && !writeValidatorFn(action, ctx.user.roles, ctx.user.id, null, requestBody))
                 execService.throwError("c75f", 400, "bad create request. operation not allowed.");
             return { record: null, requestBody: requestBody };
         }
@@ -66,7 +66,7 @@ class HelperService
                 ctx.user.roles.push("owner");
             this.validateRoles(ctx, action);
 
-            if (isWriteAllowedFn && !isWriteAllowedFn(action, ctx.user.roles, ctx.user.id, record, requestBody))
+            if (writeValidatorFn && !writeValidatorFn(action, ctx.user.roles, ctx.user.id, record, requestBody))
                 execService.throwError("29c8", 400, "bad " + action + " request. operation not allowed.");
             return { record: record, requestBody: requestBody };
         }
@@ -80,7 +80,7 @@ class HelperService
      */
     validateRoles(ctx: Context, action: string): void
     {
-        if (!this.containsAny(ctx.config.entities[ctx.entityName].allowedRoles[action], ctx.user.roles))
+        if (!this.containsAny(ctx.config.entities[ctx.entityName].permissions[action], ctx.user.roles))
             execService.throwError("c327", 401, "Unauthorized");
     }
 

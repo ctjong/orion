@@ -1,7 +1,7 @@
 # Orion Documentation
 
 - [Home](../)
-- [Create Your First Orion Application](create-your-first-orion-application)
+- [Sample Blog App](sample-blog-app)
 - [API Endpoints](api-endpoints)
 - [Configuration Options](configuration-options)
 - [Sample Configuration](sample-configuration)
@@ -66,7 +66,7 @@
                 "name": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
                 "date": { type: "int", isEditable: true, createReq: 2, foreignKey: null }
             },
-            allowedRoles: 
+            permissions: 
             {
                 "read": ["owner", "admin"],
                 "create": ["member"],
@@ -88,8 +88,8 @@
             },
 
             // allow members to read, create, update, but not delete. 
-            // more granular permission check for read and update is applied in the getReadCondition and isWriteAllowed.
-            allowedRoles: 
+            // more granular permission check for read and update is applied in the readValidator and writeValidator.
+            permissions: 
             {
                 "read": ["member", "admin"],
                 "create": ["member", "admin"],
@@ -98,7 +98,7 @@
             },
 
             // we only allow read access to the sender (owner) and the recipient, and the site admin.
-            getReadCondition: (roles, userId) =>
+            readValidator: (roles, userId) =>
             {
                 if(roles.indexOf("admin") >= 0)
                     return "";
@@ -106,7 +106,7 @@
             },
 
             // we only allow update access to the recipient (to flag the message) and the site admin.
-            isWriteAllowed: (action, roles, userId, dbRecord, inputRecord) =>
+            writeValidator: (action, roles, userId, dbRecord, inputRecord) =>
             {
                 if(action !== "update" || roles.indexOf("admin") >= 0)
                     return true;

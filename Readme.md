@@ -2,12 +2,12 @@
 
 [![npm](https://img.shields.io/npm/dt/orion-api.svg)](https://www.npmjs.com/package/orion-api) [![npm](https://img.shields.io/npm/v/orion-api.svg)](https://www.npmjs.com/package/orion-api) [![David](https://img.shields.io/david/ctjong/orion.svg)](https://www.npmjs.com/package/orion-api)
 
-Orion is a wrapper framework of [Express](https://github.com/expressjs/express) that allows you to build a config-based API server. It reads a configuration file that you provide and based on that it will set up a full-fledged API server, which includes CRUD data endpoints, file management endpoints, authentication endpoints, and error handling endpoints.
+Orion is a framework for creating a config-based REST API server, meaning the client can create a full-fledged API server by only defining a single configuration file. The framework is built on top of [Express](https://github.com/expressjs/express). The server application that the framework creates will support CRUD, file upload, authentication, and error handling.
 
 ## Supported components
 
 The framework allows you to use the following services based on your preferences:
-- Database: **SQL Server** / **MySQL**
+- Database: **SQL Server** / **MySQL** / **sqlite**
 - File storage: **Azure Blob Storage** / **Amazon S3** / **Local Server**
 - Authentication: **Facebook token** / **Orion JSON Web Token (JWT)**
 - Monitoring: **Azure Application Insights**
@@ -42,7 +42,7 @@ module.exports =
                 "title": { type: "string", isEditable: true, createReq: 2, foreignKey: null },
                 "content": { type: "richtext", isEditable: true, createReq: 2, foreignKey: null }
             },
-            "allowedRoles":
+            "permissions":
             {
                 "read": ["guest"],
                 "create": ["guest"],
@@ -71,7 +71,7 @@ orionApp.start();
 ## Documentation
 
 - [Home](https://ctjong.github.io/orion)
-- [Create Your First Orion Application](https://ctjong.github.io/orion/docs/create-your-first-orion-application)
+- [Sample Blog App](https://ctjong.github.io/orion/docs/sample-blog-app)
 - [API Endpoints](https://ctjong.github.io/orion/docs/api-endpoints)
 - [Configuration Options](https://ctjong.github.io/orion/docs/configuration-options)
 - [Sample Configuration](https://ctjong.github.io/orion/docs/sample-configuration)
