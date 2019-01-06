@@ -14,25 +14,35 @@ class UpdateHandler
      * @param requestBody Request body
      * @param recordId Record ID to update
      */
-    async executeAsync(ctx:Context, requestBody:INameValueMap, recordId:string): Promise<void>
+    async executeAsync(ctx: Context, requestBody: INameValueMap, recordId: string): Promise<void>
     {
         const { record } = await helperService.onBeginWriteRequestAsync(ctx, "update", recordId, requestBody);
-        const updateData:INameValueMap = {};
+
+        // Match the submitted data fields with those specified in the config, to make sure
+        // the submitted field name is editable. We also need to make sure that the matching
+        // is case-insensitive.
+        const updateData: INameValueMap = {};
         const fields = helperService.getFields(ctx, "update");
-        for(let i=0; i<fields.length; i++)
+        Object.keys(requestBody).forEach(requestBodyField =>
         {
-            const fieldName = fields[i];
-            if(!requestBody.hasOwnProperty(fieldName)) continue;
-            updateData[fieldName] = requestBody[fieldName];
-        }
-        if(Object.keys(updateData).length === 0)
+            requestBody[requestBodyField.toLowerCase()] = requestBody[requestBodyField];
+        });
+        fields.forEach(fieldName =>
+        {
+            if (requestBody.hasOwnProperty(fieldName))
+                updateData[fieldName] = requestBody[fieldName];
+        });
+
+        // Validate that the submitted data
+        if (Object.keys(updateData).length === 0)
         {
             execService.throwError("582e", 400, "bad request");
         }
-        if(ctx.entityName === "user" && record.domain !== "local") 
+        if (ctx.entityName === "user" && record.domain !== "local") 
         {
             execService.throwError("511f", 400, "updating external user info is not supported");
         }
+
         const condition = conditionFactory.createSingle(ctx.entityName, "id", "=", recordId);
         const dbResponse = await ctx.db.updateAsync(ctx, ctx.entityName, updateData, condition);
         ctx.res.send(dbResponse);

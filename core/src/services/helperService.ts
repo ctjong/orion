@@ -7,12 +7,14 @@ import { execService } from "./execService";
 class HelperService
 {
     /**
-     * Get a list of fields that are accessible from the given entity for the
-     * specified action.
+     * Get a list of enttiy fields to be used for the specified action. For read action,
+     * this will include all fields in the config that is not marked as "secret".
+     * For update action, this will include all fields that are marked as editable.
+     * For any other action, this will return an empty array.
      * @param ctx Request context
      * @param action Action name
-     * @param entityName Entity name
-     * @returns an array of field names
+     * @param entityName Optional entity name. If not defined, the context entity will be used.
+     * @returns an array of all-lowercased field names
      */
     getFields(ctx: Context, action: string, entityName?: string): string[]
     {
@@ -27,7 +29,7 @@ class HelperService
             if (!(action === "read" && fields[fieldName].type === "secret") &&
                 !(action === "update" && !fields[fieldName].isEditable))
             {
-                allowedFields.push(fieldName);
+                allowedFields.push(fieldName.toLowerCase());
             }
         }
         return allowedFields;

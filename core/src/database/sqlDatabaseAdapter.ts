@@ -118,11 +118,12 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
      * @param recordId Id of record to find
      * @returns query results
      */
-    findRecordByIdAsync(ctx: Context, entityName: string, recordId: string): Promise<any>
+    async findRecordByIdAsync(ctx: Context, entityName: string, recordId: string): Promise<any>
     {
         const fields = helperService.getFields(ctx, "read", entityName);
         const condition = conditionFactory.createSingle(entityName, "id", "=", recordId);
-        return this.selectAsync(ctx, fields, entityName, condition, "id", 0, 1);
+        const response = await this.selectAsync(ctx, fields, entityName, condition, "id", 0, 1);
+        return response[0];
     }
 
     /**
