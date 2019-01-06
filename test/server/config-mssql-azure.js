@@ -74,13 +74,13 @@ module.exports =
             },
             getReadCondition: function(roles, userId)
             {
-                if(roles.contains("admin"))
+                if(roles.indexOf("admin") >= 0)
                     return "";
                 return "ownerid=" + userId + "|recipientid=" + userId;
             },
             isWriteAllowed: function(action, roles, userId, dbResource, inputResource)
             {
-                if(action !== "update" || roles.contains("admin"))
+                if(action !== "update" || roles.indexOf("admin") >= 0)
                     return true;
                 return userId === dbResource.recipientid;
             }

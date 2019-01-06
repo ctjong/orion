@@ -100,7 +100,7 @@
             // we only allow read access to the sender (owner) and the recipient, and the site admin.
             getReadCondition: (roles, userId) =>
             {
-                if(roles.contains("admin"))
+                if(roles.indexOf("admin") >= 0)
                     return "";
                 return "ownerid=" + userId + "|recipientid=" + userId;
             },
@@ -108,7 +108,7 @@
             // we only allow update access to the recipient (to flag the message) and the site admin.
             isWriteAllowed: (action, roles, userId, dbRecord, inputRecord) =>
             {
-                if(action !== "update" || roles.contains("admin"))
+                if(action !== "update" || roles.indexOf("admin") >= 0)
                     return true;
                 return userId === dbRecord.recipientid;
             }
