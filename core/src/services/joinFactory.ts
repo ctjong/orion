@@ -33,7 +33,7 @@ class JoinFactory
         {
             e1: entityName, 
             e2: e2, 
-            e2Alias: fk.resolvedKeyName, 
+            e2Alias: fk.resolvedEntityName, 
             e1JoinField: field,
             e2JoinField: "id", 
             e2SelectFields: e2SelectFields.join(',')

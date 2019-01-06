@@ -82,7 +82,7 @@
             // if it contains inappropariate content
             fields:
             {
-                "recipientid": { type: "int", isEditable: false, createReq: 2, foreignKey: { targetEntityName: "user", resolvedKeyName: "recipient" }},
+                "recipientid": { type: "int", isEditable: false, createReq: 2, foreignKey: { targetEntityName: "user", resolvedEntityName: "recipient" }},
                 "text": { type: "string", isEditable: false, createReq: 2, foreignKey: null },
                 "flagged": { type: "boolean", isEditable: true, createReq: 0, foreignKey: null }
             },

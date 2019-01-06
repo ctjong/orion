@@ -19,7 +19,7 @@ export class ContextFactory
     {
         this.config = inputConfig;
 
-        // merge defaultFields into the this.config
+        // merge defaultFields into the config
         for (const entityName in this.config.entities)
         {
             if (!this.config.entities.hasOwnProperty(entityName) || defaultEntityConfigSet[entityName])
@@ -27,7 +27,7 @@ export class ContextFactory
             this.config.entities[entityName].fields = Object.assign({}, defaultFieldConfigSet, this.config.entities[entityName].fields);
         }
 
-        // merge defaultEntities into the this.config
+        // merge defaultEntities into the config
         for (const defaultEntityName in defaultEntityConfigSet)
         {
             if (!defaultEntityConfigSet.hasOwnProperty(defaultEntityName))

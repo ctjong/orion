@@ -86,18 +86,30 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
         if (fields.length === 0)
             return null;
 
+        const resolvedForeignNames: any[] = [];
+        Object.keys(ctx.config.entities[entityName].fields).forEach(fieldName =>
+        {
+            const fieldConfig = ctx.config.entities[entityName].fields[fieldName];
+            if (fieldConfig.foreignKey)
+                resolvedForeignNames.push(fieldConfig.foreignKey.resolvedEntityName);
+        });
+
         const query: Sequelize.FindOptions<any> = {};
         query.attributes = fields;
         query.where = this.getWhereClause(condition);
         query.offset = skip;
         query.limit = take;
+        query.include = resolvedForeignNames;
 
-        const orderByVal = [];
-        if (orderByField.indexOf("~") === 0)
-            orderByVal.push([orderByField.substring(1), "DESC"]);
-        else
-            orderByVal.push(orderByField);
-        query.order = orderByVal;
+        if (orderByField !== "id")
+        {
+            const orderByVal = [];
+            if (orderByField.indexOf("~") === 0)
+                orderByVal.push([orderByField.substring(1), "DESC"]);
+            else
+                orderByVal.push(orderByField);
+            query.order = orderByVal;
+        }
 
         const model = this.models[entityName];
         const response = await model.findAll(query);
@@ -228,12 +240,13 @@ export class SqlDatabaseAdapter implements IDatabaseAdapter
                     return;
 
                 const targetName = fieldConfig.foreignKey.targetEntityName;
+                const resolvedName = fieldConfig.foreignKey.resolvedEntityName;
                 if (!fieldConfig.foreignKey.isManyToMany)
-                    this.models[entityName].belongsTo(this.models[targetName], { foreignKey: fieldName });
+                    this.models[entityName].belongsTo(this.models[targetName], { foreignKey: fieldName, as: resolvedName });
                 else
                 {
                     const mapTableName = targetName < entityName ? `${targetName}_${entityName}` : `${entityName}_${targetName}`;
-                    this.models[entityName].belongsToMany(this.models[targetName], { through: mapTableName });
+                    this.models[entityName].belongsToMany(this.models[targetName], { foreignKey: fieldName, as: resolvedName, through: mapTableName });
                 }
             });
         })

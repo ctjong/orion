@@ -69,7 +69,7 @@ Here are the properties that must/may be included in a field configuration objec
     - **2** : The field is required, it must be included in a POST body. If not a 400 response code will be returned.
 - **foreignKey** : (Optional) Foreign key configuration, required if the field is a foreign key to another entity. The configuration includes the following properties:
     - **targetEntityName** - (Required) the entity name that the field is linked to. The value of the field will be matched with the "id" field of the target entity.
-    - **resolvedKeyName** - (Required) The library resolves one level of foreign key relationship for a GET request. The resolved object will be appended to the response object, with the value of this **resolvedKeyName** as key. For instance, if entity "blogpost" has field "authorId" that is a foreign key to entity "user" and has **resolvedKeyName** value "author", then an item in a GET response will look something like:
+    - **resolvedEntityName** - (Required) The library resolves one level of foreign key relationship for a GET request. The resolved object will be appended to the response object, with the value of this **resolvedEntityName** as key. For instance, if entity "blogpost" has field "authorId" that is a foreign key to entity "user" and has **resolvedEntityName** value "author", then an item in a GET response will look something like:
         ```
         {
             id: 123
