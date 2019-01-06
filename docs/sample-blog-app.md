@@ -61,9 +61,9 @@ To see what the framework can do, let us try creating a simple API server. Here 
     
     // You can add more endpoints to the orionApp.app object or do other things here
     
-    orionApp.start();
+    orionApp.startAsync();
     ```
-5. You're all set! You can now run server.js to see your app in action. Unless you specify a port in the start() call, you will see your app running at port 1337.
+5. You're all set! You can now run server.js to see your app in action. Unless you specify a port in the startAsync() call, you will see your app running at port 1337.
     ```bash
     $ node server.js
     $

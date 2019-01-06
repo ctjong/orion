@@ -65,7 +65,7 @@ orionApp.setupApiEndpoints();
 // to add more endpoints, use orionApp.app like regular Express app:
 // orionApp.app.get("/additionalroute", (req, res) => ...);
 
-orionApp.start();
+orionApp.startAsync();
 ```
 
 ## Documentation
