@@ -24,7 +24,7 @@ export class LocalStorageAdapter implements IStorageAdapter
         if(wrapper)
             this.wrapper = wrapper;
         else
-            this.wrapper = new StorageCommandWrapper(null, null);
+            this.wrapper = new StorageCommandWrapper();
     }
 
     /**

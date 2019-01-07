@@ -1,6 +1,6 @@
 {
   "id": "922d5ace-1757-a73a-cbda-f6710b599cec",
-  "name": "node-local-mssql",
+  "name": "orion-mssql-azure",
   "values": [
     {
       "enabled": true,

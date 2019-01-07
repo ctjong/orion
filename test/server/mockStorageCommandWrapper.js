@@ -7,6 +7,15 @@ const path = require("path");
 module.exports = class MockStorageCommandWrapper
 {
     /**
+     * Construct the mock storage command wrapper
+     * @param basePath Path to where the uploaded files will be stored
+     */
+    constructor(basePath)
+    {
+        this.basePath = basePath;
+    }
+
+    /**
      * Upload a file to an Azure blob storage.
      * @param containerName azure container name
      * @param name  file name
@@ -15,10 +24,10 @@ module.exports = class MockStorageCommandWrapper
      * @param options upload options
      * @returns error object
      */
-    azureUploadAsync (containerName, name, stream, size, options)
+    azureUploadAsync(containerName, name, stream, size, options)
     {
         let mime = null;
-        if(options && options.contentSettings && options.contentSettings.contentType)
+        if (options && options.contentSettings && options.contentSettings.contentType)
             mime = options.contentSettings.contentType;
         return this.processFilePartAsync(name, mime, stream, null);
     }
@@ -113,22 +122,22 @@ module.exports = class MockStorageCommandWrapper
         return new Promise(resolve =>
         {
             // save the uploaded file to the system temp folder
-            const targetPath = `${ASSET_BASE_PATH}/${name}`;
-            if(stream)
+            const targetPath = `${this.basePath}/${name}`;
+            if (stream)
             {
-                if(!this.wstream || this.wstream.path !== targetPath)
+                if (!this.wstream || this.wstream.path !== targetPath)
                 {
                     this.wstream = fs.createWriteStream(targetPath);
                     this.wstream.on('finish', (error) => resolve(error));
                 }
                 stream.pipe(this.wstream);
             }
-            else if(tempPath)
+            else if (tempPath)
             {
                 fs.rename(tempPath, targetPath, (error) => resolve(error));
             }
 
-            if(this.filePartReceivedHandler)
+            if (this.filePartReceivedHandler)
                 this.filePartReceivedHandler(name, mime);
         });
     }
@@ -141,7 +150,7 @@ module.exports = class MockStorageCommandWrapper
     {
         return new Promise(resolve =>
         {
-            if(this.fileDeletedHandler)
+            if (this.fileDeletedHandler)
                 this.fileDeletedHandler(filename);
             resolve(null);
         });

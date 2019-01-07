@@ -3,13 +3,15 @@ import * as fs from "fs";
 
 export class StorageCommandWrapper implements IStorageCommandWrapper
 {
-    azureBlobService: any;
-    s3Service: any;
+    storageService: any;
 
-    constructor(azureBlobService: any, s3Service: any)
+    /**
+     * Set the service component that will handle the file management
+     * @param storageService service component
+     */
+    setService(storageService:any): void
     {
-        this.azureBlobService = azureBlobService;
-        this.s3Service = s3Service;
+        this.storageService = storageService;
     }
 
     /**
@@ -22,7 +24,7 @@ export class StorageCommandWrapper implements IStorageCommandWrapper
     {
         return new Promise(resolve =>
         {
-            fs.rename(sourcePath, targetPath, error => resolve(error));
+            fs.rename(sourcePath, targetPath, (error: any) => resolve(error));
         });
     }
 
@@ -35,7 +37,7 @@ export class StorageCommandWrapper implements IStorageCommandWrapper
     {
         return new Promise(resolve =>
         {
-            fs.unlink(path, error => resolve(error));
+            fs.unlink(path, (error: any) => resolve(error));
         });
     }
 
@@ -48,10 +50,10 @@ export class StorageCommandWrapper implements IStorageCommandWrapper
     {
         return new Promise(resolve =>
         {
-            if (!this.s3Service)
+            if (!this.storageService)
                 resolve({ msg: "servie not initialized" });
             else
-                this.s3Service.upload(options, (error:any) => resolve(error));
+                this.storageService.upload(options, (error:any) => resolve(error));
         });
     }
 
@@ -64,10 +66,10 @@ export class StorageCommandWrapper implements IStorageCommandWrapper
     {
         return new Promise(resolve =>
         {
-            if (!this.s3Service)
+            if (!this.storageService)
                 resolve({ msg: "servie not initialized" });
             else
-                this.s3Service.deleteObject(options, (error:any) => resolve(error));
+                this.storageService.deleteObject(options, (error:any) => resolve(error));
         });
     }
 
@@ -84,10 +86,10 @@ export class StorageCommandWrapper implements IStorageCommandWrapper
     {
         return new Promise(resolve =>
         {
-            if (!this.azureBlobService)
+            if (!this.storageService)
                 resolve({ msg: "servie not initialized" });
             else
-                this.azureBlobService.createBlockBlobFromStream(containerName, fileName, stream, size, options, (error:any) => resolve(error));
+                this.storageService.createBlockBlobFromStream(containerName, fileName, stream, size, options, (error:any) => resolve(error));
         });
     }
 
@@ -101,10 +103,10 @@ export class StorageCommandWrapper implements IStorageCommandWrapper
     {
         return new Promise(resolve =>
         {
-            if (!this.azureBlobService)
+            if (!this.storageService)
                 resolve({ msg: "servie not initialized" });
             else
-                this.azureBlobService.deleteBlob(containerName, fileName, (error:any) => resolve(error));
+                this.storageService.deleteBlob(containerName, fileName, (error:any) => resolve(error));
         });
     }
 }

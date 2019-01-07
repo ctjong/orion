@@ -10,7 +10,8 @@ tsc --build tsconfig.json
 cd ${basepath}/test/server
 npm install
 npm pack ../../core
-npm install --save orion*.tgz
+mv orion-api*.tgz orion.tgz
+npm install --save orion.tgz
 
 if [ "$1" == "-test" ]; then
     cd ${basepath}/test

@@ -28,7 +28,8 @@ export class S3StorageAdapter implements IStorageAdapter
         {
             if(!config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
             throw "Missing awsAccessKeyId or awsSecretAccessKey in the config";
-            this.wrapper = new StorageCommandWrapper(null, new awsSdk.S3(
+            this.wrapper = new StorageCommandWrapper();
+            this.wrapper.setService(new awsSdk.S3(
             { 
                 accessKeyId: config.storage.awsAccessKeyId, 
                 secretAccessKey: config.storage.awsSecretAccessKey

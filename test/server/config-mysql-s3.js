@@ -25,9 +25,9 @@ module.exports =
     storage: 
     {
         provider: "s3",
-        awsAccessKeyId: process.env.AWS_ACCESSKEYID,
-        awsSecretAccessKey: process.env.AWS_SECRETACCESSKEY,
-        s3Bucket: "ct-oriontest"
+        awsAccessKeyId: "testAwsAccessKeyId",
+        awsSecretAccessKey: "testAwsSecretAccessKey",
+        s3Bucket: "testS3BucketName"
     },
     monitoring:
     {

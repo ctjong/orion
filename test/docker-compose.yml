@@ -7,27 +7,32 @@ services:
     restart: always
     ports:
       - "1433:1433"
-    env_file:
-      - oriontest-mssql.env
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=mssqlP455w0rd
   oriontest-server1:
     build: ./server
     volumes:
       - ./server:/code
     ports:
       - "1337:1337"
-    env_file:
-      - oriontest-server1.env
-
+    environment:
+      - ACTIVE_CONFIG=mssql-azure
+      - DB_HOST=oriontest-mssql
+      - DB_USERNAME=SA
+      - DB_PASSWORD=mssqlP455w0rd
+      - PORT=1337
   # mysql test components
   oriontest-mysql:
     image: mysql
     restart: always
     ports:
       - "3306:3306"
-    env_file:
-      - oriontest-mysql.env
     volumes:
       - ./mysql:/etc/mysql/conf.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysqlP455w0rd
+      - MYSQL_DATABASE=oriontest
   oriontest-pma:
     image: phpmyadmin/phpmyadmin
     restart: always
@@ -43,5 +48,21 @@ services:
       - ./server:/code
     ports:
       - "1338:1338"
-    env_file:
-      - oriontest-server2.env
+    environment:
+      - ACTIVE_CONFIG=mysql-s3
+      - DB_HOST=oriontest-mysql
+      - DB_USERNAME=root
+      - DB_PASSWORD=mysqlP455w0rd
+      - PORT=1338
+  oriontest-server3:
+    build: ./server
+    volumes:
+      - ./server:/code
+    ports:
+      - "1339:1339"
+    environment:
+      - ACTIVE_CONFIG=mysql-local
+      - DB_HOST=oriontest-mysql
+      - DB_USERNAME=root
+      - DB_PASSWORD=mysqlP455w0rd
+      - PORT=1339

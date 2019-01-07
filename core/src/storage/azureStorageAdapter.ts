@@ -28,7 +28,8 @@ export class AzureStorageAdapter implements IStorageAdapter
         {
             if(!config.storage.azureStorageConnectionString)
                 throw "Missing azureStorageConnectionString in the config";
-            this.wrapper = new StorageCommandWrapper(azureStorage.createBlobService(config.storage.azureStorageConnectionString), null);
+            this.wrapper = new StorageCommandWrapper();
+            this.wrapper.setService(azureStorage.createBlobService(config.storage.azureStorageConnectionString));
         }
     }
 

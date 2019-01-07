@@ -24,9 +24,13 @@ We are using Postman and Docker to run the tests against our code. These tools a
 To run our tests, please follow these steps.
 1. Launch Postman
 2. Hit import
-3. Select all the files that begin with postman_ under the folder test/postman.
-4. From command line, run the build script from the project root and tell it to also set up the test servers.
-```bash
-$ ./build.sh -test
+3. Select all the files under the folder test/postman and hit Open
+4. Open command line, and run the build script from the project root and tell it to also set up the test servers
 ```
-5. In Postman, hit the Runner button. For each environment in the dropdown, run all the tests (both orion-data and orion-assets) and make sure all of them pass.
+MacOS / Linux:
+$ ./build.sh -test
+Windows:
+$ build.bat /test
+```
+5. Go back to the Postman window, go to the Collections tab and look for a test case with name "api-asset-goodToken". Open it and go to the Body tab. In the file parameter value field, click Choose Files, and select a random file from your computer to be used for testing uploads. Then hit Save / hit Ctrl+S.
+5. Hit the Runner button at the top. For each environment in the dropdown, run the orion-data tests and make sure all of them pass.

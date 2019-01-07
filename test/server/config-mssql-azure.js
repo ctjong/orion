@@ -25,8 +25,8 @@ module.exports =
     storage: 
     {
         provider: "azure",
-        azureStorageConnectionString: process.env.AZURE_BS_CONNSTRING,
-        azureStorageContainerName: "oriontest"
+        azureStorageConnectionString: "testAzureStorageConnectionString",
+        azureStorageContainerName: "testAzureStorageContainerName"
     },
     monitoring:
     {

@@ -25,7 +25,7 @@ module.exports =
     storage: 
     {
         provider: "local",
-        uploadPath: "uploads"
+        uploadPath: "testUploadPath"
     },
     monitoring:
     {

@@ -1,6 +1,6 @@
 {
   "id": "2d0a584f-fa80-234c-791b-1558fd8568fd",
-  "name": "node-local-mysql",
+  "name": "orion-mysql-s3",
   "values": [
     {
       "enabled": true,
