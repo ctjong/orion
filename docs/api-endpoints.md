@@ -83,7 +83,9 @@ Here are the REST API endpoints that the library will set up for you.
     Request body:
     - **file** - File to upload
 
-    Success response: The inserted asset ID
+    Success response: 
+    - **assetId** - The inserted asset ID
+    - **fileName** - The inserted file name
 
 - **POST /api/data/:entity**
 
