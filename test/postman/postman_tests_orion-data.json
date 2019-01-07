@@ -1,10 +1,8 @@
 {
-	"variables": [],
 	"info": {
+		"_postman_id": "5126b3d6-a85d-4cdb-a6e5-2a1b30627bad",
 		"name": "orion-data",
-		"_postman_id": "1399ce37-3c8a-6405-9708-a71c83d46723",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -21,20 +19,28 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/error",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"msg\": \"test error\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/error",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"error"
+					]
+				}
 			},
 			"response": []
 		},
@@ -52,20 +58,32 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item2/public/findbyid/10",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item2/public/findbyid/10",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item2",
+						"public",
+						"findbyid",
+						"10"
+					]
+				}
 			},
 			"response": []
 		},
@@ -83,20 +101,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"invalidemail\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -114,20 +141,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -145,20 +181,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"test\",\n\t\"confirmPassword\": \"test\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -176,20 +221,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"user1\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"gavin\",\n\t\"lastName\": \"belson\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -207,20 +261,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"user1\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"gavin\",\n\t\"lastName\": \"belson\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -238,20 +301,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"user2\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"peter\",\n\t\"lastName\": \"gregory\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -269,20 +341,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"user3\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"brian\",\n\t\"lastName\": \"griffin\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -300,20 +381,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/auth/token",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"user1\",\n\t\"password\": \"testpassword123\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/auth/token",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"token"
+					]
+				}
 			},
 			"response": []
 		},
@@ -331,20 +421,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/auth/token",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"invaliduser\",\n\t\"password\": \"testpassword\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/auth/token",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"token"
+					]
+				}
 			},
 			"response": []
 		},
@@ -374,20 +473,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/auth/token",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"user1\",\n\t\"password\": \"testpassword\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/auth/token",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"token"
+					]
+				}
 			},
 			"response": []
 		},
@@ -417,20 +525,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/auth/token",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"user2\",\n\t\"password\": \"testpassword\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/auth/token",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"token"
+					]
+				}
 			},
 			"response": []
 		},
@@ -460,20 +577,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/auth/token",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"username\": \"user3\",\n\t\"password\": \"testpassword\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/auth/token",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"token"
+					]
+				}
 			},
 			"response": []
 		},
@@ -499,25 +625,38 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user/private/findall/id/0/1",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user/private/findall/id/0/1",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user",
+						"private",
+						"findall",
+						"id",
+						"0",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
@@ -543,25 +682,36 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user/private/findbyid/{{user1id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user/private/findbyid/{{user1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user",
+						"private",
+						"findbyid",
+						"{{user1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -585,25 +735,36 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user/private/findbyid/2",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user/private/findbyid/2",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user",
+						"private",
+						"findbyid",
+						"2"
+					]
+				}
 			},
 			"response": []
 		},
@@ -621,25 +782,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user/{{user2id}}",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"firstName\": \"eddard\",\n\t\"lastName\": \"stark\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user/{{user2id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user",
+						"{{user2id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -657,25 +827,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user/{{user1id}}",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"firstName\": \"catelyn\",\n\t\"lastName\": \"tully\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user/{{user1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user",
+						"{{user1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -701,25 +880,36 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user/private/findbyid/{{user1id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"testuser\",\n\t\"password\": \"testpassword\",\n\t\"confirmPassword\": \"testpassword\",\n\t\"email\": \"test@test.com\",\n\t\"firstName\": \"firstName\",\n\t\"lastName\": \"lastName\"\n}"
+					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user/private/findbyid/{{user1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user",
+						"private",
+						"findbyid",
+						"{{user1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -737,25 +927,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/user/{{user1id}}",
 				"method": "DELETE",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/user/{{user1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"user",
+						"{{user1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -773,20 +972,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"name\": \"item123\",\n\t\"date\": \"20171234\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item"
+					]
+				}
 			},
 			"response": []
 		},
@@ -804,25 +1012,33 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"name\": \"item123\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item"
+					]
+				}
 			},
 			"response": []
 		},
@@ -843,25 +1059,33 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"name\": \"item1\",\n\t\"date\": \"20170101\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item"
+					]
+				}
 			},
 			"response": []
 		},
@@ -882,25 +1106,33 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"name\": \"item2\",\n\t\"date\": \"20170202\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item"
+					]
+				}
 			},
 			"response": []
 		},
@@ -918,20 +1150,32 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/public/findbyid/{{item1id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/public/findbyid/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"public",
+						"findbyid",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -949,14 +1193,27 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
 				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbyid",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -980,20 +1237,32 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken2}}",
-						"description": ""
+						"value": "Bearer {{authtoken2}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbyid",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1011,20 +1280,32 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer wrongtokenwrongtokenwrongtokenwrongtokenwrongtoken",
-						"description": ""
+						"value": "Bearer wrongtokenwrongtokenwrongtokenwrongtokenwrongtoken"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbyid",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1050,20 +1331,32 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbyid",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1081,14 +1374,30 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbycondition/id/0/2/date%3E20170000",
 				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbycondition/id/0/2/date%3E20170000",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbycondition",
+						"id",
+						"0",
+						"2",
+						"date%3E20170000"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1116,20 +1425,35 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbycondition/id/0/2/date%3E20170000",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbycondition/id/0/2/date%3E20170000",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbycondition",
+						"id",
+						"0",
+						"2",
+						"date%3E20170000"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1157,20 +1481,35 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbycondition/id/0/2/name~item1",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbycondition/id/0/2/name~item1",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbycondition",
+						"id",
+						"0",
+						"2",
+						"name~item1"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1188,14 +1527,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findall/id/0/2",
 				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findall/id/0/2",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findall",
+						"id",
+						"0",
+						"2"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1221,20 +1575,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findall/createdat/0/2",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findall/createdat/0/2",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findall",
+						"createdat",
+						"0",
+						"2"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1252,25 +1620,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/{{item1id}}",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken2}}",
-						"description": ""
+						"value": "Bearer {{authtoken2}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"name\": \"item123\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1288,25 +1665,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/{{item1id}}",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"name\": \"item123\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1331,20 +1717,32 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbyid",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1362,25 +1760,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/{{item1id}}",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"name\": \"new item\",\n\t\"name123\": \"new invalid item\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1405,20 +1812,32 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbyid",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1436,25 +1855,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/{{item1id}}",
 				"method": "DELETE",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken2}}",
-						"description": ""
+						"value": "Bearer {{authtoken2}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1472,25 +1900,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/{{item1id}}",
 				"method": "DELETE",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1508,25 +1945,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/{{item2id}}",
 				"method": "DELETE",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/{{item2id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"{{item2id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1544,25 +1990,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/{{item2id}}",
 				"method": "DELETE",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/{{item2id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"{{item2id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1586,20 +2041,32 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/item/private/findbyid/{{item1id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"item",
+						"private",
+						"findbyid",
+						"{{item1id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1617,20 +2084,29 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2Id}}\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1648,25 +2124,33 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"recipientid\": \"{{user2id}}\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1686,25 +2170,33 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2id}}\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1728,25 +2220,39 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message/public/findbycondition/id/0/1/ownerid={{user1id}}&recipientid={{user2id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2Id}}\"\n}"
+					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message/public/findbycondition/id/0/1/ownerid={{user1id}}&recipientid={{user2id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message",
+						"public",
+						"findbycondition",
+						"id",
+						"0",
+						"1",
+						"ownerid={{user1id}}&recipientid={{user2id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1770,25 +2276,39 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message/public/findbycondition/id/0/1/ownerid={{user1id}}&recipientid={{user2id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken2}}",
-						"description": ""
+						"value": "Bearer {{authtoken2}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2Id}}\"\n}"
+					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message/public/findbycondition/id/0/1/ownerid={{user1id}}&recipientid={{user2id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message",
+						"public",
+						"findbycondition",
+						"id",
+						"0",
+						"1",
+						"ownerid={{user1id}}&recipientid={{user2id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1812,25 +2332,39 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message/public/findbycondition/id/0/1/ownerid={{user1id}}&recipientid={{user2id}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken3}}",
-						"description": ""
+						"value": "Bearer {{authtoken3}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"text\": \"test message\",\n\t\"recipientid\": \"{{user2Id}}\"\n}"
+					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message/public/findbycondition/id/0/1/ownerid={{user1id}}&recipientid={{user2id}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message",
+						"public",
+						"findbycondition",
+						"id",
+						"0",
+						"1",
+						"ownerid={{user1id}}&recipientid={{user2id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1848,25 +2382,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message/{{messageId}}",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken2}}",
-						"description": ""
+						"value": "Bearer {{authtoken2}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"flagged\": \"1\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message/{{messageId}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message",
+						"{{messageId}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1884,25 +2427,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message/{{messageId}}",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"flagged\": \"0\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message/{{messageId}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message",
+						"{{messageId}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1920,25 +2472,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message/{{messageId}}",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"text\": \"test message edited\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message/{{messageId}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message",
+						"{{messageId}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1956,25 +2517,34 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message/{{messageId}}",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken2}}",
-						"description": ""
+						"value": "Bearer {{authtoken2}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"text\": \"test message edited\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message/{{messageId}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message",
+						"{{messageId}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1992,30 +2562,39 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/message/{{messageId}}",
 				"method": "DELETE",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/message/{{messageId}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"message",
+						"{{messageId}}"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "POST | api-asset-noToken | 401",
+			"name": "POST | asset-noToken | 401",
 			"event": [
 				{
 					"listen": "test",
@@ -2028,7 +2607,6 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/asset",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -2037,39 +2615,55 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "test.jpg",
-							"value": ""
+							"src": null
 						}
 					]
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/asset",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"asset"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "POST | api-asset-goodToken | 200",
+			"name": "POST | asset-goodToken | 200",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"type": "text/javascript",
+						"id": "08c8203c-e276-46d5-8edc-2d25706e0a42",
 						"exec": [
 							"tests[\"statusCode\"] = responseCode.code === 200;",
-							"if(responseCode.code === 200){",
-							"    postman.setGlobalVariable(\"assetId\", responseBody);",
+							"try{",
+							"    var json = JSON.parse(responseBody);",
+							"    tests[\"assetId\"] = !!json.assetId;",
+							"    tests[\"fileName\"] = !!json.fileName;",
+							"    postman.setGlobalVariable(\"assetId\", json.assetId);",
+							"    postman.setGlobalVariable(\"uploadedFileName\", json.fileName);",
+							"}catch(e){",
+							"    tests[\"assetId\"] = false;",
+							"    tests[\"fileName\"] = false;",
 							"}"
-						]
+						],
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/asset",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
@@ -2078,54 +2672,119 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "test.jpg",
-							"value": ""
+							"src": null
 						}
 					]
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/asset",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"asset"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "GET | api-asset-verifyUpload | 200",
+			"name": "GET | asset-verifyUpload | 200",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"type": "text/javascript",
+						"id": "a41d5eaf-75b6-4350-a348-51bffd109617",
 						"exec": [
 							"tests[\"statusCode\"] = responseCode.code === 200;",
 							"try{",
 							"    var json = JSON.parse(responseBody);",
 							"    tests[\"responseId\"] = json.items[0].id.toString() === postman.getGlobalVariable(\"assetId\");",
+							"    tests[\"uploadedFileName\"] = json.items[0].filename.toString() === postman.getGlobalVariable(\"uploadedFileName\");",
 							"}catch(e){",
 							"    tests[\"responseId\"] = false;",
+							"    tests[\"uploadedFileName\"] = false;",
 							"}"
-						]
+						],
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/asset/private/findbyid/{{assetId}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/asset/private/findbyid/{{assetId}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"asset",
+						"private",
+						"findbyid",
+						"{{assetId}}"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "DEL | api-asset-noToken | 401",
+			"name": "GET | asset-verifyFileUploaded | 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "29a48b6a-5789-43cd-ab6d-1d11984f0901",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{host}}/files/{{uploadedFileName}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"files",
+						"{{uploadedFileName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DEL | asset-noToken | 401",
 			"event": [
 				{
 					"listen": "test",
@@ -2138,19 +2797,30 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/asset/{{assetId}}",
 				"method": "DELETE",
 				"header": [],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/asset/{{assetId}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"asset",
+						"{{assetId}}"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "DEL | api-asset-goodToken | 200",
+			"name": "DEL | asset-goodToken | 200",
 			"event": [
 				{
 					"listen": "test",
@@ -2163,25 +2833,35 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/asset/{{assetId}}",
 				"method": "DELETE",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/asset/{{assetId}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"asset",
+						"{{assetId}}"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "GET | api-asset-verifyDelete | 200",
+			"name": "GET | asset-verifyDelete | 200",
 			"event": [
 				{
 					"listen": "test",
@@ -2200,20 +2880,72 @@
 				}
 			],
 			"request": {
-				"url": "http://{{host}}/api/data/asset/private/findbyid/{{assetId}}",
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{authtoken}}",
-						"description": ""
+						"value": "Bearer {{authtoken}}"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/data/asset/private/findbyid/{{assetId}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"asset",
+						"private",
+						"findbyid",
+						"{{assetId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET | asset-verifyFileDeleted | 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "29a48b6a-5789-43cd-ab6d-1d11984f0901",
+						"exec": [
+							"tests[\"statusCode\"] = responseCode.code === 404;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authtoken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{host}}/files/{{uploadedFileName}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"files",
+						"{{uploadedFileName}}"
+					]
+				}
 			},
 			"response": []
 		}

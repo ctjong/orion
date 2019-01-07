@@ -27,7 +27,7 @@ class CreateAssetHandler
         else
         {
             const insertedId = await ctx.db.insertAsync(ctx, "asset", ["ownerid", "filename"], [ctx.user.id, name]);
-            ctx.res.send(insertedId.toString());
+            ctx.res.json({ assetId: insertedId.toString(), fileName: name });
         }
     }
 };
