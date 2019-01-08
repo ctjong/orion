@@ -32,7 +32,7 @@ Below is the list of settings to be included in a configuration module:
         - **digitChar** - (Required) sWhether or not a password should contain a digit character (true/false).
         - **specialChar** - (Required) Whether or not a password should contain an special character (true/false).
 - **storage** - (Optional) File upload configuration. Required if you want to support file upload.
-    - **provider** - (Required) Storage provider to use (azure/s3/local/custom). If you set it to custom, you would need to write a storage adapter and pass it to the Orion constructor. The custom adapter that you write should override the customUploadAsync and customDeleteAsync functions.
+    - **provider** - (Required) Storage provider to use (azure/s3/local/custom). If you set it to custom, you would need to write a storage adapter and pass it to the Orion constructor. The custom adapter that you write should override the customUploadAsync and customDeleteAsync functions. See [iStorageAdapter.ts](https://github.com/ctjong/orion/blob/master/core/src/storage/iStorageAdapter.ts) for the method signatures.
     - **azureStorageConnectionString** - (Optional) Azure Blob Storage connection string. Required if you want to support file upload to Azure Blob Storage.
     - **azureStorageContainerName** - (Optional) Azure Blob Storage account name. Required if you want to use Azure Blob Storage.
     - **awsAccessKeyId** - (Optional) AWS Access Key ID to access an Amazon S3 account. Required if you want to support file upload to Amazon S3.
