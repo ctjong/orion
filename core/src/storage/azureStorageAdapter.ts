@@ -37,6 +37,7 @@ export class AzureStorageAdapter implements IStorageAdapter
      * Upload a file to Azure Blob Storage
      * @param ctx Request context
      * @param req Request object
+     * @returns upload response
      */
     uploadFileAsync(ctx:Context, req:any): Promise<IUploadFileResponse>
     {
@@ -83,7 +84,7 @@ export class AzureStorageAdapter implements IStorageAdapter
      * Delete a file from the storage
      * @param ctx Request context 
      * @param filename File name
-     * @param callback Callback function
+     * @returns upload error if any
      */
     async deleteFileAsync(ctx:Context, filename:string): Promise<any>
     {

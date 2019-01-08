@@ -22,7 +22,7 @@ module.exports = class MockStorageCommandWrapper
      * @param stream file stream
      * @param size file size
      * @param options upload options
-     * @returns error object
+     * @returns error if any
      */
     azureUploadAsync(containerName, name, stream, size, options)
     {
@@ -36,7 +36,7 @@ module.exports = class MockStorageCommandWrapper
      * Delete a file from an Azure blob storage.
      * @param containerName azure container name
      * @param filename file name
-     * @returns error object
+     * @returns error if any
      */
     azureDeleteAsync(containerName, filename)
     {
@@ -46,7 +46,7 @@ module.exports = class MockStorageCommandWrapper
     /**
      * Upload a file to an Amazon S3 storage.
      * @param options upload options
-     * @returns error object
+     * @returns error if any
      */
     s3UploadAsync(options)
     {
@@ -59,7 +59,7 @@ module.exports = class MockStorageCommandWrapper
     /**
      * Delete a file from an Amazon S3 storage.
      * @param options delete options
-     * @returns error object
+     * @returns error if any
      */
     s3DeleteAsync(options)
     {
@@ -70,7 +70,7 @@ module.exports = class MockStorageCommandWrapper
      * Rename an uploaded file.
      * @param tempPath Temporary upload path
      * @param finalPath Final upload path
-     * @returns error object
+     * @returns error if any
      */
     localRenameAsync(tempPath, finalPath)
     {
@@ -81,7 +81,7 @@ module.exports = class MockStorageCommandWrapper
     /**
      * Remove an uploaded file.
      * @param fullPath Full path of the file to delete
-     * @returns error object
+     * @returns error if any
      */
     localUnlinkAsync(fullPath)
     {
@@ -115,7 +115,7 @@ module.exports = class MockStorageCommandWrapper
      * @param mime Mime type
      * @param stream File stream
      * @param tempPath Temporary file path
-     * @returns error object
+     * @returns error if any
      */
     processFilePartAsync(name, mime, stream, tempPath)
     {
@@ -126,6 +126,8 @@ module.exports = class MockStorageCommandWrapper
             {
                 // save the uploaded file to the system temp folder
                 const targetPath = `${basePath}/${name}`;
+                if (!fs.existsSync(basePath))
+                    fs.mkdirSync(basePath);
                 if (!fs.existsSync(targetPath))
                     fs.writeFileSync(targetPath, "");
                 if (stream)
@@ -147,6 +149,7 @@ module.exports = class MockStorageCommandWrapper
             }
             catch (err)
             {
+                console.log(err);
                 resolve(err);
             }
         });
@@ -155,13 +158,20 @@ module.exports = class MockStorageCommandWrapper
     /**
      * Process a file delete.
      * @param filename File name
+     * @returns error if any
      */
     processFileDeleteAsync(filename)
     {
+        const basePath = this.basePath;
         return new Promise(resolve =>
         {
             try
             {
+                const targetPath = `${basePath}/${filename}`;
+                if (!fs.existsSync(targetPath))
+                    throw `File not found in the storage: ${targetPath}`;
+
+                fs.unlinkSync(targetPath);
                 if (this.fileDeletedHandler)
                     this.fileDeletedHandler(filename);
                 resolve(null);
