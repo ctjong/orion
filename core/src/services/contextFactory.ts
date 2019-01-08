@@ -50,6 +50,8 @@ export class ContextFactory
      * @param req request object
      * @param res response object
      * @param entityName entity name
+     * @param db database adapter
+     * @param storage storage adapter
      * @returns context object
      */
     create(req:any, res:any, entityName:string, db:IDatabaseAdapter, storage:IStorageAdapter) : Context

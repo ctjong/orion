@@ -56,7 +56,7 @@ To see what the framework can do, let us try creating a simple API server. Here 
     ```js
     const Orion = require('orion-api');
     const config = require('./config');
-    const orionApp = new Orion.App(config);
+    const orionApp = new Orion(config);
     orionApp.setupApiEndpoints();
     
     // You can add more endpoints to the orionApp.app object or do other things here

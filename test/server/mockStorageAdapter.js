@@ -2,12 +2,12 @@ const fs = require("fs");
 const path = require("path");
 
 /**
- * A mock storage command wrapper module
+ * A mock storage adapter
  */
-module.exports = class MockStorageCommandWrapper
+module.exports = class MockStorageAdapter
 {
     /**
-     * Construct the mock storage command wrapper
+     * Construct the mock storage adapter
      * @param basePath Path to where the uploaded files will be stored
      */
     constructor(basePath)
@@ -66,7 +66,7 @@ module.exports = class MockStorageCommandWrapper
     }
 
     /**
-     * Rename an uploaded file.
+     * Upload a file to a local path
      * @param fileName File name
      * @param stream File stream
      * @param uploadPath Target upload path
@@ -78,7 +78,7 @@ module.exports = class MockStorageCommandWrapper
     }
 
     /**
-     * Remove an uploaded file.
+     * Delete a file from a local path
      * @param fullPath Full path of the file to delete
      * @returns error if any
      */

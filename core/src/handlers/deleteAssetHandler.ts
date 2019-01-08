@@ -26,11 +26,47 @@ class DeleteAssetHandler
         if (dbError)
             execService.throwError("2020", 500, "Failed to remove asset from DB: " + dbError);
 
-        const storageError = await ctx.storage.deleteFileAsync(ctx, record.filename);
+        const storageError = await this.deleteFileAsync(ctx, record.filename);
         if (storageError)
             execService.throwError("mgwy", 500, "Failed to remove asset from storage: " + storageError);
 
         ctx.res.send("Asset removed");
+    }
+
+    /**
+     * Delete a file from the storage
+     * @param ctx Request context 
+     * @param filename File name
+     * @returns upload error if any
+     */
+    private deleteFileAsync(ctx: Context, filename: string): Promise<any>
+    {
+        const provider = ctx.config.storage.provider;
+        if (provider === "azure")
+        {
+            return ctx.storage.azureDeleteAsync(ctx.config.storage.azureStorageContainerName, filename);
+        }
+        else if (provider === "s3")
+        {
+            return ctx.storage.s3DeleteAsync(
+                {
+                    Key: filename,
+                    Bucket: ctx.config.storage.s3Bucket
+                });
+        }
+        else if (provider === "local")
+        {
+            const fullPath = ctx.config.storage.uploadPath + "/" + filename;
+            return ctx.storage.localDeleteAsync(fullPath);
+        }
+        else if (provider === "custom")
+        {
+            return ctx.storage.customDeleteAsync(name);
+        }
+        else
+        {
+            throw `Unknown provider: ${provider}`;
+        }
     }
 };
 

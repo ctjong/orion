@@ -2,7 +2,7 @@ const mssql = require("mssql");
 const mysql = require("mysql");
 const os = require('os');
 const Orion = require("orion-api");
-const MockStorageCommandWrapper = require("./mockStorageCommandWrapper");
+const MockStorageAdapter = require("./mockStorageAdapter");
 
 const DB_RETRY_INTERVAL = 3;
 const ASSET_BASE_PATH = `${os.tmpdir()}/oriontest`;
@@ -27,7 +27,7 @@ async function main()
 function startServer(config, storageAdapter)
 {
     console.log("Starting server");
-    const orionApp = new Orion.App(config, null, storageAdapter);
+    const orionApp = new Orion(config, null, storageAdapter);
     orionApp.setupApiEndpoints();
     orionApp.app.get("/healthcheck", (req, res) => res.status(200).end());
     orionApp.app.get("/files/:fileName", (req, res) => res.sendFile(`${ASSET_BASE_PATH}/${req.params.fileName}`));
@@ -62,15 +62,8 @@ function createStorageAdapter(config)
 {
     if (!config.storage)
         return null;
-
-    const provider = config.storage.provider;
-    if (provider === "azure")
-        return new Orion.AzureStorageAdapter(config, new MockStorageCommandWrapper(ASSET_BASE_PATH));
-    else if (provider === "s3")
-        return new Orion.S3StorageAdapter(config, new MockStorageCommandWrapper(ASSET_BASE_PATH));
-    else if (provider === "local")
-        return new Orion.LocalStorageAdapter(config, new MockStorageCommandWrapper(ASSET_BASE_PATH));
-    return null
+    else
+        return new MockStorageAdapter(ASSET_BASE_PATH);
 }
 
 /**

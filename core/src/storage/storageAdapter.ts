@@ -1,16 +1,19 @@
-import { IStorageCommandWrapper } from "./iStorageCommandWrapper";
+import { IStorageAdapter } from "./iStorageAdapter";
 import * as fs from "fs";
 
-export class StorageCommandWrapper implements IStorageCommandWrapper
+/**
+ * Class that handles the communication with storage provider
+ */
+export class StorageAdapter implements IStorageAdapter
 {
     storageService: any;
     wstream: any;
 
     /**
-     * Set the service component that will handle the file management
-     * @param storageService service component
+     * Construct a storage adapter
+     * @param storageService Storage service provided by the provider's library
      */
-    setService(storageService: any): void
+    constructor(storageService: any)
     {
         this.storageService = storageService;
     }
@@ -52,7 +55,7 @@ export class StorageCommandWrapper implements IStorageCommandWrapper
     }
 
     /**
-     * Delete a file locally
+     * Delete a file from a local path
      * @param path file path
      * @returns error if any
      */
@@ -171,5 +174,27 @@ export class StorageCommandWrapper implements IStorageCommandWrapper
                 resolve(err);
             }
         });
+    }
+
+    /**
+     * Upload a file to a custom storage provider
+     * @param fileName File name
+     * @param stream File stream
+     * @param size File size
+     * @returns error if any
+     */
+    customUploadAsync(fileName: string, stream: any, size: number): Promise<any>
+    {
+        throw "not implemented";
+    }
+
+    /**
+     * Delete a file from a custom storage provider
+     * @param fileName file name
+     * @returns error if any
+     */
+    customDeleteAsync(fileName: string): Promise<any>
+    {
+        throw "not implemented";
     }
 }
