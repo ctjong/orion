@@ -14,6 +14,8 @@ echo cd %basepath%\test\server
 call cd %basepath%\test\server
 echo npm install
 call npm install
+echo del /S /Q orion-api*.tgz
+call del /S /Q orion-api*.tgz
 echo npm pack ..\..\core
 call npm pack ..\..\core
 echo move orion-api*.tgz orion.tgz
