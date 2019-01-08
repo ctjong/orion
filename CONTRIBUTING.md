@@ -32,5 +32,4 @@ $ ./build.sh -test
 Windows:
 $ build.bat /test
 ```
-5. Go back to the Postman window, go to the Collections tab and look for a test case with name "api-asset-goodToken". Open it and go to the Body tab. In the file parameter value field, click Choose Files, and select the test image under the test folder (test/postman/test.jpg). Then hit Save / hit Ctrl+S.
 5. Hit the Runner button at the top. For each environment in the dropdown, run the orion-data tests and make sure all of them pass.

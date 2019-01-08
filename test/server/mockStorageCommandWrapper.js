@@ -119,26 +119,36 @@ module.exports = class MockStorageCommandWrapper
      */
     processFilePartAsync(name, mime, stream, tempPath)
     {
+        const basePath = this.basePath;
         return new Promise(resolve =>
         {
-            // save the uploaded file to the system temp folder
-            const targetPath = `${this.basePath}/${name}`;
-            if (stream)
+            try
             {
-                if (!this.wstream || this.wstream.path !== targetPath)
+                // save the uploaded file to the system temp folder
+                const targetPath = `${basePath}/${name}`;
+                if (!fs.existsSync(targetPath))
+                    fs.writeFileSync(targetPath, "");
+                if (stream)
                 {
-                    this.wstream = fs.createWriteStream(targetPath);
-                    this.wstream.on('finish', (error) => resolve(error));
+                    if (!this.wstream || this.wstream.path !== targetPath)
+                    {
+                        this.wstream = fs.createWriteStream(targetPath);
+                        this.wstream.on('finish', (error) => resolve(error));
+                    }
+                    stream.pipe(this.wstream);
                 }
-                stream.pipe(this.wstream);
-            }
-            else if (tempPath)
-            {
-                fs.rename(tempPath, targetPath, (error) => resolve(error));
-            }
+                else if (tempPath)
+                {
+                    fs.rename(tempPath, targetPath, (error) => resolve(error));
+                }
 
-            if (this.filePartReceivedHandler)
-                this.filePartReceivedHandler(name, mime);
+                if (this.filePartReceivedHandler)
+                    this.filePartReceivedHandler(name, mime);
+            }
+            catch (err)
+            {
+                resolve(err);
+            }
         });
     }
 
@@ -150,9 +160,16 @@ module.exports = class MockStorageCommandWrapper
     {
         return new Promise(resolve =>
         {
-            if (this.fileDeletedHandler)
-                this.fileDeletedHandler(filename);
-            resolve(null);
+            try
+            {
+                if (this.fileDeletedHandler)
+                    this.fileDeletedHandler(filename);
+                resolve(null);
+            }
+            catch (err)
+            {
+                resolve(err);
+            }
         });
     }
 };
