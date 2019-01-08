@@ -1,6 +1,6 @@
 {
   "name": "orion-api",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Config based REST API framework",
   "main": "build/index.js",
   "repository": {
