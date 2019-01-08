@@ -7,31 +7,32 @@ export interface IStorageCommandWrapper
     setService(storageService: any): void;
 
     /**
-     * Rename a file locally
-     * @param sourcePath Source file path
-     * @param targetPath Target file path
-     * @returns error object
+     * Upload a file to a local path
+     * @param fileName File name
+     * @param stream File stream
+     * @param uploadPath Target upload path
+     * @returns error if any
      */
-    localRenameAsync(sourcePath: string, targetPath: string): Promise<any>;
+    localUploadAsync(fileName: string, stream: any, uploadPath: string): Promise<any>;
 
     /**
      * Delete a file locally
      * @param path file path
-     * @returns error object
+     * @returns error if any
      */
-    localUnlinkAsync(path: string): Promise<any>;
+    localDeleteAsync(path: string): Promise<any>;
 
     /**
      * Upload a file to S3
      * @param options upload options
-     * @returns error object
+     * @returns error if any
      */
     s3UploadAsync(options: any): Promise<any>;
 
     /**
      * Delete a file from S3
      * @param options delete options
-     * @returns error object
+     * @returns error if any
      */
     s3DeleteAsync(options: any): Promise<any>;
 
@@ -42,7 +43,7 @@ export interface IStorageCommandWrapper
      * @param stream File stream
      * @param size File size
      * @param options Upload options
-     * @returns error object
+     * @returns error if any
      */
     azureUploadAsync(containerName: string, fileName: string, stream: any, size: number, options: any): Promise<any>;
 
@@ -50,7 +51,7 @@ export interface IStorageCommandWrapper
      * Delete a file from azure blob storage
      * @param containerName Container name
      * @param fileName file name
-     * @returns error object
+     * @returns error if any
      */
     azureDeleteAsync(containerName: string, fileName: string): Promise<any>;
 }

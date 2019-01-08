@@ -29,7 +29,7 @@ module.exports = class MockStorageCommandWrapper
         let mime = null;
         if (options && options.contentSettings && options.contentSettings.contentType)
             mime = options.contentSettings.contentType;
-        return this.processFilePartAsync(name, mime, stream, null);
+        return this.processFilePartAsync(name, stream, null);
     }
 
     /**
@@ -52,8 +52,7 @@ module.exports = class MockStorageCommandWrapper
     {
         const name = options.Key;
         const stream = options.Body;
-        const mime = options.ContentType;
-        return this.processFilePartAsync(name, mime, stream, null);
+        return this.processFilePartAsync(name, stream, null);
     }
 
     /**
@@ -68,14 +67,14 @@ module.exports = class MockStorageCommandWrapper
 
     /**
      * Rename an uploaded file.
-     * @param tempPath Temporary upload path
-     * @param finalPath Final upload path
+     * @param fileName File name
+     * @param stream File stream
+     * @param uploadPath Target upload path
      * @returns error if any
      */
-    localRenameAsync(tempPath, finalPath)
+    localUploadAsync(fileName, stream, uploadPath)
     {
-        const filename = path.basename(tempPath);
-        return this.processFilePartAsync(filename, null, null, tempPath);
+        return this.processFilePartAsync(fileName, stream, uploadPath);
     }
 
     /**
@@ -83,28 +82,10 @@ module.exports = class MockStorageCommandWrapper
      * @param fullPath Full path of the file to delete
      * @returns error if any
      */
-    localUnlinkAsync(fullPath)
+    localDeleteAsync(fullPath)
     {
         const filename = path.basename(fullPath);
         return this.processFileDeleteAsync(filename);
-    }
-
-    /**
-     * Set a handler to be invoked when a file part is received
-     * @param handler handler function
-     */
-    onFilePartReceived(handler)
-    {
-        this.filePartReceivedHandler = handler;
-    }
-
-    /**
-     * Set a handler to be invoked when a file is deleted
-     * @param handler handler function
-     */
-    onFileDeleted(handler)
-    {
-        this.fileDeletedHandler = handler;
     }
 
     /**
@@ -112,12 +93,11 @@ module.exports = class MockStorageCommandWrapper
      * Note that this is using the old callback argument style instead of Promise because the purpose
      * of this function is to override the the library functions, which are not returning a Promise.
      * @param name File name
-     * @param mime Mime type
      * @param stream File stream
      * @param tempPath Temporary file path
      * @returns error if any
      */
-    processFilePartAsync(name, mime, stream, tempPath)
+    processFilePartAsync(name, stream, tempPath)
     {
         const basePath = this.basePath;
         return new Promise(resolve =>
@@ -143,9 +123,6 @@ module.exports = class MockStorageCommandWrapper
                 {
                     fs.rename(tempPath, targetPath, (error) => resolve(error));
                 }
-
-                if (this.filePartReceivedHandler)
-                    this.filePartReceivedHandler(name, mime);
             }
             catch (err)
             {
@@ -172,12 +149,11 @@ module.exports = class MockStorageCommandWrapper
                     throw `File not found in the storage: ${targetPath}`;
 
                 fs.unlinkSync(targetPath);
-                if (this.fileDeletedHandler)
-                    this.fileDeletedHandler(filename);
                 resolve(null);
             }
             catch (err)
             {
+                console.log(err);
                 resolve(err);
             }
         });

@@ -13,20 +13,20 @@ import { IStorageAdapter } from "./iStorageAdapter";
  */
 export class AzureStorageAdapter implements IStorageAdapter
 {
-    private wrapper:IStorageCommandWrapper;
+    private wrapper: IStorageCommandWrapper;
 
     /**
      * Initialize the adapter
      * @param config config object
      * @param wrapper optional commmand wrapper module
      */
-    constructor(config:IConfig, wrapper?:IStorageCommandWrapper)
+    constructor(config: IConfig, wrapper?: IStorageCommandWrapper)
     {
-        if(wrapper)
+        if (wrapper)
             this.wrapper = wrapper;
         else
         {
-            if(!config.storage.azureStorageConnectionString)
+            if (!config.storage.azureStorageConnectionString)
                 throw "Missing azureStorageConnectionString in the config";
             this.wrapper = new StorageCommandWrapper();
             this.wrapper.setService(azureStorage.createBlobService(config.storage.azureStorageConnectionString));
@@ -39,13 +39,13 @@ export class AzureStorageAdapter implements IStorageAdapter
      * @param req Request object
      * @returns upload response
      */
-    uploadFileAsync(ctx:Context, req:any): Promise<IUploadFileResponse>
+    uploadFileAsync(ctx: Context, req: any): Promise<IUploadFileResponse>
     {
         return new Promise(resolve =>
         {
             let isFirstPartReceived = false;
             const form = new (multiparty.Form)();
-            form.on('part', (stream:any) =>
+            form.on('part', (stream: any) =>
             {
                 execService.catchAllErrorsAsync(ctx, async () =>
                 {
@@ -54,10 +54,10 @@ export class AzureStorageAdapter implements IStorageAdapter
                         execService.throwError("ffce", 400, "submitted file is not a valid file");
                     const size = stream.byteCount - stream.byteOffset;
                     const name = guid() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    const error = await this.wrapper.azureUploadAsync(ctx.config.storage.azureStorageContainerName, name, stream, size, 
-                    {
-                        contentSettings: { contentType: mime.lookup(name) }
-                    });
+                    const error = await this.wrapper.azureUploadAsync(ctx.config.storage.azureStorageContainerName, name, stream, size,
+                        {
+                            contentSettings: { contentType: mime.lookup(name) }
+                        });
                     resolve({ error: error, name: name });
                 });
             });
@@ -65,7 +65,7 @@ export class AzureStorageAdapter implements IStorageAdapter
             {
                 execService.catchAllErrorsAsync(ctx, () =>
                 {
-                    if(!isFirstPartReceived && bytesReceived >= bytesExpected)
+                    if (!isFirstPartReceived && bytesReceived >= bytesExpected)
                         execService.sendErrorResponse(ctx, "171d", 400, "error while parsing the first part");
                 });
             });
@@ -86,7 +86,7 @@ export class AzureStorageAdapter implements IStorageAdapter
      * @param filename File name
      * @returns upload error if any
      */
-    async deleteFileAsync(ctx:Context, filename:string): Promise<any>
+    async deleteFileAsync(ctx: Context, filename: string): Promise<any>
     {
         return this.wrapper.azureDeleteAsync(ctx.config.storage.azureStorageContainerName, filename);
     }
