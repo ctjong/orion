@@ -15,8 +15,6 @@ import { IDatabaseAdapter } from "./database/iDatabaseAdapter";
 import { IStorageAdapter } from "./storage/iStorageAdapter";
 import { SqlDatabaseAdapter } from "./database/sqlDatabaseAdapter";
 import { StorageAdapter } from "./storage/storageAdapter";
-import * as azureStorage from "azure-storage";
-import * as awsSdk from "aws-sdk";
 
 /**
  * An Orion app object
@@ -50,33 +48,7 @@ class OrionApp
         if (storageAdapter)
             this.storage = storageAdapter;
         else if (config.storage)
-        {
-            const provider = config.storage.provider;
-            if (provider === "azure")
-            {
-                if (!config.storage.azureStorageConnectionString)
-                    throw "Missing azureStorageConnectionString in the config";
-                this.storage = new StorageAdapter(azureStorage.createBlobService(config.storage.azureStorageConnectionString));
-            }
-            else if (provider === "s3")
-            {
-                if (!config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
-                    throw "Missing awsAccessKeyId or awsSecretAccessKey in the config";
-                this.storage = new StorageAdapter(new awsSdk.S3(
-                    {
-                        accessKeyId: config.storage.awsAccessKeyId,
-                        secretAccessKey: config.storage.awsSecretAccessKey
-                    }));
-            }
-            else if (provider === "local" || provider === "custom")
-            {
-                this.storage = new StorageAdapter(null);
-            }
-            else
-            {
-                throw `Unknown provider ${provider}`;
-            }
-        }
+            this.storage = new StorageAdapter(config);
 
         // setup monitoring
         if (config.monitoring && config.monitoring.appInsightsKey)

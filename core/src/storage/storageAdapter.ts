@@ -1,21 +1,49 @@
 import { IStorageAdapter } from "./iStorageAdapter";
 import * as fs from "fs";
+import { IConfig } from "../types";
+import * as azureStorage from "azure-storage";
+import * as awsSdk from "aws-sdk";
 
 /**
  * Class that handles the communication with storage provider
  */
 export class StorageAdapter implements IStorageAdapter
 {
-    storageService: any;
+    azureService: any;
+    s3Service: any;
     wstream: any;
 
     /**
      * Construct a storage adapter
-     * @param storageService Storage service provided by the provider's library
+     * @param config Configuration object
      */
-    constructor(storageService: any)
+    constructor(config: IConfig)
     {
-        this.storageService = storageService;
+        const provider = config.storage.provider;
+        if (provider === "azure")
+        {
+            if (!config.storage.azureStorageConnectionString)
+                throw "Missing azureStorageConnectionString in the config";
+            this.azureService = azureStorage.createBlobService(config.storage.azureStorageConnectionString);
+        }
+        else if (provider === "s3")
+        {
+            if (!config.storage.awsAccessKeyId || !config.storage.awsSecretAccessKey)
+                throw "Missing awsAccessKeyId or awsSecretAccessKey in the config";
+            this.s3Service = new awsSdk.S3(
+                {
+                    accessKeyId: config.storage.awsAccessKeyId,
+                    secretAccessKey: config.storage.awsSecretAccessKey
+                });
+        }
+        else if (provider === "custom")
+        {
+            throw "Missing custom adapter. Please create a custom storage adapter and pass it to Orion constructor.";
+        }
+        else if (provider !== "local")
+        {
+            throw `Unknown provider ${provider}`;
+        }
     }
 
     /**
@@ -86,10 +114,10 @@ export class StorageAdapter implements IStorageAdapter
         {
             try
             {
-                if (!this.storageService)
+                if (!this.s3Service)
                     resolve({ msg: "servie not initialized" });
                 else
-                    this.storageService.upload(options, (error: any) => resolve(error));
+                    this.s3Service.upload(options, (error: any) => resolve(error));
             }
             catch (err)
             {
@@ -110,10 +138,10 @@ export class StorageAdapter implements IStorageAdapter
         {
             try
             {
-                if (!this.storageService)
+                if (!this.s3Service)
                     resolve({ msg: "servie not initialized" });
                 else
-                    this.storageService.deleteObject(options, (error: any) => resolve(error));
+                    this.s3Service.deleteObject(options, (error: any) => resolve(error));
             }
             catch (err)
             {
@@ -138,10 +166,10 @@ export class StorageAdapter implements IStorageAdapter
         {
             try
             {
-                if (!this.storageService)
+                if (!this.azureService)
                     resolve({ msg: "servie not initialized" });
                 else
-                    this.storageService.createBlockBlobFromStream(containerName, fileName, stream, size, options, (error: any) => resolve(error));
+                    this.azureService.createBlockBlobFromStream(containerName, fileName, stream, size, options, (error: any) => resolve(error));
             }
             catch (err)
             {
@@ -163,10 +191,10 @@ export class StorageAdapter implements IStorageAdapter
         {
             try
             {
-                if (!this.storageService)
+                if (!this.azureService)
                     resolve({ msg: "servie not initialized" });
                 else
-                    this.storageService.deleteBlob(containerName, fileName, (error: any) => resolve(error));
+                    this.azureService.deleteBlob(containerName, fileName, (error: any) => resolve(error));
             }
             catch (err)
             {
