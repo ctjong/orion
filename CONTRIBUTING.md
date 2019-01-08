@@ -32,4 +32,4 @@ $ ./build.sh -test
 Windows:
 $ build.bat /test
 ```
-5. Hit the Runner button at the top. For each environment in the dropdown, run the orion-data tests and make sure all of them pass.
+5. You can run the tests in Postman manually one-by-one, but make sure you run them in order from top to bottom so that the variables can be set properly. Or you can use Postman's collection runner that automatically runs all tests, by clicking the Runner button at the top. For both methods, you need to make sure that all tests pass for each environment (mssql-azure, mysql-s3, mysql-local).
