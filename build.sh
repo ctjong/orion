@@ -4,15 +4,14 @@ set -x #echo on
 basepath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd ${basepath}/core
-npm install
+npm ci
 tsc --build tsconfig.json
 
 cd ${basepath}/test/server
-npm install
 rm orion-api*.tgz
 npm pack ../../core
 mv orion-api*.tgz orion.tgz
-npm install --save orion.tgz
+npm ci
 
 if [ "$1" == "-test" ]; then
     cd ${basepath}/test
