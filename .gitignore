@@ -13,3 +13,4 @@ uploads
 .nyc_output
 *.tgz
 test/server/package-lock.json
+.vscode/

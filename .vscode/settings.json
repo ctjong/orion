@@ -1,4 +1,0 @@
-{
-    // Mocha: Glob to search for test files
-    "mocha.files.glob": "build/test/**/*.js",
-}
