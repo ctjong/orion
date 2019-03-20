@@ -14,6 +14,7 @@ Please go to [Issues](https://github.com/ctjong/orion/issues) to see the list of
 
 - [Typescript](https://www.typescriptlang.org/#download-links)
 - [Docker](https://docs.docker.com/get-started/) 
+- [Docker compose](https://docs.docker.com/compose/install/)
 - [Postman](https://www.getpostman.com/)
 
 
