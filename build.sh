@@ -15,6 +15,6 @@ npm ci
 
 if [ "$1" == "-test" ]; then
     cd ${basepath}/test
-    docker-compose stop
-    docker-compose up
+    sudo docker-compose stop
+    sudo docker-compose up
 fi
