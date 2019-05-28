@@ -1,4 +1,4 @@
-FROM node:carbon
+FROM node:lts
 
 RUN mkdir /code
 WORKDIR /code
