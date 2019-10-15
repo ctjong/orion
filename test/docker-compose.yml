@@ -12,8 +12,6 @@ services:
       - SA_PASSWORD=mssqlP455w0rd
   oriontest-server1:
     build: ./server
-    volumes:
-      - ./server:/code
     ports:
       - "1337:1337"
     environment:
@@ -44,8 +42,6 @@ services:
       - oriontest-mysql
   oriontest-server2:
     build: ./server
-    volumes:
-      - ./server:/code
     ports:
       - "1338:1338"
     environment:
@@ -56,8 +52,6 @@ services:
       - PORT=1338
   oriontest-server3:
     build: ./server
-    volumes:
-      - ./server:/code
     ports:
       - "1339:1339"
     environment:
