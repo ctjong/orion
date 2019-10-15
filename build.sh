@@ -1,9 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == "--help" ]; then
-    echo "Usage: build.sh [-testserver]"
-    echo "By default the test server will run using the default Docker host."
-    echo "To use a custom docker host, set the DOCKER_HOST environment variable."
+    echo "Usage: build.sh [-testserver] [docker_host]"
     exit 0
 fi
 
@@ -23,9 +21,9 @@ if [ "$1" == "-testserver" ]; then
     mv orion-api*.tgz orion.tgz
 
     cd ${basepath}/test
-    if [ "$DOCKER_HOST" != "" ]; then
-        docker-compose -H $DOCKER_HOST stop
-        docker-compose -H $DOCKER_HOST up
+    if [ "$2" != "" ]; then
+        docker-compose -H $2 stop
+        docker-compose -H $2 up
     else
         docker-compose stop
         docker-compose up
