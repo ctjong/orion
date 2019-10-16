@@ -12,6 +12,8 @@ services:
       - SA_PASSWORD=mssqlP455w0rd
   oriontest-server1:
     build: ./server
+    volumes:
+      - ./server:/code
     ports:
       - "1337:1337"
     environment:
@@ -22,13 +24,12 @@ services:
       - PORT=1337
   # mysql test components
   oriontest-mysql:
-    build:
-      context: ./mysql
-      dockerfile: ./Dockerfile
+    image: mysql
     restart: always
     ports:
       - "3306:3306"
-      - "33060:33060"
+    volumes:
+      - ./mysql:/etc/mysql/conf.d
     environment:
       - MYSQL_ROOT_PASSWORD=mysqlP455w0rd
       - MYSQL_DATABASE=oriontest
@@ -43,6 +44,8 @@ services:
       - oriontest-mysql
   oriontest-server2:
     build: ./server
+    volumes:
+      - ./server:/code
     ports:
       - "1338:1338"
     environment:
@@ -53,6 +56,8 @@ services:
       - PORT=1338
   oriontest-server3:
     build: ./server
+    volumes:
+      - ./server:/code
     ports:
       - "1339:1339"
     environment:
