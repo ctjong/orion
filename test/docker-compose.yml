@@ -22,13 +22,10 @@ services:
       - PORT=1337
   # mysql test components
   oriontest-mysql:
-    build:
-      context: ./mysql
-      dockerfile: ./Dockerfile
+    image: mysql:5.7
     restart: always
     ports:
       - "3306:3306"
-      - "33060:33060"
     environment:
       - MYSQL_ROOT_PASSWORD=mysqlP455w0rd
       - MYSQL_DATABASE=oriontest
