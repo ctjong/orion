@@ -23,7 +23,7 @@
     "azure-storage": "^2.10.2",
     "body-parser": "1.18.2",
     "cookie-parser": "1.4.3",
-    "express": "4.16.2",
+    "express": "4.17.3",
     "https": "1.0.0",
     "jsonwebtoken": "8.1.0",
     "mime-types": "2.1.21",
